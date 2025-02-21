@@ -21,8 +21,8 @@
 	$datetime_hash	=	bin2hex(hash('sha256', $datetime, true ) );
 
 	// ダウンロード用のディレクトリ
-	$export_dir		=	$this->upload_dir_path.'export/'.$datetime_hash.'/';
-	$export_dir_url	=	$this->upload_dir_url .'export/'.$datetime_hash.'/';
+	$export_dir		=	DIR_UPLOAD.'export/'.$datetime_hash.'/';
+	$export_dir_url	=	URL_UPLOAD.'export/'.$datetime_hash.'/';
 
 	// エクスポートするファイル名
 	$export_file	=	'pz_linkcard_export_utf8_'.$datetime.'.csv';
@@ -57,5 +57,5 @@
 		fclose($handle );
 
 		// ダウンロード用ボタンを表示
-		echo '<div><button type="submit" id="export_button" class="pz-lkc-man-file-button button button-primary" name="action" value="show-export" onclick="window.open('."'".$export_path_url."'".');">'.__('Download Export File', $this->text_domain ).'</button></div>';
+		echo '<div><button type="submit" id="export_button" class="pz-man-file-button button button-primary" name="action" value="show-export" onclick="window.open('."'".$export_path_url."'".');">'.__('Download Export File', TEXT_DOMAIN ).'</button></div>';
 	}

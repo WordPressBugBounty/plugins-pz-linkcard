@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.5
+Version:		2.5.6
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -17,197 +17,267 @@ class class_pz_linkcard {
 	// 設定値
 	private		const	DEFAULTS	=
 		array(
-			'plugin-version'		=>	null,			// Cache
-			'db-version'			=>	null,			// Cache
+			'plugin-version'		=>	null,			// 🟦Cache
+			'db-version'			=>	null,			// 🟦Cache
 
-			'error-mode'			=>	0,				// Cache
+			'error-mode'			=>	0,				// 🟦Cache
 			'error-hide'			=>	0,
-			'error-url'				=>	null,			// Cache
-			'error-time'			=>	null,			// Cache
+			'error-url'				=>	null,			// 🟦Cache
+			'error-postid'			=>	null,			// 🟦Cache
+			'error-time'			=>	null,			// 🟦Cache
 
-			'special-format'		=>	null,
+			'special-format'		=>	null,			// 🟥CSS
 
-			'link-all'				=>	1,				// Cache
-			'margin-top'			=>	'16px',
-			'margin-bottom'			=>	'16px',
-			'margin-left'			=>	'16px',
-			'margin-right'			=>	'16px',
-			'card-top'				=>	'8px',
-			'card-bottom'			=>	'8px',
-			'card-left'				=>	'8px',
-			'card-right'			=>	'8px',
-			'width'					=>	'500px',
-			'content-height'		=>	'108px',
-			'centering'				=>	0,
-			'blockquote'			=>	0,				// Cache
+			'link-all'				=>	1,				// 🟦Cache
+			'thumbnail-resize'		=>	1,				// 🟥CSS
+			'margin-top'			=>	'16px',			// 🟥CSS
+			'margin-bottom'			=>	'16px',			// 🟥CSS
+			'margin-left'			=>	'16px',			// 🟥CSS
+			'margin-right'			=>	'16px',			// 🟥CSS
+			'card-top'				=>	'8px',			// 🟥CSS
+			'card-bottom'			=>	'8px',			// 🟥CSS
+			'card-left'				=>	'8px',			// 🟥CSS
+			'card-right'			=>	'8px',			// 🟥CSS
+			'thumbnail-position'	=>	2,				// 🟦Cache
+			'thumbnail-width'		=>	'100px',		// 🟥CSS
+			'thumbnail-height'		=>	'100px',		// 🟥CSS
+			'width'					=>	'500px',		// 🟥CSS
+			'content-height'		=>	'108px',		// 🟥CSS
+			'centering'				=>	0,				// 🟥CSS
+			'blockquote'			=>	0,				// 🟦Cache
+			'info-position'			=>	1,				// 🟦Cache
+			'use-sitename'			=>	1,				// 🟦Cache
 
-			'info-position'			=>	1,				// Cache
-			'use-sitename'			=>	1,				// Cache
-			'display-date'			=>	1,				// Cache
-			'heading'				=>	0,
-			'flg-anchor'			=>	1,
-			'separator'				=>	0,
-			'display-url'			=>	1,				// Cache
-			'thumbnail-position'	=>	2,				// Cache
-			'thumbnail-width'		=>	'100px',
-			'thumbnail-height'		=>	'100px',
-			'thumbnail-shadow'		=>	0,
-			'content-inset'			=>	0,
-			'display-excerpt'		=>	1,				// Cache
-			'shadow-inset'			=>	0,
-			'shadow'				=>	0,
-			'radius'				=>	null,
-			'hover'					=>	null,
-			'border-style'			=>	'solid',
-			'border-width'			=>	'1px',
-			'style-reset-img'		=>	1,
-			'flg-more'				=>	0,				// Cache
-			'sns-position'			=>	2,				// Cache
-			'sns-tw'				=>	1,				// Cache
-			'sns-tw-x'				=>	0,				// Cache
-			'sns-fb'				=>	1,				// Cache
-			'sns-hb'				=>	1,				// Cache
-			'sns-po'				=>	1,				// Cache
+			'display-date'			=>	1,				// 🟦Cache
+			'separator'				=>	0,				// 🟥CSS
+			'display-url'			=>	1,				// 🟦Cache
+			'shadow'				=>	1,				// 🟥CSS
+			'shadow-inset'			=>	0,				// 🟥CSS
+			'radius'				=>	'4px',			// 🟥CSS
 
-			'title-color'			=>	'#111111',
-			'title-outline'			=>	null,
-			'title-outline-color'	=>	'#ffffff',
-			'title-size'			=>	'16px',
-			'title-height'			=>	'24px',
-			'title-trim'			=>	80,				// Cache
-			'title-nowrap'			=>	null,
-			'url-color'				=>	'#4466ff',
-			'url-outline'			=>	null,
-			'url-outline-color'		=>	'#ffffff',
-			'url-size'				=>	'10px',
-			'url-height'			=>	'15px',
-			'url-trim'				=>	250,
-			'url-nowrap'			=>	1,
-			'excerpt-color'			=>	'#333333',
-			'excerpt-outline'		=>	null,
-			'excerpt-outline-color'	=>	'#ffffff',
-			'excerpt-size'			=>	'11px',
-			'excerpt-height'		=>	'17px',
-			'excerpt-trim'			=>	500,			// Cache
-			'more-color'			=>	'#444444',
-			'more-outline'			=>	null,
-			'more-outline-color'	=>	'#ffffff',
-			'more-size'				=>	'12px',
-			'more-height'			=>	'40px',
-			'info-color'			=>	'#222222',
-			'info-outline'			=>	null,
-			'info-outline-color'	=>	'#ffffff',
-			'info-size'				=>	'12px',
-			'info-height'			=>	'18px',
-			'info-trim'				=>	200,			// Cache
-			'added-color'			=>	'#222222',
-			'added-outline'			=>	null,
-			'added-outline-color'	=>	'#ffffff',
-			'added-size'			=>	'12px',
-			'added-height'			=>	'18px',
-			'thumbnail-resize'		=>	1,
+			'border-style'			=>	'solid',		// 🟥CSS
+			'border-width'			=>	'1px',			// 🟥CSS
 
-			'ex-border-color'		=>	'#888888',
-			'ex-bg-color'			=>	'#ffffff',
-			'ex-image'				=>	null,
-			'ex-thumbnail'			=>	13,				// Cache
-			'ex-thumbnail-size'		=>	'thumbnail',	// Cache
-			'ex-thumbnail-alt'		=>	null,			// Cache
-			'ex-favicon'			=>	3,				// Cache
-			'ex-favicon-alt'		=>	null,			// Cache
-			'ex-info'				=>	null,			// Cache
-			'ex-more-text'			=>	null,			// Cache
-			'ex-target'				=>	2,				// Cache
-			'ex-get'				=>	2,
-			'nofollow'				=>	0,				// Cache
-			'noopener'				=>	1,				// Cache
-//			'use-hatena'			=>	null,			// Cache
+			'thumbnail-border'		=>	null,			// 🟥CSS
+			'thumbnail-shadow'		=>	0,				// 🟥CSS
+			'thumbnail-radius'		=>	'4px',			// 🟥CSS
+			'content-inset'			=>	0,				// 🟥CSS
+			'display-excerpt'		=>	1,				// 🟦Cache
+			'more-style'			=>	'SMP',			// 🟦Cache
+			'border'				=>	0,				// 🟥CSS
+			'radius'				=>	'4px',			// 🟥CSS
+			'hover'					=>	1,				// 🟥CSS
+			'style-reset-img'		=>	1,				// 🟥CSS
+			'sns-position'			=>	2,				// 🟦Cache
+			'sns-tw'				=>	1,				// 🟦Cache
+			'sns-tw-x'				=>	0,				// 🟦Cache
+			'sns-fb'				=>	1,				// 🟦Cache
+			'sns-hb'				=>	1,				// 🟦Cache
+			'sns-po'				=>	1,				// 🟦Cache
 
-			'in-border-color'		=>	'#888888',
-			'in-bg-color'			=>	'#f8f8f8',
-			'in-image'				=>	null,
-			'in-thumbnail'			=>	1,				// Cache
-			'in-thumbnail-size'		=>	'thumbnail',	// Cache
-			'in-thumbnail-alt'		=>	null,			// Cache
-			'in-favicon'			=>	3,				// Cache
-			'in-favicon-alt'		=>	null,			// Cache
-			'in-info'				=>	null,			// Cache
-			'in-more-text'			=>	null,			// Cache
-			'in-target'				=>	null,			// Cache
-			'in-get'				=>	null,			// Cache
-			'flg-get-pid'			=>	0,				// Cache
+			'title-color'			=>	'#111111',		// 🟥CSS
+			'title-outline-color'	=>	null,			// 🟥CSS
+			'title-bg-color'		=>	null,			// 🟥CSS
+			'title-size'			=>	'16px',			// 🟥CSS
+			'title-height'			=>	'22px',			// 🟥CSS
+			'title-maxline'			=>	2,				// 🟥CSS
+			'title-length'			=>	80,				// 🟦Cache
+			'title-bold'			=>	1,				// 🟥CSS
+			'title-italic'			=>	0,				// 🟥CSS
+			'title-underline'		=>	0,				// 🟥CSS
+			'title-hover'			=>	1,				// 🟥CSS
 
-			'th-border-color'		=>	'#888888',
-			'th-bg-color'			=>	'#eeeeee',
-			'th-image'				=>	null,
-			'th-info'				=>	null,			// Cache
+			'url-color'				=>	'#4466ff',		// 🟥CSS
+			'url-outline-color'		=>	null,			// 🟥CSS
+			'url-bg-color'			=>	null,			// 🟥CSS
+			'url-size'				=>	'10px',			// 🟥CSS
+			'url-height'			=>	'16px',			// 🟥CSS
+			'url-bold'				=>	0,				// 🟥CSS
+			'url-italic'			=>	0,				// 🟥CSS
+			'url-underline'			=>	1,				// 🟥CSS
+			'url-hover'				=>	1,				// 🟥CSS
 
-			'flg-relative-url'		=>	1,				// Cache
-			'flg-unlink'			=>	1,				// Cache
-			'flg-ssl'				=>	1,				// Cache
-			'flg-redir'				=>	1,				// Cache
-			'flg-referer'			=>	1,				// Cache
-			'flg-agent'				=>	1,				// Cache
-			'user-agent'			=>	null,			// Cache
-			'flg-alive'				=>	1,				// Cache
-			'flg-alive-count'		=>	0,				// Cache
+			'excerpt-color'			=>	'#444444',		// 🟥CSS
+			'excerpt-outline-color'	=>	'',				// 🟥CSS
+			'excerpt-bg-color'		=>	null,			// 🟥CSS
+			'excerpt-size'			=>	'11px',			// 🟥CSS
+			'excerpt-height'		=>	'16px',			// 🟥CSS
+			'excerpt-maxline'		=>	2,				// 🟥CSS
+			'excerpt-length'		=>	500,			// 🟦Cache
+			'excerpt-bold'			=>	0,				// 🟥CSS
+			'excerpt-italic'		=>	0,				// 🟥CSS
+			'excerpt-underline'		=>	0,				// 🟥CSS
+			'excerpt-hover'			=>	0,				// 🟥CSS
 
-			'code1'					=>	'blogcard',		// Cache
-			'use-inline'			=>	null,			// Cache
-			'code2'					=>	null,			// Cache
-			'code3'					=>	null,			// Cache
-			'code4'					=>	null,			// Cache
-			'auto-atag'				=>	0,				// Cache
-			'auto-url'				=>	0,				// Cache
-			'auto-external'			=>	0,				// Cache
-			'flg-do-shortcode'		=>	1,
-			'flg-edit-insert'		=>	1,				// Cache
-			'mce-priority'			=>	null,			// Cache
-			'flg-edit-qtag'			=>	1,				// Cache
+			'date-color'			=>	'#444444',		// 🟥CSS
+			'date-outline-color'	=>	null,			// 🟥CSS
+			'date-bg-color'			=>	null,			// 🟥CSS
+			'date-size'				=>	'10px',			// 🟥CSS
+			'date-height'			=>	'16px',			// 🟥CSS
+			'date-bold'				=>	0,				// 🟥CSS
+			'date-italic'			=>	0,				// 🟥CSS
+			'date-underline'		=>	0,				// 🟥CSS
+			'date-hover'			=>	0,				// 🟥CSS
 
-			'multi-mode'			=>	0,
-			'multi-myid'			=>	0,
-			'multi-count'			=>	0,
+			'info-color'			=>	'#222222',		// 🟥CSS
+			'info-outline-color'	=>	null,			// 🟥CSS
+			'info-bg-color'			=>	null,			// 🟥CSS
+			'info-size'				=>	'12px',			// 🟥CSS
+			'info-height'			=>	null,			// 🟥CSS
+			'info-length'			=>	null,			// 🟦Cache
+			'info-bold'				=>	0,				// 🟥CSS
+			'info-italic'			=>	0,				// 🟥CSS
+			'info-underline'		=>	0,				// 🟥CSS
+			'info-hover'			=>	0,				// 🟥CSS
 
-			'trail-slash'			=>	1,				// Cache
-			'class-pc'				=>	null,			// Cache
-			'class-mobile'			=>	null,			// Cache
-			'flg-filemenu'			=>	0,
-			'flg-initialize'		=>	1,
-			'flg-compress'			=>	1,
-			'flg-amp-url'			=>	0,				// Cache
-			'error-mode-hide'		=>	0,				// Cache
-			'saved-date'			=>	null,			// Cache
-			'develop-mode'			=>	0,
-			'admin-mode'			=>	0,				// Cache
-			'debug-mode'			=>	0,				// Cache
-			'debug-nocache'			=>	0,				// Cache
-			'debug-dir'				=>	null,			// Cache
-			'debug-url'				=>	null,
+			'added-color'			=>	'#ffffff',		// 🟥CSS
+			'added-outline-color'	=>	null,			// 🟥CSS
+			'added-bg-color'		=>	'#365cd9',		// 🟥CSS
+			'added-size'			=>	'9px',			// 🟥CSS
+			'added-height'			=>	'10px',			// 🟥CSS
+			'added-bold'			=>	0,				// 🟥CSS
+			'added-italic'			=>	0,				// 🟥CSS
+			'added-underline'		=>	0,				// 🟥CSS
+			'added-hover'			=>	0,				// 🟥CSS
 
-			'css-url'				=>	null,			// Cache
-			'css-add-url'			=>	null,			// Cache
-			'css-add'				=>	null,
-			'css-count'				=>	0,				// Cache
-			'css-path'				=>	null,
-			'css-templete'			=>	null,
-			'thumbnail-dir'			=>	null,			// Cache
-			'thumbnail-url'			=>	null,			// Cache
-			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',	// Cache
-			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',		// Cache
+			'heading-color'			=>	'#444444',		// 🟥CSS
+			'heading-outline-color'	=>	null,			// 🟥CSS
+			'heading-bg-color'		=>	null,			// 🟥CSS
+			'heading-size'			=>	'12px',			// 🟥CSS
+			'heading-height'		=>	'32px',			// 🟥CSS
+			'heading-bold'			=>	0,				// 🟥CSS
+			'heading-italic'		=>	0,				// 🟥CSS
+			'heading-underline'		=>	0,				// 🟥CSS
+			'heading-hover'			=>	0,				// 🟥CSS
 
-			'initialize-exception'	=>	0,				// Cache
-		);
+			'more-color'			=>	'#444444',		// 🟥CSS
+			'more-outline-color'	=>	null,			// 🟥CSS
+			'more-bg-color'			=>	null,			// 🟥CSS
+			'more-size'				=>	'12px',			// 🟥CSS
+			'more-height'			=>	'24px',			// 🟥CSS
+			'more-bold'				=>	0,				// 🟥CSS
+			'more-italic'			=>	0,				// 🟥CSS
+			'more-underline'		=>	0,				// 🟥CSS
+			'more-hover'			=>	0,				// 🟥CSS
+
+//			'cat-color'				=>	'#ffffff',		// 🟥CSS
+//			'cat-outline-color'		=>	null,			// 🟥CSS
+//			'cat-bg-color'			=>	'#ff8000',		// 🟥CSS
+//			'cat-size'				=>	'12px',			// 🟥CSS
+//			'cat-height'			=>	'16px',			// 🟥CSS
+//			'cat-bold'				=>	0,				// 🟥CSS
+//			'cat-italic'			=>	0,				// 🟥CSS
+//			'cat-underline'			=>	0,				// 🟥CSS
+//			'cat-hover'				=>	0,				// 🟥CSS
+
+			'ex-border-color'		=>	'#888888',		// 🟥CSS
+			'ex-bg-color'			=>	'#f8f8f8',		// 🟥CSS
+			'ex-image'				=>	null,			// 🟥CSS
+			'ex-heading-text'		=>	null,			// 🟦Cache
+			'ex-more-text'			=>	null,			// 🟦Cache
+			'ex-added-text'			=>	null,			// 🟦Cache
+			'ex-favicon'			=>	3,				// 🟦Cache
+			'ex-favicon-alt'		=>	null,			// 🟦Cache
+			'ex-thumbnail'			=>	13,				// 🟦Cache
+			'ex-thumbnail-size'		=>	'thumbnail',	// 🟦Cache
+			'ex-thumbnail-alt'		=>	null,			// 🟦Cache
+			'ex-target'				=>	2,				// 🟦Cache
+			'ex-get'				=>	2,				// 🟥CSS
+
+			'in-border-color'		=>	'#2277bb',		// 🟥CSS
+			'in-bg-color'			=>	'#ddeeff',		// 🟥CSS
+			'in-image'				=>	null,			// 🟥CSS
+			'in-heading-text'		=>	null,			// 🟦Cache
+			'in-more-text'			=>	null,			// 🟦Cache
+			'in-added-text'			=>	null,			// 🟦Cache
+			'in-favicon'			=>	3,				// 🟦Cache
+			'in-favicon-alt'		=>	null,			// 🟦Cache
+			'in-thumbnail'			=>	1,				// 🟦Cache
+			'in-thumbnail-size'		=>	'thumbnail',	// 🟦Cache
+			'in-thumbnail-alt'		=>	null,			// 🟦Cache
+			'in-target'				=>	null,			// 🟦Cache
+			'in-get'				=>	null,			// 🟦Cache
+			'in-field-title'		=>	null,			// 🟦Cache
+			'in-field-excerpt'		=>	null,			// 🟦Cache
+			'in-get-url'			=>	0,				// 🟦Cache
+
+			'th-border-color'		=>	'#2277bb',		// 🟥CSS
+			'th-bg-color'			=>	'#bbccdd',		// 🟥CSS
+			'th-image'				=>	null,			// 🟥CSS
+			'th-heading-text'		=>	null,			// 🟦Cache
+			'th-more-text'			=>	null,			// 🟦Cache
+			'th-added-text'			=>	null,			// 🟦Cache
+
+			'flg-nofollow'			=>	0,				// 🟦Cache
+			'flg-noopener'			=>	1,				// 🟦Cache
+			'flg-referer'			=>	1,				// 🟦Cache
+			'flg-relative-url'		=>	1,				// 🟦Cache
+			'flg-unlink'			=>	1,				// 🟦Cache
+			'flg-ssl'				=>	1,				// 🟦Cache
+			'flg-redir'				=>	1,				// 🟦Cache
+			'flg-agent'				=>	1,				// 🟦Cache
+			'user-agent'			=>	null,			// 🟦Cache
+			'flg-alive'				=>	1,				// 🟦Cache
+			'flg-alive-count'		=>	0,				// 🟦Cache
+
+			'code1'					=>	'blogcard',		// 🟦Cache
+			'code2'					=>	null,			// 🟦Cache
+			'code3'					=>	null,			// 🟦Cache
+			'code4'					=>	null,			// 🟦Cache
+			'use-inline'			=>	null,			// 🟦Cache
+			'auto-atag'				=>	0,				// 🟦Cache
+			'auto-url'				=>	0,				// 🟦Cache
+			'auto-external'			=>	0,				// 🟦Cache
+			'flg-do-shortcode'		=>	1,				// 🟥CSS
+			'flg-edit-insert'		=>	1,				// 🟦Cache
+			'mce-priority'			=>	null,			// 🟦Cache
+			'flg-edit-qtag'			=>	1,				// 🟦Cache
+			'flg-clear-excerpt'		=>	1,				// 🟦Cache
+
+			'multi-mode'			=>	0,				// 🟥CSS
+			'multi-myid'			=>	0,				// 🟥CSS
+			'multi-count'			=>	0,				// 🟥CSS
+
+			'trail-slash'			=>	1,				// 🟦Cache
+			'class-pc'				=>	null,			// 🟦Cache
+			'class-mobile'			=>	null,			// 🟦Cache
+			'date-format-man'		=>	'Y\<\b\r\/\>m/d\<\b\r\/\>H:i',	// 🟥CSS
+			'flg-unti-select'		=>	0,				// 🟥CSS
+			'flg-filemenu'			=>	0,				// 🟥CSS
+			'flg-initialize'		=>	1,				// 🟥CSS
+			'flg-compress'			=>	0,				// 🟥CSS
+			'flg-amp-url'			=>	0,				// 🟦Cache
+			'error-mode-hide'		=>	1,				// 🟦Cache
+			'saved-date'			=>	null,			// 🟦Cache
+
+			'develop-mode'			=>	0,				// 🟦Cache
+			'admin-mode'			=>	0,				// 🟦Cache
+			'debug-mode'			=>	0,				// 🟦Cache
+			'debug-nocache'			=>	0,				// 🟦Cache
+
+			'css-add-url'			=>	null,			// 🟦Cache
+			'css-add'				=>	null,			// 🟥CSS
+			'css-count'				=>	0,				// 🟦Cache
+			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',	// 🟦Cache
+			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',		// 🟦Cache
+			'initialize-exception'	=>	0,				// 🟦Cache
+			'flg-delete-db'			=>	1,				// 🟦Cache
+			'flg-delete-settings'	=>	1,				// 🟦Cache
+);
 
 	// 定数・プラグイン情報
 	private		const	PLUGIN_NAME			=	'Pz-LinkCard';
 	private		const	PLUGIN_SLUG			=	'pz-linkcard';
+
+	private		const	HANDLE_ADMIN		=	self::PLUGIN_SLUG.'-admin';
+	private		const	HANDLE_CSS			=	self::PLUGIN_SLUG.'-style';
+	private		const	HANDLE_CSS_ADD		=	self::PLUGIN_SLUG.'-add';
+
 	private		const	PLUGIN_ACRONYM		=	'Pz-LkC';
 	private		const	PLUGIN_PATH			=	'/pz-linkcard';
 	private		const	OPTION_NAME			=	'pz_linkcard_options';
 	private		const	OPTION_NAME_OLD		=	'Pz_LinkCard_options';
 	private		const	AUTHOR_URL			=	'https://popozure.info';
-	private		const	AUTHOR_DEBUG_URL	=	'https://popozure.xsrv.jp/develop/';
 	private		const	AUTHOR_NAME			=	'Popozure';
 	private		const	AUTHOR_TWITTER		=	'@popozure';
 	private		const	AUTHOR_TWITTER_URL	=	'https://x.com/popozure';
@@ -220,24 +290,28 @@ class class_pz_linkcard {
 	private		const	SETTINGS_PAGE		=	self::PLUGIN_SLUG.'-settings';						// Pzカード設定のページ名
 	private		const	SETTINGS_URL		=	'/options-general.php?page='.self::SETTINGS_PAGE;	// Pzカード設定のURL
 
+	private		const	ENV_PRODUCT_URL		=	'https://popozure.info/';
+	private		const	ENV_DEVELOP_URL		=	'https://popozure.xsrv.jp/develop/';
+
 	// 変数
 	private		$slug;					// スラッグ
-	private		$text_domain;			// テキスト ドメイン（スラッグと同じ内容）
 	private		$charset;				// 文字セット
 	private		$amp;					// Google AMP 0:不明 1:AMP 2:通常
-	private		$datetime_format;		// 日時の書式
 	private		$now;					// 現在日時（ローカル時間）
+
 	private		$home_url;				// 自サイトのURL
 	private		$scheme;				// 自サイトのスキーム
 	private		$domain;				// 自サイトのドメイン名
 	private		$domain_url;			// 自サイトのドメインURL
+
+	private		$now_url;				// 現在開いているURL
+
 	private		$plugin_basename;		// プラグイン ディレクトリの名前
 	private		$plugin_dir_path;		// プラグイン ディレクトリのパス
 	private		$plugin_dir_url;		// プラグイン ディレクトリのURL
 	private		$plugin_link;			// プラグインページのURL
-	private		$upload_dir_path;		// アップロード ディレクトリのパス
-	private		$upload_dir_url;		// アップロード ディレクトリのURL
 	private		$db_name;				// DBのテーブル名
+	private		$activate_now;			// 二重実行防止
 	private		$suppression;			// 出力抑制
 	private		$now_page;				// 表示中のページ（1:Pzカード設定 2:Pzカード管理）
 	private		$options;				// パラメータ
@@ -247,37 +321,78 @@ class class_pz_linkcard {
 	private		$cacheman_url;			// 管理画面のURL
 
 	public	function	__construct() {
-		global							$wpdb;											// DBの宣言
+		global						$wpdb;													// DBの宣言
 
 		// プラグイン情報
 		$default_headers = array(
-			'Version'		=>	'Version',
-			'Author'		=>	'Author',
-			'AuthorURI'		=>	'Author URI',
-			'TextDomain'	=>	'Text Domain',
+			'Version'			=>	'Version',
+			'Author'			=>	'Author',
+			'AuthorURI'			=>	'Author URI',
+			'TextDomain'		=>	'Text Domain',
 		);
-		$plugin_info		= get_file_data(__FILE__, $default_headers );
-		define('PLUGIN_VERSION', $plugin_info['Version'] );
+		$plugin_info			=	get_file_data(__FILE__, $default_headers );
+		define('PLUGIN_VERSION',	$plugin_info['Version'] );								// バージョン
+
+		// オプション取得
+		$this->suppression		=	false;													// 出力抑制（header出力前かどうか）
+		$result					=	$this->pz_load_options();
+
+		// 定数
+		define('TEXT_DOMAIN',		$plugin_info['TextDomain'] );							// テキストドメイン
+
+		define('DATE_FORMAT',		get_option('date_format' ) );							// 日付の書式
+		define('TIME_FORMAT',		get_option('time_format' ) );							// 時刻の書式
+		define('DATETIME_FORMAT',	DATE_FORMAT.' '.TIME_FORMAT );							// 日付・時刻の書式
+
+		define('URL_ADMIN_JS',		plugins_url('js/admin-settings.js', __FILE__ ) );		// 管理画面のJSのURL
+		define('URL_ADMIN_CSS',		plugin_dir_url(__FILE__ ).'css/admin.css' );			// 管理画面のCSSのURL
+
+		define('DIR_UPLOAD',		wp_upload_dir()['basedir']. '/'.self::PLUGIN_SLUG.'/' );	// アップロード ディレクトリのパス
+		define('URL_UPLOAD',		preg_replace('/(http|https):(\/\/.*)/', '$2', wp_upload_dir()['baseurl'] ).'/'.self::PLUGIN_SLUG.'/' );		// アップロード ディレクトリのURL
+
+		define('DIR_STYLE',			DIR_UPLOAD.'style/' );									// CSSディレクトリのパス
+		define('URL_STYLE',			URL_UPLOAD.'style/' );									// CSSディレクトリのURL
+
+		define('DIR_CACHE',			DIR_UPLOAD.'cache/' );									// 画像キャッシュのパス
+		define('URL_CACHE',			URL_UPLOAD.'cache/' );									// 画像キャッシュのURL
+
+		define('DIR_DEBUG',			DIR_UPLOAD.'debug/' );									// ログファイル ディレクトリのパス
+		define('URL_DEBUG',			URL_UPLOAD.'debug/' );									// ログファイル ディレクトリのURL
+
+		define('FILE_TEMPLETE',		plugin_dir_path(__FILE__ ).'templete/pz-linkcard-templete.css' );	// 元となるテンプレート
+
+		define('URL_CSS_ADD',		$this->options['css-add-url'] );						// 追加CSSのURL
 
 		$this->slug					=	basename(dirname(__FILE__ ) );						// スラッグ
-		$this->text_domain			=	$this->slug;										// テキストドメイン（スラッグと同じ）
 		$this->charset				=	get_bloginfo('charset' );							// 文字セット
 		$this->amp					=	0;													// 今がAMP表示かどうか判定
-		$this->datetime_format		=	get_option('date_format' ).' '.get_option('time_format' );	// 日時の書式
+
 		$this->now					=	current_time('timestamp', false );					// 現在日時（ローカル時間）
 		$this->db_name				=	$wpdb->prefix.'pz_linkcard';						// DBのテーブル名
 		$this->plugin_basename		=	plugin_basename(__FILE__ );							// プラグイン ディレクトリの名前
 		$this->plugin_dir_path		=	plugin_dir_path(__FILE__ );							// プラグイン ディレクトリのパス
 		$this->plugin_dir_url		=	plugin_dir_url (__FILE__ );							// プラグイン ディレクトリのURL
-		$wp_upload_dir				=	wp_upload_dir();
-		$this->upload_dir_path		=	$wp_upload_dir['basedir'].'/'.$this->slug.'/';		// アップロード ディレクトリのパス
-		$this->upload_dir_url		=	str_replace('http:', '', $wp_upload_dir['baseurl'] ).'/'.$this->slug.'/';	// アップロード ディレクトリのURL
-		$this->suppression			=	false;												// 出力抑制（header出力前かどうか）
 		$this->settings_url			=	admin_url(self::SETTINGS_URL );						// Pzカード設定のURL
 		$this->cacheman_url			=	admin_url(self::CACHEMAN_URL );						// Pzカード管理のURL
 
-		// オプション取得
-		$result						=	$this->pz_load_options();
+		// バージョンが違う場合、初期処理を実行する
+		if	($this->options['plugin-version']	<>	PLUGIN_VERSION ) {
+			$this->activate();												// プラグインの再起動
+		}
+
+		// 環境情報
+		$this->now_url		=		(is_ssl() ? 'https' : 'http' ).'://'.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
+		$this->home_url		=		esc_url(home_url().(substr(home_url(), -1, 1 ) == '/' ? '' : '/' ) );
+		switch	(true ) {
+		case	(substr($this->now_url, 0, strlen(Self::ENV_PRODUCT_URL ) ) == Self::ENV_PRODUCT_URL ):
+			$this->options['develop-mode']		=	2;
+			break;
+		case	(substr($this->now_url, 0, strlen(Self::ENV_DEVELOP_URL ) ) == Self::ENV_DEVELOP_URL ):
+			$this->options['develop-mode']		=	1;
+			break;
+		default:
+			$this->options['develop-mode']		=	0;
+		}
 
 		// URL解析（自サイトチェック）（Optionsを読み込んでから）
 		$this->home_url				=	esc_url(home_url() );
@@ -295,7 +410,7 @@ class class_pz_linkcard {
 		}
 
 		// 言語の国際化（日本語化）
-		load_plugin_textdomain($this->text_domain, false, $this->slug.'/languages' );
+		load_plugin_textdomain(TEXT_DOMAIN, false, $this->slug.'/languages' );
 
 		// 管理画面のとき
 		if	(is_admin() ) {
@@ -316,6 +431,8 @@ class class_pz_linkcard {
 			add_action		('admin_notices',								array($this, 'add_notices' ),		10, 1 );		// 注意書き
 			add_action		('admin_menu',									array($this, 'add_admin_menu' ),	11, 1 );		// 設定メニュー
 			add_action		('wp_before_admin_bar_render',					array($this, 'add_admin_bar' ),		11,	1 );		// 管理バー
+			add_action		('admin_print_styles',							array($this, 'add_styles' ),		10, 1 );		// スタイルシートの追加
+			add_action		('admin_print_scripts',							array($this, 'add_scripts' ),		10, 1 );		// スクリプトの追加
 			add_action		('admin_print_footer_scripts',					array($this, 'add_footer' ),		10, 1 );		// テキストエディタ用クイックタグ
 			add_filter		('plugin_action_links_'.$this->plugin_basename,	array($this, 'add_inline_menu' ),	10, 1 );		// プラグイン画面
 			add_filter		('mce_buttons',									array($this, 'add_mce_button' ), 	$this->options['mce-priority'], 1 );	// ビジュアルエディタ用ボタン
@@ -355,6 +472,7 @@ class class_pz_linkcard {
 			if	($this->options['code4'] ) {																		// ショートコード4
 				add_shortcode($this->options['code4'], array($this, 'shortcode' ), 10 );
 			}
+			add_action		('plugins_loaded',								array($this, 'add_loaded' ), 10 );
 		}
 	}
 
@@ -441,12 +559,12 @@ class class_pz_linkcard {
 		case	(!empty($atts['ur1'] ) ) :				// 密かに記述ミス対応（ur1でもurlとして判定する）
 			$url	=	$atts['ur1'];
 			break;
-		case	(!empty($atts[0] ) ) :					// 謎の記述ミスに対応
-			$url	=	$atts[0];
-			break;
-		case	(!empty($atts[1] ) ) :					// 謎の記述ミスに対応
-			$url	=	$atts[1];
-			break;
+//		case	(!empty($atts[0] ) ) :					// 謎の記述ミスに対応
+//			$url	=	$atts[0];
+//			break;
+//		case	(!empty($atts[1] ) ) :					// 謎の記述ミスに対応
+//			$url	=	$atts[1];
+//			break;
 		default:
 			$url	=	null;
 			break;
@@ -461,12 +579,14 @@ class class_pz_linkcard {
 		$url_org	=	$url;
 
 		// 相対URLを絶対URLに変換（ショートコードのURLで相対パス表記の場合、内部リンクと見なす）
-		if	($this->options['flg-relative-url'] && !mb_strpos($url, '://' ) ) {
+		if	($url && $this->options['flg-relative-url'] && !mb_strpos($url, '://' ) ) {
 			$url	=	$this->pz_RelToURL(esc_url(home_url() ), $url );
 		}
 
 		// URLのサニタイズ＆エンティティ化
-		$url		=	$this->pz_EncodeURL($url ,true );
+		if	($url ) {
+			$url	=	$this->pz_EncodeURL($url ,true );
+		}
 
 		// URLエラー
 		if	(!$url ) {
@@ -475,13 +595,14 @@ class class_pz_linkcard {
 				$post_id								=	url_to_postid($url_now );
 				if	($post_id ) {
 					$this->options['error-mode']		=	true;
+					$this->options['error-postid']		=	$post_id;
 					$this->options['error-url']			=	$url_now;
 					$this->options['error-time']		=	$this->now;
-					// オプション更新
-					$result	=	$this->pz_UpdateOption();
+					// オプション更新testtest
+					$result	=	$this->pz_save_options();
 				}
 			}
-			$tag		=	'<div class="lkc-card"><div class="lkc-this-wrap"><div class="lkc-info">'.$this->options['plugin-name'].'</div><div class="lkc-excerpt">'.__('-', $this->text_domain ).' '.__('Incorrect URL specification.', $this->text_domain ).'<br>'.__('-', $this->text_domain ).' '.__('URL', $this->text_domain ).'='.html_entity_decode($url_org ).'</div></div></div>';
+			$tag		=	'<div class="linkcard"><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', TEXT_DOMAIN ).' '.__('Incorrect URL specification.', TEXT_DOMAIN ).'<br>'.__('-', TEXT_DOMAIN ).' '.__('URL', TEXT_DOMAIN ).'='.html_entity_decode($url_org ).'</div></div></div>';
 			$err_info	=	print_r($atts, true );
 			return			PHP_EOL.'<div id="lkc-error" class="lkc-error"><!-- '.html_entity_decode($err_info ).' -->'.$tag.'</div>'.PHP_EOL;
 		}
@@ -663,10 +784,10 @@ class class_pz_linkcard {
 
 			// noopenerとnofollowの指定
 			$rel			=	'external';
-			if	($this->options['nofollow'] || (isset($atts['follow'] ) && mb_strtolower($atts['follow'] ) == 'no' ) || (isset($atts['nofollow'] ) && mb_strtolower($atts['nofollow'] ) == 'true' ) ) {
+			if	($this->options['flg-nofollow'] || (isset($atts['follow'] ) && mb_strtolower($atts['follow'] ) == 'no' ) || (isset($atts['nofollow'] ) && mb_strtolower($atts['nofollow'] ) == 'true' ) ) {
 				$rel		.=	' nofollow';							// nofollow指定。趣味の問題？
 			}
-			if	($this->options['noopener'] ) {
+			if	($this->options['flg-noopener'] ) {
 				$rel		.=	' noopener';
 			}
 			$rel			=	' rel="'.$rel.'"';
@@ -701,60 +822,37 @@ class class_pz_linkcard {
 		// ラッピング
 		if	($is_internal ) {
 			if	($is_samepage ) {
-				$html_wrap_op	=	'<div class="lkc-this-wrap">';
-				$html_wrap_cl	=	'</div>';
-				$html_added_op	=	'<div class="lkc-this-added">';
-				$html_added_cl	=	'</div>';
-				$more			=	null;
-				$more_text		=	null;
-				$thumbnail_alt	=	null;
-				$favicon_alt	=	null;
-				$info_text		=	isset($this->options['th-info'] )		? $this->options['th-info']			: null ;
-				$sw_thumbnail	=	isset($this->options['in-thumbnail'] )	? $this->options['in-thumbnail']	: 0 ;
-				$sw_favicon		=	isset($this->options['in-favicon'] )	? $this->options['in-favicon']		: 0 ;
+				$html_wrap_op		=	'<div class="lkc-this-wrap">';
+				$html_wrap_cl		=	'</div>';
+				$added_text			=	isset($this->options['th-added-text'] )		?	esc_attr($this->options['th-added-text'] )		:	null ;
+				$heading_text		=	isset($this->options['th-heading-text'] )	?	esc_attr($this->options['th-heading-text'] )	:	null ;
+				$more_text			=	isset($this->options['th-more-text'] )		?	esc_attr($this->options['th-more-text'] )		:	null ;
+				$thumbnail_alt		=	isset($this->options['in-thumbnail-alt'] )	?	esc_attr($this->options['in-thumbnail-alt'] )	:	null ;
+				$favicon_alt		=	isset($this->options['in-favicon-alt'] )	?	esc_attr($this->options['in-favicon-alt'] )		:	null ;
+				$sw_thumbnail		=	isset($this->options['in-thumbnail'] )		?	esc_attr($this->options['in-thumbnail'] )		:	0 ;
+				$sw_favicon			=	isset($this->options['in-favicon'] )		?	esc_attr($this->options['in-favicon'] )			:	0 ;
 			} else {
-				$html_wrap_op	=	'<div class="lkc-internal-wrap">';
-				$html_wrap_cl	=	'</div>';
-				$html_added_op	=	'<div class="lkc-internal-added">';
-				$html_added_cl	=	'</div>';
-				$more			=	isset($this->options['flg-more'] )			? $this->options['flg-more']			: null ;
-				$more_text		=	isset($this->options['in-more-text'] )		? $this->options['in-more-text']		: null ;
-				$thumbnail_alt	=	isset($this->options['in-thumbnail-alt'] )	? $this->options['in-thumbnail-alt']	: null ;
-				$favicon_alt	=	isset($this->options['in-favicon-alt'] )	? $this->options['in-favicon-alt']		: null ;
-				$info_text		=	isset($this->options['in-info'] )			? $this->options['in-info']				: null ;
-				$sw_thumbnail	=	isset($this->options['in-thumbnail'] )		? $this->options['in-thumbnail']		: 0 ;
-				$sw_favicon		=	isset($this->options['in-favicon'] )		? $this->options['in-favicon']			: 0 ;
+				$html_wrap_op		=	'<div class="lkc-internal-wrap">';
+				$html_wrap_cl		=	'</div>';
+				$added_text			=	isset($this->options['in-added-text'] )		?	esc_attr($this->options['in-added-text'] )		:	null ;
+				$heading_text		=	isset($this->options['in-heading-text'] )	?	esc_attr($this->options['in-heading-text'] )	:	null ;
+				$more_text			=	isset($this->options['in-more-text'] )		?	esc_attr($this->options['in-more-text'] )		:	null ;
+				$thumbnail_alt		=	isset($this->options['in-thumbnail-alt'] )	?	esc_attr($this->options['in-thumbnail-alt'] )	:	null ;
+				$favicon_alt		=	isset($this->options['in-favicon-alt'] )	?	esc_attr($this->options['in-favicon-alt'] )		:	null ;
+				$sw_thumbnail		=	isset($this->options['in-thumbnail'] )		?	esc_attr($this->options['in-thumbnail'] )		:	0 ;
+				$sw_favicon			=	isset($this->options['in-favicon'] )		?	esc_attr($this->options['in-favicon'] )			:	0 ;
 			}
 		} else {
-			// 外部リンクで「はてなブログカード」を使う
-			//if	( $this->options['use-hatena'] ) {
-			//	// 「はてなブログカード」をそのまま利用する
-			//	$tag		=	'<div class="lkc-iframe-wrap"><iframe src="https://hatenablog-parts.com/embed?url=' .$url.'" class="lkc-iframe" scrolling="no" frameborder="0"></iframe></div>';
-			//	if	($this->options['blockquote'] ) {
-			//		$tag	=	'<div class="'.$class_id.'"><blockquote class="lkc-quote">'.$tag.'</blockquote></div>';
-			//	} else {
-			//		$tag	=	'<div class="'.$class_id.'">'.$tag.'</div>';
-			//	}
-			//	return	$tag;		// タグを出力してさっさと終了
-			//}
-			$html_wrap_op		=	'<div class="lkc-external-wrap">';
-			$html_wrap_cl		=	'</div>';
-			$html_added_op		=	'<div class="lkc-external-added">';
-			$html_added_cl		=	'</div>';
-			$more				=	isset($this->options['flg-more'] )			? $this->options['flg-more']			: null ;
-			$more_text			=	isset($this->options['ex-more-text'] )		? $this->options['ex-more-text']		: null ;
-			$thumbnail_alt		=	isset($this->options['ex-thumbnail-alt'] )	? $this->options['ex-thumbnail-alt']	: null ;
-			$favicon_alt		=	isset($this->options['ex-favicon-alt'] )	? $this->options['ex-favicon-alt']		: null ;
-			$info_text			=	isset($this->options['ex-info'] )			? $this->options['ex-info']				: null ;
-			$sw_thumbnail		=	isset($this->options['ex-thumbnail'] )		? $this->options['ex-thumbnail']		: 0 ;
-			$sw_favicon			=	isset($this->options['ex-favicon'] )		? $this->options['ex-favicon']			: 0 ;
+			$html_wrap_op			=	'<div class="lkc-external-wrap">';
+			$html_wrap_cl			=	'</div>';
+			$added_text				=	isset($this->options['ex-added-text'] )		?	esc_attr($this->options['ex-added-text'] )		:	null ;
+			$heading_text			=	isset($this->options['ex-heading-text'] )	?	esc_attr($this->options['ex-heading-text'] )	:	null ;
+			$more_text				=	isset($this->options['ex-more-text'] )		?	esc_attr($this->options['ex-more-text'] )		:	null ;
+			$thumbnail_alt			=	isset($this->options['ex-thumbnail-alt'] )	?	esc_attr($this->options['ex-thumbnail-alt'] )	:	null ;
+			$favicon_alt			=	isset($this->options['ex-favicon-alt'] )	?	esc_attr($this->options['ex-favicon-alt'] )		:	null ;
+			$sw_thumbnail			=	isset($this->options['ex-thumbnail'] )		?	esc_attr($this->options['ex-thumbnail'] )		:	0 ;
+			$sw_favicon				=	isset($this->options['ex-favicon'] )		?	esc_attr($this->options['ex-favicon'] )			:	0 ;
 		}
-
-		// XSS対策
-		$more_text			=	esc_attr($more_text );
-		$info_text			=	esc_attr($info_text );
-		$thumbnail_alt		=	esc_attr($thumbnail_alt );
-		$favicon_alt		=	esc_attr($favicon_alt );
 
 		// ドメイン名の準備
 		$domain_name			=	$domain;
@@ -771,12 +869,13 @@ class class_pz_linkcard {
 		} else {
 			$disp_sitename		=	$domain_name;
 		}
+		$disp_sitename			=	esc_html($disp_sitename );
 
 		// 表示用サイト名の文字数
 		$title_sitename			=	'';
-		if	($this->options['info-trim'] ) {
+		if	($this->options['info-length'] ) {
 			$before				=	$disp_sitename;
-			$disp_sitename		=	mb_strimwidth($disp_sitename, 0, $this->options['info-trim'] , '...' );
+			$disp_sitename		=	mb_strimwidth($before, 0, $this->options['info-length'] , '...' );
 			if	($disp_sitename	<>	$before ) {		// 省略された場合はtitleタグにセットする
 				$title_sitename	=	' title="'.esc_html($site_name ).'"';
 			}
@@ -784,17 +883,19 @@ class class_pz_linkcard {
 
 		// タイトル
 		if	(!$title ) {
-			$title			=	$this->pz_DecodeURL($url, true );			// タイトル取得できていなかったらURLをセットする
+			$title			=	$this->pz_DecodeURL($url, true );				// タイトル取得できていなかったらURLをセットする
 		}
 
 		// パラメータ取得（タイトル）
-		if	(isset($atts['title'] ) && $atts['title'] ) {					// title パラメータ
+		if	(isset($atts['title'] ) && $atts['title'] ) {						// title パラメータ
 			$title			=	$atts['title'];
-			$excerpt		=	null;
+			if	(isset($this->options['flg-clear-excerpt'] ) && $this->options['flg-clear-excerpt'] ) {	// 概要文をクリアする
+				$excerpt		=	null;
+			}
 		}
 
 		// パラメータ取得（抜粋文）
-		if	(isset($atts['excerpt'] ) && $atts['excerpt'] ) {				// excerpt パラメータ
+		if	(isset($atts['excerpt'] ) && $atts['excerpt'] ) {					// excerpt パラメータ
 			$excerpt		=	$atts['excerpt'];
 		}
 
@@ -802,13 +903,13 @@ class class_pz_linkcard {
 		$temp			=	$title;												// タイトル
 		$temp			=	strip_tags($temp );									// HTMLタグ除去
 		$temp			=	str_replace(array("\r", "\n"), '', $temp );			// 改行を除去
-		if	($this->options['title-trim'] ) {									// 文字数制限
-			$temp		=	mb_strimwidth($temp, 0, $this->options['title-trim'] , '...' );
+		if	($this->options['title-length'] ) {									// 文字数制限
+			$temp		=	mb_strimwidth($temp, 0, $this->options['title-length'] , '...' );
 		} else {
 			$temp		=	mb_strimwidth($temp, 0, 200 , '...' );
 		}
-		$temp			=	esc_html($temp );									// HTMLエスケープ
-		$title			=	$temp;
+		$title			=	esc_html($temp );
+		$html_title		=	'<div class="lkc-title">'.$title.'</div>';
 
 		// 抜粋文整形（抜粋文非表示の場合、空欄にする）
 		if	(!$this->options['display-excerpt'] ) {
@@ -819,13 +920,18 @@ class class_pz_linkcard {
 			$temp		=	str_replace(array("\r", "\n"), '', $temp );			// 改行を除去
 			$temp		=	preg_replace('/<!--more-->.+/is', '', $temp );		// moreタグ以降削除
 			$temp		=	preg_replace('/\[[^]]*\]/', '', $temp );			// ショートコードすべて除去
-			if	($this->options['excerpt-trim'] ) {								// 文字数制限
-				$temp	=	mb_strimwidth($temp, 0, $this->options['excerpt-trim'] , '...' );
+			if	($this->options['excerpt-length'] ) {								// 文字数制限
+				$temp	=	mb_strimwidth($temp, 0, $this->options['excerpt-length'] , '...' );
 			} else {
 				$temp	=	mb_strimwidth($temp, 0, 500 , '...' );
 			}
 			$temp		=	esc_html($temp );									// HTMLエスケープ
 			$excerpt	=	$temp;
+		}
+		if	($excerpt ) {
+			$html_excerpt		=	'<div class="lkc-excerpt">'.$excerpt.'</div>';
+		} else {
+			$html_excerpt		=	null;
 		}
 
 		// 代替テキスト（サムネイル）
@@ -884,7 +990,7 @@ class class_pz_linkcard {
 					$favicon_url	=	get_site_icon_url(32 );						// 自サイトのサイトアイコン
 				}
 				if	($favicon_url ) {
-					$html_favicon	=	'<img class="lkc-favicon" src="'.$favicon_url.'" alt="'.$favicon_alt.'" width="16" height="16" />';
+					$html_favicon	=	'<div  class="lkc-favicon"><img src="'.$favicon_url.'" alt="'.$favicon_alt.'" width="16" height="16" /></div>';
 				} elseif	($sw_favicon == 13 ) {									// 直接取得に失敗
 					$sw_favicon	=	3;
 				}
@@ -900,7 +1006,7 @@ class class_pz_linkcard {
 						$temp				=	preg_replace('/%DOMAIN%/',		$domain,				$temp );
 						$temp				=	preg_replace('/%URL%/',			rawurlencode($url ),	$temp );
 					}
-					$html_favicon	=	'<img class="lkc-favicon" src="'.$temp.'" alt="'.$favicon_alt.'" width="16" height="16" />';
+					$html_favicon	=	'<div class="lkc-favicon"><img src="'.$temp.'" alt="'.$favicon_alt.'" width="16" height="16" /></div>';
 				}
 			}
 		}
@@ -941,23 +1047,24 @@ class class_pz_linkcard {
 			if	($this->options['link-all'] ) {
 				if	($this->options['sns-tw'] && $sns_tw > 0 ) {
 					if	($this->options['sns-tw-x'] ) {
-						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d tweet', $this->text_domain ) : __('%d tweets', $this->text_domain ) ), $sns_tw ).'</div>';
+						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d tweet', TEXT_DOMAIN ) : __('%d tweets', TEXT_DOMAIN ) ), $sns_tw ).'</div>';
 					} else {
-						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d post',  $this->text_domain ) : __('%d posts',  $this->text_domain ) ), $sns_tw ).'</div>';
+						$sns	.=	' <div class="lkc-sns-x">'.sprintf(($sns_tw == 1 ? __('%d post',  TEXT_DOMAIN ) : __('%d posts',  TEXT_DOMAIN ) ), $sns_tw ).'</div>';
 					}
 				}
 				if	($this->options['sns-fb'] && $sns_fb > 0 ) {
-					$sns	.=	' <div class="lkc-sns-fb">'.sprintf(($sns_fb == 1 ? __('%d share',  $this->text_domain ) : __('%d shares',  $this->text_domain ) ), $sns_fb ).'</div>';
+					$sns	.=	' <div class="lkc-sns-fb">'.sprintf(($sns_fb == 1 ? __('%d share',  TEXT_DOMAIN ) : __('%d shares',  TEXT_DOMAIN ) ), $sns_fb ).'</div>';
 				}
 				if	($this->options['sns-hb'] && $sns_hb > 0 ) {
-					$sns	.=	' <div class="lkc-sns-hb">'.sprintf(($sns_hb == 1 ? __('%d user',   $this->text_domain ) : __('%d users',   $this->text_domain ) ), $sns_hb ).'</div>';
+					$sns	.=	' <div class="lkc-sns-hb">'.sprintf(($sns_hb == 1 ? __('%d user',   TEXT_DOMAIN ) : __('%d users',   TEXT_DOMAIN ) ), $sns_hb ).'</div>';
 				}
 				if	($this->options['sns-po'] && $sns_po > 0 ) {
-					$sns	.=	' <div class="lkc-sns-po">'.sprintf(($sns_po == 1 ? __('%d pocket', $this->text_domain ) : __('%d pockets', $this->text_domain ) ), $sns_po ).'</div>';
+					$sns	.=	' <div class="lkc-sns-po">'.sprintf(($sns_po == 1 ? __('%d pocket', TEXT_DOMAIN ) : __('%d pockets', TEXT_DOMAIN ) ), $sns_po ).'</div>';
 				}
 			} else {
 				// 外部リンクアイコンを表示させるプラグイン対応のため no_icon を付与
-				$url_noscheme	=	preg_replace('/.*\/\/(.*)/', '$1', $url );	// スキームを外す
+				$url_noscheme	=	preg_replace('/(http|https):(\/\/.*)/', '$2', $url );	// スキームを外す
+
 				if	($this->options['sns-tw'] && $sns_tw > 0 ) {
 					if	($this->options['sns-tw-x'] ) {
 						$sns	.=	' <a class="lkc-sns-tw no_icon" href="https://twitter.com/search?q=' .$url_noscheme.'&text='.esc_html($title ).'" target="_blank">'.$sns_tw.'&nbsp;tweet'.(($sns_tw > 1 ) ? 's' : null ).'</a>';
@@ -979,7 +1086,7 @@ class class_pz_linkcard {
 				if	($this->options['sns-position'] == 1 ) {
 					$html_sns_title	=	'<div class="lkc-share">'.$sns.'</div>';
 				} else {
-					$html_sns_info	=	'&nbsp;'.'<div class="lkc-share">'.$sns.'</div>';
+					$html_sns_info	=	'<div class="lkc-share">'.$sns.'</div>';
 				}
 			}
 		}
@@ -992,39 +1099,61 @@ class class_pz_linkcard {
 		// 表示用のURL
 		$disp_url			=	esc_html($this->pz_DecodeURL($url, true ) );
 
-		// 続きを読むボタン
-		if	($more && $more_text ) {
-			$html_moretag	=	'<div class="lkc-more">'.$html_a_op.'<div class="lkc-more-text">'.$more_text.'</div>'.$html_a_cl.'</div>';
-		} else {
-			$html_moretag	=	null;
-		}
-
 		// リンク先URL
 		$html_url1			=	null;
 		$html_url2			=	null;
 		switch	($this->options['display-url'] ) {
 		case	1:
-			$html_url1	=	'<div class="lkc-url" title="'.esc_html($url ).'">'.	$html_a_op.		$html_st_op.	$disp_url.		$html_st_cl.	$html_a_cl.		'</div>';
+			$html_url1	=	'<div class="lkc-url" title="'.esc_html($url ).'">'.$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
 			break;
 		case	2:
-			$html_url2	=	'&nbsp;<div class="lkc-url-info">'.	$html_a_op.			$html_st_op.	$disp_url.		$html_st_cl.	$html_a_cl.		'</div>';
+			$html_url2	=	'&nbsp;<div class="lkc-url-info">'.	$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
 			break;
-		}
-
-		// サイト情報
-		if	($info_text ) {
-			$added_info	=	$html_added_op.$info_text.$html_added_cl;
-		} else {
-			$added_info	=	null;
 		}
 
 		// 投稿日
-		if	($this->options['display-date'] && $post_date && $is_internal ) {
-			$info_date	=	'<div class="lkc-date">'.date('Y.m.d', strtotime($post_date ) ).'</div>';
-		} else {
-			$info_date	=	null;
+		$html_date	=	null;
+		if	($is_internal && $this->options['display-date'] ) {
+			$html_url1	=	null;
+			$html_url2	=	null;
+			switch		($this->options['display-date'] ) {
+			case	1:
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', TEXT_DOMAIN ).$this->pz_date(DATE_FORMAT, strtotime($post_date ) ).'</div>';
+				break;
+			case	2:
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', TEXT_DOMAIN ).$this->pz_date(DATE_FORMAT, strtotime($post_modified ) ).'</div>';
+				break;
+			case	3:
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', TEXT_DOMAIN ).$this->pz_date(DATE_FORMAT, strtotime($post_date ) ).'&ensp;'.__('&#x1F501;&#xfe0f;', TEXT_DOMAIN ).$this->pz_date(DATE_FORMAT, strtotime($post_date ) ).'</div>';
+				break;
+			}
 		}
-		$domain_info	=	'<div class="lkc-info">'.$html_a_op.$html_favicon.'<div class="lkc-domain"'.$title_sitename.'>'.$disp_sitename.'</div>'.$added_info.$html_a_cl.$html_sns_info.$html_url2.$info_date.'</div>';
+
+		// 見出し情報
+		if	($heading_text ) {
+			$html_heading	=	'<div class="lkc-heading">'.$heading_text.'</div>';
+		} else {
+			$html_heading	=	null;
+		}
+
+		// 続きを読むボタン
+		if	($more_text ) {
+			$html_moretag	=	$html_a_op.'<div class="lkc-more">'.$more_text.'</div>'.$html_a_cl;
+
+		} else {
+			$html_moretag	=	null;
+		}
+
+		// サイト情報
+		if	($added_text ) {
+			$html_added	=	'<div class="lkc-added">'.$added_text.'</div>';
+		} else {
+			$html_added	=	null;
+		}
+
+
+		$html_domain	=	'<div class="lkc-domain"'.$title_sitename.'>'.$disp_sitename.'</div>';
+		$html_info		=	'<div class="lkc-info">'.$html_a_op.$html_favicon.$html_domain.$html_added.$html_a_cl.$html_sns_info.$html_url2.'</div>';
 
 		// Google AMP用 簡易タグ作成
 		if	($this->amp <> 2 ) {
@@ -1053,25 +1182,22 @@ class class_pz_linkcard {
 			$tag	=	
 				$html_wrap_op.
 					$html_a_op_all.
+					$html_heading.
 						'<div class="lkc-card">'.
-							$domain_info.
+							$html_info.
 							'<div class="lkc-content">'.
 								$html_a_op.
 									$html_thumbnail.
-									'<div class="lkc-title">'.
-										$title.
-									'</div>'.
+									$html_title.
 								$html_a_cl.
 								$html_sns_title.
 								$html_url1.
-								'<div class="lkc-excerpt">'.
-									$excerpt.
-								'</div>'.
+								$html_date.
+								$html_excerpt.
 								$html_moretag.
 							'</div>'.
-							'<div class="clear">
-							</div>
-						</div>'.
+							'<div class="clear"></div>'.
+						'</div>'.
 					$html_a_cl_all.
 				$html_wrap_cl
 			;
@@ -1079,38 +1205,77 @@ class class_pz_linkcard {
 		case	2:		// 下側
 			$tag	=	
 				$html_wrap_op.
+					$html_heading.
 					$html_a_op_all.
 						'<div class="lkc-card">'.
 							'<div class="lkc-content">'.
 								$html_a_op.
-									$html_thumbnail.
-									'<div class="lkc-title">'.
-										$title.
-									'</div>'.
+								$html_thumbnail.
+									$html_title.
 								$html_a_cl.
 								$html_sns_title.
 								$html_url1.
-								'<div class="lkc-excerpt">'.
-									$excerpt.
-								'</div>'.
+								$html_date.
+								$html_excerpt.
 								$html_moretag.
 							'</div>'.
-							$domain_info.
-							'<div class="clear">
-							</div>
-						</div>'.
+							$html_info.
+							'<div class="clear">'.
+							'</div>'.
+						'</div>'.
 					$html_a_cl_all.
 				$html_wrap_cl
 			;
 			break;
 		case	3:		// タイトルの上側
 			$tag	=	
-			$html_wrap_op.$html_a_op_all.'<div class="lkc-card"><div class="lkc-content">'.$html_a_op.$html_thumbnail.$domain_info.$html_a_cl.$html_a_op.'<div class="lkc-title">'.'<div class="lkc-title-text">'.$title.'</div></div>'.$html_a_cl.$html_sns_title.$html_url1.'<div class="lkc-excerpt">'.$excerpt.'</div>'.$html_moretag.'</div><div class="clear"></div></div>'.$html_a_cl_all.$html_wrap_cl;
-
-
+				$html_wrap_op.
+					$html_heading.
+					$html_a_op_all.
+						'<div class="lkc-card">'.
+							'<div class="lkc-content">'.
+								$html_a_op.
+									$html_thumbnail.
+									$html_title.
+								$html_a_cl.
+								$html_sns_title.
+								$html_url1.
+								$html_date.
+								$html_excerpt.
+								$html_moretag.
+							'</div>'.
+							'<div class="clear">'.
+							'</div>'.
+						'</div>'.
+					$html_a_cl_all.
+				$html_wrap_cl
+			;
 			break;
 		default:
-			$tag	=	$html_wrap_op.$html_a_op_all.'<div class="lkc-card"><div class="lkc-content">'.$html_a_op.$html_thumbnail.'<div class="lkc-title"><div class="lkc-title-text">'.$title.'</div>'.$html_sns_title.'</div>'.$html_a_cl.$html_url1.'<div class="lkc-excerpt">'.$excerpt.'</div>'.$html_moretag.'</div><div class="clear"></div></div>'.$html_a_cl_all.$html_wrap_cl;
+
+			$tag	=	
+				$html_wrap_op.
+					$html_heading.
+					$html_a_op_all.
+						'<div class="lkc-card">'.
+							'<div class="lkc-content">'.
+								$html_a_op.
+									$html_thumbnail.
+									$html_title.
+								$html_a_cl.
+								$html_sns_title.
+								$html_url1.
+								$html_date.
+								$html_excerpt.
+								$html_moretag.
+							'</div>'.
+							'<div class="clear">'.
+							'</div>'.
+						'</div>'.
+					$html_a_cl_all.
+				$html_wrap_cl
+			;
+
 		}
 
 		// 引用文扱い
@@ -1696,42 +1861,49 @@ class class_pz_linkcard {
 
 		// サイトアイコン
 		if	(function_exists('has_site_icon' ) && has_site_icon() ) {
-			$favicon		=	get_site_icon_url(16, null, 0 );
+			$favicon			=	get_site_icon_url(16, null, 0 );
 		}
 
 		// 記事内容
 		$url					=	$data['url'];
-		$post_id				=	url_to_postid($url );				// 記事IDを取得
+		$post_id				=	url_to_postid($url );					// 記事IDを取得
 		if	($this->options['debug-mode'] ) {
 			echo	'<!-- Pz-LkC [PID='.$post_id.'] /-->'.PHP_EOL;
 		}
 
-		if	(!$post_id && $this->options['flg-get-pid'] ) {
-			$url				=	$this->Pz_GetRedirURL($data );		// 本当の記事URLを取得
-			$post_id			=	url_to_postid($url );				// 記事IDを取得
-			if	($this->options['debug-mode'] ) {
-				echo	'<!-- Pz-LkC [PID='.$post_id.'(REDIR)] /-->'.PHP_EOL;
-			}
-		}
-
 		if	($post_id ) {
 			// 記事IDが取得できた場合
-			$update_result		=	200;						// 外部取得と同じコードをセット
-			$post				=	get_post($post_id );		// 記事情報
-			$title				=	$post->post_title;			// 記事タイトル
-			$excerpt			=	$post->post_content;		// 記事内容から抜粋
-			if	($this->options['in-get'] == 1 && $post->post_excerpt ) {
-				$excerpt		=	$post->post_excerpt;		// 抜粋文
+			$update_result		=	200;									// 外部取得と同じコードをセット
+			$post				=	get_post($post_id );					// 記事情報
+			$title				=	$post->post_title;						// 記事タイトル
+			$excerpt			=	$post->post_content;					// 記事内容から抜粋
+
+			// 「抜粋」優先
+			if	($this->options['in-get'] == 1 && $post->post_excerpt ) {	// 記事取得方法：「抜粋文」があった場合、優先する
+				$excerpt		=	$post->post_excerpt;					// 抜粋文
 			}
-			$post_date			=	$post->post_date;			// 投稿日
-			$post_modified		=	$post->post_modified;		// 更新日
-			$thumbnail_id		=	get_post_thumbnail_id($post_id );	// サムネイル
+
+			// 「カスタムフィールド」優先
+			if	($this->options['in-get'] == 3 ) {							// 記事取得方法：「カスタムフィールド」があった場合、優先する
+				$meta_title		=	get_post_meta($post_id, $this->options['in-field-title'] );
+				if	(array($meta_title ) && array_key_exists(0, $meta_title ) ) {
+					$title		=	$meta_title[0];
+				}
+				$meta_excerpt	=	get_post_meta($post_id, $this->options['in-field-excerpt'] );
+				if	(array($meta_excerpt ) && array_key_exists(0, $meta_excerpt ) ) {
+					$excerpt	=	$meta_excerpt[0];
+				}
+			}
+
+			$post_date			=	$post->post_date;						// 投稿日
+			$post_modified		=	$post->post_modified;					// 更新日
+			$thumbnail_id		=	get_post_thumbnail_id($post_id );		// サムネイル
 			if	($thumbnail_id ) {
 				$thumbnail_size		=	$this->options['in-thumbnail-size'] ? $this->options['in-thumbnail-size'] : 'thumbnail' ;
 				$attach				=	wp_get_attachment_image_src($thumbnail_id, $thumbnail_size, true );
 				if	(isset($attach ) && count($attach ) > 3 && isset($attach[0] ) ) {
 					$thumbnail		=	$attach[0];
-					if	(preg_match('/.*(\/\/.*)/', $thumbnail, $m ) ) {		// スキームを外す
+					if	(preg_match('/.*(\/\/.*)/', $thumbnail, $m ) ) {	// スキームを外す
 						$thumbnail	=	$m[1];
 					}
 				}
@@ -1754,12 +1926,12 @@ class class_pz_linkcard {
 				$cat_data		=	get_category_by_slug($cat_slug );
 				if	($cat_data ) {
 					$cat_count		=	($cat_data->count - 0 );
-					$title			=	__('Category', $this->text_domain ).' '.__('‘', $this->text_domain ).$cat_data->name.__('’', $this->text_domain );
-					$excerpt		=	__('(', $this->text_domain ).__('Count', $this->text_domain ).':'.($cat_data->count - 0 ).__(')', $this->text_domain ).' '.$cat_data->description;
+					$title			=	__('Category', TEXT_DOMAIN ).' '.__('‘', TEXT_DOMAIN ).$cat_data->name.__('’', TEXT_DOMAIN );
+					$excerpt		=	__('(', TEXT_DOMAIN ).__('Count', TEXT_DOMAIN ).':'.($cat_data->count - 0 ).__(')', TEXT_DOMAIN ).' '.$cat_data->description;
 					$update_result	=	200;
 				} else {
-					$title			=	__('Category', $this->text_domain ).' '.__('‘', $this->text_domain ).rawurldecode($cat_slug ).__('’', $this->text_domain );
-					$excerpt		=	__('Not Found', $this->text_domain );
+					$title			=	__('Category', TEXT_DOMAIN ).' '.__('‘', TEXT_DOMAIN ).rawurldecode($cat_slug ).__('’', TEXT_DOMAIN );
+					$excerpt		=	__('Not Found', TEXT_DOMAIN );
 					$update_result	=	403;
 				}
 			} else {
@@ -1771,18 +1943,22 @@ class class_pz_linkcard {
 					$cat_slug		=	mb_substr($url, $cat_len );
 					$cat_data		=	get_tags(array('slug' => $cat_slug ) );
 					if	($cat_data ) {
-						$title			=	__('Tag', $this->text_domain ).' '.__('‘', $this->text_domain ).$cat_data[0]->name.__('’', $this->text_domain );
-						$excerpt		=	__('(', $this->text_domain ).__('Count', $this->text_domain ).':'.($cat_data[0]->count - 0 ).__(')', $this->text_domain ).' '.$cat_data[0]->description;
+						$title			=	__('Tag', TEXT_DOMAIN ).' '.__('‘', TEXT_DOMAIN ).$cat_data[0]->name.__('’', TEXT_DOMAIN );
+						$excerpt		=	__('(', TEXT_DOMAIN ).__('Count', TEXT_DOMAIN ).':'.($cat_data[0]->count - 0 ).__(')', TEXT_DOMAIN ).' '.$cat_data[0]->description;
 						$update_result	=	200;
 					} else {
-						$title			=	__('Tag', $this->text_domain ).' '.__('‘', $this->text_domain ).rawurldecode($cat_slug ).__('’', $this->text_domain );
-						$excerpt		=	__('Not Found', $this->text_domain );
+						$title			=	__('Tag', TEXT_DOMAIN ).' '.__('‘', TEXT_DOMAIN ).rawurldecode($cat_slug ).__('’', TEXT_DOMAIN );
+						$excerpt		=	__('Not Found', TEXT_DOMAIN );
 						$update_result	=	403;
 					}
 				} else {
-					if	(!$post_id && $this->options['flg-get-pid'] ) {
-						$data		=	$this->Pz_GetCURL($data );		// 外部サイトとして読み込み
-						return			$data;
+					if	(!$post_id && $this->options['in-get-url'] ) {
+						$result			=	$this->Pz_GetCURL($data );		// 外部サイトとして読み込み
+						if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
+							$data		=	$result;
+							$result		=	$this->pz_SetCache($data );
+						}
+						return			$result;
 					}
 				}
 			}
@@ -1797,17 +1973,17 @@ class class_pz_linkcard {
 					}
 				}
 			}
-			$title		=	$str;
+			$title			=	$str;
 		}
 
 		// 抜粋文整形
-		if							($str	=	$excerpt ) {										// 代入しながら判定
-			if						($str	=	strip_tags($str ) ) {								// HTMLタグ除去
-				if					($str	=	esc_html($str ) ) {									// HTMLエスケープ
-					if				($str	=	str_replace(array("\r", "\n"), '', $str ) ) {		// 改行を除去
-						if			($str	=	preg_replace('/<!--more-->.+/is', '', $str ) ) {	// moreタグ以降削除
-							if		($str	=	preg_replace('/\[[^]]*\]/', '', $str ) ) {			// ショートコードすべて除去
-									$str	=	mb_strimwidth($str, 0, 500, '...' );				// 500文字制限
+		if						($str	=	$excerpt ) {										// 代入しながら判定
+			if					($str	=	strip_tags($str ) ) {								// HTMLタグ除去
+				if				($str	=	esc_html($str ) ) {									// HTMLエスケープ
+					if			($str	=	str_replace(array("\r", "\n"), '', $str ) ) {		// 改行を除去
+						if		($str	=	preg_replace('/<!--more-->.+/is', '', $str ) ) {	// moreタグ以降削除
+							if	($str	=	preg_replace('/\[[^]]*\]/', '', $str ) ) {			// ショートコードすべて除去
+								$str	=	mb_strimwidth($str, 0, 500, '...' );				// 500文字制限
 							}
 						}
 					}
@@ -1850,29 +2026,27 @@ class class_pz_linkcard {
 
 	// リダイレクト先URL取得
 	private	function	pz_GetRedirURL($data ) {
-		$url				=	$data['url'];
-		$error				=	false;
+		$url					=	esc_url($data['url'] );
+
 		if	(function_exists('curl_init' ) ) {							// cURLを使用する
-			$update_result	=	0;
-			$ch				=	curl_init($url );
+			$update_result		=	0;
+			$ch					=	curl_init($url );
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER,	true );			// データで取得
 			curl_setopt($ch, CURLOPT_NOBODY,			true );			// ヘッダのみ取得
 			curl_setopt($ch, CURLOPT_TIMEOUT,			120 );			// タイムアウト
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION,	true );			// リダイレクトを処理する
 			curl_setopt($ch, CURLOPT_MAXREDIRS,			5 );			// リダイレクトを処理する階層
-			$html			=	curl_exec($ch );						// cURL実行
-			$err_no			=	curl_errno($ch );						// cURLエラーコード
+			$html				=	curl_exec($ch );					// cURL実行
+			$err_no				=	curl_errno($ch );					// cURLエラーコード
 			if	($err_no ) {
-				$error			=	true;
 				$update_result	=	$err_no;
-			} else {
 				$header			=	curl_getinfo($ch );
-				$update_result	=	$header['http_code'];				// HTTPステータス
-				$url			=	$header['url'];
+				$r_http_code	=	$header['http_code'];				// HTTPステータス
+				$r_url			=	$header['url'];
 			}
 			curl_close($ch );
 		}
-		return	$url;
+		return		$url;
 	}
 
 	// 外部リンク・記事情報取得
@@ -2164,8 +2338,8 @@ class class_pz_linkcard {
 		}
 
 		// サムネイルのディレクトリとディレクトリURL
-		$file_dir		=	$this->options['thumbnail-dir'];
-		$file_dir_url	=	$this->options['thumbnail-url'];
+		$file_dir		=	DIR_CACHE;
+		$file_dir_url	=	URL_CACHE;
 		if	(!$file_dir || !$file_dir_url ) {
 			return			null;
 		}
@@ -2288,7 +2462,6 @@ class class_pz_linkcard {
 
 	// 設定を取得する
 	private	function	pz_load_options() {
-		
 		// パラメーターを取得
 		$this->options			=	get_option(self::OPTION_NAME );			// オプション値を取得
 		if		(!$this->options || !is_array($this->options ) ) {
@@ -2300,20 +2473,6 @@ class class_pz_linkcard {
 				$result			=	delete_option(self::OPTION_NAME_OLD );
 			}
 		}
-
-		// バージョンが違う場合、初期処理を実行する
-		if	($this->options['plugin-version']	<>	PLUGIN_VERSION ) {
-			$this->activate();												// プラグインの再起動
-			$this->options['plugin-version']	=	PLUGIN_VERSION;
-			if	($this->options['css-count']	>	10 ) {
-				$this->options['css-count']		=	0;
-			}
-			$result				=	update_option(self::OPTION_NAME, $this->options );
-			if	($result		==	false ) {
-				return	false;
-			}
-		}
-
 		return	true;
 	}
 
@@ -2331,6 +2490,9 @@ class class_pz_linkcard {
 
 		// CSSバージョン（CSSキャッシュ対策）
 		$this->options['css-count']			+=	1;
+
+		// プラグインバージョン
+		$this->options['plugin-version']	=	PLUGIN_VERSION;
 
 		// 必要ディレクトリが無い場合、作り直す
 		require_once('lib/pz-linkcard-settings-setup.php' );
@@ -2358,7 +2520,7 @@ class class_pz_linkcard {
 		$this->options		=	self::DEFAULTS;
 		
 		// 引き継ぐ設定値
-		$takeover			=	array('css-templete', 'css-path', 'thumbnail-dir', 'thumbnail-url', 'debug-dir', 'debug-url', 'saved-date', 'db-version' );
+		$takeover			=	array('saved-date', 'db-version' );
 		if	($before['initialize-exception'] ) {
 			// 初期化例外が有効の時に引き継ぐ設定値
 			array_push($takeover, 'initialize-exception', 'admin-mode', 'debug-mode' );
@@ -2384,7 +2546,7 @@ class class_pz_linkcard {
 	}
 
 	// スタイルシート生成
-	private	function	pz_SetStyle() {
+	private	function	pz_SetStyle($filename = 'style' ) {
 		$result		=	0;
 		require_once('lib/pz-linkcard-style.php' );
 		return	$result;
@@ -2394,7 +2556,7 @@ class class_pz_linkcard {
 	private	function	pz_CompressCSS($style ) {
 		// 参考：https://shimotsuki.wwwxyz.jp/20200930-650
 		$replaces	=	[];
-		$replaces['/@charset [^;]+;/' ] = '';
+		//$replaces['/@charset [^;]+;/' ] = '';
 		$replaces['/([\s:]url\()[\"\']([^\"\']+)[\"\'](\)[\s;}])/' ] = '${1}${2}${3}';
 		$replaces['/(\/\*(?=[!]).*?\*\/|\"(?:(?!(?<!\\\)\").)*\"|\'(?:(?!(?<!\\\)\').)*\')|\s+/' ] = '${1} ';
 		$replaces['/(\/\*(?=[!]).*?\*\/|\"(?:(?!(?<!\\\)\").)*\"|\'(?:(?!(?<!\\\)\').)*\')|\/\*.*?\*\/|\s+([:])\s+|\s+([)])|([(:])\s+/s' ] = '${1}${2}${3}${4}';
@@ -2404,14 +2566,13 @@ class class_pz_linkcard {
 			$style	=	preg_replace('/(})[^{]*{}/', '$1', $style );		// 空の要素除去
 		} while (preg_match('/;[^{]*{}/', $style ) );
 		$style		=	trim($style );
-		$style		=	'@charset "'.$this->charset.'";'.$style;			// 文字セット
 		return		$style;
 	}
 
 	// デバグ用の文字列表示
 	private	function	pz_HTTPMessage($result ) {
 		$http_message	=	array();
-		require_once('lib/pz-linkcard-error-code.php' );
+		require('lib/pz-linkcard-error-code.php' );
 		if	(isset($http_message[$result] ) ) {
 			return	$http_message[$result];
 		}
@@ -2420,29 +2581,57 @@ class class_pz_linkcard {
 
 	// デバグ用の文字列表示
 	private	function	pz_OutputLOG($user_message ) {
-		if	($this->options['debug-dir'] ) {
+		return 0;
+		if	(is_dir(DIR_DEBUG ) ) {
 			$now			=	current_time('timestamp', false );
 			$message		=	date('Y-m-d H:i:s', $now ).' '.$user_message.(mb_substr($user_message, -1, 1) == PHP_EOL ? null : PHP_EOL );
-			$filename		=	$this->options['debug-dir'].$this->slug.'_'.date('Ymd', $now ).'.log';
+			$filename		=	DIR_DEBUG.$this->slug.'_'.date('Ymd', $now ).'.log';
 			$result			=	file_put_contents($filename, $message, FILE_APPEND );
 			return			$result;
 		}
+	}
+
+	// 日付・時刻の書式変換
+	private	function	pz_Date($format, $value ) {
+		if	(!$value ) {
+			return	null;
+		}
+		$format	=	preg_replace('/<br\s*\/?>/', '\<\b\r\/\>', $format );
+		$temp	=	date($format, $value );
+		$temp	=	preg_replace('/<br\s*\/?>/', PHP_EOL, $temp );
+		$temp	=	esc_html($temp );
+		$temp	=	str_replace(PHP_EOL, '<br/>', $temp );
+		return		$temp;
 	}
 
 	// 通常時のスタイルシート
 	public	function	enqueue($hook ) {
 		$this->amp		=	null;
 		$css_version	=	PLUGIN_VERSION.'.'.$this->options['css-count'];
-		wp_enqueue_style	(self::PLUGIN_SLUG,			$this->options['css-url'],		array(), $css_version );
+		if	($this->options['flg-compress'] ) {
+			wp_enqueue_style	(self::HANDLE_CSS,		URL_STYLE.'style.min.css',		array(),	$css_version );
+		} else {
+			wp_enqueue_style	(self::HANDLE_CSS,		URL_STYLE.'style.css',			array(),	$css_version );
+		}
 		if	($this->options['css-add-url'] ) {
-			wp_enqueue_style(self::PLUGIN_SLUG.'-add',	$this->options['css-add-url'],	array(), $css_version );
+			wp_enqueue_style(self::HANDLE_CSS_ADD,		$this->options['css-add-url'],	array(),	$css_version );
 		}
 	}
 
 	// 管理画面のスタイルシート、スクリプト設定
 	public	function	enqueue_admin($hook ) {
-		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin',	plugins_url('js/admin-settings.js', __FILE__ ),	array('jquery' ),	PLUGIN_VERSION, true );
-		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin',	plugin_dir_url(__FILE__ ).'css/admin.css',		array(),			PLUGIN_VERSION );
+		wp_enqueue_script	(self::HANDLE_ADMIN,		URL_ADMIN_JS,			array('jquery' ),	PLUGIN_VERSION, true );
+		wp_enqueue_style	(self::HANDLE_ADMIN,		URL_ADMIN_CSS,			array(),			PLUGIN_VERSION );
+		wp_enqueue_script	('wp-color-picker' );		// WordPressカラーピッカースクリプト
+		wp_enqueue_style	('wp-color-picker' );		// WordPressカラーピッカースタイルシート
+	}
+
+	// 管理画面時の設定（スタイルシートの追加）
+	public	function	add_styles() {
+	}
+
+	// 管理画面時の設定（スクリプトの追加）
+	public	function	add_scripts() {
 	}
 
 	// 管理画面時の設定（フッター）
@@ -2450,7 +2639,7 @@ class class_pz_linkcard {
 		// テキスト エディタ用のクイックタグ
 		if	($this->options['flg-edit-qtag'] ) {
 			if	(wp_script_is('quicktags' ) ) {
-				echo '<script>QTags.addButton(\'pz-lkc\',\''.__('Linkcard', $this->text_domain ).'\',\'['.$this->options['code1'].' url="\',\'"]\',\'\',\''.__('Make Linkcard', $this->text_domain ).'\' );</script>';
+				echo '<script>QTags.addButton(\'pz-lkc\',\''.__('Linkcard', TEXT_DOMAIN ).'\',\'['.$this->options['code1'].' url="\',\'"]\',\'\',\''.__('Make Linkcard', TEXT_DOMAIN ).'\' );</script>';
 			}
 		}
 		// ビジュアル エディタ用の挿入ダイアログ
@@ -2461,15 +2650,25 @@ class class_pz_linkcard {
 	public	function	add_notices() {
 	//	if	($this->options['error-mode'] ) {
 	//		if	(!$this->options['error-mode-hide'] ) {
-	//			echo '<div class="notice notice-error is-dismissible"><p><strong>'.$this->options['plugin-name'].': '.__('Invalid URL parameter in ', $this->text_domain ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', $this->text_domain ).' '.__('You can cancel this message from <a href=".'.self::SETTINGS_URL.'">the setting screen</a>.', $this->text_domain ).'</p></div>';
+	//			echo '<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', TEXT_DOMAIN ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', TEXT_DOMAIN ).' '.__('You can cancel this message from <a href=".'.self::SETTINGS_URL.'">the setting screen</a>.', TEXT_DOMAIN ).'</p></div>';
 	//		}
 	//	}
+	}
+
+	// プラグインロード後（プラガブル関数用）
+	public	function	add_loaded() {
+		if		(is_user_logged_in() ) {
+			$user_data	=	wp_get_current_user();
+			if	($user_data->caps['administrator'] ) {
+				//
+			}
+		}
 	}
 
 	// 管理画面時のスタイルシート、スクリプト設定
 	public	function	add_mce_button($buttons ) {
 		if	($this->options['flg-edit-insert'] ) {
-			$buttons[]		=	'pz_linkcard_insert_shortcode';
+			$buttons[]							=	'pz_linkcard_insert_shortcode';
 		}
 		return	$buttons;
 	}
@@ -2485,8 +2684,8 @@ class class_pz_linkcard {
 		return array_merge(
 			$links,
 			array(
-				'manager'	=>	'<a href="'.$this->cacheman_url.'">'.__('Manager' , $this->text_domain ).'</a>',
-				'settings'	=>	'<a href="'.$this->settings_url.'">'.__('Settings', $this->text_domain ).'</a>',
+				'manager'	=>	'<a href="'.$this->cacheman_url.'">'.__('Manager' , TEXT_DOMAIN ).'</a>',
+				'settings'	=>	'<a href="'.$this->settings_url.'">'.__('Settings', TEXT_DOMAIN ).'</a>',
 			)
 		);
 	}
@@ -2495,14 +2694,14 @@ class class_pz_linkcard {
 	public	function	add_admin_bar() {
 	//	global $wp_admin_bar;
 	//	$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => 'Pzカード',											'href' => '#' ) );
-	//	$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('LinkCard Cache Manager',	$this->text_domain ),	'href' => '#',	'meta' => array('target' => '_parent' ) ) );
-	//	$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('LinkCard Settings',		$this->text_domain ),	'href' => '#',	'meta' => array('target' => '_parent' ) ) );
+	//	$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('LinkCard Cache Manager',	TEXT_DOMAIN ),	'href' => '#',	'meta' => array('target' => '_parent' ) ) );
+	//	$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('LinkCard Settings',		TEXT_DOMAIN ),	'href' => '#',	'meta' => array('target' => '_parent' ) ) );
 	}
 
 	// 管理画面のサブメニュー追加
 	public	function	add_admin_menu() {
-		$menu_manager	=	__('Pz-LinkCard Manager',	$this->text_domain );
-		$menu_settings	=	__('Pz-LinkCard Settings',	$this->text_domain );
+		$menu_manager	=	__('Pz-LinkCard Manager',	TEXT_DOMAIN );
+		$menu_settings	=	__('Pz-LinkCard Settings',	TEXT_DOMAIN );
 		if	($this->options['flg-alive'] && $this->options['flg-alive-count'] ) {
 			global	$wpdb;
 			$result		=	$wpdb->get_row("SELECT COUNT(*) AS count FROM $this->db_name WHERE alive_result < 100 OR alive_result >= 400");
@@ -2510,8 +2709,8 @@ class class_pz_linkcard {
 				$menu_manager	.=	'&nbsp;<span class="update-plugins"><span class="update-count lkc-menu-count">'.$result->count.'</span></span>';
 			}
 		}
-		add_management_page	(__('Pz-LinkCard Manager',		$this->text_domain ),	$menu_manager,		'manage_options', 	self::CACHEMAN_PAGE,	array($this, 'page_cacheman' ) );
-		add_options_page	(__('Pz-LinkCard Settings',		$this->text_domain ),	$menu_settings,		'manage_options', 	self::SETTINGS_PAGE,	array($this, 'page_settings' ) );
+		add_management_page	(__('Pz-LinkCard Manager',		TEXT_DOMAIN ),	$menu_manager,		'manage_options', 	self::CACHEMAN_PAGE,	array($this, 'page_cacheman' ) );
+		add_options_page	(__('Pz-LinkCard Settings',		TEXT_DOMAIN ),	$menu_settings,		'manage_options', 	self::SETTINGS_PAGE,	array($this, 'page_settings' ) );
 	}
 	
 	// 管理画面＞Pz カード管理
@@ -2526,11 +2725,17 @@ class class_pz_linkcard {
 
 	// プラグインを有効化
 	public	function	activate() {
-		require_once('lib/pz-linkcard-init.php' );
+		if	($this->options['debug-mode'] ) {
+			echo	'<!-- Pz-LkC [activate]'.PHP_EOL.' -->'.PHP_EOL;
+		}
+		require_once('lib/pz-linkcard-activate.php' );
 	}
 
 	// プラグインを無効化
 	public	function	deactivate() {
+		if	($this->options['debug-mode'] ) {
+			echo	'<!-- Pz-LkC [deactivate]'.PHP_EOL.' -->'.PHP_EOL;
+		}
 		wp_clear_scheduled_hook(self::DEFAULTS['cron-alive'] );		// WP-CRONスケジュール停止（リンク先存在チェック）
 		wp_clear_scheduled_hook(self::DEFAULTS['cron-check'] );		// WP-CRONスケジュール停止（SNSカウント取得）
 	}
@@ -2541,6 +2746,11 @@ class class_pz_linkcard {
 
 	// 更新完了
 	public	function	upgrader($upgrader_object, $options ) {
+		if	($this->options['debug-mode'] ) {
+			echo	'<!-- Pz-LkC [upgrader]'.PHP_EOL;
+			echo	'$atts='.html_entity_decode(print_r($upgrader_object, true ) );
+			echo	'/-->'.PHP_EOL;
+		}
 	//	// 参考：https://club.jidaikobo.com/knowledge/177.html
 	//	if			($options['action'] == 'update' && $options['type'] == 'plugin' ) {
 	//		if		(isset($options['plugins'] ) && is_array($options['plugins'] ) ) {

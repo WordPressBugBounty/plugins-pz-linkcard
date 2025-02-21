@@ -3,26 +3,26 @@
 // [DEBUG]
 $xxxxxxx	=
 	array(
-		array('id',					__('ID', $this->text_domain ),							'' ),
-		array('url',				__('URL', $this->text_domain ),							'' ),
-		array('title',				__('Title', $this->text_domain ),						'' ),
-		array('excerpt',			__('Excerpt', $this->text_domain ),						'' ),
-		array('charset',			__('Charset', $this->text_domain ),						' pz-lkc-admin-only' ),
-		array('domain',				__('Domain', $this->text_domain ),						'' ),
+		array('id',					__('ID', TEXT_DOMAIN ),							'' ),
+		array('url',				__('URL', TEXT_DOMAIN ),							'' ),
+		array('title',				__('Title', TEXT_DOMAIN ),						'' ),
+		array('excerpt',			__('Excerpt', TEXT_DOMAIN ),						'' ),
+		array('charset',			__('Charset', TEXT_DOMAIN ),						' pz-debug-only' ),
+		array('domain',				__('Domain', TEXT_DOMAIN ),						'' ),
 		array(
-			array('sns_twitter',	__('Tw', $this->text_domain ),							'' ),
-			array('sns_facebook',	__('fb', $this->text_domain ),							'' ),
-			array('sns_hatena',		__('B!', $this->text_domain ),							'' ),
-			array('sns_pocket',		__('Po', $this->text_domain ),							'' ),
+			array('sns_twitter',	__('Tw', TEXT_DOMAIN ),							'' ),
+			array('sns_facebook',	__('fb', TEXT_DOMAIN ),							'' ),
+			array('sns_hatena',		__('B!', TEXT_DOMAIN ),							'' ),
+			array('sns_pocket',		__('Po', TEXT_DOMAIN ),							'' ),
 		),
-		array('regist_time',		__('Regist<br/>Date', $this->text_domain ),				' pz-lkc-admin-only' ),
-		array('update_time',		__('Update<br/>Date', $this->text_domain ),				'' ),
-		array('sns_time',			__('SNS<br/>Check<br/>Date', $this->text_domain ),		' pz-lkc-admin-only' ),
-		array('alive_time',			__('Alive<br/>Check<br/>Date', $this->text_domain ),	' pz-lkc-admin-only' ),
-		array('use_post_id1',		__('Post ID', $this->text_domain ),						'' ),
+		array('regist_time',		__('Regist<br/>Date', TEXT_DOMAIN ),				' pz-debug-only' ),
+		array('update_time',		__('Update<br/>Date', TEXT_DOMAIN ),				'' ),
+		array('sns_time',			__('SNS<br/>Check<br/>Date', TEXT_DOMAIN ),		' pz-debug-only' ),
+		array('alive_time',			__('Alive<br/>Check<br/>Date', TEXT_DOMAIN ),	' pz-debug-only' ),
+		array('use_post_id1',		__('Post ID', TEXT_DOMAIN ),						'' ),
 		array(
-			array('update_result',	__('Result<br/>Code', $this->text_domain ),				'' ),
-			array('alive_result',	__('(Last)', $this->text_domain ),						'' ),
+			array('update_result',	__('Result<br/>Code', TEXT_DOMAIN ),				'' ),
+			array('alive_result',	__('(Last)', TEXT_DOMAIN ),						'' ),
 		),
 	);
 // [DEBUG]
@@ -35,7 +35,7 @@ $xxxxxxx	=
 	}
 
 	// ドメイン一覧作成
-	$domain_list		=	$wpdb->get_results("SELECT domain, site_name, count(*) AS count FROM $this->db_name GROUP BY domain ORDER BY domain ASC", ARRAY_A );
+	$domain_list		=	$wpdb->get_results("SELECT domain, count(*) AS count FROM $this->db_name GROUP BY domain ORDER BY domain ASC", ARRAY_A );
 
 	// ドメイン存在チェック
 	$refine		=	null;
@@ -170,26 +170,26 @@ $xxxxxxx	=
 
 	// ページネーション
 	$temp_button	=	'&nbsp;<button type="submit" name="page_button" value="%d" class="button tablenav-pages-navspan" %s>%s</button>';
-	$temp_text		=	'<span class="paging-input"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-lkc-sync-text current-page" size="2" aria-describedby="table-paging" /><span class="total-pages">&nbsp;/&nbsp;%d</span></span>';
+	$temp_text		=	'<span class="paging-input"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-sync-text current-page" size="2" aria-describedby="table-paging" /><span class="total-pages">&nbsp;/&nbsp;%d</span></span>';
 	$paging			=
-		'<div class="pz-lkc-man-pages tablenav-pages"><span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', $this->text_domain ) : __('%s items', $this->text_domain ) ), number_format($count_now ) ).'</span><span class="pagination-links">'.
-		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;',	$this->text_domain ) ).		// 最初のページ
-		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;',	$this->text_domain ) ).		// 前のページ
+		'<div class="pz-man-pages tablenav-pages"><span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', TEXT_DOMAIN ) : __('%s items', TEXT_DOMAIN ) ), number_format($count_now ) ).'</span><span class="pagination-links">'.
+		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;',	TEXT_DOMAIN ) ).		// 最初のページ
+		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;',	TEXT_DOMAIN ) ).		// 前のページ
 		'&nbsp;'.
 		sprintf($temp_text,		$page_now,			$page_max ).																						// 今のページ
-		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;',	$this->text_domain ) ).		// 次のページ
-		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;',	$this->text_domain ) ).		// 最後のページ
+		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;',	TEXT_DOMAIN ) ).		// 次のページ
+		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;',	TEXT_DOMAIN ) ).		// 最後のページ
 		'</span></div>';
 ?>
-	<div class="pz-lkc-man-count-list">
+	<div class="pz-man-count-list">
 		<?php
 			$items	=
 				array(
-					'all'		=>	__('All',      $this->text_domain ),
-					'internal'	=>	__('Internal', $this->text_domain ),
-					'external'	=>	__('External', $this->text_domain ),
-					'modify'	=>	__('Modify',   $this->text_domain ),
-					'unlink'	=>	__('Unlink',   $this->text_domain ),
+					'all'		=>	__('All',      TEXT_DOMAIN ),
+					'internal'	=>	__('Internal', TEXT_DOMAIN ),
+					'external'	=>	__('External', TEXT_DOMAIN ),
+					'modify'	=>	__('Modify',   TEXT_DOMAIN ),
+					'unlink'	=>	__('Unlink',   TEXT_DOMAIN ),
 				);
 			$sep		=	'';
 			foreach	($items as $i_code => $i_name ) {
@@ -200,34 +200,34 @@ $xxxxxxx	=
 		?>
 	</div>
 	
-	<div class="pz-lkc-man-search">
-		<p class="search-box" title="<?php _e('Text search by title and excerpt', $this->text_domain ); ?>">
+	<div class="pz-man-search">
+		<p class="search-box" title="<?php _e('Text search by title and excerpt', TEXT_DOMAIN ); ?>">
 			<label>
-				<span><?php echo __('&#x1f50d;&#xfe0f;', $this->text_domain ); ?></span>
+				<span><?php echo __('&#x1f50d;&#xfe0f;', TEXT_DOMAIN ); ?></span>
 				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo $keyword ; ?>" />
-				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php _e('Search', $this->text_domain ); ?></button>
+				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php _e('Search', TEXT_DOMAIN ); ?></button>
 			</label>
 		</p>
 	</div>
 	
-	<div class="pz-lkc-man-navi tablenav top">
-		<div class="pz-lkc-man-batch-list alignleft actions bulkactions">
+	<div class="pz-man-navi tablenav top">
+		<div class="pz-man-batch-list alignleft actions bulkactions">
 			<select name="bulk_action" id="bulk-action-selector-top">
-				<option value="" selected="selected"><?php _e('Bulk Actions', $this->text_domain ); ?></option>
-				<option value="renew"><?php _e('Renew Cache', $this->text_domain ); ?></option>
-				<option value="renew_thumbnail"><?php _e('Renew Thumbnail Image', $this->text_domain ); ?></option>
-				<option value="renew_sns"><?php _e('Renew SNS Count', $this->text_domain ); ?></option>
-				<option value="renew_postid"><?php _e('Renew Post ID', $this->text_domain ); ?></option>
-				<option value="alive"><?php _e('Check Status', $this->text_domain ); ?></option>
-				<option value="delete"><?php _e('Delete from Cache', $this->text_domain ); ?></option>
+				<option value="" selected="selected"><?php _e('Bulk Actions', TEXT_DOMAIN ); ?></option>
+				<option value="renew"><?php _e('Renew Cache', TEXT_DOMAIN ); ?></option>
+				<option value="renew_thumbnail"><?php _e('Renew Thumbnail Image', TEXT_DOMAIN ); ?></option>
+				<option value="renew_sns"><?php _e('Renew SNS Count', TEXT_DOMAIN ); ?></option>
+				<option value="renew_postid"><?php _e('Renew Post ID', TEXT_DOMAIN ); ?></option>
+				<option value="alive"><?php _e('Check Status', TEXT_DOMAIN ); ?></option>
+				<option value="delete"><?php _e('Delete from Cache', TEXT_DOMAIN ); ?></option>
 			</select>
-			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm(\''.__('Are you sure?', $this->text_domain ).'\' );"><?php _e('Apply', $this->text_domain ); ?></button>
+			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm(\''.__('Are you sure?', TEXT_DOMAIN ).'\' );"><?php _e('Apply', TEXT_DOMAIN ); ?></button>
 			&nbsp;
 		</div>
 		
-		<div class="pz-lkc-man-domain-list alignleft actions bulkactions">
+		<div class="pz-man-domain-list alignleft actions bulkactions">
 			<select name="refine" id="bulk-action-selector-top">
-				<option value="" selected="selected"><?php _e('All Domain', $this->text_domain ); ?></option>
+				<option value="" selected="selected"><?php _e('All Domain', TEXT_DOMAIN ); ?></option>
 					<?php
 						foreach	($domain_list as $rec ) {
 							if (isset($rec['domain'] ) === true && isset($rec['count'] ) === true) {
@@ -238,131 +238,131 @@ $xxxxxxx	=
 						}
 					?>
 				</select>
-			<button type="submit" name="action" value="select-domain" class="button action"><?php _e('Refine Search', $this->text_domain ); ?></button>
+			<button type="submit" name="action" value="select-domain" class="button action"><?php _e('Refine Search', TEXT_DOMAIN ); ?></button>
 		</div>
 		<?php /* ページネーション */ echo $paging; ?>
 		<br class="clear">
 	</div>
 
-	<table class="pz-lkc-man-cache-list widefat striped">
+	<table class="pz-man-cache-list widefat striped">
 		<thead>
 			<tr>
-				<td id="cb" class="pz-lkc-man-head-check manage-column column-cb check-column"><input id="cb-select-all-1" type="checkbox" /></td>
+				<td id="cb" class="pz-man-head-check manage-column column-cb check-column"><input id="cb-select-all-1" type="checkbox" /></td>
 <?php
-	$asc_chr	=	'<span class="pz-lkc-man-head-orderby">'.__('&#x1f53c;&#xfe0f;', $this->text_domain ).'</span>';
-	$desc_chr	=	'<span class="pz-lkc-man-head-orderby">'.__('&#x1f53d;&#xfe0f;', $this->text_domain ).'</span>';
+	$asc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53c;&#xfe0f;', TEXT_DOMAIN ).'</span>';
+	$desc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53d;&#xfe0f;', TEXT_DOMAIN ).'</span>';
 
 	$item		=	'id';
-	$item_name	=	__('ID', $this->text_domain );
+	$item_name	=	__('ID', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'url';
-	$item_name	=	__('URL', $this->text_domain );
+	$item_name	=	__('URL', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'title';
-	$item_name	=	__('Title', $this->text_domain );
+	$item_name	=	__('Title', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'excerpt';
-	$item_name	=	__('Excerpt', $this->text_domain );
+	$item_name	=	__('Excerpt', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'charset';
-	$item_name	=	__('Charset', $this->text_domain );
-	$add_class	=	' pz-lkc-admin-only';
+	$item_name	=	__('Charset', TEXT_DOMAIN );
+	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'domain';
-	$item_name	=	__('Domain', $this->text_domain );
+	$item_name	=	__('Domain', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_twitter';
-	$item_name	=	__('Tw', $this->text_domain );
+	$item_name	=	__('Tw', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
 	echo	'<br/>';
 	$item		=	'sns_facebook';
-	$item_name	=	__('fb', $this->text_domain );
+	$item_name	=	__('fb', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	// echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
 	echo	'<br/>';
 	$item		=	'sns_hatena';
-	$item_name	=	__('B!', $this->text_domain );
+	$item_name	=	__('B!', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	// echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
 	echo	'<br/>';
 	$item		=	'sns_pocket';
-	$item_name	=	__('Po', $this->text_domain );
+	$item_name	=	__('Po', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	// echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	echo	'</th>';
 
 	$item		=	'regist_time';
-	$item_name	=	__('Regist<br/>Date', $this->text_domain );
-	$add_class	=	' pz-lkc-admin-only';
+	$item_name	=	__('Regist<br/>Date', TEXT_DOMAIN );
+	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_time';
-	$item_name	=	__('Update<br/>Date', $this->text_domain );
+	$item_name	=	__('Update<br/>Date', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_time';
-	$item_name	=	__('SNS<br/>Check<br/>Date', $this->text_domain );
-	$add_class	=	' pz-lkc-admin-only';
+	$item_name	=	__('SNS<br/>Check<br/>Date', TEXT_DOMAIN );
+	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'alive_time';
-	$item_name	=	__('Alive<br/>Check<br/>Date', $this->text_domain );
-	$add_class	=	' pz-lkc-admin-only';
+	$item_name	=	__('Alive<br/>Check<br/>Date', TEXT_DOMAIN );
+	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'use_post_id1';
-	$item_name	=	__('Post ID', $this->text_domain );
+	$item_name	=	__('Post ID', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_result';
-	$item_name	=	__('Result<br>code', $this->text_domain );
+	$item_name	=	__('Result<br>code', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
 	echo	'<br/>';
 	$item		=	'alive_result';
-	$item_name	=	__('(Last)', $this->text_domain );
+	$item_name	=	__('(Last)', TEXT_DOMAIN );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	// echo	'<th scope="col" class="pz-lkc-man-head-'.$item.$add_class.'">';
+	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	echo	'</th>';
 ?>
@@ -395,13 +395,13 @@ $xxxxxxx	=
 					$html_url_error		=	'';
 					if	($data->alive_result < 100 || $data->alive_result >= 400 ) {
 						if	($data->no_failure ) {		// エラー無視が有効か
-							$temp_icon	=	__('&#x26a0;&#xfe0f;', $this->text_domain );	// ⚠️
-							$temp_class	=	'pz-lkc-man-body-url-error-ignore';				// エラー無視
-							$temp_title	=	__('The latest HTTP code is in error, but ignore it.', $this->text_domain );
+							$temp_icon	=	__('&#x26a0;&#xfe0f;', TEXT_DOMAIN );		// ⚠️
+							$temp_class	=	'pz-man-body-url-error-ignore';			// エラー無視
+							$temp_title	=	__('The latest HTTP code is in error, but ignore it.', TEXT_DOMAIN );
 						} else {
-							$temp_icon	=	__('&#x26d4;&#xfe0f;', $this->text_domain );	// ⛔️エラー
-							$temp_class	=	'pz-lkc-man-body-url-error';					// エラー
-							$temp_title	=	__('The latest HTTP code is in error. You can change it to ignore the error from the edit screen.', $this->text_domain );
+							$temp_icon	=	__('&#x26d4;&#xfe0f;', TEXT_DOMAIN );		// ⛔️エラー
+							$temp_class	=	'pz-man-body-url-error';				// エラー
+							$temp_title	=	__('The latest HTTP code is in error. You can change it to ignore the error from the edit screen.', TEXT_DOMAIN );
 						}
 						$html_url_error	=	'<span class="'.$temp_class.'" title="'.$temp_title.'">'.$temp_icon.'</span>&nbsp;';
 					}
@@ -468,7 +468,7 @@ $xxxxxxx	=
 						}
 					}
 					if	($thumbnail_url ) {
-						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" class="pz-lkc-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-lkc-man-thumbnail-img"></div></a>';
+						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" class="pz-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-man-thumbnail-img"></div></a>';
 					}
 
 					// 記事ID
@@ -482,56 +482,56 @@ $xxxxxxx	=
 					}
 
 					// HTTPレスポンス
-					$html_result		=	'<span class="pz-lkc-man-body-result-update">'.strHTTPCode($data->update_result, $this->pz_HTTPMessage($data->update_result ) ).'</span>';
+					$html_result		=	'<span class="pz-man-body-result-update">'.strHTTPCode($data->update_result, $this->pz_HTTPMessage($data->update_result ) ).'</span>';
 					if	($data->update_result <> $data->alive_result ) {
-						$html_result	.=	'<br/><span class="pz-lkc-man-body-result-alive">('.strHTTPCode($data->alive_result, $this->pz_HTTPMessage($data->alive_result ) ).')</span>';
+						$html_result	.=	'<br/><span class="pz-man-body-result-alive">('.strHTTPCode($data->alive_result, $this->pz_HTTPMessage($data->alive_result ) ).')</span>';
 					}
 					if	($data->no_failure ) {
-						$html_result	=	'<span class="pz-lkc-man-body-result-ignore">'.__('Ignore', $this->text_domain ).'</span><br/>'.$html_result;
+						$html_result	=	'<span class="pz-man-body-result-ignore">'.__('Ignore', TEXT_DOMAIN ).'</span><br/>'.$html_result;
 					}
 
 					// HTML 明細行
 			?>
 			<tr>
-				<th scope="row" class="pz-lkc-man-body-check check-column"><input id="cb-select-<?php echo $data_id; ?>" type="checkbox" name="select_id[]" value="<?php echo $data_id; ?>" /><div class="locked-indicator"></div></th>
-				<td class="pz-lkc-man-body-id"><?php echo $data_id.$html_thumbnail; ?></td>
+				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo $data_id; ?>" type="checkbox" name="select_id[]" value="<?php echo $data_id; ?>" /><div class="locked-indicator"></div></th>
+				<td class="pz-man-body-id"><?php echo $data_id.$html_thumbnail; ?></td>
 				<td colspan="2">
-					<div class="pz-lkc-man-body-url"><?php echo $html_url; ?></div>
-					<div class="pz-lkc-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo $html_title; ?></span></div>
-					<div id="inline_<?php echo $data_id; ?>" class="pz-lkc-man-body-menu row-actions">
-						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-lkc-man-inline-menu"><?php _e('Edit',$this->text_domain ); ?></button> | 
-						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-lkc-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', $this->text_domain )."'"; ?> );"><?php _e('Renew',$this->text_domain ); ?></button> | 
-						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-lkc-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', $this->text_domain )."'"; ?> );"><?php _e('Delete',$this->text_domain ); ?></button>
+					<div class="pz-man-body-url"><?php echo $html_url; ?></div>
+					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo $html_title; ?></span></div>
+					<div id="inline_<?php echo $data_id; ?>" class="pz-man-body-menu row-actions">
+						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php _e('Edit',TEXT_DOMAIN ); ?></button> | 
+						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', TEXT_DOMAIN )."'"; ?> );"><?php _e('Renew',TEXT_DOMAIN ); ?></button> | 
+						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', TEXT_DOMAIN )."'"; ?> );"><?php _e('Delete',TEXT_DOMAIN ); ?></button>
 					</div>
 				</td>
-				<td><div class="pz-lkc-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
-				<td class="pz-lkc-man-body-charset pz-lkc-admin-only"><?php echo htmlspecialchars($data->charset ); ?></td>
+				<td><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
+				<td class="pz-man-body-charset pz-debug-only"><?php echo htmlspecialchars($data->charset ); ?></td>
 				<td>
-					<div class="pz-lkc-man-body-domain">
+					<div class="pz-man-body-domain">
 						<?php
 							$disp_domain	=	(function_exists('idn_to_utf8' ) && mb_substr($domain, 0, 4) === 'xn--') ? idn_to_utf8($domain, 0, INTL_IDNA_VARIANT_UTS46 ) : $domain ;
 							$disp_sitename	=	esc_html($data->site_name );
 						?>
-						<span class="pz-lkc-man-body-domain"   title="<?php echo $disp_domain;   ?>"><?php echo $disp_domain;   ?></span><br/>
-						<span class="pz-lkc-man-body-sitename" title="<?php echo $disp_sitename; ?>"><?php echo $disp_sitename; ?></span>
+						<span class="pz-man-body-domain"   title="<?php echo $disp_domain;   ?>"><?php echo $disp_domain;   ?></span><br/>
+						<span class="pz-man-body-sitename" title="<?php echo $disp_sitename; ?>"><?php echo $disp_sitename; ?></span>
 					</div>
 				</td>
-				<td class="pz-lkc-man-body-sns"><?php echo $html_sns; ?></td>
-				<td class="pz-lkc-man-body-resist-time pz-lkc-admin-only"><?php $dt=$data->regist_time; ?><span title="<?php echo date($this->datetime_format, $dt); ?>"><?php echo date('Y', $dt ); ?><br/><?php echo date('m/d', $dt ); ?><br/><?php echo date('H:i', $dt ); ?></span></td></td>
-				<td class="pz-lkc-man-body-update-time"><?php $dt=$data->update_time; ?><span title="<?php echo date($this->datetime_format, $dt); ?>"><?php echo date('Y', $dt ); ?><br/><?php echo date('m/d', $dt ); ?><br/><?php echo date('H:i', $dt ); ?></span></td></td>
-				<td class="pz-lkc-man-body-sns-time pz-lkc-admin-only"><?php $dt=$data->sns_time; ?><span title="<?php echo date($this->datetime_format, $dt); ?>"><?php echo date('Y', $dt ); ?><br/><?php echo date('m/d', $dt ); ?><br/><?php echo date('H:i', $dt ); ?></span></td></td>
-				<td class="pz-lkc-man-body-alive-time pz-lkc-admin-only"><?php $dt=$data->alive_time; ?><span title="<?php echo date($this->datetime_format, $dt); ?>"><?php echo date('Y', $dt ); ?><br/><?php echo date('m/d', $dt ); ?><br/><?php echo date('H:i', $dt ); ?></span></td></td>
-				<td class="pz-lkc-man-body-post-id"><?php echo $html_post_id; ?></td>
-				<td class="pz-lkc-man-body-result"><?php echo $html_result; ?></td>
+				<td class="pz-man-body-sns"><?php echo $html_sns; ?></td>
+				<td class="pz-man-body-resist-time pz-debug-only"><?php $dt=$data->regist_time; ?><span title="<?php echo date(DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-update-time"><?php $dt=$data->update_time; ?><span title="<?php echo date(DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-sns-time pz-debug-only"><?php $dt=$data->sns_time; ?><span title="<?php echo date(DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-alive-time pz-debug-only"><?php $dt=$data->alive_time; ?><span title="<?php echo date(DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-post-id"><?php echo $html_post_id; ?></td>
+				<td class="pz-man-body-result"><?php echo $html_result; ?></td>
 			</tr>
 			<?php } ?>
 		</tbody>
 	</table>
-	<div class="pz-lkc-man-navi tablenav"><?php /* ページネーション */ echo $paging; ?></div>
+	<div class="pz-man-navi tablenav"><?php /* ページネーション */ echo $paging; ?></div>
 <?php
 	// ファイルメニュー（インポート・エクスポート）
 	if	($this->options['flg-filemenu'] ) {
-		echo	'<div  class="pz-lkc-man-filemenu"><span class="pz-lkc-man-filemenu-icon">'.__('&#x1f4c4;&#xfe0f;', $this->text_domain ).'</span><span class="pz-lkc-man-filemenu-text">'.__('File Menu', $this->text_domain ).'</span><button type="submit" name="action" value="show-import" class="pz-lkc-man-filemenu-button button">'.__('Import From Local File', $this->text_domain ).'</button><button type="submit" name="action" value="show-export" class="pz-lkc-man-filemenu-button button">'.__('Export To Local File', $this->text_domain ).' ('.sprintf(($count_list['all'] == 1 ? __('%s item', $this->text_domain ) : __('%s items', $this->text_domain ) ), number_format($count_list['all'] ) ).')'.'</button></div>';
+		echo	'<div  class="pz-man-filemenu"><span class="pz-man-filemenu-icon">'.__('&#x1f4c4;&#xfe0f;', TEXT_DOMAIN ).'</span><span class="pz-man-filemenu-text">'.__('File Menu', TEXT_DOMAIN ).'</span><button type="submit" name="action" value="show-import" class="pz-man-filemenu-button button">'.__('Import From Local File', TEXT_DOMAIN ).'</button><button type="submit" name="action" value="show-export" class="pz-man-filemenu-button button">'.__('Export To Local File', TEXT_DOMAIN ).' ('.sprintf(($count_list['all'] == 1 ? __('%s item', TEXT_DOMAIN ) : __('%s items', TEXT_DOMAIN ) ), number_format($count_list['all'] ) ).')'.'</button></div>';
 	}
 
 // 関数

@@ -1,30 +1,34 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-lkc-page" id="pz-lkc-error">
-	<div class="pz-lkc-submit-float"><?php submit_button(); ?></div>
-	
-	<h2><?php echo	__('Error Settings', $this->text_domain ).$help_open.'error'.$help_close; ?></h3>
+<div class="pz-page" id="pz-error">
+	<h2><?php echo	__('Error Settings', TEXT_DOMAIN ).$help_open.'error'.$help_close; ?></h2>
 	<div class="pz-error-text">
-		<?php _e('The shortcode description is incorrect. Please open the "Linked Articles" section and correct it.', $this->text_domain ); ?>
+		<?php _e('The shortcode description is incorrect. Please open the "Linked Articles" section and correct it.', TEXT_DOMAIN ); ?>
 	</div>
-	<table class="pz-lkc-set-table form-table">
+	<table class="pz-set-table form-table">
 		<tr>
-			<th scope="row"><?php _e('Post URL', $this->text_domain ); ?></th>
+			<th scope="row"><?php _e('Post ID', TEXT_DOMAIN ); ?></th>
 			<td>
-				<a href="<?php echo esc_url($this->options['error-url'] ); ?>" class="pz-lkc-error-url"><?php echo esc_url($this->options['error-url'] ); ?></a>
+				<a href="<?php echo get_permalink($prop['error-postid'] ); ?>" class="pz-error-url"><?php echo esc_html($prop['error-postid'] ); ?></a>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Occurrence Time', $this->text_domain ); ?></th>
+			<th scope="row"><?php _e('Post URL', TEXT_DOMAIN ); ?></th>
 			<td>
-				<span><?php echo is_numeric($this->options['error-time'] ) ? date($this->datetime_format, $this->options['error-time'] ) : $this->options['error-time']; ?></span>
+				<a href="<?php echo esc_url($prop['error-url'] ); ?>" class="pz-error-url"><?php echo esc_html($prop['error-url'] ); ?></a>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Error Reset', $this->text_domain ); ?></th>
+			<th scope="row"><?php _e('Occurrence Time', TEXT_DOMAIN ); ?></th>
 			<td>
-				<button type="submit" name="action" value="clear-error" class="pz-lkc-button"><?php _e('Reset', $this->text_domain ); ?></button>
-				&ensp;<span><?php _e('Cancel the error condition.', $this->text_domain ); ?></span>
-				<br /><span class="pz-warning"><?php _e('* If you have not corrected the error, you may still get an error even if you cancel the error.', $this->text_domain ); ?></span>
+				<span><?php echo is_numeric($prop['error-time'] ) ? $this->pz_Date(DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time']; ?></span>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php _e('Error Reset', TEXT_DOMAIN ); ?></th>
+			<td>
+				<button type="submit" name="action" value="clear-error" class="pz-button"><?php _e('Reset', TEXT_DOMAIN ); ?></button>
+				&ensp;<span><?php _e('Cancel the error condition.', TEXT_DOMAIN ); ?></span>
+				<br /><span class="pz-warning"><?php _e('* If you have not corrected the error, you may still get an error even if you cancel the error.', TEXT_DOMAIN ); ?></span>
 			</td>
 		</tr>
 	</table>

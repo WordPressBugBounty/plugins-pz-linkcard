@@ -1,9 +1,9 @@
 === Pz-LinkCard ===
-Contributors: Poporon
+Contributors: Popozure
 Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 5.7
-Tested up to: 6.5
-Requires PHP: 7.0
+Tested up to: 6.7.3
+Requires PHP: 7.4.33
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -150,10 +150,39 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 == Changelog ==
 
-= 2.5.5 =
+= 2.5.6 =
+* [Tested] WordPress 6.7.1 での動作確認を行いました。
+* [Tested] WordPress 6.7.2 での動作確認を行いました。
+* [Tested] WordPress 6.7.3-alpha-59811 での動作確認を行いました。
+* [Tested] PHP 7.4.33 での動作確認を行いました。PHPの最低要件を同バージョンとしました。
+* [Tested] PHP 8.2.22 での動作確認を行いました。
+* [Removed] 設定画面の「表示」タブから「リンク文字の下線を除去」を削除しました。「文字」タブで同様の設定が出来るようになったため。
+* [Fixed] 「サイズの変更」を有効にしているときの画像の縦横比が崩れてしまっていたのを修正しました。（Thanks ささのは @sasanohasan on x.com）
+* [Fixed] サムネイルに強制的に枠線が表示されてしまったのを修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Fixed] プラグインを有効化したときに「プラグインの有効化中にxxx文字の予期しない出力が生成されました」のエラーが表示されてしまうのを修正しました。
+* [Fixed] リンク先の画像取得に失敗した際、管理画面でエラーが表示されてしっていたのを修正しました。（Thanks 足じゃんけん @ASHIJANKEN on x.com）
+* [Modified] 変更履歴を日本語のみにしました。
+* [Modified] 「かんたん書式設定」を選んだときの表示方法を調整しました。
+* [Modified] 設定画面の「文字」タブの構成を表形式に変更しました。
+* [Modified] 設定画面の「文字」タブに「ヘッダー文字列」「カテゴリー」を追加しました。ただしカテゴリー表示は未実装のため変更できません。
+* [Modified] 設定画面の「外部リンク」「内部リンク」「同ページへのリンク」に「ヘッダー」を追加しました。
+* [Modified] 設定画面の「サイズの変更」を「表示」タブから「配置」タブへ移動しました。
+* [Modified] 設定画面の「BLOCKQUOTEで囲む」を「配置」タブから「上級者向け」タブへ移動しました。
+* [Modified] 設定画面の「シェア数の表示」の「タイトルの後ろ」を「タイトルの下」へ変更しました。
+* [Modified] 設定画面の「表示」にある「投稿日を表示」の機能について、指定した場合、URLの代わりに表示するように修正。
+* [Modified] スタイルシートを生成する際、軽量化したファイルも生成するように修正しました。
+* [Modified] 設定画面の「上級者向け」タブに「圧縮」を追加しました。軽量化したスタイルシートを使用するようになります。
+* [Modified] ショートコードのURLパラメータの指定が誤っている場合の判定を厳しくしました。エクスポート時に不正データになってしまうため。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Modified] 設定の初期値をいくつか変更しました。（リンクカードの影の初期値が無しから有りになったなど）
+* [Added] 設定画面の「内部リンク」タブの「記事取得方法」にカスタムフィールドを優先する設定を追加しました。（Thanks Goshi #comment-7728）
+* [Added] 設定画面の「内部リンク」タブに「タイトルにするカスタムフィールド」「抜粋文にするカスタムフィールド」を追加しました。（Thanks Goshi #comment-7728）
+* [Added] 設定画面の「表示」にサムネイルの枠線を追加しました。
+* [Added] 設定画面の「エディター」タブに「抜粋文をクリア」を追加。titleパラメーターを指定したときに抜粋文をクリアします。
+* [Added] 設定画面の「上級者向け」タブに「テキストの選択」を追加。カード内のテキストを選択禁止に出来ます。
 
+= 2.5.5 =
 * WordPress 6.5.4 での動作確認。
-  Compatible with WordPress 6.5.4.
+  Tested: Compatible with WordPress 6.5.4.
 * スタイルシートのテンプレートを一部修正しました。
   Modified: Some modifications have been made to the style sheet template.
 * 設定画面でチェックボックスの一部でチェックが外れなくなる不具合を修正しました。
@@ -176,16 +205,14 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Added: Added plugin name and version at the top of the admin page.
 * リンクカードが記事の幅を越えて表示されてしまう不具合を修正しました。
   Fixed: Fixed a bug that caused link cards to appear beyond the width of the article.
+* サムネイル画像の領域を変更したが、テーマの設定に引っ張られ正しく表示されない現象を修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+  Modified: Improved display of thumbnails with small vertical size. (Additional Corrections.)
 * 管理画面からキャッシュ内容のインポート／エクスポートが正常に出来ない不具合を修正しました。
   Fixed: Fixed a problem that prevented import/export of cache contents from the administration screen.
 
 = 2.5.4 =
-* WordPress 6.5 での動作確認。
-  Compatible with WordPress 6.5.
-* WordPress 6.5.2 での動作確認。
-  Compatible with WordPress 6.5.2.
 * WordPress 6.5.3 での動作確認。
-  Compatible with WordPress 6.5.3.
+  Tested: Compatible with WordPress 6.5.3.
 * 設定画面で [Ctrl]+[←] でひとつ前のタブ、[Ctrl]+[→]でひとつ後のタブを選択できるように機能追加。
   Added: Press CTRL+RIGHT on the settings screen to move to the next tab, or CTRL+LEFT to move to the previous tab.
 * 設定画面で [Ctrl]+[S] で「変更を保存」をクリックした動作をするように機能追加。
@@ -199,7 +226,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * 設定画面で「変更を保存」を押したときに画面を暗くするように修正しました。
   Modified: Fixed to darken the screen when the 'Save Changes' button is pressed.
 * 設定画面の「外部リンク」から「はてなブログカードを使用する」を削除しました。
-  Modified: Removed "Use HatenaBlogCard" from "External Links" on the Settings screen.
+  Removed: Removed "Use HatenaBlogCard" from "External Links" on the Settings screen.
 * カード管理画面での画面遷移をGETからPOSTに変更しました。
   Modified: Screen transitions on the card management screen have been changed from GET to POST.
 * カード管理画面にて外部サイトのURLにリンクを追加しました。
@@ -227,7 +254,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.5.3 =
 * WordPress 6.4.3 での動作確認。
-  Compatible with WordPress 6.4.3.
+  Tested: Compatible with WordPress 6.4.3.
 * 「SSRF（サーバーサイドリクエストフォージェリ）」に対する脆弱性があったため、対策を行いました。
   Fixed: SSRF vulnerability was discovered and countermeasures were taken.
 * 「XSS（クロスサイトスクリプティング）」に対する脆弱性があったため、対策を行いました。
@@ -256,10 +283,10 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.5.0 =
 * WordPress 6.4.2 での動作確認。
-  Compatible with WordPress 6.4.2.
+  Tested: Compatible with WordPress 6.4.2.
 * Pzカード管理の画面のセキュリティを強化。(Thanks 山下午壱 @fiveoneinc_jp on x.com)(Thanks 山田彩乃 @happyjotoku on x.com)
   Fixed: Enhanced security of the Pz Card Management screen.
-* URLにシングルクォートが含まれる場合、リンクされなかった不具合を再度修正。(Thanks てんちゃん #comment-6603)
+* URLにシングルクォートが含まれる場合、リンクされなかった不具合を再度修正。（Thanks てんちゃん #comment-6603）
   Fixed: Fixed again the bug that the link did not work if the URL contained single quotes.
 * 文字コードの判定に失敗すると異常終了になってしまう不具合を修正。（Thanks 足じゃんけん @ASHIJANKEN on x.com）
   Fixed: Fixed a bug that caused abnormal termination when character code determination failed.
@@ -268,13 +295,13 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.8.1 =
 * WordPress 6.4.1 での動作確認。
-  Compatible with WordPress 6.4.1.
-* URLにシングルクォートが含まれる場合、リンクされなかった不具合を修正。(Thanks てんちゃん #comment-6603)
+  Tested: Compatible with WordPress 6.4.1.
+* URLにシングルクォートが含まれる場合、リンクされなかった不具合を修正。（Thanks てんちゃん #comment-6603）
   Fixed: Fixed no link when single quotes are included in the URL.
 
 = 2.4.8 =
 * WordPress 6.3.1 での動作確認。
-  Compatible with WordPress 6.3.1.
+  Tested: Compatible with WordPress 6.3.1.
 * カード管理画面にてSQLの構文エラーがあったのを修正。(Thanks @in_seki on x.com)
   Fixed: Fixed SQL syntax error in card management screen.
 * 設定画面の「外部リンク」タブに「サムネイル」と「サイトアイコン」の「代替テキスト」の設定を追加。(Thanks @SWD on x.com)
@@ -288,19 +315,19 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.7 =
 * WordPress 6.0.2 での動作確認。
-  Compatible with WordPress 6.0.2.
+  Tested: Compatible with WordPress 6.0.2.
 * ビジュアル エディタの「リンクカード挿入」ボタンが表示されない不具合を修正。(Thanks @hutagoparadise on Twitter)
   Fixed: Fixed a bug that prevented the "Insert Link Card" button in the Visual Editor from appearing.
 
 = 2.4.6.1 =
 * WordPress 6.0.1 での動作確認。
-  Compatible with WordPress 6.0.1.
+  Tested: Compatible with WordPress 6.0.1.
 * 国際化ドメイン（日本語ドメイン）の記事が取得できない不具合を修正。(Thanks @kozy_1919 on Twitter)
   Fixed: Fixed a bug that prevented the acquisition of articles with an IDNA-ASCII-Domain.
 
 = 2.4.6 =
 * WordPress 6.0 での動作確認。
-  Compatible with WordPress 6.0.
+  Tested: Compatible with WordPress 6.0.
 * 画像のリダイレクトに対応。（CDN対応）(Thanks @in_seki on Twitter)
   Modified: Support for image URL redirects in CDNs, etc.
 * 特定のテーマでAMPと誤判定してしまう不具合を修正。(Thanks @360bpk on Twitter)
@@ -308,7 +335,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.5.4 =
 * WordPress 5.9.5 での動作確認。
-  Compatible with WordPress 5.9.5.
+  Tested: Compatible with WordPress 5.9.5.
 * プラグインのアンインストールが失敗する不具合を修正。
   Fixed: Fixed a bug that caused uninstallation to fail.
 * 管理画面に記事情報が登録されない不具合を修正。(Thanks @OrganicRelife on Twitter)
@@ -332,15 +359,15 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * 最低動作環境を WordPress 5.7 に変更。
   Changed the minimum system requirements to WordPress 5.7.
 * WordPress 5.8.2 での動作確認。
-  Compatible with WordPress 5.8.2.
+  Tested: Compatible with WordPress 5.8.2.
 * PHP 7.3 での動作確認。
-  Compatible with PHP 7.3.
+  Tested: Compatible with PHP 7.3.
 * PHP 7.4 での動作確認。
-  Compatible with PHP 7.4.
+  Tested: Compatible with PHP 7.4.
 * PHP 8.0 に対応。PHPの仕様変更により出るようになったエラーを修正。
-  Compatible with PHP 8.0.
+  Tested: Compatible with PHP 8.0.
 * PHP 8.1 での動作確認。（WordPress本体や他のプラグインでエラーが出る状態です）
-  Compatible with PHP 8.1.
+  Tested: Compatible with PHP 8.1.
 * リンクカードのタイトルと抜粋文のエスケープ処理を追加。（XSS脆弱性の対応）
   Fixed: Added escaping of display items to address XSS vulnerability.
 * リンクカードのHTMLの"noopener"の表記ミスを修正。(Thanks @jh4vaj on Twitter)
@@ -349,14 +376,8 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Fixed: Fixed that line feeds are not inserted when exporting card information.
 
 = 2.4.4.4 =
-* WordPress 5.7.1 での動作確認。
-  Compatible with WordPress 5.7.1.
-* WordPress 5.7.2 での動作確認。
-  Compatible with WordPress 5.7.2.
-* WordPress 5.8 での動作確認。
-  Compatible with WordPress 5.8.
 * WordPress 5.8.1 での動作確認。
-  Compatible with WordPress 5.8.1.
+  Tested: Compatible with WordPress 5.8.1.
 * カード管理画面の一覧画面に表示される文字列にエスケープ処理を追加。（XSS脆弱性の対応）
   Fixed: Added escaping of display items to address XSS vulnerability.
 * カード管理画面の編集画面に表示される文字列にエスケープ処理を追加。（XSS脆弱性の対応）
@@ -378,7 +399,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.4.1 =
 * WordPress 5.7 での動作確認。
-  Compatible with WordPress 5.7.
+  Tested: Compatible with WordPress 5.7.
 * 設定画面の「内部リンク」タブの「記事取得方法」で「抜粋文を優先」を選んでも抜粋文が取得できていない不具合を修正。(Thanks @OrganicRelife)
   Fixed: Fixed a bug that excerpts could not be obtained even if "Prioritize excerpts" was selected in "Article acquisition method" on the "Internal link" tab of the setting screen.
 
@@ -483,8 +504,8 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Modified: Replace require_once with include.
 
 = 2.4.3.3 =
-* 設定画面の「上級者向け」タブに「URLの補正」の設定を削除。（不具合が解消されなかったため。）(Thanks @tannpura00)
-  Modified: Deleted "URL correction" setting from "Advanced" tab of the setting screen. (It wasn't the cause of the problem.)
+* 設定画面の「上級者向け」タブにある「URLの補正」を削除。（不具合が解消されなかったため。）(Thanks @tannpura00)
+  Removed: Deleted "URL correction" setting from "Advanced" tab of the setting screen. (It wasn't the cause of the problem.)
 * URL内の % が %25 とエンコードされていた際に正しいページにリンクがされなかった不具合を修正。(Thanks @tannpura00)
   Fixed: Fixed a bug that the correct page was not linked when "%" in the URL was encoded as "%25".
 
@@ -502,7 +523,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.3 =
 * WordPress 5.6.2 での動作確認。
-  Compatible with WordPress 5.6.2.
+  Tested: Compatible with WordPress 5.6.2.
 * ドキュメント（readme.txt）修正。
   Modified: Modify "readme.txt".
 * ショートコードのURLパラメータの解釈方法を修正。(Thanks @longer_n)
@@ -526,11 +547,11 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * 外部リンクのサムネイルのキャッシュ画像のURLからスキーム（http:やhttps:）を省略するように変更。(Thanks @miya_gal_ossan)
   Modified: Modified to omit the scheme (http: and https:) from the URL of the cache image of the thumbnail of the external link.
 * 設定画面から国際化ドメイン（IDNA ASCIIドメイン）に対応する設定を削除。
-  Modified: Deleted the setting corresponding to the internationalized domain (IDNA ASCII domain) from the setting screen.
+  Removed: Removed the setting corresponding to the internationalized domain (IDNA ASCII domain) from the setting screen.
 * 設定に関わらず国際化ドメインに対応。
   Modified: Supports internationalized domains regardless of settings.
 * 設定画面で使うカラーピッカーをWordPressの物からHTML5の物に変更。
-  Modified: Modified the color picker used on the setting screen from WordPress to HTML5.
+  Modified: Modified the color-picker used on the setting screen from WordPress to HTML5.
 * 設定画面の「相対指定URL」の設定項目を「上級者向け」タブから「リンク先の検査」タブへ移動。
   Modified: Moved the setting item of "Relative URL" on the setting screen from the "Advanced" tab to the "Link Check" tab.
 * 設定画面の「基本」タブに、「更新履歴」の表示を追加。
@@ -538,7 +559,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * 設定画面の「リンク先の検査」タブに「相対指定URL」の設定を追加。
   Added: Added "Relative URL" setting to "Link Check" tab of the setting screen.
 * 設定画面の「Web API」タブ、「画像」タブ、「CSS」タブを削除。
-  Modified: Removed "Web API" tab, "Image" tab, and "CSS" tab on the setting screen.
+  Removed: Removed "Web API" tab, "Image" tab, and "CSS" tab on the setting screen.
 * 設定画面に「その他」タブを追加。（「Web API」「画像」「CSS」の内容を統合）
   Added: Added "etc." tab to the setting screen. (Integrates the contents of "Web API", "Image" and "CSS")
 * 設定画面の「外部リンク」タブに「サムネイルサイズ」の設定を追加。
@@ -556,7 +577,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * 設定画面の「上級者向け」タブに「初期化タブ」を表示する設定を追加。
   Added: Added a setting to display the "Initialization Tab" in the "Advanced" tab of the setting screen.
 * 設定画面の「上級者向け」タブから「実行時間の表示」の設定を削除。
-  Modified: Deleted "Display Execution Time" setting from "Advanced" tab of the setting screen.
+  Removed: Removed "Display Execution Time" setting from "Advanced" tab of the setting screen.
 * 設定画面の「上級者向け」タブに「調査モード」の設定を追加。（通常は使用しないでください）
   Added a setting to display the "Survey Mode" in the "Advanced" tab of the setting screen. (Do not use normally)
 * 設定画面の「上級者向け」タブに「管理者モード」の設定を追加。（動作無能に陥る設定が可能なため、通常は使用しないでください。）
@@ -654,17 +675,13 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 = 2.4.1 =
 * WordPress 5.6 での動作確認。
-  Compatible with WordPress 5.6.
+  Tested: Compatible with WordPress 5.6.
 * 外部リンクの画像をキャッシュするときのサイズを選択できる機能を追加。(Thanks @peacediner on Twitter)
   Added: Added settings to allow you to choose the size when caching images from external link.
 
 = 2.4.0 =
-* WordPress 5.4.2 での動作確認。
-  Compatible with WordPress 5.4.2.
-* WordPress 5.5 での動作確認。
-  Compatible with WordPress 5.5.
 * WordPress 5.5.3 での動作確認。
-  Compatible with WordPress 5.5.3.
+  Tested: Compatible with WordPress 5.5.3.
 * 記事では無いページでURL指定エラーが発生する不具合を修正。（ポストIDが取得できないURLを除外）(Thanks @rindark on Twitter)(Thanks @Rina_sendai on Twitter)
   Fixed: Suppressed incorrect error display.
 * サブディレクトリ型マルチサイトの判定において警告エラーが発生する不具合を修正。

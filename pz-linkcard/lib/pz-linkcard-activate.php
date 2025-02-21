@@ -1,7 +1,9 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
-	// 出力を抑制
-	$this->suppression		=	true;
+	if	($this->activate_now	==	true) {
+		return;
+	}
+	$this->activate_now			=	true;
 
 	// WP-CRONの割り込みを停止
 	if	(wp_next_scheduled(self::CRON_CHECK ) ) {
@@ -68,32 +70,95 @@
 		'size-added'			=>		'added-size',				// Ver.2.5.5 パラメータ名変更のため
 		'height-added'			=>		'added-height',				// Ver.2.5.5 パラメータ名変更のため
 		'css-url-add'			=>		'css-add-url',				// Ver.2.5.5 パラメータ名変更のため
+		'nofollow'				=>		'flg-nofollow',				// Ver.2.5.6 パラメータ名変更のため
+		'noopener'				=>		'flg-noopener',				// Ver.2.5.6 パラメータ名変更のため
+		'title-trim'			=>		'title-length',				// Ver.2.5.6 パラメータ名変更のため
+		'excerpt-trim'			=>		'excerpt-length',			// Ver.2.5.6 パラメータ名変更のため
+		'flg-get-pid'			=>		'in-get-url',				// Ver.2.5.6 パラメータ名変更のため
 		);
-	foreach ($rename_key as $old => $new ) {
+	foreach ($rename_key		as	$old => $new ) {
 		if	(array_key_exists($old, $this->options ) && !array_key_exists($new, $this->options ) ) {
 			$this->options[$new]	=	$this->options[$old];
 			unset($this->options[$old] );
 		}
 	}
 
-	// CSSの補助バージョンのリセット
+	// 足りない項目
+	foreach	(Self::DEFAULTS		as	$key => $value ) {
+		if	(!array_key_exists($key, $this->options ) ) {
+			$this->options[$key]	=	Self::DEFAULTS[$key];
+		}
+	}
+
+	// 個別に設定しなおす
+	if		($this->options['plugin-version']	<	'2.5.6' ) {
+		// 角の丸め
+		switch	($this->options['radius'] ) {
+		case	'2':
+			$this->options['radius']			=	'4px';
+			break;
+		case	'1':
+			$this->options['radius']			=	'8px';
+			break;
+		case	'3':
+			$this->options['radius']			=	'16px';
+			break;
+		case	'4':
+			$this->options['radius']			=	'32px';
+			break;
+		case	'5':
+			$this->options['radius']			=	'64px';
+			break;
+		}
+		// 続きを読むボタン
+		switch	(isset($this->options['flg-more'] ) ) {
+		case	'0':
+			$this->options['more-style']		=	'';
+			break;
+		case	'1':
+			$this->options['more-style']		=	'SMP';
+			break;
+		case	'3':
+			$this->options['more-style']		=	'BTN';
+			break;
+		case	'4':
+			$this->options['more-style']		=	'PSH';
+			break;
+		case	'5':
+			$this->options['more-style']		=	'PSH';
+			break;
+		}
+		unset($this->options['flg-more'] );
+
+		// 縁取りの色をクリアする
+		foreach		(array('title', 'excerpt', 'url', 'date', 'heading', 'more', 'info', 'added', 'cat' ) as $t ) {
+			if	(array_key_exists($t.'-outline', $this->options ) && !$this->options[$t.'-outline'] ) {
+				$this->options[$t.'-outline-color']	=	null;
+			}
+		}
+	}
+
+	// プラグインバージョンの更新とCSSの補助バージョンのリセット
 	if		($this->options['plugin-version']	<>	PLUGIN_VERSION ) {
 		if	($this->options['css-count']		>	5 ) {
-			$this->options['css-count']		=	1;
+			$this->options['css-count']		=	0;
 		}
 		$this->options['plugin-version']	=	PLUGIN_VERSION;
 	}
 
-	// DBテーブル作成＆メンテナンス
-	require_once ('pz-linkcard-init-db.php');
+	// DBテーブル作成・更新＆メンテナンス
+	require_once ('pz-linkcard-activate-db.php');
 
 	// テンプレート側でMCEプラグイン一覧を上書きする場合があるため、実行優先度を下げる
 	if	(empty($this->options['mce-priority'] ) && (get_template() == 'jin' ) ) {
-		$this->options['mce-priority']		=	11;
+		$this->options['mce-priority']	=	11;
 	}
 
 	// オプションの更新
 	$result		=	$this->pz_save_options();
+	if	($result		==	false ) {
+		return	false;
+	}
 
 	// スタイルシート生成
 	$this->pz_SetStyle();

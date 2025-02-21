@@ -6,7 +6,7 @@
 	// DBの列名取得
 	$col_name	=	$wpdb->get_col("DESC $this->db_name" );
 	if	(!$col_name || $wpdb->last_error ) {
-		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', $this->text_domain ).__('(', $this->text_domain ).$wpdb->last_error.__(')', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', TEXT_DOMAIN ).__('(', TEXT_DOMAIN ).$wpdb->last_error.__(')', TEXT_DOMAIN ).'</strong></p></div>';
 		return	null;
 	}
 
@@ -24,20 +24,20 @@
 
 	// アップロードされたファイルの存在チェック
 	if	(!is_uploaded_file($temp_path ) ) {
-		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Not Found.', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Not Found.', TEXT_DOMAIN ).'</strong></p></div>';
 		return	null;
 	}
 
 	// ファイルを開く（読み込み）
 	$handle			=	fopen($temp_path, 'r');
 	if	(!$handle ) {
-		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Open Error.', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Open Error.', TEXT_DOMAIN ).'</strong></p></div>';
 		return	null;
 	}
 
 	// ヘッダー行入力
 	if	(($csv_header = fgetcsv($handle ) ) == false ) {
-		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Read Error.', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import File Read Error.', TEXT_DOMAIN ).'</strong></p></div>';
 		return	null;
 	}
 
@@ -49,14 +49,14 @@
 		// DBクリア
 		$result	=	$wpdb->query("DELETE FROM $this->db_name" );
 		if	($wpdb->last_error ) {
-			echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', $this->text_domain ).__('(', $this->text_domain ).$wpdb->last_error.__(')', $this->text_domain ).'</strong></p></div>';
+			echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', TEXT_DOMAIN ).__('(', TEXT_DOMAIN ).$wpdb->last_error.__(')', TEXT_DOMAIN ).'</strong></p></div>';
 			return	null;
 		}
 
 		// AUTO INCLIMENTのリセット
 		$result	=	$wpdb->query("ALTER TABLE $this->db_name AUTO_INCREMENT=1;" );
 		if	($wpdb->last_error ) {
-			echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', $this->text_domain ).__('(', $this->text_domain ).$wpdb->last_error.__(')', $this->text_domain ).'</strong></p></div>';
+			echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('DB Access Error.', TEXT_DOMAIN ).__('(', TEXT_DOMAIN ).$wpdb->last_error.__(')', TEXT_DOMAIN ).'</strong></p></div>';
 			return	null;
 		}
 	}
@@ -95,7 +95,7 @@
 	fclose($handle );
 
 	if	($success_count ) {
-		echo	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Import Successful.', $this->text_domain ).__('(', $this->text_domain ).__('Read:', $this->text_domain ).$read_count.' '.__('Success:', $this->text_domain ).$success_count.' '.__('Skip:', $this->text_domain ).$skip_count.__(')', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Import Successful.', TEXT_DOMAIN ).__('(', TEXT_DOMAIN ).__('Read:', TEXT_DOMAIN ).$read_count.' '.__('Success:', TEXT_DOMAIN ).$success_count.' '.__('Skip:', TEXT_DOMAIN ).$skip_count.__(')', TEXT_DOMAIN ).'</strong></p></div>';
 	} else {
-		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import Failure.', $this->text_domain ).__('(', $this->text_domain ).__('Read:', $this->text_domain ).$read_count.' '.__('Skip:', $this->text_domain ).$skip_count.__(')', $this->text_domain ).'</strong></p></div>';
+		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import Failure.', TEXT_DOMAIN ).__('(', TEXT_DOMAIN ).__('Read:', TEXT_DOMAIN ).$read_count.' '.__('Skip:', TEXT_DOMAIN ).$skip_count.__(')', TEXT_DOMAIN ).'</strong></p></div>';
 	}

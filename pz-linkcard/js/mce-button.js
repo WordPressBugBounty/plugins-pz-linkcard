@@ -17,16 +17,16 @@
 				image: url + "/mce-button.png"
 			} );
 			ed.addCommand(id, function() {
-                $("#pz-lkc-overlay").css("display", "block");
-                $("#pz-lkc-modal").css("display", "block");
-				$("#pz-lkc-url").val("");
+                $("#pz-overlay").css("display", "block");
+                $("#pz-modal").css("display", "block");
+				$("#pz-url").val("");
                 var st = tinymce.activeEditor.selection.getContent();
                 var ur = cut_url(st);
 
-				$("#pz-lkc-url").val(ur);
+				$("#pz-url").val(ur);
 				modal_move_center();
-                $("#pz-lkc-url").focus();
-				$("#pz-lkc-url").select();
+                $("#pz-url").focus();
+				$("#pz-url").select();
 			} );
 		},
 	} );
@@ -35,23 +35,23 @@
 	tinymce.PluginManager.requireLangPack('pz_linkcard_tinymce');
 
 	// 画面のどこかをクリックしたらモーダルを閉じる
-	$("#pz-lkc-overlay,#pz-lkc-close").unbind().click( function() {
-	    $("#pz-lkc-overlay").css("display", "none");
-	    $("#pz-lkc-modal").css("display"," none");
-	    $("#pz-lkc-serif").val("");
-		$("#pz-lkc-check").prop("checked", false);
+	$("#pz-overlay,#pz-close").unbind().click( function() {
+	    $("#pz-overlay").css("display", "none");
+	    $("#pz-modal").css("display"," none");
+	    $("#pz-serif").val("");
+		$("#pz-check").prop("checked", false);
 	} ) ;
 	
 	// [ESC]キーが押されたらCLOSEをクリック
 	$(document).keydown( function(e) {
 		if (e.keyCode == 27) {
-			$("#pz-lkc-close").click();
+			$("#pz-close").click();
 		}
 	} ) ;
 	
 	// 貼り付け
-	$("#pz-lkc-url").bind('paste', function(e) {
-		if ($("#pz-lkc-url").val() == "") {
+	$("#pz-url").bind('paste', function(e) {
+		if ($("#pz-url").val() == "") {
 			var cb = undefined;
 			if (window.clipboardData && window.clipboardData.getData) {
 				cb = window.clipboardData.getData('Text');
@@ -61,24 +61,24 @@
 	        var ur = cut_url(cb);
 			if (ur != null) {
 				ur = ur[1];
-				$("#pz-lkc-url").val(ur);
-				$("#pz-lkc-url").select();
+				$("#pz-url").val(ur);
+				$("#pz-url").select();
 				return false;
 			}
 		}
 	} ) ;
 	
 	// 挿入ボタン
-	$("#pz-lkc-insert").unbind().click( function() {
-	    $("#pz-lkc-overlay").css("display","none");
-	    $("#pz-lkc-modal").css("display","none");
-		if ($("#pz-lkc-url").val() != "") {
-	    	var sc = "<p>[" + $("#pz-lkc-code").val() + " url=\"" + $("#pz-lkc-url").val() + "\"]</p>";
+	$("#pz-insert").unbind().click( function() {
+	    $("#pz-overlay").css("display","none");
+	    $("#pz-modal").css("display","none");
+		if ($("#pz-url").val() != "") {
+	    	var sc = "<p>[" + $("#pz-code").val() + " url=\"" + $("#pz-url").val() + "\"]</p>";
 	    	tinymce.activeEditor.selection.setContent(sc);
 	    }
 	    tinymce.activeEditor.focus()
-	    $("#pz-lkc-serif").val("");
-		$("#pz-lkc-check").prop("checked", false);
+	    $("#pz-serif").val("");
+		$("#pz-check").prop("checked", false);
 	} ) ;
 
 	// ウィンドウのリサイズ
@@ -86,9 +86,9 @@
 	function modal_move_center() {
 	    var w = $(window).width();
 	    var h = $(window).height();
-	    var mw = $("#pz-lkc-modal").outerWidth();
-	    var mh = $("#pz-lkc-modal").outerHeight();
-	    $("#pz-lkc-modal").css( {"left": ((w - mw)/2) + "px","top": ((h - mh)/2) + "px"} );
+	    var mw = $("#pz-modal").outerWidth();
+	    var mh = $("#pz-modal").outerHeight();
+	    $("#pz-modal").css( {"left": ((w - mw)/2) + "px","top": ((h - mh)/2) + "px"} );
 	}
 
 	// 文字列からURLを切り出す
