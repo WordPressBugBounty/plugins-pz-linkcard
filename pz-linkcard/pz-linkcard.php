@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.6
+Version:		2.5.6.1
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -481,7 +481,7 @@ class class_pz_linkcard {
 		if		(!$this->options['auto-external'] ) {
 			// 内部リンクも外部リンクも変換する
 			if	($this->options['auto-atag'] ) {
-				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?<a\s.*href\s*=\s*[\'"]?((https?|file|ftp|data|ogg):\/\/[^\s<>]+)[\'"]?[^<]*<\/a>(<\/p>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
+				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?<a\s.*href\s*=\s*[\'"]?((https?|file|ftp|data|ogg):\/\/[^\s<>\'"]+)[\'"]?[^<]*<\/a>(<\/p>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
 			}
 			if	($this->options['auto-url'] ) {
 				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?((https?|file|ftp|data|ogg):\/\/[^\s<>]+)(<\/p>|<br ?\/?>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );

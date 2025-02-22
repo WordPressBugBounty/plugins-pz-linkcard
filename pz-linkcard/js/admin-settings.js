@@ -1,4 +1,4 @@
-(function($) {
+jQuery(function($) {
 	// Pz-LinkCardの設定画面のときのみ動作
 	if	($('.pz-dashboard').is('*') ) {
 

@@ -1,4 +1,4 @@
-( function( $ ) {
+jQuery( function( $ ) {
 	tinymce.create( "tinymce.plugins.pz_linkcard_tinymce", {
 		getInfo: function() {
 			return {

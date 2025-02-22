@@ -1,5 +1,5 @@
 === Pz-LinkCard ===
-Contributors: Popozure
+Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 5.7
 Tested up to: 6.7.3
@@ -149,6 +149,10 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 
 == Changelog ==
+
+= 2.5.6.1 =
+* [Fixed] クラシック エディターで挿入ボタンが動作しない場合があったため、スクリプトを修正しました。
+* [Fixed] 「テキストリンク行を変換」を有効にした際、リンクカードが表示されずURLエラーの表示になってしまう不具合を修正しました。
 
 = 2.5.6 =
 * [Tested] WordPress 6.7.1 での動作確認を行いました。
