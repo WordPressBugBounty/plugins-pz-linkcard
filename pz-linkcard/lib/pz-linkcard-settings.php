@@ -1,9 +1,16 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div id="pz-overlay-proc"></div>
 <?php
+	// 年月の書式
+	define('DATETIME_FORMAT', get_option('date_format' ).' '.get_option('time_format' ) );
 
+	// 「内部リンクの設定を参照」
+	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', TEXT_DOMAIN ), ) );
+
+	// 「枠線の幅」
+	define('LIST_PX',		array('1px' => __('1px', TEXT_DOMAIN ), '2px' => __('2px', TEXT_DOMAIN ), '3px' => __('3px', TEXT_DOMAIN ), '4px' => __('4px', TEXT_DOMAIN ), '5px' => __('5px', TEXT_DOMAIN ), '6px' => __('6px', TEXT_DOMAIN ), '7px' => __('7px', TEXT_DOMAIN ), '8px' => __('8px', TEXT_DOMAIN ), '9px' => __('9px', TEXT_DOMAIN ), '10px' => __('10px', TEXT_DOMAIN ), '11px' => __('11px', TEXT_DOMAIN ), '12px' => __('12px', TEXT_DOMAIN ), '13px' => __('13px', TEXT_DOMAIN ), '14px' => __('14px', TEXT_DOMAIN ), '15px' => __('15px', TEXT_DOMAIN ), '16px' => __('16px', TEXT_DOMAIN ), '17px' => __('17px', TEXT_DOMAIN ), '18px' => __('18px', TEXT_DOMAIN ), '19px' => __('19px', TEXT_DOMAIN ), '20px' => __('20px', TEXT_DOMAIN ), '21px' => __('21px', TEXT_DOMAIN ), '22px' => __('22px', TEXT_DOMAIN ), '23px' => __('23px', TEXT_DOMAIN ), '24px' => __('24px', TEXT_DOMAIN ), '25px' => __('25px', TEXT_DOMAIN ), '26px' => __('26px', TEXT_DOMAIN ), '27px' => __('27px', TEXT_DOMAIN ), '28px' => __('28px', TEXT_DOMAIN ), '29px' => __('29px', TEXT_DOMAIN ), '30px' => __('30px', TEXT_DOMAIN ), '31px' => __('31px', TEXT_DOMAIN ), '32px' => __('32px', TEXT_DOMAIN ), '33px' => __('33px', TEXT_DOMAIN ), '34px' => __('34px', TEXT_DOMAIN ), '35px' => __('35px', TEXT_DOMAIN ), '36px' => __('36px', TEXT_DOMAIN ), '37px' => __('37px', TEXT_DOMAIN ), '38px' => __('38px', TEXT_DOMAIN ), '39px' => __('39px', TEXT_DOMAIN ), '40px' => __('40px', TEXT_DOMAIN ), '41px' => __('41px', TEXT_DOMAIN ), '42px' => __('42px', TEXT_DOMAIN ), '43px' => __('43px', TEXT_DOMAIN ), '44px' => __('44px', TEXT_DOMAIN ), '45px' => __('45px', TEXT_DOMAIN ), '46px' => __('46px', TEXT_DOMAIN ), '47px' => __('47px', TEXT_DOMAIN ), '48px' => __('48px', TEXT_DOMAIN ), '49px' => __('49px', TEXT_DOMAIN ), '50px' => __('50px', TEXT_DOMAIN ), '51px' => __('51px', TEXT_DOMAIN ), '52px' => __('52px', TEXT_DOMAIN ), '53px' => __('53px', TEXT_DOMAIN ), '54px' => __('54px', TEXT_DOMAIN ), '55px' => __('55px', TEXT_DOMAIN ), '56px' => __('56px', TEXT_DOMAIN ), '57px' => __('57px', TEXT_DOMAIN ), '58px' => __('58px', TEXT_DOMAIN ), '59px' => __('59px', TEXT_DOMAIN ), '60px' => __('60px', TEXT_DOMAIN ), '61px' => __('61px', TEXT_DOMAIN ), '62px' => __('62px', TEXT_DOMAIN ), '63px' => __('63px', TEXT_DOMAIN ), '64px' => __('64px', TEXT_DOMAIN ), ) );
+	
 	// 「余白」の書式
-	define('LIST_MARGIN', array(
+	define('LIST_MARGIN',	array(
 		''				=>		__('Not defined',		TEXT_DOMAIN ),
 		'0'				=>		__('0',					TEXT_DOMAIN ),
 		'4px'			=>		__('4px',				TEXT_DOMAIN ),
@@ -20,7 +27,7 @@
 	) );
 
 	// 「角丸め」の書式
-	define('LIST_RADIUS', array(
+	define('LIST_RADIUS',	array(
 		''				=>		__('None',				TEXT_DOMAIN ),
 		'2px'			=>		__('2px',				TEXT_DOMAIN ),
 		'4px'			=>		__('4px',				TEXT_DOMAIN ),
@@ -55,22 +62,16 @@
 		'2'				=>		__('Other Than Mobile',	TEXT_DOMAIN ),
 	) );
 
-	// 「内部リンクの設定を参照」
-	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', TEXT_DOMAIN ), ) );
-
-	// 「枠線の幅」
-	define('LIST_PX',		array('1px' => __('1px', TEXT_DOMAIN ), '2px' => __('2px', TEXT_DOMAIN ), '3px' => __('3px', TEXT_DOMAIN ), '4px' => __('4px', TEXT_DOMAIN ), '5px' => __('5px', TEXT_DOMAIN ), '6px' => __('6px', TEXT_DOMAIN ), '7px' => __('7px', TEXT_DOMAIN ), '8px' => __('8px', TEXT_DOMAIN ), '9px' => __('9px', TEXT_DOMAIN ), '10px' => __('10px', TEXT_DOMAIN ), '11px' => __('11px', TEXT_DOMAIN ), '12px' => __('12px', TEXT_DOMAIN ), '13px' => __('13px', TEXT_DOMAIN ), '14px' => __('14px', TEXT_DOMAIN ), '15px' => __('15px', TEXT_DOMAIN ), '16px' => __('16px', TEXT_DOMAIN ), '17px' => __('17px', TEXT_DOMAIN ), '18px' => __('18px', TEXT_DOMAIN ), '19px' => __('19px', TEXT_DOMAIN ), '20px' => __('20px', TEXT_DOMAIN ), '21px' => __('21px', TEXT_DOMAIN ), '22px' => __('22px', TEXT_DOMAIN ), '23px' => __('23px', TEXT_DOMAIN ), '24px' => __('24px', TEXT_DOMAIN ), '25px' => __('25px', TEXT_DOMAIN ), '26px' => __('26px', TEXT_DOMAIN ), '27px' => __('27px', TEXT_DOMAIN ), '28px' => __('28px', TEXT_DOMAIN ), '29px' => __('29px', TEXT_DOMAIN ), '30px' => __('30px', TEXT_DOMAIN ), '31px' => __('31px', TEXT_DOMAIN ), '32px' => __('32px', TEXT_DOMAIN ), '33px' => __('33px', TEXT_DOMAIN ), '34px' => __('34px', TEXT_DOMAIN ), '35px' => __('35px', TEXT_DOMAIN ), '36px' => __('36px', TEXT_DOMAIN ), '37px' => __('37px', TEXT_DOMAIN ), '38px' => __('38px', TEXT_DOMAIN ), '39px' => __('39px', TEXT_DOMAIN ), '40px' => __('40px', TEXT_DOMAIN ), '41px' => __('41px', TEXT_DOMAIN ), '42px' => __('42px', TEXT_DOMAIN ), '43px' => __('43px', TEXT_DOMAIN ), '44px' => __('44px', TEXT_DOMAIN ), '45px' => __('45px', TEXT_DOMAIN ), '46px' => __('46px', TEXT_DOMAIN ), '47px' => __('47px', TEXT_DOMAIN ), '48px' => __('48px', TEXT_DOMAIN ), '49px' => __('49px', TEXT_DOMAIN ), '50px' => __('50px', TEXT_DOMAIN ), '51px' => __('51px', TEXT_DOMAIN ), '52px' => __('52px', TEXT_DOMAIN ), '53px' => __('53px', TEXT_DOMAIN ), '54px' => __('54px', TEXT_DOMAIN ), '55px' => __('55px', TEXT_DOMAIN ), '56px' => __('56px', TEXT_DOMAIN ), '57px' => __('57px', TEXT_DOMAIN ), '58px' => __('58px', TEXT_DOMAIN ), '59px' => __('59px', TEXT_DOMAIN ), '60px' => __('60px', TEXT_DOMAIN ), '61px' => __('61px', TEXT_DOMAIN ), '62px' => __('62px', TEXT_DOMAIN ), '63px' => __('63px', TEXT_DOMAIN ), '64px' => __('64px', TEXT_DOMAIN ), ) );
-	
 	// 引数・変数の設定
-	$page			=	'pz-linkcard-settings';						// 設定画面のページ
-	$action			=	isset($_POST['action'] )					?	esc_attr($_POST['action'] )					:	null ;
-	$submit			=	isset($_POST['submit'] )					?	esc_attr($_POST['submit'] )					:	null ;
-	$tab_now		=	isset($_POST['tab-now'] )					?	esc_attr($_POST['tab-now'] )				:	null ;
-	$scroll_now		=	isset($_POST['scroll-now'] )				?	esc_attr($_POST['scroll-now'] )				:	null ;
+	$page				=	'pz-linkcard-settings';						// 設定画面のページ
+	$action				=	isset($_POST['action'] )					?	esc_attr($_POST['action'] )					:	null ;
+	$submit				=	isset($_POST['submit'] )					?	esc_attr($_POST['submit'] )					:	null ;
+	$tab_now			=	isset($_POST['tab-now'] )					?	esc_attr($_POST['tab-now'] )				:	null ;
+	$scroll_now			=	isset($_POST['scroll-now'] )				?	esc_attr($_POST['scroll-now'] )				:	null ;
 
 	// 変更の保存ボタンを押したとき
 	if	(!$action	&&	$submit ) {
-		$action		=	'save-changed';
+		$action			=	'save-changed';
 	}
 
 	// nonceチェック
@@ -79,12 +80,13 @@
 	}
 
 	// デバグモード・管理モード
-	$debug_mode		=	isset($this->options['debug-mode'] )		?	intval($this->options['debug-mode'] )		:	0 ;
-	$admin_mode		=	isset($this->options['admin-mode'] )		?	intval($this->options['admin-mode'] )		:	0 ;
-	$develop_mode	=	isset($this->options['develop-mode'] )		?	intval($this->options['develop-mode'] )		:	0 ;
-	$menu_error		=	isset($this->options['error-mode'] )		?	intval($this->options['error-mode'] )		:	0 ;
-	$menu_multi		=	isset($this->options['multi-mode'] )		?	intval($this->options['multi-mode'] )		:	0 ;
-	$menu_initialize=	isset($this->options['flg-initialize'] )	?	intval($this->options['flg-initialize'] )	:	0 ;
+	$debug_mode			=	isset($this->options['debug-mode'] )		?	intval($this->options['debug-mode'] )		:	0 ;
+	$admin_mode			=	isset($this->options['admin-mode'] )		?	intval($this->options['admin-mode'] )		:	0 ;
+	$develop_mode		=	isset($this->options['develop-mode'] )		?	intval($this->options['develop-mode'] )		:	0 ;
+	$menu_error			=	isset($this->options['error-mode'] )		?	intval($this->options['error-mode'] )		:	0 ;
+	$menu_multi			=	isset($this->options['multi-mode'] )		?	intval($this->options['multi-mode'] )		:	0 ;
+	$menu_initialize	=	isset($this->options['flg-initialize'] )	?	intval($this->options['flg-initialize'] )	:	0 ;
+	$inhibit			=	isset($this->options['flg-inhibit'] )		?	intval($this->options['flg-inhibit'] )		:	0 ;
 
 	// 入力値
 	$prop		=	null;
@@ -97,12 +99,20 @@
 	} 
 
 	// 画面入力値で修正
-	$debug_mode		=	isset($prop['debug-mode'] )			?	intval($prop['debug-mode'] )			:	$debug_mode ;
-	$admin_mode		=	isset($prop['admin-mode'] )			?	intval($prop['admin-mode'] )			:	$admin_mode ;
-	$develop_mode	=	isset($prop['develop-mode'] )			?	intval($prop['develop-mode'] )		:	$develop_mode ;
-	$menu_error		=	isset($prop['error-mode'] )			?	intval($prop['error-mode'] )			:	$menu_error ;
-	$menu_multi		=	isset($prop['multi-mode'] )			?	intval($prop['multi-mode'] )			:	$menu_multi ;
-	$menu_initialize=	isset($prop['flg-initialize'] )		?	intval($prop['flg-initialize'] )		:	$menu_initialize ;
+	$debug_mode			=	isset($prop['debug-mode'] )					?	intval($prop['debug-mode'] )				:	$debug_mode ;
+	$admin_mode			=	isset($prop['admin-mode'] )					?	intval($prop['admin-mode'] )				:	$admin_mode ;
+	$develop_mode		=	isset($prop['develop-mode'] )				?	intval($prop['develop-mode'] )				:	$develop_mode ;
+	$menu_error			=	isset($prop['error-mode'] )					?	intval($prop['error-mode'] )				:	$menu_error ;
+	$menu_multi			=	isset($prop['multi-mode'] )					?	intval($prop['multi-mode'] )				:	$menu_multi ;
+	$menu_initialize	=	isset($prop['flg-initialize'] )				?	intval($prop['flg-initialize'] )			:	$menu_initialize ;
+	$inhibit			=	isset($prop['flg-inhibit'] )				?	intval($prop['flg-inhibit'] )				:	$inhibit ;
+
+	// 暗転（準備中）
+	if	($inhibit ) {
+		echo		'<div id="pz-overlay-proc" style="display: inline;"></div>';
+	} else {
+		echo		'<div id="pz-overlay-proc" style="display: none;"></div>';
+	}
 
 	// マルチサイト
 	$is_multisite	=	function_exists('is_multisite' )			?	is_multisite()								:	false ;

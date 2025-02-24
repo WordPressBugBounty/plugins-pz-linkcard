@@ -20,7 +20,7 @@
 		<tr>
 			<th scope="row"><?php _e('Occurrence Time', TEXT_DOMAIN ); ?></th>
 			<td>
-				<span><?php echo is_numeric($prop['error-time'] ) ? $this->pz_Date(DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time']; ?></span>
+				<span><?php echo is_numeric($prop['error-time'] ) ? esc_html($this->pz_Date(DATETIME_FORMAT, $prop['error-time'] ) ) : $prop['error-time']; ?></span>
 			</td>
 		</tr>
 		<tr>

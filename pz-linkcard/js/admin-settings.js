@@ -5,9 +5,6 @@ jQuery(function($) {
 		// マウスイベントを一旦停止
 		$('input').css('pointer-events', 'none');
 
-		// 画面を暗くする
-		$('#pz-overlay-proc').show();
-
 		// タブを初期選択（表示速度のため、ロードを待たない）
 		$('input[name="tab-now"]').change(tab_open_last() );
 
@@ -60,7 +57,9 @@ jQuery(function($) {
 			// submitをクリックしたら
 			$('form').submit( function() {
 				$('input[name="scroll-now"]').val($(window).scrollTop());
-				$('#pz-overlay-proc').show();
+				if	($('input[name="properties[flg-inhibit]"]:checkbox').prop('checked') == true) {
+					$('#pz-overlay-proc').show();
+				}
 			});
 
 			// クリックしたらテキスト全選択
@@ -481,4 +480,4 @@ jQuery(function($) {
 		}
 	}
 
-}) ( jQuery);
+}) (jQuery);

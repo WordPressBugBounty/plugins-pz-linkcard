@@ -47,7 +47,7 @@
 					'key'			=>	$timestamp,
 					'hook'			=>	$hook,
 					'myjob'			=>	$myjob,
-					'next_time'		=>	get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), DATETIME_FORMAT ),
+					'next_time'		=>	esc_html(get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), DATETIME_FORMAT ) ),
 					'schedule'		=>	$schedule,
 					'interval'		=>	$interval,
 					'button'		=>	'<button type="submit" name="action" '.$button.' onclick="return confirm(\''.__('Are you sure?', TEXT_DOMAIN ).'\' );">'.__('Run Now', TEXT_DOMAIN ).'</button>',

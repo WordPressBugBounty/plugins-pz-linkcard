@@ -43,7 +43,7 @@
 		<tr>
 			<th scope="row"><?php _e('Saved Datetime', TEXT_DOMAIN ); ?></th>
 			<td>
-				<input type="text" size="40" value="<?php echo is_numeric($this->options['saved-date'] ) ? $this->pz_Date(DATETIME_FORMAT, $this->options['saved-date'] ) : $this->options['saved-date']; ?>" readonly="readonly" />
+				<input type="text" size="40" value="<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(DATETIME_FORMAT, $this->options['saved-date'] ) ) : $this->options['saved-date']; ?>" readonly="readonly" />
 				<input name="properties[saved-date]" type="text" value="<?php echo $this->options['saved-date']; ?>" class="pz-admin-only" readonly="readonly" />
 			</td>
 		</tr>

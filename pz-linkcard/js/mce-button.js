@@ -1,4 +1,4 @@
-jQuery( function( $ ) {
+jQuery(function($) {
 	tinymce.create( "tinymce.plugins.pz_linkcard_tinymce", {
 		getInfo: function() {
 			return {
@@ -59,8 +59,7 @@ jQuery( function( $ ) {
 				cb = e.originalEvent.clipboardData.getData('text/plain');
 			}
 	        var ur = cut_url(cb);
-			if (ur != null) {
-				ur = ur[1];
+			if (ur !== null) {
 				$("#pz-url").val(ur);
 				$("#pz-url").select();
 				return false;
@@ -76,7 +75,6 @@ jQuery( function( $ ) {
 	    	var sc = "<p>[" + $("#pz-code").val() + " url=\"" + $("#pz-url").val() + "\"]</p>";
 	    	tinymce.activeEditor.selection.setContent(sc);
 	    }
-	    tinymce.activeEditor.focus()
 	    $("#pz-serif").val("");
 		$("#pz-check").prop("checked", false);
 	} ) ;
@@ -93,10 +91,17 @@ jQuery( function( $ ) {
 
 	// 文字列からURLを切り出す
 	function cut_url(s) {
-	    // var reg = '((https?|file|ftp|data|ogg):\/\/[^ \'"<]+)';
-	    var reg = '((https?|file|ftp|data|ogg):\/\/[^ "<]+)';
-	    var ur = s.match(reg );
-	    return ur;
+		// var r = '((https?|file|ftp|data|ogg):\/\/[^ "<,]+)';
+		// var u = s.match(r );
+		if (s === '') {
+			return '';
+		}
+	    var r = RegExp('((https?|file|ftp|data|ogg):\/\/[^ "<,]+)' );
+		var u = r.exec(s );
+		if (u !== null ) {
+			return u[1];
+		}
+	    return '';
 	}
 	
-} ) ( jQuery );
+} ) (jQuery);

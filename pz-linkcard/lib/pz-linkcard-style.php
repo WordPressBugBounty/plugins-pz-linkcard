@@ -547,6 +547,9 @@
 			}
 
 			// 横幅
+			if		($prop['width']	==	null ) {
+				$prop['width']		=	'100%';
+			}
 			$width_value	=	intval($prop['width'] );
 			$width_unit		=	substr($prop['width'], -1 ) == '%'	?	'%'		:	'px';
 			if	($width_unit	==	'%' ) {

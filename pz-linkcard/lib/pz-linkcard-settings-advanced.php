@@ -57,6 +57,16 @@
 			<td><input name="properties[date-format-man]"		type="text" size="40" value="<?php echo	(isset($this->options['date-format-man'] ) ? esc_attr($this->options['date-format-man'] ) : '' ); ?>" list="date-dormat-man-default" /></td>
 			<datalist id="date-dormat-man-default"><option value="Y\<\b\r\/\>m/d\<\b\r\/\>H:i">Y\<\b\r\/\>m/d\<\b\r\/\>H:i</option><option value="d-M\<\b\r\/\>Y\<\b\r\/\>h:i\<\b\r\/\>a">d-M\<\b\r\/\>Y\<\b\r\/\>h:i\<\b\r\/\>a</option></datalist>
 		</tr>
+		<tr>
+			<th scope="row"><?php _e('Input Inhibit Time', TEXT_DOMAIN ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-inhibit]" value="" />
+					<input type="checkbox" name="properties[flg-inhibit]" value="1" <?php checked($this->options['flg-inhibit'] ); ?> />
+					<?php _e('After pressing a button, the screen goes dark to prevent accidental input.', TEXT_DOMAIN ); ?>
+				</label>
+			</td>
+		</tr>
 	</table>
 	<?php submit_button(); ?>
 

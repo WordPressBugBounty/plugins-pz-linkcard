@@ -129,6 +129,10 @@
 			break;
 		}
 		unset($this->options['flg-more'] );
+		
+		if	(intval($this->options['width'] ) == 0 ) {
+			$this->options['width']				=	'500px';
+		}
 
 		// 縁取りの色をクリアする
 		foreach		(array('title', 'excerpt', 'url', 'date', 'heading', 'more', 'info', 'added', 'cat' ) as $t ) {
