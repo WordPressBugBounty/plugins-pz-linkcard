@@ -2,9 +2,6 @@ jQuery(function($) {
 	// Pz-LinkCardの設定画面のときのみ動作
 	if	($('.pz-dashboard').is('*') ) {
 
-		// マウスイベントを一旦停止
-		$('input').css('pointer-events', 'none');
-
 		// タブを初期選択（表示速度のため、ロードを待たない）
 		$('input[name="tab-now"]').change(tab_open_last() );
 
@@ -110,8 +107,6 @@ jQuery(function($) {
 			// 画面表示する
 			$('#pz-overlay-proc').hide();
 
-			// マウスイベントを有効化
-			$('input').css('pointer-events', 'auto');
 		}
 	});
 
@@ -480,4 +475,4 @@ jQuery(function($) {
 		}
 	}
 
-}) (jQuery);
+});

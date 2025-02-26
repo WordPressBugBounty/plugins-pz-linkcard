@@ -14,13 +14,7 @@
 	}
 
 	// オプション取得
-	$result			=	$this->pz_load_options();
-
-	// 開発環境用ログ
-	if	($this->options['develop-mode'] ) {
-		$result		=	$this->pz_OutputLOG('[Init] Start Plugin Activate Process' );
-		$result		=	$this->pz_OutputLOG(print_r($this->options, true ) );
-	}
+	$result			=	$this->pz_LoadOptions();
 
 	// 項目名称変更
 	$rename_key	=	array(
@@ -159,7 +153,7 @@
 	}
 
 	// オプションの更新
-	$result		=	$this->pz_save_options();
+	$result		=	$this->pz_SaveOptions();
 	if	($result		==	false ) {
 		return	false;
 	}

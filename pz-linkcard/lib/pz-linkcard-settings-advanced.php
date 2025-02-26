@@ -128,42 +128,52 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Survey Mode', TEXT_DOMAIN ); ?></span></th>
-			<td>
+			<th scope="row" style="color: #06f !important; background-color: #ccccee !important;"><span ><?php _e('Debug Mode', TEXT_DOMAIN ); ?></span></th>
+			<td	style="background-color: #f8f8ff !important;">
 				<label>
 					<input type="hidden"   name="properties[debug-mode]" value="" />
 					<input type="checkbox" name="properties[debug-mode]" value="1" class="pz-tab-show" <?php checked($this->options['debug-mode'] ); ?> />
-					<?php echo __('Outputs some events and setting information to a log file.', TEXT_DOMAIN ).__('(Deprecation)', TEXT_DOMAIN ); ?>
+					<span style="color: #06f !important;"><?php echo __('Displays normally hidden items to find and fix defects.', TEXT_DOMAIN ).__('(Deprecation)', TEXT_DOMAIN ); ?></span>
 				</label>
 			</td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th scope="row"><?php _e('Administrator Mode', TEXT_DOMAIN ); ?></span></th>
-			<td>
+			<th scope="row" style="color: #06f !important; background-color: #ccccee !important;"><span ><?php _e('Survey Mode', TEXT_DOMAIN ); ?></span></th>
+			<td	style="background-color: #f8f8ff !important;">
+				<label>
+					<input type="hidden"   name="properties[survey-mode]" value="" />
+					<input type="checkbox" name="properties[survey-mode]" value="1" class="pz-tab-show" <?php checked($this->options['survey-mode'] ); ?> />
+					<span style="color: #06f !important;"><?php echo __('Collect logs. May slow down operation.', TEXT_DOMAIN ).__('(Deprecation)', TEXT_DOMAIN ); ?></span>
+				</label>
+			</td>
+		</tr>
+		<tr class="pz-debug-only">
+			<th scope="row" style="color: #c38 !important; background-color: #d8cce0 !important;"><?php _e('Administrator Mode', TEXT_DOMAIN ); ?></th>
+			<td style="background-color: #fff8ff !important;">
 				<label>
 					<input type="hidden"   name="properties[admin-mode]" value="" />
 					<input type="checkbox" name="properties[admin-mode]" value="1" class="pz-tab-show" <?php checked($this->options['admin-mode'] ); if (!$this->options['admin-mode'] ) {echo 'readonly="readonly"'; }; if (!$this->options['admin-mode'] ) { echo 'ondblclick="this.readOnly=false;"'; } ?> />
-					<?php echo __('Display information that is not normally needed or open special settings.', TEXT_DOMAIN ).__('(Deprecation)', TEXT_DOMAIN ); ?>
+					<span style="color: #c38 !important;"><?php echo __('Display information that is not normally needed or open special settings.', TEXT_DOMAIN ).__('(Deprecation)', TEXT_DOMAIN ); ?></span>
 				</label>
 			</td>
 		</tr>
 		<tr class="pz-admin-only">
-			<th scope="row"><?php _e('MultiSite Mode', TEXT_DOMAIN ); ?></th>
-			<td>
+			<th scope="row" style="color: #f62 !important; background-color: #ddccbb !important;"><?php _e('MultiSite Mode', TEXT_DOMAIN ); ?></th>
+			<td style="background-color: #fcf4f0 !important;">
 				<label>
 					<input type="hidden"   name="properties[multi-mode]" value="" />
 					<input type="checkbox" name="properties[multi-mode]" value="1" <?php checked($menu_multi || $is_multisite ); echo ($is_multisite ? ' readonly="readonly"' : '' ); ?> />
-					<?php _e('Displays a menu for Multi-Site', TEXT_DOMAIN ); ?>
+					<span style="color: #f62 !important;"><?php _e('Displays a menu for Multi-Site', TEXT_DOMAIN ); ?></span>
 				</label>
 			</td>
 		</tr>
 		<tr  class="pz-develop-only">
-			<th scope="row"><?php _e('Develop Mode', TEXT_DOMAIN ); ?></th>
-			<td>
+			<th scope="row" style="color: #0a8 !important; background-color: #b0bbbb !important;"><?php _e('Develop Mode', TEXT_DOMAIN ); ?></th>
+			<td style="background-color: #fffff8 !important;">
 				<label>
 					<input type="hidden"   name="properties[develop-mode]" value="" />
 					<input type="checkbox" name="properties[develop-mode]" value="1" <?php checked($this->options['develop-mode'] ); ?> readonly="readonly" />
-					<?php _e('Currently working in a development environment.', TEXT_DOMAIN ); ?>
+					<span style="color: #0a8 !important;"><?php _e('Currently working in a development environment.', TEXT_DOMAIN ); ?></span>
 				</label>
 			</td>
 		</tr>

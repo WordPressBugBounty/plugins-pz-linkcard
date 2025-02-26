@@ -68,9 +68,6 @@
 				</label>
 			</td>
 		</tr>
-
-
-<!-- [DEBUG] -->
 		<tr>
 			<th scope="row"><?php _e('Clear Excerpt', TEXT_DOMAIN ); ?></th>
 			<td>
@@ -81,9 +78,6 @@
 				</label>
 			</td>
 		</tr>
-<!-- [DEBUG] -->
-
-
 		</table>
 	<?php submit_button(); ?>
 

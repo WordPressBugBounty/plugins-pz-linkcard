@@ -13,19 +13,19 @@
 				<textarea name="properties[css-add]" maxlength="1024" class="pz-css-add"><?php echo	esc_attr($prop['css-add'] ); ?></textarea>
 			</td>
 		</tr>
-		<tr class="pz-admin-only">
+		<tr class="pz-debug-only">
 			<th scope="row"><?php _e('Stylesheet Version', TEXT_DOMAIN ); ?></th>
 			<td><input name="properties[css-count]"		type="text" size="10" title="<?php echo	esc_attr($prop['css-count'] ); ?>" value="<?php echo	esc_attr($prop['css-count'] ); ?>" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'onDblClick="this.readOnly=false;" '; }?>/></td>
 		</tr>
-		<tr class="pz-admin-only">
+		<tr class="pz-debu-only">
 			<th scope="row"><?php echo __('CSS File URL', TEXT_DOMAIN ); ?></th>
 			<td><input name=""							type="text" size="120" title="<?php echo esc_attr(DIR_STYLE.'style.css'     ); ?>" class="pz-click-all-select" value="<?php echo	esc_attr(DIR_STYLE.'style.css'     ); ?>" readonly="readonly" /></td>
 		</tr>
-		<tr class="pz-admin-only">
+		<tr class="pz-debug-only">
 			<th scope="row"><?php echo __('CSS File URL', TEXT_DOMAIN ).' '.__('(Compressed)', TEXT_DOMAIN ); ?></th>
 			<td><input name="" 							type="text" size="120" title="<?php echo esc_attr(DIR_STYLE.'style.min.css' ); ?>" class="pz-click-all-select" value="<?php echo	esc_attr(DIR_STYLE.'style.min.css' ); ?>" readonly="readonly" /></td>
 		</tr>
-		<tr class="pz-admin-only">
+		<tr class="pz-debug-only">
 			<th scope="row"><?php _e('Stylesheet Templete File', TEXT_DOMAIN ); ?></th>
 			<td><input name=""	type="text" size="120" title="<?php echo esc_attr(FILE_TEMPLETE ); ?>" class="pz-click-all-select" value="<?php echo esc_attr(FILE_TEMPLETE ); ?>" readonly="readonly" /></td>
 		</tr>
@@ -66,7 +66,7 @@
 				<p><?php $size = pz_GetDirSize(DIR_CACHE ); echo	__('Used', TEXT_DOMAIN ).__(': ', TEXT_DOMAIN ).'<span class="pz-monospace">'.pz_GetSizeStringSi($size).' ('.pz_GetStringBytes($size).')'; ?></span></p>
 			</td>
 		</tr>
-		<tr class="pz-admin-only">
+		<tr class="pz-debug-only">
 			<th scope="row"><?php _e('Image Cache Directory', TEXT_DOMAIN ); ?></th>
 			<td>
 				<p><input name="" type="text" title="<?php echo DIR_CACHE; ?>" class="pz-click-all-select" value="<?php echo DIR_CACHE; ?>" size="120" readonly="readonly" /></p>
@@ -87,7 +87,7 @@
 					<p><button type="button" name="action" value="clear-log" class="pz-button" onclick="return confirm('<?php _e('(Unimplemented)', TEXT_DOMAIN ); ?>');"><?php _e('Clear LOG File', TEXT_DOMAIN ); ?></button><?php _e('(Unimplemented)', TEXT_DOMAIN ); ?></p>
 				</td>
 			</tr>
-			<tr class="pz-admin-only">
+			<tr class="pz-debug-only">
 				<th scope="row"><?php _e('Log Directory', TEXT_DOMAIN ); ?></th>
 				<td>
 					<p><input name="" type="text" title="<?php echo	DIR_DEBUG; ?>" class="pz-click-all-select" value="<?php echo DIR_DEBUG; ?>" size="120" readonly="readonly" /></p>

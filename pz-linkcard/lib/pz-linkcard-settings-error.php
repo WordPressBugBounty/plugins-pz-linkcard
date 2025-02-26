@@ -8,13 +8,13 @@
 		<tr>
 			<th scope="row"><?php _e('Post ID', TEXT_DOMAIN ); ?></th>
 			<td>
-				<a href="<?php echo get_permalink($prop['error-postid'] ); ?>" class="pz-error-url"><?php echo esc_html($prop['error-postid'] ); ?></a>
+				<a href="<?php echo get_permalink($prop['error-postid'] ); ?>#lkc-error" class="pz-error-url"><?php echo esc_html($prop['error-postid'] ); ?></a>
 			</td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('Post URL', TEXT_DOMAIN ); ?></th>
 			<td>
-				<a href="<?php echo esc_url($prop['error-url'] ); ?>" class="pz-error-url"><?php echo esc_html($prop['error-url'] ); ?></a>
+				<a href="<?php echo esc_url($prop['error-url'] ); ?>#lkc-error" class="pz-error-url"><?php echo esc_html($prop['error-url'] ); ?></a>
 			</td>
 		</tr>
 		<tr>

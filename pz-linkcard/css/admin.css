@@ -131,6 +131,9 @@
 .pz-plugin-env-product {
 	background-color: #f66;
 }
+.pz-plugin-env-survey {
+	background-color: #44a;
+}
 
 .pz-header-title {
 	border-bottom: 4px solid #0ef;
@@ -726,40 +729,50 @@
 	background-color: #0c0;
 	border-radius: 4px;
 }
+.pz-log-pending {
+	padding: 2px 4px;
+	font-weight: bold;
+	color: #484;
+	background-color: #ff0;
+	border-radius: 4px;
+}
 .pz-thx {
 	display: inline-flex; 
-	align-items: center; 
-	height: 12px;
 	margin: -4px 0 0 8px;
-	padding: 2px 8px;
-	background-color: #eef;
+	padding: 4px;
+	height: 12px;
+	align-items: center; 
+	position: relative;
+	top: -5px;
+	left: -5px;
 	border: 1px solid #000;
-	border-radius: 6px;
-	box-shadow: 4px 4px 0 #000;
-	color: #000;
-	font-size: 12px;
+	border-radius: 4px;
+	box-shadow: 3px 3px 4px rgba(0,0,0,0.5);
+	color: #222;
+	font-size: 9px;
+	text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+}
+a.pz-thx {
+	text-decoration: none;
 }
 .pz-thx * {
 	vertical-align: middle;
+	text-decoration: none;
 }
 .pz-thx-name {
+	padding: 2px 4px;
 	color: #000;
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: bold;
 }
 .pz-thx-account {
-	color: #777;
-	font-size: 12px;
-	text-decoration: none;
+	color: #333;
+	font-family: Consolas, 'Yu Gothic', 'Osaka-Mono', 'Noto Sans JP', Menlo, 'Courier New', Monospace;
+	font-size: 10px;
 }
-.pz-thx-account a:link {
-	color: #666;
-	text-decoration: none !important;
+.pz-thx-account:hover {
+	text-decoration: underline;
 }
-
-
-
-
 .pz-position-margin {
 	margin: 0;
 	padding: 0;

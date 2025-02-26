@@ -420,8 +420,8 @@ $xxxxxxx	=
 //					$html_url			=	'<span title="'.$temp_href.'">'.esc_url($this->pz_DecodeURL($url ) ).'</span>';
 
 					// タイトル
-					$title			=	esc_attr(stripslashes($data->title ) );						// 代入しながら判定
-					$html_title		=	mb_strimwidth($title, 0, 200 , '...' );	// 200文字にする
+					$title			=	esc_attr(stripslashes($data->title ) );		// 代入しながら判定
+					$html_title		=	mb_strimwidth($title, 0, 200 , '...' );		// 200文字にする
 					if	($data->title	<>	$data->regist_title ) {
 						$html_title		=	'<b>'.$html_title.'</b>';
 					}

@@ -150,15 +150,27 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 == Changelog ==
 
+= 2.5.6.3 =
+* [Fixed] 設定画面でタブの移動などが出来なくなる不具合を修正しました。（Thanks HidetatsuTsuji @hakitukai on x.com）
+* [Fixed] 設定画面で処理中にエラーが発生したまま固まる不具合を修正しました。（Thanks ゴルフや投資の配信 @piyofumin4 on x.com）
+* [Fixed] 投稿編集画面にて挿入ボタンが起因したエラーが表示されていたのを修正しました。（Thanks マーージ＠ブログ中毒 @maagemagemaaage on x.com）
+* [Fixed] 管理者権限の無いログインユーザーがサイトを見た際、PHPのWarningが発声してしまう不具合を修正しました。（Thanks @kikorin55 on wordpress.org）
+* [Fixed] 軽微なバグを修正しました。
+* [Modified] 設定画面の「上級者向け」タブの「調査モード」をログファイルを出力する機能のみにしました。
+* [Modified] 設定画面の「上級者向け」タブに「デバッグモード」を追加しました。調査モードの一部の機能（非表示項目の表示）を移しました。
+* [Modified] 内部処理を一部見直しました。
+* [Pending] 投稿編集画面にて挿入ボタンが動作しない件について調査中です。（Thanks yukkun20 #comment-12876 on popozure.info）
+
 = 2.5.6.2 =
 * [Added] 設定画面の「上級者向け」タブに「入力禁止」を追加しました。「変更を保存」をクリックした際に誤入力を避けるため暗転して入力禁止にします。
 * [Fixed] 設定画面で「変更を保存」をクリックした際、暗転するようにしましたが初期値では暗転なしにしました。
-* [Fixed] 設定画面の「配置」の「幅」を空欄にしていた場合、「0px」として扱っていたのを「100%」として扱うように修正しました。
+* [Fixed] 設定画面の「配置」の「幅」を空欄にしていた場合、「0px」として扱っていたのを「100%」として扱うように修正しました。（Thanks KAI #comment-12912 on popozure.info）
 * [Modified] 内部処理を一部見直しました。
 
 = 2.5.6.1 =
 * [Fixed] クラシック エディターで挿入ボタンが動作しない場合があったため、スクリプトを修正しました。
 * [Fixed] 「テキストリンク行を変換」を有効にした際、リンクカードが表示されずURLエラーの表示になってしまう不具合を修正しました。
+* [Fixed] マルチサイトを利用している際、設定画面に「初期設定値に〇〇が定義されていません」というエラーが表示されるのを修正しました。（Thanks ふりっぷ @flip365 on x.com）
 
 = 2.5.6 =
 * [Tested] WordPress 6.7.1 での動作確認を行いました。
@@ -185,8 +197,8 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * [Modified] ショートコードのURLパラメータの指定が誤っている場合の判定を厳しくしました。エクスポート時に不正データになってしまうため。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
 * [Modified] 設定の初期値をいくつか変更しました。（リンクカードの影の初期値が無しから有りになったなど）
 * [Modified] 設定画面で「変更を保存」を押した際、誤入力を防ぐため暗転するように修正しました。
-* [Added] 設定画面の「内部リンク」タブの「記事取得方法」にカスタムフィールドを優先する設定を追加しました。（Thanks Goshi #comment-7728）
-* [Added] 設定画面の「内部リンク」タブに「タイトルにするカスタムフィールド」「抜粋文にするカスタムフィールド」を追加しました。（Thanks Goshi #comment-7728）
+* [Added] 設定画面の「内部リンク」タブの「記事取得方法」にカスタムフィールドを優先する設定を追加しました。（Thanks Goshi #comment-7728 on popozure.info）
+* [Added] 設定画面の「内部リンク」タブに「タイトルにするカスタムフィールド」「抜粋文にするカスタムフィールド」を追加しました。（Thanks Goshi #comment-7728 on popozure.info）
 * [Added] 設定画面の「表示」にサムネイルの枠線を追加しました。
 * [Added] 設定画面の「エディター」タブに「抜粋文をクリア」を追加。titleパラメーターを指定したときに抜粋文をクリアします。
 * [Added] 設定画面の「上級者向け」タブに「テキストの選択」を追加。カード内のテキストを選択禁止に出来ます。
@@ -297,7 +309,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Tested: Compatible with WordPress 6.4.2.
 * Pzカード管理の画面のセキュリティを強化。(Thanks 山下午壱 @fiveoneinc_jp on x.com)(Thanks 山田彩乃 @happyjotoku on x.com)
   Fixed: Enhanced security of the Pz Card Management screen.
-* URLにシングルクォートが含まれる場合、リンクされなかった不具合を再度修正。（Thanks てんちゃん #comment-6603）
+* URLにシングルクォートが含まれる場合、リンクされなかった不具合を再度修正。（Thanks てんちゃん #comment-6603 on popozure.info）
   Fixed: Fixed again the bug that the link did not work if the URL contained single quotes.
 * 文字コードの判定に失敗すると異常終了になってしまう不具合を修正。（Thanks 足じゃんけん @ASHIJANKEN on x.com）
   Fixed: Fixed a bug that caused abnormal termination when character code determination failed.
@@ -307,7 +319,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 = 2.4.8.1 =
 * WordPress 6.4.1 での動作確認。
   Tested: Compatible with WordPress 6.4.1.
-* URLにシングルクォートが含まれる場合、リンクされなかった不具合を修正。（Thanks てんちゃん #comment-6603）
+* URLにシングルクォートが含まれる場合、リンクされなかった不具合を修正。（Thanks てんちゃん #comment-6603 on popozure.info）
   Fixed: Fixed no link when single quotes are included in the URL.
 
 = 2.4.8 =

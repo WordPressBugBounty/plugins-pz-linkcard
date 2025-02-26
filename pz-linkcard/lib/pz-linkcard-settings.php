@@ -1,8 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
-	// 年月の書式
-	define('DATETIME_FORMAT', get_option('date_format' ).' '.get_option('time_format' ) );
-
 	// 「内部リンクの設定を参照」
 	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', TEXT_DOMAIN ), ) );
 
@@ -81,6 +78,7 @@
 
 	// デバグモード・管理モード
 	$debug_mode			=	isset($this->options['debug-mode'] )		?	intval($this->options['debug-mode'] )		:	0 ;
+	$survey_mode		=	isset($this->options['survey-mode'] )		?	intval($this->options['survey-mode'] )		:	0 ;
 	$admin_mode			=	isset($this->options['admin-mode'] )		?	intval($this->options['admin-mode'] )		:	0 ;
 	$develop_mode		=	isset($this->options['develop-mode'] )		?	intval($this->options['develop-mode'] )		:	0 ;
 	$menu_error			=	isset($this->options['error-mode'] )		?	intval($this->options['error-mode'] )		:	0 ;
@@ -96,10 +94,20 @@
 			$prop[$key]	=	stripslashes($value );
 		}
 		ksort($prop );
+
+		// 管理者モードの解除
+		if	(!$prop['debug-mode'] ) {
+			$prop['survey-mode']			=	0;
+			$prop['admin-mode']				=	0;
+		}
+		if	(!$prop['admin-mode'] ) {
+			$prop['initialize-exception']	=	0;
+		}
 	} 
 
 	// 画面入力値で修正
 	$debug_mode			=	isset($prop['debug-mode'] )					?	intval($prop['debug-mode'] )				:	$debug_mode ;
+	$survey_mode		=	isset($prop['survey-mode'] )				?	intval($prop['survey-mode'] )				:	$survey_mode ;
 	$admin_mode			=	isset($prop['admin-mode'] )					?	intval($prop['admin-mode'] )				:	$admin_mode ;
 	$develop_mode		=	isset($prop['develop-mode'] )				?	intval($prop['develop-mode'] )				:	$develop_mode ;
 	$menu_error			=	isset($prop['error-mode'] )					?	intval($prop['error-mode'] )				:	$menu_error ;
@@ -154,6 +162,7 @@
 	// プラグイン名・バージョン・環境表示
 	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PLUGIN_VERSION.$html_plugin.
 			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', TEXT_DOMAIN ).'</span>'				:	'' ).
+			($survey_mode			?	'<span class="pz-plugin-env pz-plugin-env-survey">'.__('Survey Mode', TEXT_DOMAIN ).'</span>'			:	'' ).
 			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', TEXT_DOMAIN ).'</span>'	:	'' ).
 			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', TEXT_DOMAIN ).'</span>'	:	'' ).
 			'</div>';
@@ -172,6 +181,7 @@
 	$temp_param		=
 		array(
 			'debug-mode'		=>		intval($debug_mode ),
+			'survey-mode'		=>		intval($survey_mode ),
 			'admin-mode'		=>		intval($admin_mode ),
 			'develop-mode'		=>		intval($develop_mode ),
 			'multi-mode'		=>		intval($menu_multi ),
@@ -242,7 +252,7 @@
 				$flg_error				=	false;						// エラーの有無
 				require_once ('pz-linkcard-settings-validate.php' );	// 値の検証
 				if	(!$flg_error ) {
-					$result	=	$this->pz_save_options();				// オプションの更新
+					$result	=	$this->pz_SaveOptions();				// オプションの更新
 					if	($result ) {
 						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in saving the settings.', TEXT_DOMAIN ).'</strong></p></div>';
 					} else {
@@ -259,7 +269,7 @@
 			break;
 
 		case	'init-settings':						// 設定の初期化
-			$result		=	$this->pz_initialize_options();
+			$result		=	$this->pz_InitializeOptions();
 			if	($result ) {
 				$flg_style		=	true;				// スタイルシートの再生成
 				$prop		=	$this->options;
@@ -273,7 +283,7 @@
 			$flg_style			=	false;
 			$menu_error			=	0;		
 			$this->options['error-mode']	=	0;
-			$result	=	$this->pz_save_options();	// オプションの更新
+			$result	=	$this->pz_SaveOptions();	// オプションの更新
 			break;
 
 		case	'run-pz_linkcard_check':
@@ -343,17 +353,21 @@
 		$changelog	=	preg_replace('/\[modified\]\s*/i',			'<span class="pz-log-modified">Modified</span>&ensp;',					$changelog);	// 変更
 		$changelog	=	preg_replace('/\[removed\]\s*/i',			'<span class="pz-log-removed">Removed</span>&ensp;',					$changelog);	// 修正
 		$changelog	=	preg_replace('/\[tested\]\s*/i',			'<span class="pz-log-tested">Tested</span>&ensp;',						$changelog);	// テスト
+		$changelog	=	preg_replace('/\[pending\]\s*/i',			'<span class="pz-log-pending">Pending</span>&ensp;',					$changelog);	// 保留事項
 
 		$changelog	=	preg_replace('/&ensp;&ensp;added:\s*/i',	'&ensp;&ensp;<span class="pz-log-added">Added</span>&ensp;',			$changelog);	// 追加
 		$changelog	=	preg_replace('/&ensp;&ensp;fixed:\s*/i',	'&ensp;&ensp;<span class="pz-log-fixed">Fixed</span>&ensp;',			$changelog);	// 修正
 		$changelog	=	preg_replace('/&ensp;&ensp;modified:\s*/i',	'&ensp;&ensp;<span class="pz-log-modified">Modified</span>&ensp;',		$changelog);	// 変更
 		$changelog	=	preg_replace('/&ensp;&ensp;removed:\s*/i',	'&ensp;&ensp;<span class="pz-log-removed">Removed</span>&ensp;',		$changelog);	// 修正
 		$changelog	=	preg_replace('/&ensp;&ensp;tested:\s*/i',	'&ensp;&ensp;<span class="pz-log-tested">Tested</span>&ensp;',			$changelog);	// テスト
+		$changelog	=	preg_replace('/&ensp;&ensp;pending:\s*/i',	'&ensp;&ensp;<span class="pz-log-pending">Pending</span>&ensp;',			$changelog);	// テスト
 //		$changelog	=	preg_replace('/^.*（thanks ([0-9]+#comment-[0-9]+).*）$/i',						' (Thanks <a href="'.$pz_url.'/?p=$1" rel="external noopener noreferrer" target="_blank">'.$logo_pz.'$1</a>)', $changelog);						// Popozure.info のコメントへのリンク
 //		$changelog	=	preg_replace('/（thanks [^@]*@([A-Za-z]+[A-Za-z0-9_]+).* wordpress.*）/i',	' (Thanks <a href="https://wordpress.org/support/users/$1/" rel="external noopener noreferrer" target="_blank">'.$logo_wp.'@$1</a>)', $changelog);	// WordPress.orgアカウントへのリンク
 //		$changelog	=	preg_replace('/^[^(（]*（thanks ([^@]*)@([A-Za-z]+[A-Za-z0-9_]+).*\s*on\s*x\.com\s*）\s*$/im',			'<span class="pz-thx">Thanks&ensp;<span class="pz-thx-name">$2</span>&ensp;<a href="https://www.x.com/$2" rel="external noopener noreferrer" target="_blank" class="pz-thx-account">'.$logo_x.'@$2</a></span>', $changelog);	// Xアカウントへのリンク
 //		$changelog	=	preg_replace('/^[^(（]*（thanks ([^@]*)@([A-Za-z]+[A-Za-z0-9_]+).*\s*on\s*twitter\.com\s*）\s*$/im',	'<span class="pz-thx">Thanks&ensp;<span class="pz-thx-name">$2</span>&ensp;<a href="https://www.x.com/$2" rel="external noopener noreferrer" target="_blank" class="pz-thx-account">'.$logo_x.'@$2</a></span>', $changelog);	// Twitterアカウントへのリンク
-		$changelog	=	preg_replace('/（Thanks\s+([^\s]*)\s+(@[^\s]*)\s+on x.com）/i',		'<span style="display: inline; align-items: center; border: 2px solid #000; border-radius: 4px; box-shadow: 4px 4px 4px rgba(0,0,0,0.5); padding: 2px 6px; color: #fff; background-color: #00f; font-size: 10px;">Thanks <span style="font-size: 12px; font-weight: bold;">$1</span>&ensp;<a href="https://x.com/$2" rel="external noopener noreferrer" target="_blank">'.$logo_x.'<span style="font-family: Consolas; font-size: 10px; color: #0ef;">$2</span></a></span>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on x.com）/i',					'<a href="https://x.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.						'Thanks<span class="pz-thx-name">$1</span>'.$logo_x. '<span class="pz-thx-account">$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on wordpress.org）/i',			'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(#[^\s]*)\s+on popozure.info）/i',			'<a href="'.$pz_url.'" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.								'Thanks<span class="pz-thx-name">$1</span>'.$logo_pz.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	str_replace(PHP_EOL, '<br/>', $changelog );															// 改行をBRタグに変換
 		$changelog	=	'<div class="pz-basic-changelog">'.$changelog.'</div>';
 	}

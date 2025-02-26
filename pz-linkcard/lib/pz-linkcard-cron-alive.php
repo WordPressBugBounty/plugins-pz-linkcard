@@ -13,9 +13,10 @@
 	$proc_datas	=	$wpdb->get_results($wpdb->prepare("SELECT url,alive_time FROM $this->db_name WHERE alive_nexttime < %d ORDER BY alive_time ASC, id ASC", $this->now ) );
 
 	// 実行ログ
-	$message	=	'There were '.count($proc_datas ).' links that passed the next "Link Alive Check" confirmation date and time.';
-	$log		=	$message.PHP_EOL;
-	$this->pz_OutputLog($message );
+	if	($this->options['survey-mode'] ) {
+		$message	=	'There were '.count($proc_datas ).' links that passed the next "Link Alive Check" confirmation date and time.';
+		$this->pz_OutputLOG(__FUNCTION__, $message );
+	}
 
 	// 生存確認
 	$proc_count	=	0;
@@ -55,9 +56,10 @@
 				$result		=	$this->pz_SetCache($before );
 
 				// 実行ログ
-				$message	=	'['.$proc_count.'] '.'Confirmed the "Link Alive Check". (NextTime='.date('Y-m-d H:i:s', $result['alive_nexttime'] ).' Result='.$result['alive_result'].' URL='.$result['url'].')';
-				$log		.=	$message.PHP_EOL;
-				$this->pz_OutputLog($message );
+				if	($this->options['survey-mode'] ) {
+					$message	=	'['.$proc_count.'] '.'Confirmed the "Link Alive Check". (NextTime='.date('Y-m-d H:i:s', $result['alive_nexttime'] ).' Result='.$result['alive_result'].' URL='.$result['url'].')';
+					$this->pz_OutputLOG(__FUNCTION__, $message );
+				}
 			}
 		}
 	}
