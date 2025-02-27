@@ -5,17 +5,11 @@
 		wp_clear_scheduled_hook(self::CRON_CHECK );
 		$cron_log		=	'* execute: '.self::CRON_CHECK.PHP_EOL.PHP_EOL;
 		$cron_log		.=	$this->schedule_hook_check();
-		if ($prop['sns-position'] && !wp_next_scheduled(self::CRON_CHECK ) ) {
-			wp_schedule_event(time() + HOUR_IN_SECONDS, 'hourly', self::CRON_CHECK );
-		}
 		break;
 	case	'run-'.self::CRON_ALIVE:
 		wp_clear_scheduled_hook(self::CRON_ALIVE );
 		$cron_log		=	'* execute: '.self::CRON_ALIVE.PHP_EOL.PHP_EOL;
 		$cron_log		.=	$this->schedule_hook_alive();
-		if ($prop['flg-alive'] && !wp_next_scheduled(self::CRON_ALIVE ) ) {
-			wp_schedule_event(time() + DAY_IN_SECONDS, 'daily', self::CRON_ALIVE );
-		}
 		break;
 	}
 
@@ -129,6 +123,10 @@
 					<?php _e('Check to enable error conditions.', TEXT_DOMAIN ); ?>
 				</label>
 			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php _e('Post ID', TEXT_DOMAIN ); ?></th>
+			<td><input name="properties[error-postid]" type="text" size="5" value="<?php echo esc_attr($prop['error-postid'] ); ?>" /></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('Post URL', TEXT_DOMAIN ); ?></th>

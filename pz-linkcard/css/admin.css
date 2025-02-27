@@ -1128,6 +1128,7 @@ button.button.wp-color-result {
 	width: 100%;
 	height: 120%;
 	background-color: rgba(0,0,0,0.2);
+	cursor: wait;
 }
 
 /* Visual Editor - Input URL Dialog - Overlay */

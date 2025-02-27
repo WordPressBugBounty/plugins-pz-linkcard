@@ -1,5 +1,6 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <div class="pz-page" id="pz-error">
+	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Error Settings', TEXT_DOMAIN ).$help_open.'error'.$help_close; ?></h2>
 	<div class="pz-error-text">
 		<?php _e('The shortcode description is incorrect. Please open the "Linked Articles" section and correct it.', TEXT_DOMAIN ); ?>

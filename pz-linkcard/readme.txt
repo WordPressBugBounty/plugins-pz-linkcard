@@ -150,16 +150,23 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 == Changelog ==
 
+= 2.5.6.4 =
+* [Fixed] クラシックエディタで挿入ボタンからショートコードを挿入した後、フォーカスが自動で戻るように修正しました。
+* [Modified] 投稿編集画面で使用している挿入ボタンのjsファイルにについて、jQueryだったものをJavaScriptに変更しました。
+* [Modified] 設定画面で使用しているjsファイルについて、一部の機能を分割しました。また一部、jQueryだったものをJavaScriptに変更しました。
+* [Modified] 設定画面の「管理者」タブで実行出来る処理を一部変更しました。※一般に解放していません。
+
 = 2.5.6.3 =
 * [Fixed] 設定画面でタブの移動などが出来なくなる不具合を修正しました。（Thanks HidetatsuTsuji @hakitukai on x.com）
 * [Fixed] 設定画面で処理中にエラーが発生したまま固まる不具合を修正しました。（Thanks ゴルフや投資の配信 @piyofumin4 on x.com）
 * [Fixed] 投稿編集画面にて挿入ボタンが起因したエラーが表示されていたのを修正しました。（Thanks マーージ＠ブログ中毒 @maagemagemaaage on x.com）
-* [Fixed] 管理者権限の無いログインユーザーがサイトを見た際、PHPのWarningが発声してしまう不具合を修正しました。（Thanks @kikorin55 on wordpress.org）
+* [Fixed] 投稿編集画面にて挿入ボタンが動作しない不具合を修正しました。（Thanks yukkun20 #comment-12876 on popozure.info）
+* [Fixed] 管理者権限の無いログインユーザーがサイトを見た際、PHPのWarningが出てしまう不具合を修正しました。（Thanks @kikorin55 on wordpress.org）
 * [Fixed] 軽微なバグを修正しました。
+* [Modified] 設定画面の「基本」タブの「変更履歴」の表示方法を修正しました。（行の先頭のバッジに保留（PENDING）を追加しました）
 * [Modified] 設定画面の「上級者向け」タブの「調査モード」をログファイルを出力する機能のみにしました。
 * [Modified] 設定画面の「上級者向け」タブに「デバッグモード」を追加しました。調査モードの一部の機能（非表示項目の表示）を移しました。
 * [Modified] 内部処理を一部見直しました。
-* [Pending] 投稿編集画面にて挿入ボタンが動作しない件について調査中です。（Thanks yukkun20 #comment-12876 on popozure.info）
 
 = 2.5.6.2 =
 * [Added] 設定画面の「上級者向け」タブに「入力禁止」を追加しました。「変更を保存」をクリックした際に誤入力を避けるため暗転して入力禁止にします。
@@ -183,7 +190,8 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 * [Fixed] サムネイルに強制的に枠線が表示されてしまったのを修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
 * [Fixed] プラグインを有効化したときに「プラグインの有効化中にxxx文字の予期しない出力が生成されました」のエラーが表示されてしまうのを修正しました。
 * [Fixed] リンク先の画像取得に失敗した際、管理画面でエラーが表示されてしっていたのを修正しました。（Thanks 足じゃんけん @ASHIJANKEN on x.com）
-* [Modified] 変更履歴を日本語のみにしました。
+* [Modified] 設定画面の「基本」タブの「変更履歴」を日本語のみにしました。
+* [Modified] 設定画面の「基本」タブの「変更履歴」の表示方法を修正しました。（行の先頭に追加（Added）・修正（Fixed）・変更（Modified）・削除（Removed）のバッジが付きます）
 * [Modified] 「かんたん書式設定」を選んだときの表示方法を調整しました。
 * [Modified] 設定画面の「文字」タブの構成を表形式に変更しました。
 * [Modified] 設定画面の「文字」タブに「ヘッダー文字列」「カテゴリー」を追加しました。ただしカテゴリー表示は未実装のため変更できません。
@@ -463,9 +471,9 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Fixed: Fixed a bug that URL is not converted in "Convert URL line" on the "Editor" tab of the setting screen.
 * 設定画面の「エディタ」タブの「パラメータ（表記例）」を修正。
   Modified: Added a description example of "Parameter" on the "Editor" tab of the setting screen.
-* 設定画面に「管理者」タブを追加。
+* 設定画面に「管理者」タブを追加。※一般に解放していません。
   Added: Added "Admin" tab to the setting screen. (Available only in admin mode)
-* 設定画面に「管理者」タブに「WP-Cronの設定」を追加。
+* 設定画面に「管理者」タブに「WP-Cronの設定」を追加。※一般に解放していません。
   Added: Added "WP-Cron Settings" setting to "Admin" tab of the setting screen. (Available only in admin mode)
 * 設定画面の「上級者向け」タブ内に「上級者向けの設定」を追加。
   Added: Added "Senior Settings" setting to "Advanced" tab of the setting screen.
@@ -603,9 +611,9 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Removed: Removed "Display Execution Time" setting from "Advanced" tab of the setting screen.
 * 設定画面の「上級者向け」タブに「調査モード」の設定を追加。（通常は使用しないでください）
   Added a setting to display the "Survey Mode" in the "Advanced" tab of the setting screen. (Do not use normally)
-* 設定画面の「上級者向け」タブに「管理者モード」の設定を追加。（動作無能に陥る設定が可能なため、通常は使用しないでください。）
+* 設定画面の「上級者向け」タブに「管理者モード」の設定を追加。※一般に解放していません。
   Added a setting to display the "Administrator Mode" in the "Advanced" tab of the setting screen. (Do not use normally as it can be set to incapacitate.)
-* 設定画面の「上級者向け」タブに「開発者モード」の設定を追加。（動作無能に陥る設定が可能なため、通常は使用しないでください。）
+* 設定画面の「上級者向け」タブに「開発者モード」の設定を追加。※一般に解放していません。
   Added a setting to display the "Developer Mode" in the "Advanced" tab of the setting screen. (Do not use normally as it can be set to incapacitate.)
 * 設定画面の「上級者向け」タブの「URLによるAMP判断」を非推奨に変更。
   Modified: Modified "AMP judgment by URL" on the "Advanced" tab of the setting screen to Deprecated.
@@ -613,9 +621,9 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Modified: Modified to leave open tabs when pressing "Save Changes" on the settings screen.
 * 設定画面の「初期化」タブを非表示に変更。（「上級者向け」タブから表示させることができます。）
   Modified: Modified "Initialize" tab of the setting screen to hide. (It can be displayed from the "Advanced" tab.)
-* 設定画面の「初期化」タブに「プラグインの再起動」を追加。（管理者モードのみで使用できます）
+* 設定画面の「初期化」タブに「プラグインの再起動」を追加。※一般に解放していません。
   Added a setting to button "Restart Plugin" in the "Initialize" tab of the setting screen. (Available only in admin mode)
-* 設定画面の「初期化」タブに「初期化時の例外」の設定を追加。（管理者モードのみで使用できます）
+* 設定画面の「初期化」タブに「初期化時の例外」の設定を追加。※一般に解放していません。
   Added a setting to "Initialization Exception" in the "Initialize" tab of the setting screen. (Available only in admin mode)
 * カード管理画面の一覧に全件表示されていたものを、1ページに10個表示されるように修正。
   Fixed: Fixed all the items displayed in the list on the card management screen so that 10 items are displayed on one page.

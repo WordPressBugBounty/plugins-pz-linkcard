@@ -2,8 +2,9 @@
 <?php
 	// WP-CRONスケジュール（存在チェック）
 	if (!$this->options['flg-alive'] ) {
+		$log	.=	'Clear schedule "Site Alive Check".'.PHP_EOL;
 		wp_clear_scheduled_hook(self::CRON_ALIVE );
-		return	null;
+		//return	null;
 	}
 
 	// DBの宣言
@@ -13,8 +14,9 @@
 	$proc_datas	=	$wpdb->get_results($wpdb->prepare("SELECT url,alive_time FROM $this->db_name WHERE alive_nexttime < %d ORDER BY alive_time ASC, id ASC", $this->now ) );
 
 	// 実行ログ
+	$message	=	sprintf('There were %d links that passed the next "Link Alive Check" confirmation date and time.', count($proc_datas ) );
+	$log		.=	$message.PHP_EOL;
 	if	($this->options['survey-mode'] ) {
-		$message	=	'There were '.count($proc_datas ).' links that passed the next "Link Alive Check" confirmation date and time.';
 		$this->pz_OutputLOG(__FUNCTION__, $message );
 	}
 
@@ -26,6 +28,7 @@
 
 			// 5件を超えたら、1時間後に続きを処理する
 			if ($proc_count > 5) {
+				$log	.=	'Break.'.PHP_EOL;
 				wp_schedule_single_event(time() + 3600, self::CRON_ALIVE );
 				break;
 			}
@@ -56,8 +59,9 @@
 				$result		=	$this->pz_SetCache($before );
 
 				// 実行ログ
+				$message	=	'['.$proc_count.'] Confirmed the "Link Alive Check". (NextTime='.date('Y-m-d H:i:s', $result['alive_nexttime'] ).' Result='.$result['alive_result'].' URL='.$result['url'].')';
+				$log		.=	$message.PHP_EOL;
 				if	($this->options['survey-mode'] ) {
-					$message	=	'['.$proc_count.'] '.'Confirmed the "Link Alive Check". (NextTime='.date('Y-m-d H:i:s', $result['alive_nexttime'] ).' Result='.$result['alive_result'].' URL='.$result['url'].')';
 					$this->pz_OutputLOG(__FUNCTION__, $message );
 				}
 			}

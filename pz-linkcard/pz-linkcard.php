@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.6.3
+Version:		2.5.6.4
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -271,10 +271,6 @@ class class_pz_linkcard {
 	private		const	PLUGIN_NAME			=	'Pz-LinkCard';
 	private		const	PLUGIN_SLUG			=	'pz-linkcard';
 
-	private		const	HANDLE_ADMIN		=	self::PLUGIN_SLUG.'-admin';
-	private		const	HANDLE_CSS			=	self::PLUGIN_SLUG.'-style';
-	private		const	HANDLE_CSS_ADD		=	self::PLUGIN_SLUG.'-add';
-
 	private		const	PLUGIN_ACRONYM		=	'Pz-LkC';
 	private		const	PLUGIN_PATH			=	'/pz-linkcard';
 	private		const	OPTION_NAME			=	'pz_linkcard_options';
@@ -341,6 +337,7 @@ class class_pz_linkcard {
 		define('TEXT_DOMAIN',		$plugin_info['TextDomain'] );							// テキストドメイン
 
 		define('URL_ADMIN_JS',		plugins_url('js/admin-settings.js', __FILE__ ) );		// 管理画面のJSのURL
+		define('URL_ADMIN_TAB',		plugins_url('js/admin-tabs.js', __FILE__ ) );			// 管理画面のJSのURL
 		define('URL_ADMIN_CSS',		plugin_dir_url(__FILE__ ).'css/admin.css' );			// 管理画面のCSSのURL
 
 		define('DIR_UPLOAD',		wp_upload_dir()['basedir']. '/'.self::PLUGIN_SLUG.'/' );	// アップロード ディレクトリのパス
@@ -1165,103 +1162,16 @@ class class_pz_linkcard {
 		// HTMLタグ作成
 		switch	($this->options['info-position'] ) {
 		case	1:		// 上側
-			$tag	=	
-				$html_wrap_op.
-					$html_a_op_all.
-					$html_heading.
-						'<div class="lkc-card">'.
-							$html_info.
-							'<div class="lkc-content">'.
-								$html_a_op.
-									$html_thumbnail.
-									$html_title.
-								$html_a_cl.
-								$html_sns_title.
-								$html_url1.
-								$html_date.
-								$html_excerpt.
-								$html_moretag.
-							'</div>'.
-							'<div class="clear"></div>'.
-						'</div>'.
-					$html_a_cl_all.
-				$html_wrap_cl
-			;
+			$tag	=	$html_wrap_op.$html_a_op_all.$html_heading.'<div class="lkc-card">'.$html_info.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear"></div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		case	2:		// 下側
-			$tag	=	
-				$html_wrap_op.
-					$html_heading.
-					$html_a_op_all.
-						'<div class="lkc-card">'.
-							'<div class="lkc-content">'.
-								$html_a_op.
-								$html_thumbnail.
-									$html_title.
-								$html_a_cl.
-								$html_sns_title.
-								$html_url1.
-								$html_date.
-								$html_excerpt.
-								$html_moretag.
-							'</div>'.
-							$html_info.
-							'<div class="clear">'.
-							'</div>'.
-						'</div>'.
-					$html_a_cl_all.
-				$html_wrap_cl
-			;
+			$tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.$html_info.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		case	3:		// タイトルの上側
-			$tag	=	
-				$html_wrap_op.
-					$html_heading.
-					$html_a_op_all.
-						'<div class="lkc-card">'.
-							'<div class="lkc-content">'.
-								$html_a_op.
-									$html_thumbnail.
-									$html_title.
-								$html_a_cl.
-								$html_sns_title.
-								$html_url1.
-								$html_date.
-								$html_excerpt.
-								$html_moretag.
-							'</div>'.
-							'<div class="clear">'.
-							'</div>'.
-						'</div>'.
-					$html_a_cl_all.
-				$html_wrap_cl
-			;
+			$tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		default:
-
-			$tag	=	
-				$html_wrap_op.
-					$html_heading.
-					$html_a_op_all.
-						'<div class="lkc-card">'.
-							'<div class="lkc-content">'.
-								$html_a_op.
-									$html_thumbnail.
-									$html_title.
-								$html_a_cl.
-								$html_sns_title.
-								$html_url1.
-								$html_date.
-								$html_excerpt.
-								$html_moretag.
-							'</div>'.
-							'<div class="clear">'.
-							'</div>'.
-						'</div>'.
-					$html_a_cl_all.
-				$html_wrap_cl
-			;
-
+			$tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 		}
 
 		// 引用文扱い
@@ -2587,25 +2497,6 @@ class class_pz_linkcard {
 		return		null;
 	}
 
-	// デバグ用の文字列表示
-	private	function	pz_OutputLOG($function, $user_message = null, $separate = false ) {
-		if	(is_dir(DIR_DEBUG ) ) {
-			$filename		=	DIR_DEBUG.$this->slug.'_'.date('Ymd', current_time('timestamp', false ) ).'.log';
-			if	(function_exists('microtime' ) && function_exists('wp_date') ) {
-				$timestamp	=	microtime(true );
-				$dt			=	intval($timestamp );
-				$ms			=	substr(intval($timestamp * 1000 ), -3, 3 );
-				$timestamp	=	wp_date('Y-m-d H:i:s', $dt ).'.'.$ms;
-			} else {
-				$timestamp	=	date('Y-m-d H:i:s', current_time('timestamp', false ) );
-			}
-			$count			=	sprintf('%03d', $this->test_count++ );
-			$message		=	($separate ? PHP_EOL : null ).$timestamp.' '.$count.' ['.$function.'] '.$user_message.(mb_substr($user_message, -1, 1) == PHP_EOL ? null : PHP_EOL );
-			$result			=	file_put_contents($filename, $message, FILE_APPEND );
-			return			$result;
-		}
-	}
-
 	// 日付・時刻の書式変換
 	private	function	pz_Date($format, $value ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
@@ -2693,8 +2584,10 @@ class class_pz_linkcard {
 	public	function	action_admin_enqueue_scripts($hook ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
-		wp_enqueue_script	(self::HANDLE_ADMIN,		URL_ADMIN_JS,			array('jquery' ),	PLUGIN_VERSION, true );
-		wp_enqueue_style	(self::HANDLE_ADMIN,		URL_ADMIN_CSS,			array(),			PLUGIN_VERSION );
+		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-tabs',	URL_ADMIN_TAB,			array('jquery' ),	PLUGIN_VERSION, true );
+		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-js',		URL_ADMIN_JS,			array('jquery' ),	PLUGIN_VERSION, true );
+		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	URL_ADMIN_CSS,			array(),			PLUGIN_VERSION );
+
 		wp_enqueue_script	('wp-color-picker' );		// WordPressカラーピッカースクリプト
 		wp_enqueue_style	('wp-color-picker' );		// WordPressカラーピッカースタイルシート
 	}
@@ -2706,12 +2599,12 @@ class class_pz_linkcard {
 		$this->amp		=	null;
 		$css_version	=	PLUGIN_VERSION.'.'.$this->options['css-count'];
 		if	($this->options['flg-compress'] ) {
-			wp_enqueue_style	(self::HANDLE_CSS,		URL_STYLE.'style.min.css',		array(),	$css_version );
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-css',		URL_STYLE.'style.min.css',		array(),	$css_version );
 		} else {
-			wp_enqueue_style	(self::HANDLE_CSS,		URL_STYLE.'style.css',			array(),	$css_version );
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-css',		URL_STYLE.'style.css',			array(),	$css_version );
 		}
 		if	($this->options['css-add-url'] ) {
-			wp_enqueue_style(self::HANDLE_CSS_ADD,		$this->options['css-add-url'],	array(),	$css_version );
+			wp_enqueue_style(self::PLUGIN_SLUG.'-css-add',		$this->options['css-add-url'],	array(),	$css_version );
 		}
 	}
 
@@ -2723,7 +2616,7 @@ class class_pz_linkcard {
 
 	// 管理画面時の設定（スクリプトの追加）
 	public	function	action_admin_print_scripts() {
-		// if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
+		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
 	}
 
@@ -2827,16 +2720,37 @@ class class_pz_linkcard {
 	public	function	schedule_hook_check() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
+		$log	=	null;
 		require_once('lib/pz-linkcard-cron-sns.php' );
-		return	$log;
+		return		$log;
 	}
 
 	// WP-CRONスケジュール（存在チェック）
 	public	function	schedule_hook_alive() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
+		$log	=	null;
 		require_once('lib/pz-linkcard-cron-alive.php' );
-		return	$log;
+		return		$log;
+	}
+
+	// デバグ用の文字列表示
+	private	function	pz_OutputLOG($function, $user_message = null, $separate = false ) {
+		if	(is_dir(DIR_DEBUG ) ) {
+			$filename		=	DIR_DEBUG.$this->slug.'_'.date('Ymd', current_time('timestamp', false ) ).'.log';
+			if	(function_exists('microtime' ) ) {
+				$timestamp	=	microtime(true );
+				$dt			=	intval($timestamp );
+				$ms			=	substr(intval($timestamp * 1000 ), -3, 3 );
+				$timestamp	=	wp_date('Y-m-d H:i:s', $dt ).'.'.$ms;
+			} else {
+				$timestamp	=	date('Y-m-d H:i:s', current_time('timestamp', false ) );
+			}
+			$count			=	sprintf('%03d', $this->test_count++ );
+			$message		=	($separate ? PHP_EOL : null ).$timestamp.' '.$count.' ['.$function.'] '.$user_message.(mb_substr($user_message, -1, 1) == PHP_EOL ? null : PHP_EOL );
+			$result			=	file_put_contents($filename, $message, FILE_APPEND );
+			return			$result;
+		}
 	}
 }
 $class_pz_linkcard	=	new class_pz_linkcard;

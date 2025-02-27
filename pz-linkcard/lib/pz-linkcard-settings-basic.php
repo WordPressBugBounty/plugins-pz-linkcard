@@ -1,9 +1,21 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <div class="pz-page" id="pz-basic">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
-	<h2><?php echo	__('Basic Settings', TEXT_DOMAIN ).$help_open.'basic'.$help_close; ?></h2>
-	<table class="form-table">
 
+	<div class="pz-tips" style="
+		display: none;
+		margin: 0 -8px 0 -8px;
+		padding: 4px 2px 2px 4px;
+		width: 100%;
+		border: 1px solid #000;
+		border-radius: 4px;
+		box-shadow: inset 4px 4px 4px rgba(0,0,0,0.5);
+		background-color: #eff;
+		color: #444;">
+	</div>
+
+	<table class="form-table">
+	<h2><?php echo	__('Basic Settings', TEXT_DOMAIN ).$help_open.'basic'.$help_close; ?></h2>
 <?php
 	// 簡単書式設定
 	$item_name		=	'special-format';
@@ -39,7 +51,6 @@
 	$item_notice		=	__('*', TEXT_DOMAIN ).' '.__('It applies over other formatting settings.', TEXT_DOMAIN );
 	echo_list($item_name, $prop[$item_name], $item_list, $item_descript, $item_notice );
 ?>
-
 		<tr>
 			<th scope="row"><?php _e('Saved Datetime', TEXT_DOMAIN ); ?></th>
 			<td>
@@ -71,7 +82,7 @@
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('When in Trouble', TEXT_DOMAIN ); ?></th>
-			<td><?php echo	__('Twitter Account', TEXT_DOMAIN ); ?><BR><a href="<?php echo self::AUTHOR_TWITTER_URL; ?>" rel="external noopener" target="_blank"><?php echo self::AUTHOR_TWITTER; ?></A></td>
+			<td><?php echo	__('X Account', TEXT_DOMAIN ); ?><BR><a href="<?php echo self::AUTHOR_TWITTER_URL; ?>" rel="external noopener" target="_blank"><?php echo self::AUTHOR_TWITTER; ?></A></td>
 		</tr>
 
 		<tr class="pz-debug-only">
