@@ -63,7 +63,7 @@
 	$page				=	'pz-linkcard-settings';						// 設定画面のページ
 	$action				=	isset($_POST['action'] )					?	esc_attr($_POST['action'] )					:	null ;
 	$submit				=	isset($_POST['submit'] )					?	esc_attr($_POST['submit'] )					:	null ;
-	$tab_now			=	isset($_POST['tab-now'] )					?	esc_attr($_POST['tab-now'] )				:	null ;
+	$tab_now			=	isset($_POST['tab-now'] )					?	esc_attr($_POST['tab-now'] )				:	'pz-basic' ;
 	$scroll_now			=	isset($_POST['scroll-now'] )				?	esc_attr($_POST['scroll-now'] )				:	null ;
 
 	// 変更の保存ボタンを押したとき
@@ -264,7 +264,7 @@
 			break;
 
 		case	'init-plugin':							// プラグインの再起動
-			$this->activate();
+			$this->hook_activate();
 			$flg_style			=	true;				// スタイルシートの再生成
 			break;
 
@@ -365,7 +365,9 @@
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on twitter.com）/i',				'<a href="https://twitter.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.					'Thanks<span class="pz-thx-name">$1</span>'.$logo_tw.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on wordpress.org）/i',			'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(#[^\s]*)\s+on popozure.info）/i',			'<a href="'.$pz_url.'" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.								'Thanks<span class="pz-thx-name">$1</span>'.$logo_pz.'<span class="pz-thx-account">$2</span></a>', $changelog);	
-		$changelog	=	str_replace(PHP_EOL, '<br/>', $changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\r\n",		'<br/>',	$changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\r",		'<br/>',	$changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\n",		'<br/>',	$changelog );															// 改行をBRタグに変換
 		$changelog	=	'<div class="pz-basic-changelog">'.$changelog.'</div>';
 	}
 

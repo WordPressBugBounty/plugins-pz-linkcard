@@ -26,8 +26,8 @@
 			<td><input name="" 							type="text" size="120" title="<?php echo esc_attr(DIR_STYLE.'style.min.css' ); ?>" class="pz-click-all-select" value="<?php echo	esc_attr(DIR_STYLE.'style.min.css' ); ?>" readonly="readonly" /></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th scope="row"><?php _e('Stylesheet Templete File', TEXT_DOMAIN ); ?></th>
-			<td><input name=""	type="text" size="120" title="<?php echo esc_attr(FILE_TEMPLETE ); ?>" class="pz-click-all-select" value="<?php echo esc_attr(FILE_TEMPLETE ); ?>" readonly="readonly" /></td>
+			<th scope="row"><?php _e('Stylesheet Template File', TEXT_DOMAIN ); ?></th>
+			<td><input name=""	type="text" size="120" title="<?php echo esc_attr(FILE_TEMPLATE ); ?>" class="pz-click-all-select" value="<?php echo esc_attr(FILE_TEMPLATE ); ?>" readonly="readonly" /></td>
 		</tr>
 
 	</table>

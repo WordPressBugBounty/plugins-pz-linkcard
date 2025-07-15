@@ -14,7 +14,7 @@
 
 	if (!isset($prop['style'] ) || !$prop['style'] ) {
 		// テンプレートファイルの読み込み
-		$file_text	=	file_get_contents(FILE_TEMPLETE );
+		$file_text	=	file_get_contents(FILE_TEMPLATE );
 		if ($file_text ) {
 			// かんたん書式設定
 			switch ($prop['special-format'] ) {

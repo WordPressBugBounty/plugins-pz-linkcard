@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.6.4
+Version:		2.5.6.5
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -356,7 +356,7 @@ class class_pz_linkcard {
 		define('TIME_FORMAT',		get_option('time_format' ) );
 		define('DATETIME_FORMAT',	DATE_FORMAT.' '.TIME_FORMAT );
 
-		define('FILE_TEMPLETE',		plugin_dir_path(__FILE__ ).'templete/pz-linkcard-templete.css' );	// 元となるテンプレート
+		define('FILE_TEMPLATE',		plugin_dir_path(__FILE__ ).'template/pz-linkcard-template.css' );	// 元となるテンプレート
 
 		// 定数
 		$this->slug					=	basename(dirname(__FILE__ ) );						// スラッグ
@@ -420,7 +420,6 @@ class class_pz_linkcard {
 			}
 			register_activation_hook	(__FILE__,							array($this, 'hook_activate' ),						10, 1 );		// プラグインを有効化するときの処理
 			register_deactivation_hook	(__FILE__,							array($this, 'hook_deactivate' ),					10, 1 );		// プラグインを無効化するときの処理
-			register_uninstall_hook		(__FILE__,							array($this, 'hook_uninstall' ),					10, 1 );		// プラグインを削除するときの処理
 			add_action		('init',										array($this, 'action_init' ),						10, 1 );		// プラグイン初期化
 			add_action		('plugins_loaded',								array($this, 'action_plugins_loaded' ),				10, 1 );		// WordPressロード後
 			add_action		('upgrader_process_complete',					array($this, 'action_upgrader_process_complete' ),	10, 2 );		// アップデートしたときの処理
@@ -1570,7 +1569,7 @@ class class_pz_linkcard {
 			return	null;
 		}
 		if	($wpdb->last_error ) {			// DBエラーのとき、初期化する
-			$this->activate();
+			$this->hook_activate();
 		}
 
 		if	(is_wp_error($data ) ) {
@@ -2525,12 +2524,6 @@ class class_pz_linkcard {
 
 		wp_clear_scheduled_hook(self::DEFAULTS['cron-alive'] );		// WP-CRONスケジュール停止（リンク先存在チェック）
 		wp_clear_scheduled_hook(self::DEFAULTS['cron-check'] );		// WP-CRONスケジュール停止（SNSカウント取得）
-	}
-
-	// プラグインを削除
-	public	function	hook_uninstall() {
-		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
-
 	}
 
 	// プラグインの初期化
