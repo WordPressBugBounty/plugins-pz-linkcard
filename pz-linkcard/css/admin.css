@@ -456,7 +456,10 @@
 	overflow: hidden;
 	white-space: wrap;
 	text-overflow: ellipsis;
-	text-align: right;
+	text-align: center;
+}
+.pz-man-body-click-count {
+	text-align: center;
 }
 .pz-man-body-result {
 	text-align: center;

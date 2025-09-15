@@ -4,7 +4,7 @@
 		'0'			=>		'CURLE_OK',
 		'1'			=>		'CURLE_UNSUPPORTED_PROTOCOL',
 		'2'			=>		'CURLE_FAILED_INIT',
-		'3'			=>		'CURLE_URL_MALFORMAT',
+		'3'			=>		'CURLE_PZLKC_URL_MALFORMAT',
 		'4'			=>		'CURLE_NOT_BUILT_IN',
 		'5'			=>		'CURLE_COULDNT_RESOLVE_PROXY',
 		'6'			=>		'CURLE_COULDNT_RESOLVE_HOST',

@@ -1,33 +1,33 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <div class="pz-page" id="pz-letter">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
-	<h2><?php echo	__('Letter Settings', TEXT_DOMAIN ).$help_open.'letter'.$help_close; ?></h2>
+	<h2><?php echo	__('Letter Settings', PZLKC_TEXT_DOMAIN ).$help_open.'letter'.$help_close; ?></h2>
 	<table class="pz-letter-table form-table">
 		<tr class="pz-letter-head">
 			<th></th>
-			<th><?php _e('Letter Color',		TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Outline Color',		TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Background Color',	TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Size',				TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Line Height',			TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Line Limit',			TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Length',				TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Bold',				TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Italic',				TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Underline',			TEXT_DOMAIN ); ?></th>
-			<th><?php _e('Underline<br />On Hover',			TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Letter Color',		PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Outline Color',		PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Background Color',	PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Size',				PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Line Height',			PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Line Limit',			PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Length',				PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Bold',				PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Italic',				PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Underline',			PZLKC_TEXT_DOMAIN ); ?></th>
+			<th><?php _e('Underline<br>On Hover',			PZLKC_TEXT_DOMAIN ); ?></th>
 		</tr>
 		<?php
 		$table	=	array(
-			array( 'name' => 'title'	,	'title' => __('Title',				TEXT_DOMAIN ) ),
-			array( 'name' => 'excerpt'	,	'title' => __('Excerpt',			TEXT_DOMAIN ) ),
-			array( 'name' => 'url'		,	'title' => __('URL',				TEXT_DOMAIN ) ),
-			array( 'name' => 'date'		,	'title' => __('Date',				TEXT_DOMAIN ) ),
-			array( 'name' => 'heading'	,	'title' => __('Header Text',		TEXT_DOMAIN ) ),
-			array( 'name' => 'more'		,	'title' => __('More Button',		TEXT_DOMAIN ) ),
-			array( 'name' => 'info'		,	'title' => __('Site Information',	TEXT_DOMAIN ) ),
-			array( 'name' => 'added'	,	'title' => __('Added Text',			TEXT_DOMAIN ) ),
-			array( 'name' => 'cat'		,	'title' => __('Category',			TEXT_DOMAIN ) ),
+			array( 'name' => 'title'	,	'title' => __('Title',				PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'excerpt'	,	'title' => __('Excerpt',			PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'url'		,	'title' => __('URL',				PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'date'		,	'title' => __('Date',				PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'heading'	,	'title' => __('Header Text',		PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'more'		,	'title' => __('More Button',		PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'info'		,	'title' => __('Site Information',	PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'added'	,	'title' => __('Added Text',			PZLKC_TEXT_DOMAIN ) ),
+			array( 'name' => 'cat'		,	'title' => __('Category',			PZLKC_TEXT_DOMAIN ) ),
 		);
 		foreach ($table as $t) {
 			echo	'<tr>';
@@ -66,9 +66,9 @@
 			$key		=		$t['name'].'-size';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=	preg_replace('/[^0-9]/', '', $prop[$key] );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', TEXT_DOMAIN );
+				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', PZLKC_TEXT_DOMAIN );
 			} else {
-				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', TEXT_DOMAIN );
+				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', PZLKC_TEXT_DOMAIN );
 			}
 			echo	'</td>';
 
@@ -76,9 +76,9 @@
 			$key		=		$t['name'].'-height';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=	preg_replace('/[^0-9]/', '', $prop[$key] );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', TEXT_DOMAIN );
+				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', PZLKC_TEXT_DOMAIN );
 			} else {
-				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', TEXT_DOMAIN );
+				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', PZLKC_TEXT_DOMAIN );
 			}
 			echo	'</td>';
 

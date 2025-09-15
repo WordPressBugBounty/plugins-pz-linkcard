@@ -16,7 +16,7 @@
 	// WP-Cron の実行結果
 	if (isset($cron_log ) ) {
 		$cron_log			=	esc_attr(esc_html($cron_log ) );
-		$cron_log			=	str_replace(PHP_EOL, '<br />', $cron_log );
+		$cron_log			=	str_replace(PHP_EOL, '<br>', $cron_log );
 	}
 
 	// WP-Cronスケジュールを取得
@@ -35,16 +35,16 @@
 					$display	=	'class="pz-cron-list-other"';
 				}
 				$schedule		=	isset($schedules[$data['schedule']]['display'] ) ? $schedules[$data['schedule']]['display'] : $data['schedule'] ;
-				$interval		=	isset($data['interval'] ) ? $data['interval'].' '.__('Sec.', TEXT_DOMAIN ) : null ;
+				$interval		=	isset($data['interval'] ) ? $data['interval'].' '.__('Sec.', PZLKC_TEXT_DOMAIN ) : null ;
 				$cron_list[]	=	array(
 					//'key'			=>	($myjob ? '1' : '2' ).$hook,
 					'key'			=>	$timestamp,
 					'hook'			=>	$hook,
 					'myjob'			=>	$myjob,
-					'next_time'		=>	esc_html(get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), DATETIME_FORMAT ) ),
+					'next_time'		=>	esc_html(get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), PZLKC_DATETIME_FORMAT ) ),
 					'schedule'		=>	$schedule,
 					'interval'		=>	$interval,
-					'button'		=>	'<button type="submit" name="action" '.$button.' onclick="return confirm(\''.__('Are you sure?', TEXT_DOMAIN ).'\' );">'.__('Run Now', TEXT_DOMAIN ).'</button>',
+					'button'		=>	'<button type="submit" name="action" '.$button.' onclick="return confirm(\''.__('Are you sure?', PZLKC_TEXT_DOMAIN ).'\' );">'.__('Run Now', PZLKC_TEXT_DOMAIN ).'</button>',
 					'display'		=>	$display
 					);
 			}
@@ -54,35 +54,35 @@
 
 ?>
 <div class="pz-page pz-page-admin" id="pz-admin">
-	<div class="pz-admin-notice"><?php _e('Do not use normally as it can be set to incapacitate.', TEXT_DOMAIN ); ?></div>
+	<div class="pz-admin-notice"><?php _e('Do not use normally as it can be set to incapacitate.', PZLKC_TEXT_DOMAIN ); ?></div>
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 
-	<h2><?php _e('Information', TEXT_DOMAIN ); ?></h2>
+	<h2><?php _e('Information', PZLKC_TEXT_DOMAIN ); ?></h2>
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('WordPress Version', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('WordPress Version', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input type="text" size="20" value="<?php echo bloginfo('version' ); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('PHP Version', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('PHP Version', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input type="text" size="20" value="<?php echo phpversion(); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('DBMS Version', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('DBMS Version', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input type="text" size="20" value="<?php global $wpdb; echo $wpdb->db_version(); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Table Name', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Table Name', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input type="text" size="40" value="<?php echo esc_html($this->db_name ); ?>" readonly="readonly" /></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Plugin Version', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Plugin Version', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td>
-				<input type="text" name="properties[plugin-version]" value="<?php echo esc_html(PLUGIN_VERSION ); ?>" size="10" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'ondblclick="this.readOnly=false;" '; }?>/>
+				<input type="text" name="properties[plugin-version]" value="<?php echo esc_html(PZLKC_PLUGIN_VERSION ); ?>" size="10" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'ondblclick="this.readOnly=false;" '; }?>/>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Plugin DB Version', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Plugin DB Version', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td>
 				<input type="text" name="properties[db-version]"     value="<?php echo esc_attr($prop['db-version'] ); ?>"     size="40" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'ondblclick="this.readOnly=false;" '; }?>/>
 			</td>
@@ -90,52 +90,52 @@
 	</table>
 	<?php submit_button(); ?>
 
-	<h2><?php _e('for Debug', TEXT_DOMAIN ); ?></h2>
+	<h2><?php _e('for Debug', PZLKC_TEXT_DOMAIN ); ?></h2>
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Reboot This Plugin', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Reboot This Plugin', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td>
-				<button type="submit" name="action" value="init-plugin" class="pz-button-sure" onclick="return confirm('<?php _e('Are you sure?', TEXT_DOMAIN ); ?>');"><?php _e('Run', TEXT_DOMAIN ); ?></button>
-				&ensp;<span><?php echo	__('Perform initial setup.', TEXT_DOMAIN ).'&nbsp;'.__('"Settings" will not be initialized.', TEXT_DOMAIN ); ?></span>
+				<button type="submit" name="action" value="init-plugin" class="pz-button-sure" onclick="return confirm('<?php _e('Are you sure?', PZLKC_TEXT_DOMAIN ); ?>');"><?php _e('Run', PZLKC_TEXT_DOMAIN ); ?></button>
+				&ensp;<span><?php echo	__('Perform initial setup.', PZLKC_TEXT_DOMAIN ).'&nbsp;'.__('"Settings" will not be initialized.', PZLKC_TEXT_DOMAIN ); ?></span>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('DB Update Mode', TEXT_DOMAIN ); ?></span></th>
+			<th scope="row"><?php _e('DB Update Mode', PZLKC_TEXT_DOMAIN ); ?></span></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[debug-nocache]" value="" />
 					<input type="checkbox" name="properties[debug-nocache]" value="1" <?php checked($prop['debug-nocache'] ); ?> class="pz-tab-show" />
-					<?php _e('Forced access to links even if they are recorded in DB.', TEXT_DOMAIN ); ?>
+					<?php _e('Forced access to links even if they are recorded in DB.', PZLKC_TEXT_DOMAIN ); ?>
 				</label>
 			</td>
 		</tr>
 	</table>
 	<?php submit_button(); ?>
 
-	<h2><?php _e('Error Settings', TEXT_DOMAIN ); ?></h2>
+	<h2><?php _e('Error Settings', PZLKC_TEXT_DOMAIN ); ?></h2>
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Error Conditions', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Error Conditions', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[error-mode]" value="" />
 					<input type="checkbox" name="properties[error-mode]" value="1" <?php checked($prop['error-mode'] ); ?> />
-					<?php _e('Check to enable error conditions.', TEXT_DOMAIN ); ?>
+					<?php _e('Check to enable error conditions.', PZLKC_TEXT_DOMAIN ); ?>
 				</label>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Post ID', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Post ID', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input name="properties[error-postid]" type="text" size="5" value="<?php echo esc_attr($prop['error-postid'] ); ?>" /></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Post URL', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Post URL', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td><input name="properties[error-url]" type="url" size="80" value="<?php echo esc_attr($prop['error-url'] ); ?>" /></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('Occurrence Time', TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Occurrence Time', PZLKC_TEXT_DOMAIN ); ?></th>
 			<td>
-				<input type="text" size="40" value="<?php echo is_numeric($prop['error-time'] ) ? $this->pz_Date(DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time']; ?>" readonly="readonly" />
+				<input type="text" size="40" value="<?php echo is_numeric($prop['error-time'] ) ? $this->pz_Date(PZLKC_DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time']; ?>" readonly="readonly" />
 				<input name="properties[error-time]" type="text" value="<?php echo $prop['error-time']; ?>" class="pz-ad______min-only" />
 			</td>
 		</tr>
@@ -143,29 +143,29 @@
 	<?php submit_button(); ?>
 
 	<?php if (isset($cron_log ) ) { ?>
-		<h2><?php _e('Execution Result', TEXT_DOMAIN ); ?></h2>
+		<h2><?php _e('Execution Result', PZLKC_TEXT_DOMAIN ); ?></h2>
 		<div>
-			<?php _e('Execution Result', TEXT_DOMAIN ); ?>
+			<?php _e('Execution Result', PZLKC_TEXT_DOMAIN ); ?>
 		</div>
 		<div class="pz-cron-log">
 			<?php echo $cron_log; ?>
 		</div>
 	<?php } ?>
 
-	<h2><?php _e('WP-Cron Information', TEXT_DOMAIN ); ?></h2>
+	<h2><?php _e('WP-Cron Information', PZLKC_TEXT_DOMAIN ); ?></h2>
 	<div class="pz-cron-margin">
 		<label>
 			<input type="checkbox" value="1" class="pz-cron-all" />
-			<?php _e('View all schedules.', TEXT_DOMAIN ); ?>
+			<?php _e('View all schedules.', PZLKC_TEXT_DOMAIN ); ?>
 		</label>
 	</div>
 	<table class="pz-cron-list widefat striped">
 		<thead>
 			<tr>
-				<th scope="col" class="pz-cron-head-run"><?php _e('Run', TEXT_DOMAIN ); ?></th>
-				<th scope="col" class="pz-cron-head-hook"><?php _e('Hook', TEXT_DOMAIN ); ?></th>
-				<th scope="col" class="pz-cron-head-next-time"><?php echo __('Next Time', TEXT_DOMAIN ).__('▼', TEXT_DOMAIN ); ?></th>
-				<th scope="col" class="pz-cron-head-schedule"><?php _e('Schedule', TEXT_DOMAIN ); ?></th>
+				<th scope="col" class="pz-cron-head-run"><?php _e('Run', PZLKC_TEXT_DOMAIN ); ?></th>
+				<th scope="col" class="pz-cron-head-hook"><?php _e('Hook', PZLKC_TEXT_DOMAIN ); ?></th>
+				<th scope="col" class="pz-cron-head-next-time"><?php echo __('Next Time', PZLKC_TEXT_DOMAIN ).__('▼', PZLKC_TEXT_DOMAIN ); ?></th>
+				<th scope="col" class="pz-cron-head-schedule"><?php _e('Schedule', PZLKC_TEXT_DOMAIN ); ?></th>
 			</tr>
 		</thead>
 		<tbody>

@@ -5,9 +5,6 @@
 	$wp_upload_dir		=	wp_upload_dir();
 	$upload_dir_path	=	$wp_upload_dir['basedir'].'/'.$slug;
 
-	// 設定の削除
-	delete_option('Pz_LinkCard_options' );
-
 	// DBの削除
 	global			$wpdb;
 	$db_name	=	$wpdb->prefix.'pz_linkcard';

@@ -1,62 +1,62 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	// 「内部リンクの設定を参照」
-	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', TEXT_DOMAIN ), ) );
+	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', PZLKC_TEXT_DOMAIN ), ) );
 
 	// 「枠線の幅」
-	define('LIST_PX',		array('1px' => __('1px', TEXT_DOMAIN ), '2px' => __('2px', TEXT_DOMAIN ), '3px' => __('3px', TEXT_DOMAIN ), '4px' => __('4px', TEXT_DOMAIN ), '5px' => __('5px', TEXT_DOMAIN ), '6px' => __('6px', TEXT_DOMAIN ), '7px' => __('7px', TEXT_DOMAIN ), '8px' => __('8px', TEXT_DOMAIN ), '9px' => __('9px', TEXT_DOMAIN ), '10px' => __('10px', TEXT_DOMAIN ), '11px' => __('11px', TEXT_DOMAIN ), '12px' => __('12px', TEXT_DOMAIN ), '13px' => __('13px', TEXT_DOMAIN ), '14px' => __('14px', TEXT_DOMAIN ), '15px' => __('15px', TEXT_DOMAIN ), '16px' => __('16px', TEXT_DOMAIN ), '17px' => __('17px', TEXT_DOMAIN ), '18px' => __('18px', TEXT_DOMAIN ), '19px' => __('19px', TEXT_DOMAIN ), '20px' => __('20px', TEXT_DOMAIN ), '21px' => __('21px', TEXT_DOMAIN ), '22px' => __('22px', TEXT_DOMAIN ), '23px' => __('23px', TEXT_DOMAIN ), '24px' => __('24px', TEXT_DOMAIN ), '25px' => __('25px', TEXT_DOMAIN ), '26px' => __('26px', TEXT_DOMAIN ), '27px' => __('27px', TEXT_DOMAIN ), '28px' => __('28px', TEXT_DOMAIN ), '29px' => __('29px', TEXT_DOMAIN ), '30px' => __('30px', TEXT_DOMAIN ), '31px' => __('31px', TEXT_DOMAIN ), '32px' => __('32px', TEXT_DOMAIN ), '33px' => __('33px', TEXT_DOMAIN ), '34px' => __('34px', TEXT_DOMAIN ), '35px' => __('35px', TEXT_DOMAIN ), '36px' => __('36px', TEXT_DOMAIN ), '37px' => __('37px', TEXT_DOMAIN ), '38px' => __('38px', TEXT_DOMAIN ), '39px' => __('39px', TEXT_DOMAIN ), '40px' => __('40px', TEXT_DOMAIN ), '41px' => __('41px', TEXT_DOMAIN ), '42px' => __('42px', TEXT_DOMAIN ), '43px' => __('43px', TEXT_DOMAIN ), '44px' => __('44px', TEXT_DOMAIN ), '45px' => __('45px', TEXT_DOMAIN ), '46px' => __('46px', TEXT_DOMAIN ), '47px' => __('47px', TEXT_DOMAIN ), '48px' => __('48px', TEXT_DOMAIN ), '49px' => __('49px', TEXT_DOMAIN ), '50px' => __('50px', TEXT_DOMAIN ), '51px' => __('51px', TEXT_DOMAIN ), '52px' => __('52px', TEXT_DOMAIN ), '53px' => __('53px', TEXT_DOMAIN ), '54px' => __('54px', TEXT_DOMAIN ), '55px' => __('55px', TEXT_DOMAIN ), '56px' => __('56px', TEXT_DOMAIN ), '57px' => __('57px', TEXT_DOMAIN ), '58px' => __('58px', TEXT_DOMAIN ), '59px' => __('59px', TEXT_DOMAIN ), '60px' => __('60px', TEXT_DOMAIN ), '61px' => __('61px', TEXT_DOMAIN ), '62px' => __('62px', TEXT_DOMAIN ), '63px' => __('63px', TEXT_DOMAIN ), '64px' => __('64px', TEXT_DOMAIN ), ) );
+	define('LIST_PX',		array('1px' => __('1px', PZLKC_TEXT_DOMAIN ), '2px' => __('2px', PZLKC_TEXT_DOMAIN ), '3px' => __('3px', PZLKC_TEXT_DOMAIN ), '4px' => __('4px', PZLKC_TEXT_DOMAIN ), '5px' => __('5px', PZLKC_TEXT_DOMAIN ), '6px' => __('6px', PZLKC_TEXT_DOMAIN ), '7px' => __('7px', PZLKC_TEXT_DOMAIN ), '8px' => __('8px', PZLKC_TEXT_DOMAIN ), '9px' => __('9px', PZLKC_TEXT_DOMAIN ), '10px' => __('10px', PZLKC_TEXT_DOMAIN ), '11px' => __('11px', PZLKC_TEXT_DOMAIN ), '12px' => __('12px', PZLKC_TEXT_DOMAIN ), '13px' => __('13px', PZLKC_TEXT_DOMAIN ), '14px' => __('14px', PZLKC_TEXT_DOMAIN ), '15px' => __('15px', PZLKC_TEXT_DOMAIN ), '16px' => __('16px', PZLKC_TEXT_DOMAIN ), '17px' => __('17px', PZLKC_TEXT_DOMAIN ), '18px' => __('18px', PZLKC_TEXT_DOMAIN ), '19px' => __('19px', PZLKC_TEXT_DOMAIN ), '20px' => __('20px', PZLKC_TEXT_DOMAIN ), '21px' => __('21px', PZLKC_TEXT_DOMAIN ), '22px' => __('22px', PZLKC_TEXT_DOMAIN ), '23px' => __('23px', PZLKC_TEXT_DOMAIN ), '24px' => __('24px', PZLKC_TEXT_DOMAIN ), '25px' => __('25px', PZLKC_TEXT_DOMAIN ), '26px' => __('26px', PZLKC_TEXT_DOMAIN ), '27px' => __('27px', PZLKC_TEXT_DOMAIN ), '28px' => __('28px', PZLKC_TEXT_DOMAIN ), '29px' => __('29px', PZLKC_TEXT_DOMAIN ), '30px' => __('30px', PZLKC_TEXT_DOMAIN ), '31px' => __('31px', PZLKC_TEXT_DOMAIN ), '32px' => __('32px', PZLKC_TEXT_DOMAIN ), '33px' => __('33px', PZLKC_TEXT_DOMAIN ), '34px' => __('34px', PZLKC_TEXT_DOMAIN ), '35px' => __('35px', PZLKC_TEXT_DOMAIN ), '36px' => __('36px', PZLKC_TEXT_DOMAIN ), '37px' => __('37px', PZLKC_TEXT_DOMAIN ), '38px' => __('38px', PZLKC_TEXT_DOMAIN ), '39px' => __('39px', PZLKC_TEXT_DOMAIN ), '40px' => __('40px', PZLKC_TEXT_DOMAIN ), '41px' => __('41px', PZLKC_TEXT_DOMAIN ), '42px' => __('42px', PZLKC_TEXT_DOMAIN ), '43px' => __('43px', PZLKC_TEXT_DOMAIN ), '44px' => __('44px', PZLKC_TEXT_DOMAIN ), '45px' => __('45px', PZLKC_TEXT_DOMAIN ), '46px' => __('46px', PZLKC_TEXT_DOMAIN ), '47px' => __('47px', PZLKC_TEXT_DOMAIN ), '48px' => __('48px', PZLKC_TEXT_DOMAIN ), '49px' => __('49px', PZLKC_TEXT_DOMAIN ), '50px' => __('50px', PZLKC_TEXT_DOMAIN ), '51px' => __('51px', PZLKC_TEXT_DOMAIN ), '52px' => __('52px', PZLKC_TEXT_DOMAIN ), '53px' => __('53px', PZLKC_TEXT_DOMAIN ), '54px' => __('54px', PZLKC_TEXT_DOMAIN ), '55px' => __('55px', PZLKC_TEXT_DOMAIN ), '56px' => __('56px', PZLKC_TEXT_DOMAIN ), '57px' => __('57px', PZLKC_TEXT_DOMAIN ), '58px' => __('58px', PZLKC_TEXT_DOMAIN ), '59px' => __('59px', PZLKC_TEXT_DOMAIN ), '60px' => __('60px', PZLKC_TEXT_DOMAIN ), '61px' => __('61px', PZLKC_TEXT_DOMAIN ), '62px' => __('62px', PZLKC_TEXT_DOMAIN ), '63px' => __('63px', PZLKC_TEXT_DOMAIN ), '64px' => __('64px', PZLKC_TEXT_DOMAIN ), ) );
 	
 	// 「余白」の書式
 	define('LIST_MARGIN',	array(
-		''				=>		__('Not defined',		TEXT_DOMAIN ),
-		'0'				=>		__('0',					TEXT_DOMAIN ),
-		'4px'			=>		__('4px',				TEXT_DOMAIN ),
-		'8px'			=>		__('8px',				TEXT_DOMAIN ),
-		'12px'			=>		__('12px',				TEXT_DOMAIN ),
-		'16px'			=>		__('16px',				TEXT_DOMAIN ),
-		'20px'			=>		__('20px',				TEXT_DOMAIN ),
-		'24px'			=>		__('24px',				TEXT_DOMAIN ),
-		'32px'			=>		__('32px',				TEXT_DOMAIN ),
-		'40px'			=>		__('40px',				TEXT_DOMAIN ),
-		'48px'			=>		__('48px',				TEXT_DOMAIN ),
-		'56px'			=>		__('56px',				TEXT_DOMAIN ),
-		'64px'			=>		__('64px',				TEXT_DOMAIN ),
+		''				=>		__('Not defined',		PZLKC_TEXT_DOMAIN ),
+		'0'				=>		__('0',					PZLKC_TEXT_DOMAIN ),
+		'4px'			=>		__('4px',				PZLKC_TEXT_DOMAIN ),
+		'8px'			=>		__('8px',				PZLKC_TEXT_DOMAIN ),
+		'12px'			=>		__('12px',				PZLKC_TEXT_DOMAIN ),
+		'16px'			=>		__('16px',				PZLKC_TEXT_DOMAIN ),
+		'20px'			=>		__('20px',				PZLKC_TEXT_DOMAIN ),
+		'24px'			=>		__('24px',				PZLKC_TEXT_DOMAIN ),
+		'32px'			=>		__('32px',				PZLKC_TEXT_DOMAIN ),
+		'40px'			=>		__('40px',				PZLKC_TEXT_DOMAIN ),
+		'48px'			=>		__('48px',				PZLKC_TEXT_DOMAIN ),
+		'56px'			=>		__('56px',				PZLKC_TEXT_DOMAIN ),
+		'64px'			=>		__('64px',				PZLKC_TEXT_DOMAIN ),
 	) );
 
 	// 「角丸め」の書式
 	define('LIST_RADIUS',	array(
-		''				=>		__('None',				TEXT_DOMAIN ),
-		'2px'			=>		__('2px',				TEXT_DOMAIN ),
-		'4px'			=>		__('4px',				TEXT_DOMAIN ),
-		'6px'			=>		__('6px',				TEXT_DOMAIN ),
-		'8px'			=>		__('8px',				TEXT_DOMAIN ),
-		'12px'			=>		__('12px',				TEXT_DOMAIN ),
-		'16px'			=>		__('16px',				TEXT_DOMAIN ),
-		'20px'			=>		__('20px',				TEXT_DOMAIN ),
-		'24px'			=>		__('24px',				TEXT_DOMAIN ),
-		'32px'			=>		__('32px',				TEXT_DOMAIN ),
-		'64px'			=>		__('64px',				TEXT_DOMAIN ),
-		'50%'			=>		__('50%',				TEXT_DOMAIN ),
+		''				=>		__('None',				PZLKC_TEXT_DOMAIN ),
+		'2px'			=>		__('2px',				PZLKC_TEXT_DOMAIN ),
+		'4px'			=>		__('4px',				PZLKC_TEXT_DOMAIN ),
+		'6px'			=>		__('6px',				PZLKC_TEXT_DOMAIN ),
+		'8px'			=>		__('8px',				PZLKC_TEXT_DOMAIN ),
+		'12px'			=>		__('12px',				PZLKC_TEXT_DOMAIN ),
+		'16px'			=>		__('16px',				PZLKC_TEXT_DOMAIN ),
+		'20px'			=>		__('20px',				PZLKC_TEXT_DOMAIN ),
+		'24px'			=>		__('24px',				PZLKC_TEXT_DOMAIN ),
+		'32px'			=>		__('32px',				PZLKC_TEXT_DOMAIN ),
+		'64px'			=>		__('64px',				PZLKC_TEXT_DOMAIN ),
+		'50%'			=>		__('50%',				PZLKC_TEXT_DOMAIN ),
 	) );
 
 	// 「枠線」の書式
 	define('LIST_BORDER',	array(
-		'none'			=>		__('None',				TEXT_DOMAIN ),
-		'solid'			=>		__('Solid',				TEXT_DOMAIN ),
-		'dotted'		=>		__('Dotted',			TEXT_DOMAIN ),
-		'dashed'		=>		__('Dashed',			TEXT_DOMAIN ),
-		'double'		=>		__('Double',			TEXT_DOMAIN ),
-		'groove'		=>		__('Groove',			TEXT_DOMAIN ),
-		'ridge'			=>		__('Ridge',				TEXT_DOMAIN ),
-		'inset'			=>		__('Inset',				TEXT_DOMAIN ),
-		'outset'		=>		__('Outset',			TEXT_DOMAIN ),
+		'none'			=>		__('None',				PZLKC_TEXT_DOMAIN ),
+		'solid'			=>		__('Solid',				PZLKC_TEXT_DOMAIN ),
+		'dotted'		=>		__('Dotted',			PZLKC_TEXT_DOMAIN ),
+		'dashed'		=>		__('Dashed',			PZLKC_TEXT_DOMAIN ),
+		'double'		=>		__('Double',			PZLKC_TEXT_DOMAIN ),
+		'groove'		=>		__('Groove',			PZLKC_TEXT_DOMAIN ),
+		'ridge'			=>		__('Ridge',				PZLKC_TEXT_DOMAIN ),
+		'inset'			=>		__('Inset',				PZLKC_TEXT_DOMAIN ),
+		'outset'		=>		__('Outset',			PZLKC_TEXT_DOMAIN ),
 	) );
 
 	// 「新しいタブで開く」の書式
 	define('LIST_NEWTAB',	array(
-		''				=>		__('None',				TEXT_DOMAIN ),
-		'1'				=>		__('All Client',		TEXT_DOMAIN ),
-		'2'				=>		__('Other Than Mobile',	TEXT_DOMAIN ),
+		''				=>		__('None',				PZLKC_TEXT_DOMAIN ),
+		'1'				=>		__('All Client',		PZLKC_TEXT_DOMAIN ),
+		'2'				=>		__('Other Than Mobile',	PZLKC_TEXT_DOMAIN ),
 	) );
 
 	// 引数・変数の設定
@@ -160,22 +160,22 @@
 	$flg_style		=	false;			// スタイルシートを再生成するか
 
 	// プラグイン名・バージョン・環境表示
-	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PLUGIN_VERSION.$html_plugin.
-			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', TEXT_DOMAIN ).'</span>'				:	'' ).
-			($survey_mode			?	'<span class="pz-plugin-env pz-plugin-env-survey">'.__('Survey Mode', TEXT_DOMAIN ).'</span>'			:	'' ).
-			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', TEXT_DOMAIN ).'</span>'	:	'' ).
-			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', TEXT_DOMAIN ).'</span>'	:	'' ).
+	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PZLKC_PLUGIN_VERSION.$html_plugin.
+			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', PZLKC_TEXT_DOMAIN ).'</span>'				:	'' ).
+			($survey_mode			?	'<span class="pz-plugin-env pz-plugin-env-survey">'.__('Survey Mode', PZLKC_TEXT_DOMAIN ).'</span>'			:	'' ).
+			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', PZLKC_TEXT_DOMAIN ).'</span>'	:	'' ).
+			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', PZLKC_TEXT_DOMAIN ).'</span>'	:	'' ).
 			'</div>';
 
 	// ページの見出し表示（設定）
 	$page_class	=	' pz-settings';
 	$switch_link	=	esc_url($this->cacheman_url );
-	$switch_icon	=	__('&#x1f5c3;&#xfe0f;', TEXT_DOMAIN );
-	$switch_label	=	__('Manager', TEXT_DOMAIN );
-	$title_icon		=	__('&#x2699;&#xfe0f;', TEXT_DOMAIN );
-	$title_label	=	__('Pz-LinkCard Settings', TEXT_DOMAIN );
+	$switch_icon	=	__('&#x1f5c3;&#xfe0f;', PZLKC_TEXT_DOMAIN );
+	$switch_label	=	__('Manager', PZLKC_TEXT_DOMAIN );
+	$title_icon		=	__('&#x2699;&#xfe0f;', PZLKC_TEXT_DOMAIN );
+	$title_label	=	__('Pz-LinkCard Settings', PZLKC_TEXT_DOMAIN );
 	$help_page		=	self::AUTHOR_URL.'/pz-linkcard-manager';
-	$html_title		=	'<div class="pz-header"><a class="pz-header-switch" href="'.$switch_link.'"><span class="pz-header-switch-icon">'.$switch_icon.'</span><span class="pz-header-switch-label">'.$switch_label.'</span></a><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', TEXT_DOMAIN ).'" alt="help" /></a></span></h1></div>';
+	$html_title		=	'<div class="pz-header"><a class="pz-header-switch" href="'.$switch_link.'"><span class="pz-header-switch-icon">'.$switch_icon.'</span><span class="pz-header-switch-label">'.$switch_label.'</span></a><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', PZLKC_TEXT_DOMAIN ).'" alt="help" /></a></span></h1></div>';
 
 	// POSTする値 INPUT要素
 	$temp_param		=
@@ -203,13 +203,13 @@
 	// 記述エラー
 	if	($this->options['error-mode'] ) {
 		if	(!$this->options['error-mode-hide'] ) {
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', TEXT_DOMAIN ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br/>'.__('*', TEXT_DOMAIN ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', TEXT_DOMAIN ).'</p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', PZLKC_TEXT_DOMAIN ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', PZLKC_TEXT_DOMAIN ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', PZLKC_TEXT_DOMAIN ).'</p></div>';
 		}
 	}
 
 	// プラグインのバージョンが違っている
-	if	($this->options['plugin-version']	<>	PLUGIN_VERSION ) {
-		$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The plugin may have been updated.', TEXT_DOMAIN ).'</strong></p></div>';
+	if	($this->options['plugin-version']	<>	PZLKC_PLUGIN_VERSION ) {
+		$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The plugin may have been updated.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 		$flg_style			=	true;
 	}
 
@@ -217,12 +217,12 @@
 	if	( ($this->options['admin-mode'] ) && ($prop ) ) {
 		foreach	(self::DEFAULTS as $key => $value ) {
 			if	(!array_key_exists($key, $prop ) ) {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in Properties.<br/>It may be a glitch. Please inform the developer. (%s)', TEXT_DOMAIN ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">@'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in Properties.<br>It may be a glitch. Please inform the developer. (%s)', PZLKC_TEXT_DOMAIN ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">@'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
 			}
 		}
 		foreach	($prop as $key => $value ) {
 			if	(!array_key_exists($key, self::DEFAULTS ) ) {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in DEFAULTS.<br/>It may be a glitch. Please inform the developer. (%s)', TEXT_DOMAIN ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in DEFAULTS.<br>It may be a glitch. Please inform the developer. (%s)', PZLKC_TEXT_DOMAIN ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
 			}
 		}
 	}
@@ -243,7 +243,7 @@
 					}
 				}
 			} else {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Could not retrieve the content to be changed.', TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Could not retrieve the content to be changed.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 			}
 			
 			// パラメーターに変更があった場合
@@ -254,9 +254,9 @@
 				if	(!$flg_error ) {
 					$result	=	$this->pz_SaveOptions();				// オプションの更新
 					if	($result ) {
-						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in saving the settings.', TEXT_DOMAIN ).'</strong></p></div>';
+						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in saving the settings.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 					} else {
-						$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', TEXT_DOMAIN ).'</strong></p></div>';
+						$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 					}
 				}
 			}
@@ -273,9 +273,9 @@
 			if	($result ) {
 				$flg_style		=	true;				// スタイルシートの再生成
 				$prop		=	$this->options;
-				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in initialize the settings.', TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in initialize the settings.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 			} else {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to initialize the settings.', TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to initialize the settings.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
 			}
 			break;
 
@@ -304,13 +304,13 @@
 		$result		=	$this->pz_SetStyle();
 		switch		($result ) {
 		case	1:
-			$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Updated the appearance of the LinkCard.', TEXT_DOMAIN).'</strong></p></div>';
+			$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Updated the appearance of the LinkCard.', PZLKC_TEXT_DOMAIN).'</strong></p></div>';
 			break;
 		case	2:
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save CSS-File.', TEXT_DOMAIN).'</strong></p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save CSS-File.', PZLKC_TEXT_DOMAIN).'</strong></p></div>';
 			break;
 		case	9:
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to call CSS-Template.', TEXT_DOMAIN).'</strong></p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to call CSS-Template.', PZLKC_TEXT_DOMAIN).'</strong></p></div>';
 		default:
 		}
 	}
@@ -326,15 +326,15 @@
 
 	// HELPアイコン
 	$help_open			=	'&nbsp;<a href="'.$pz_url.'/pz-linkcard-settings-';
-	$help_close			=	'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" class="pz-help-icon" title="'.__('Help', TEXT_DOMAIN ).'" alt="help"></a>';
+	$help_close			=	'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" class="pz-help-icon" title="'.__('Help', PZLKC_TEXT_DOMAIN ).'" alt="help"></a>';
 
 	// 各種ロゴ
-	$logo_pz		=	'<img src="'.$this->plugin_dir_url.'img/icon_popozure.ico"    width="16" height="16" alt="'.__('Popozure Logo',		TEXT_DOMAIN ).'">';
-	$logo_pz_lkc	=	'<img src="'.$this->plugin_dir_url.'img/icon-pz-linkcard.png" width="16" height="16" alt="'.__('Pz-LinkCard Logo',	TEXT_DOMAIN ).'">';
-	$logo_wp		=	'<img src="'.$this->plugin_dir_url.'img/icon_WordPress.png"   width="16" height="16" alt="'.__('WordPress.org Logo',TEXT_DOMAIN ).'">';
-	$logo_tw		=	'<img src="'.$this->plugin_dir_url.'img/icon_twitter.svg"     width="16" height="16" alt="'.__('Twitter Logo',		TEXT_DOMAIN ).'">';
-	$logo_x			=	'<img src="'.$this->plugin_dir_url.'img/icon_x.svg"           width="16" height="16" alt="'.__('X Logo',			TEXT_DOMAIN ).'">';
-	$logo_az		=	'<img src="'.$this->plugin_dir_url.'img/icon_amazon.png"      width="16" height="16" alt="'.__('Amazon Logo',		TEXT_DOMAIN ).'">';
+	$logo_pz		=	'<img src="'.$this->plugin_dir_url.'img/icon_popozure.ico"    width="16" height="16" alt="'.__('Popozure Logo',		PZLKC_TEXT_DOMAIN ).'">';
+	$logo_pz_lkc	=	'<img src="'.$this->plugin_dir_url.'img/icon-pz-linkcard.png" width="16" height="16" alt="'.__('Pz-LinkCard Logo',	PZLKC_TEXT_DOMAIN ).'">';
+	$logo_wp		=	'<img src="'.$this->plugin_dir_url.'img/icon_WordPress.png"   width="16" height="16" alt="'.__('WordPress.org Logo',PZLKC_TEXT_DOMAIN ).'">';
+	$logo_tw		=	'<img src="'.$this->plugin_dir_url.'img/icon_twitter.svg"     width="16" height="16" alt="'.__('Twitter Logo',		PZLKC_TEXT_DOMAIN ).'">';
+	$logo_x			=	'<img src="'.$this->plugin_dir_url.'img/icon_x.svg"           width="16" height="16" alt="'.__('X Logo',			PZLKC_TEXT_DOMAIN ).'">';
+	$logo_az		=	'<img src="'.$this->plugin_dir_url.'img/icon_amazon.png"      width="16" height="16" alt="'.__('Amazon Logo',		PZLKC_TEXT_DOMAIN ).'">';
 
 	// 修正履歴
 	$changelog		=	'';
@@ -346,7 +346,7 @@
 		$changelog	=	esc_html($changelog );
 		$changelog	=	preg_replace('/^\* (.*)$/mi',				'<span class="pz-log-ja">*&ensp;$1</span>',								$changelog);	// 日本語文の行のインデント調整
 		$changelog	=	preg_replace('/^  (.*)$/mi',				'<span class="pz-log-en">&ensp;&ensp;$1</span>',						$changelog);	// 英文の行のインデント調整
-		$changelog	=	preg_replace('/= (.*) =\n/i',				'<h4>'.__('Version', TEXT_DOMAIN ).' $1</h4>',							$changelog);	// バージョン番号の表記調整
+		$changelog	=	preg_replace('/= (.*) =\n/i',				'<h4>'.__('Version', PZLKC_TEXT_DOMAIN ).' $1</h4>',							$changelog);	// バージョン番号の表記調整
 
 		$changelog	=	preg_replace('/\[added\]\s*/i',				'<span class="pz-log-added">Added</span>&ensp;',						$changelog);	// 追加
 		$changelog	=	preg_replace('/\[fixed\]\s*/i',				'<span class="pz-log-fixed">Fixed</span>&ensp;',						$changelog);	// 修正
@@ -365,9 +365,9 @@
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on twitter.com）/i',				'<a href="https://twitter.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.					'Thanks<span class="pz-thx-name">$1</span>'.$logo_tw.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on wordpress.org）/i',			'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(#[^\s]*)\s+on popozure.info）/i',			'<a href="'.$pz_url.'" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.								'Thanks<span class="pz-thx-name">$1</span>'.$logo_pz.'<span class="pz-thx-account">$2</span></a>', $changelog);	
-		$changelog	=	str_replace("\r\n",		'<br/>',	$changelog );															// 改行をBRタグに変換
-		$changelog	=	str_replace("\r",		'<br/>',	$changelog );															// 改行をBRタグに変換
-		$changelog	=	str_replace("\n",		'<br/>',	$changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\r\n",		'<br>',	$changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\r",		'<br>',	$changelog );															// 改行をBRタグに変換
+		$changelog	=	str_replace("\n",		'<br>',	$changelog );															// 改行をBRタグに変換
 		$changelog	=	'<div class="pz-basic-changelog">'.$changelog.'</div>';
 	}
 
@@ -415,21 +415,21 @@ echo	$html_style;
 			echo	$html_notice;
 		?>
 		<div class="pz-tabs">
-			<a class="pz-tab pz-red"		name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php _e('Error', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab pz-hide"		name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php _e('Basic', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php _e('Position', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php _e('Display', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php _e('Letter', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php _e('External Link', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php _e('Internal Link', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-samepage"		href="#pz-samepage"		<?php echo $show_samepage;		?>><?php _e('Same Page Link', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php _e('Link Check', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php _e('Editor', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab pz-orange"		name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php _e('Multi Site', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php _e('Advanced', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php _e('etc.', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab"				name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php _e('Initialize', TEXT_DOMAIN ); ?></a>
-			<a class="pz-tab pz-purple"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php _e('Admin', TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab pz-red"		name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php _e('Error', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab pz-hide"		name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php _e('Basic', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php _e('Position', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php _e('Display', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php _e('Letter', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php _e('External Link', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php _e('Internal Link', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-samepage"		href="#pz-samepage"		<?php echo $show_samepage;		?>><?php _e('Same Page Link', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php _e('Link Check', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php _e('Editor', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab pz-orange"		name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php _e('Multi Site', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php _e('Advanced', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php _e('etc.', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab"				name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php _e('Initialize', PZLKC_TEXT_DOMAIN ); ?></a>
+			<a class="pz-tab pz-purple"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php _e('Admin', PZLKC_TEXT_DOMAIN ); ?></a>
 		</div>
 	</header>
 	<article>
@@ -452,7 +452,7 @@ echo	$html_style;
 				require_once('pz-linkcard-settings-initialize.php' );		// 「初期化」タブ
 				require_once('pz-linkcard-settings-admin.php' );			// 「管理者」タブ
 			?>
-			<div class="pz-button-top" title="<?php _e('Scroll to the top', TEXT_DOMAIN ); ?>"><?php _e('^<br/>Top', TEXT_DOMAIN ); ?></div>
+			<div class="pz-button-top" title="<?php _e('Scroll to the top', PZLKC_TEXT_DOMAIN ); ?>"><?php _e('^<br>Top', PZLKC_TEXT_DOMAIN ); ?></div>
 		</form>
 		</article>
 </div>
@@ -563,7 +563,7 @@ function		echo_text($item_name, $item_value, $item_title, $item_notice, $item_cl
 	if		($item_maxlength	<=	0 ) {
 		$item_maxlength		=	'';
 	}
-	$html_result	=	'<input type="text" name="properties['.esc_attr($item_name ).']" value="'.esc_attr($item_value ).'" maxlength="'.esc_attr($item_maxlength ).'" class="'.esc_attr($item_class ).'" '.esc_attr($item_disabled ).' /><br /><span class="pz-note">'.esc_attr($item_notice ).'</span></td>';
+	$html_result	=	'<input type="text" name="properties['.esc_attr($item_name ).']" value="'.esc_attr($item_value ).'" maxlength="'.esc_attr($item_maxlength ).'" class="'.esc_attr($item_class ).'" '.esc_attr($item_disabled ).' /><br><span class="pz-note">'.esc_attr($item_notice ).'</span></td>';
 	$html_result	=	'<tr><th scope="row">'.$item_title.'</th><td>'.$html_result.'</tr>';
 	echo			$html_result;
 }
@@ -597,7 +597,7 @@ function		echo_list($item_name, $item_value, $item_list, $item_title, $item_noti
 	}
 	$html_result		.=	'</select>';
 	if	($item_notice ) {
-		$html_result	.=	'<br/><span class="pz-note">'.esc_attr($item_notice ).'</span>';
+		$html_result	.=	'<br><span class="pz-note">'.esc_attr($item_notice ).'</span>';
 	}
 	$html_result		.=	'</td></tr>';
 	echo					$html_result;
@@ -617,7 +617,7 @@ function	echo_combo($item_name, $item_value, $item_list, $item_title, $item_noti
 	}
 	$html_result		.=	'</datalist>';
 	if	($item_notice ) {
-		$html_result	.=	'<br/><span class="pz-note">'.esc_attr($item_notice ).'</span>';
+		$html_result	.=	'<br><span class="pz-note">'.esc_attr($item_notice ).'</span>';
 	}
 	$html_result		.=	'</td></tr>';
 	echo					$html_result;

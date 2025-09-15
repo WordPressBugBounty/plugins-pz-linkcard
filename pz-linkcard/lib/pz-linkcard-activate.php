@@ -137,11 +137,11 @@
 	}
 
 	// プラグインバージョンの更新とCSSの補助バージョンのリセット
-	if		($this->options['plugin-version']	<>	PLUGIN_VERSION ) {
+	if		($this->options['plugin-version']	<>	PZLKC_PLUGIN_VERSION ) {
 		if	($this->options['css-count']		>	5 ) {
 			$this->options['css-count']		=	0;
 		}
-		$this->options['plugin-version']	=	PLUGIN_VERSION;
+		$this->options['plugin-version']	=	PZLKC_PLUGIN_VERSION;
 	}
 
 	// DBテーブル作成・更新＆メンテナンス

@@ -1,7 +1,7 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	// スタイルシートのパスを用意
-	$css_dir			=	DIR_STYLE;
+	$css_dir			=	PZLKC_DIR_STYLE;
 	if	(!is_dir($css_dir ) ) {
 		if	(!wp_mkdir_p($css_dir ) ) {
 			$result			=	9;
@@ -14,7 +14,7 @@
 
 	if (!isset($prop['style'] ) || !$prop['style'] ) {
 		// テンプレートファイルの読み込み
-		$file_text	=	file_get_contents(FILE_TEMPLATE );
+		$file_text	=	file_get_contents(PZLKC_FILE_TEMPLATE );
 		if ($file_text ) {
 			// かんたん書式設定
 			switch ($prop['special-format'] ) {
@@ -579,7 +579,7 @@
 			// 記事情報のマージン（上下）
 			switch ($prop['info-position'] ) {
 			case 1:				// サイト情報が上（記事内容の上に余白を設定）
-				$file_text	=	str_replace('/*CONTENT-MARGIN*/',		'margin: 8px 0 0 0;', $file_text );
+				$file_text	=	str_replace('/*CONTENT-MARGIN*/',		'margin: 6px 0 0 0;', $file_text );
 				break;
 			case 2:				// サイト情報が下（記事内容の下に余白を設定）
 				$file_text	=	str_replace('/*CONTENT-MARGIN*/',		'margin: 0 0 8px 0;', $file_text );
@@ -763,8 +763,8 @@
 
 			// 文字セット
 			$charset		=	'@charset "'.$this->charset.'";';											// 文字セット
-			$info_text		=	'/* '.self::PLUGIN_NAME.' ver.'.PLUGIN_VERSION.' CSS #'.$this->now.' */';	// プラグイン名＋バージョン
-			$info_text_comp	=	'/*'.self::PLUGIN_ACRONYM.PLUGIN_VERSION.'#'.$this->now.'*/';				// プラグイン名＋バージョン（圧縮時）
+			$info_text		=	'/* '.self::PLUGIN_NAME.' ver.'.PZLKC_PLUGIN_VERSION.' CSS #'.$this->now.' */';	// プラグイン名＋バージョン
+			$info_text_comp	=	'/*'.self::PLUGIN_ACRONYM.PZLKC_PLUGIN_VERSION.'#'.$this->now.'*/';				// プラグイン名＋バージョン（圧縮時）
 
 			// ファイルの圧縮
 			$file_text		=	preg_replace('/\s*\/\*[^*]*\*+([^\/][^*]*\*+)*\//', '', $file_text );		// コメント除去
@@ -772,8 +772,8 @@
 			$css_text_comp	=	$charset.$this->pz_CompressCSS($file_text ).$info_text_comp;
 
 			// ファイル出力
-			$result			=	file_put_contents(DIR_STYLE.$filename.'.css',		$css_text );
-			$result_comp	=	file_put_contents(DIR_STYLE.$filename.'.min.css',	$css_text_comp );
+			$result			=	file_put_contents(PZLKC_DIR_STYLE.$filename.'.css',		$css_text );
+			$result_comp	=	file_put_contents(PZLKC_DIR_STYLE.$filename.'.min.css',	$css_text_comp );
 
 			if ($result || $result_comp ) {
 				$result		=	1;

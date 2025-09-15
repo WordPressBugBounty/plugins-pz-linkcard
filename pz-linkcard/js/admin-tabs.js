@@ -8,6 +8,9 @@
 	// 画面表示された時に実行
 	window.addEventListener('load', function() {
 		if (document.querySelector('.pz-dashboard')) {
+			// 処理中オーバーレイを非表示
+			document.querySelector("#pz-overlay-proc").style.display = "none";
+
 			// 最後に開いていたタブを開く
 			tab_open_last();
 			// カーソルキーでタブを移動

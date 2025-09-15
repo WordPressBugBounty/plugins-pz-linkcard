@@ -7,9 +7,9 @@
 	// CREATE TABLE
 	$sql = "CREATE TABLE $this->db_name (
 				id				BIGINT			UNSIGNED	NOT NULL	AUTO_INCREMENT,
-				url				VARCHAR(4096)							DEFAULT NULL,
+				url				VARCHAR(2048)							DEFAULT NULL,
 				url_key			VARBINARY(255)				NOT NULL,
-				url_redir		VARCHAR(4096)							DEFAULT NULL,
+				url_redir		VARCHAR(2048)							DEFAULT NULL,
 				scheme			VARCHAR(16)								DEFAULT NULL,
 				domain			VARCHAR(253)							DEFAULT NULL,
 				site_name		VARCHAR(100)							DEFAULT NULL,
@@ -21,6 +21,7 @@
 				post_date		BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,
 				post_modified	BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,
 				no_failure		INT				UNSIGNED				DEFAULT 0,
+				click_count		BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,
 				alive_result	INT										DEFAULT -1,
 				alive_time		BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,
 				alive_nexttime	BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,

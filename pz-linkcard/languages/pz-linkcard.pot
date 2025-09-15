@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pz-LinkCard\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2025-02-26 12:44+0900\n"
+"POT-Creation-Date: 2025-09-07 09:07+0900\n"
 "PO-Revision-Date: 2023-12-24 19:31+0900\n"
 "Last-Translator: \n"
 "Language-Team: poporon\n"
@@ -38,16 +38,14 @@ msgid "Cancel"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:15
-#: ../lib/pz-linkcard-cacheman-list.php:6
-#: ../lib/pz-linkcard-cacheman-list.php:256
+#: ../lib/pz-linkcard-cacheman-list.php:229
 msgid "ID"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:19
-#: ../lib/pz-linkcard-cacheman-list.php:7
-#: ../lib/pz-linkcard-cacheman-list.php:262
+#: ../lib/pz-linkcard-cacheman-list.php:235
 #: ../lib/pz-linkcard-settings-letter.php:24
-#: ../lib/pz-linkcard-settings-multisite.php:62 ../pz-linkcard.php:605
+#: ../lib/pz-linkcard-settings-multisite.php:62 ../pz-linkcard.php:584
 msgid "URL"
 msgstr ""
 
@@ -69,8 +67,7 @@ msgid "Site Name"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:39
-#: ../lib/pz-linkcard-cacheman-list.php:11
-#: ../lib/pz-linkcard-cacheman-list.php:286
+#: ../lib/pz-linkcard-cacheman-list.php:259
 #: ../lib/pz-linkcard-settings-multisite.php:63
 msgid "Domain"
 msgstr ""
@@ -80,8 +77,7 @@ msgid "Registration Title"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:51
-#: ../lib/pz-linkcard-cacheman-list.php:8
-#: ../lib/pz-linkcard-cacheman-list.php:268
+#: ../lib/pz-linkcard-cacheman-list.php:241
 #: ../lib/pz-linkcard-settings-letter.php:22
 msgid "Title"
 msgstr ""
@@ -95,8 +91,7 @@ msgid "Registration Excerpt"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:63
-#: ../lib/pz-linkcard-cacheman-list.php:9
-#: ../lib/pz-linkcard-cacheman-list.php:274
+#: ../lib/pz-linkcard-cacheman-list.php:247
 #: ../lib/pz-linkcard-settings-letter.php:23
 msgid "Excerpt"
 msgstr ""
@@ -134,9 +129,9 @@ msgid "The result code is inaccessible but can actually be accessed."
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:96
-#: ../lib/pz-linkcard-cacheman-list.php:22
-#: ../lib/pz-linkcard-cacheman-list.php:348
-#: ../lib/pz-linkcard-settings-error.php:9
+#: ../lib/pz-linkcard-cacheman-list.php:321
+#: ../lib/pz-linkcard-settings-admin.php:128
+#: ../lib/pz-linkcard-settings-error.php:10
 msgid "Post ID"
 msgstr ""
 
@@ -145,26 +140,22 @@ msgid "SNS"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:109
-#: ../lib/pz-linkcard-cacheman-list.php:13
-#: ../lib/pz-linkcard-cacheman-list.php:292
+#: ../lib/pz-linkcard-cacheman-list.php:265
 msgid "Tw"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:110
-#: ../lib/pz-linkcard-cacheman-list.php:14
-#: ../lib/pz-linkcard-cacheman-list.php:300
+#: ../lib/pz-linkcard-cacheman-list.php:273
 msgid "fb"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:111
-#: ../lib/pz-linkcard-cacheman-list.php:15
-#: ../lib/pz-linkcard-cacheman-list.php:308
+#: ../lib/pz-linkcard-cacheman-list.php:281
 msgid "B!"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:112
-#: ../lib/pz-linkcard-cacheman-list.php:16
-#: ../lib/pz-linkcard-cacheman-list.php:316
+#: ../lib/pz-linkcard-cacheman-list.php:289
 msgid "Po"
 msgstr ""
 
@@ -206,208 +197,198 @@ msgstr ""
 msgid "Update Date"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:10
-#: ../lib/pz-linkcard-cacheman-list.php:280
-msgid "Charset"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:18
-#: ../lib/pz-linkcard-cacheman-list.php:324
-msgid "Regist<br/>Date"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:19
-#: ../lib/pz-linkcard-cacheman-list.php:330
-msgid "Update<br/>Date"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:20
-#: ../lib/pz-linkcard-cacheman-list.php:336
-msgid "SNS<br/>Check<br/>Date"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:21
-#: ../lib/pz-linkcard-cacheman-list.php:342
-msgid "Alive<br/>Check<br/>Date"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:24
-msgid "Result<br/>Code"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:25
-#: ../lib/pz-linkcard-cacheman-list.php:362
-msgid "(Last)"
-msgstr ""
-
-#: ../lib/pz-linkcard-cacheman-list.php:175
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:148
+#: ../lib/pz-linkcard-cacheman-list.php:506
 #, php-format
 msgid "%s item"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:175
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:148
+#: ../lib/pz-linkcard-cacheman-list.php:506
 #, php-format
 msgid "%s items"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:176
+#: ../lib/pz-linkcard-cacheman-list.php:149
 msgid "&laquo;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:177
+#: ../lib/pz-linkcard-cacheman-list.php:150
 msgid "&lsaquo;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:180
+#: ../lib/pz-linkcard-cacheman-list.php:153
 msgid "&rsaquo;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:181
+#: ../lib/pz-linkcard-cacheman-list.php:154
 msgid "&raquo;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:188
+#: ../lib/pz-linkcard-cacheman-list.php:161
 msgid "All"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:189
+#: ../lib/pz-linkcard-cacheman-list.php:162
 msgid "Internal"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:190
+#: ../lib/pz-linkcard-cacheman-list.php:163
 msgid "External"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:191
+#: ../lib/pz-linkcard-cacheman-list.php:164
 msgid "Modify"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:192
+#: ../lib/pz-linkcard-cacheman-list.php:165
 msgid "Unlink"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:204
+#: ../lib/pz-linkcard-cacheman-list.php:177
 msgid "Text search by title and excerpt"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:206
+#: ../lib/pz-linkcard-cacheman-list.php:179
 msgid "&#x1f50d;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:208
+#: ../lib/pz-linkcard-cacheman-list.php:181
 msgid "Search"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:216
+#: ../lib/pz-linkcard-cacheman-list.php:189
 msgid "Bulk Actions"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:217 ../lib/pz-linkcard-cacheman.php:215
+#: ../lib/pz-linkcard-cacheman-list.php:190 ../lib/pz-linkcard-cacheman.php:215
 msgid "Renew Cache"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:218 ../lib/pz-linkcard-cacheman.php:237
+#: ../lib/pz-linkcard-cacheman-list.php:191 ../lib/pz-linkcard-cacheman.php:237
 msgid "Renew Thumbnail Image"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:219 ../lib/pz-linkcard-cacheman.php:258
+#: ../lib/pz-linkcard-cacheman-list.php:192 ../lib/pz-linkcard-cacheman.php:258
 msgid "Renew SNS Count"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:220
+#: ../lib/pz-linkcard-cacheman-list.php:193
 msgid "Renew Post ID"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:221
+#: ../lib/pz-linkcard-cacheman-list.php:194
 msgid "Check Status"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:222
+#: ../lib/pz-linkcard-cacheman-list.php:195
 msgid "Delete from Cache"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:224
+#: ../lib/pz-linkcard-cacheman-list.php:197
 msgid "Apply"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:230
+#: ../lib/pz-linkcard-cacheman-list.php:203
 msgid "All Domain"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:241
+#: ../lib/pz-linkcard-cacheman-list.php:214
 msgid "Refine Search"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:252
+#: ../lib/pz-linkcard-cacheman-list.php:225
 msgid "&#x1f53c;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:253
+#: ../lib/pz-linkcard-cacheman-list.php:226
 msgid "&#x1f53d;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:354
+#: ../lib/pz-linkcard-cacheman-list.php:253
+msgid "Charset"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:297
+msgid "Regist<br>Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:303
+msgid "Update<br>Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:309
+msgid "SNS<br>Check<br>Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:315
+msgid "Alive<br>Check<br>Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:327
 msgid "Result<br>code"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:398
+#: ../lib/pz-linkcard-cacheman-list.php:335
+msgid "(Last)"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php:371
 msgid "&#x26a0;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:400
+#: ../lib/pz-linkcard-cacheman-list.php:373
 msgid "The latest HTTP code is in error, but ignore it."
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:402
+#: ../lib/pz-linkcard-cacheman-list.php:375
 msgid "&#x26d4;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:404
+#: ../lib/pz-linkcard-cacheman-list.php:377
 msgid ""
 "The latest HTTP code is in error. You can change it to ignore the error from "
 "the edit screen."
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:490
+#: ../lib/pz-linkcard-cacheman-list.php:462
 msgid "Ignore"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:502
+#: ../lib/pz-linkcard-cacheman-list.php:474
 msgid "Edit"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:503
-#: ../lib/pz-linkcard-cacheman-list.php:504
-#: ../lib/pz-linkcard-settings-admin.php:53
-#: ../lib/pz-linkcard-settings-admin.php:104
+#: ../lib/pz-linkcard-cacheman-list.php:475
+#: ../lib/pz-linkcard-cacheman-list.php:476
+#: ../lib/pz-linkcard-settings-admin.php:47
+#: ../lib/pz-linkcard-settings-admin.php:98
 #: ../lib/pz-linkcard-settings-initialize.php:9
 msgid "Are you sure?"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:503
+#: ../lib/pz-linkcard-cacheman-list.php:475
 msgid "Renew"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:504
+#: ../lib/pz-linkcard-cacheman-list.php:476
 msgid "Delete"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:506
 msgid "&#x1f4c4;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:506
 #: ../lib/pz-linkcard-settings-advanced.php:111
 msgid "File Menu"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:506
 msgid "Import From Local File"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman-list.php:534
+#: ../lib/pz-linkcard-cacheman-list.php:506
 msgid "Export To Local File"
 msgstr ""
 
@@ -429,7 +410,7 @@ msgstr ""
 msgid "&#x2699;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman.php:104 ../pz-linkcard.php:2810
+#: ../lib/pz-linkcard-cacheman.php:104 ../pz-linkcard.php:2683
 msgid "Settings"
 msgstr ""
 
@@ -437,8 +418,8 @@ msgstr ""
 msgid "&#x1f5c3;&#xfe0f;"
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman.php:106 ../pz-linkcard.php:2673
-#: ../pz-linkcard.php:2682 ../pz-linkcard.php:2801
+#: ../lib/pz-linkcard-cacheman.php:106 ../pz-linkcard.php:2553
+#: ../pz-linkcard.php:2674
 msgid "Pz-LinkCard Manager"
 msgstr ""
 
@@ -451,7 +432,7 @@ msgstr ""
 msgid "Invalid URL parameter in "
 msgstr ""
 
-#: ../lib/pz-linkcard-cacheman.php:153 ../lib/pz-linkcard-settings-basic.php:39
+#: ../lib/pz-linkcard-cacheman.php:153 ../lib/pz-linkcard-settings-basic.php:51
 #: ../lib/pz-linkcard-settings.php:206
 msgid "*"
 msgstr ""
@@ -486,10 +467,10 @@ msgstr ""
 #: ../lib/pz-linkcard-cacheman.php:334 ../lib/pz-linkcard-file-import.php:9
 #: ../lib/pz-linkcard-file-import.php:52 ../lib/pz-linkcard-file-import.php:59
 #: ../lib/pz-linkcard-file-import.php:98 ../lib/pz-linkcard-file-import.php:100
-#: ../lib/pz-linkcard-settings-basic.php:62
+#: ../lib/pz-linkcard-settings-basic.php:73
 #: ../lib/pz-linkcard-settings-etc.php:8 ../lib/pz-linkcard-settings-etc.php:42
-#: ../lib/pz-linkcard-settings-etc.php:51 ../pz-linkcard.php:1940
-#: ../pz-linkcard.php:1957
+#: ../lib/pz-linkcard-settings-etc.php:51 ../pz-linkcard.php:1829
+#: ../pz-linkcard.php:1846
 msgid "("
 msgstr ""
 
@@ -514,10 +495,10 @@ msgstr ""
 #: ../lib/pz-linkcard-cacheman.php:334 ../lib/pz-linkcard-file-import.php:9
 #: ../lib/pz-linkcard-file-import.php:52 ../lib/pz-linkcard-file-import.php:59
 #: ../lib/pz-linkcard-file-import.php:98 ../lib/pz-linkcard-file-import.php:100
-#: ../lib/pz-linkcard-settings-basic.php:62
+#: ../lib/pz-linkcard-settings-basic.php:73
 #: ../lib/pz-linkcard-settings-etc.php:8 ../lib/pz-linkcard-settings-etc.php:42
-#: ../lib/pz-linkcard-settings-etc.php:51 ../pz-linkcard.php:1940
-#: ../pz-linkcard.php:1957
+#: ../lib/pz-linkcard-settings-etc.php:51 ../pz-linkcard.php:1829
+#: ../pz-linkcard.php:1846
 msgid ")"
 msgstr ""
 
@@ -590,126 +571,126 @@ msgstr ""
 msgid "Insert"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:44
+#: ../lib/pz-linkcard-settings-admin.php:38
 msgid "Sec."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:53
+#: ../lib/pz-linkcard-settings-admin.php:47
 msgid "Run Now"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:63
+#: ../lib/pz-linkcard-settings-admin.php:57
 msgid "Do not use normally as it can be set to incapacitate."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:66
+#: ../lib/pz-linkcard-settings-admin.php:60
 msgid "Information"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:69
+#: ../lib/pz-linkcard-settings-admin.php:63
 msgid "WordPress Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:73
+#: ../lib/pz-linkcard-settings-admin.php:67
 msgid "PHP Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:77
+#: ../lib/pz-linkcard-settings-admin.php:71
 msgid "DBMS Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:81
+#: ../lib/pz-linkcard-settings-admin.php:75
 #: ../lib/pz-linkcard-settings-multisite.php:38
 msgid "Table Name"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:85
+#: ../lib/pz-linkcard-settings-admin.php:79
 msgid "Plugin Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:91
+#: ../lib/pz-linkcard-settings-admin.php:85
 msgid "Plugin DB Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:99
+#: ../lib/pz-linkcard-settings-admin.php:93
 msgid "for Debug"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:102
+#: ../lib/pz-linkcard-settings-admin.php:96
 msgid "Reboot This Plugin"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:104
-#: ../lib/pz-linkcard-settings-admin.php:167
+#: ../lib/pz-linkcard-settings-admin.php:98
+#: ../lib/pz-linkcard-settings-admin.php:165
 #: ../lib/pz-linkcard-settings-initialize.php:9
 msgid "Run"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:105
+#: ../lib/pz-linkcard-settings-admin.php:99
 msgid "Perform initial setup."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:105
+#: ../lib/pz-linkcard-settings-admin.php:99
 msgid "\"Settings\" will not be initialized."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:109
+#: ../lib/pz-linkcard-settings-admin.php:103
 msgid "DB Update Mode"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:114
+#: ../lib/pz-linkcard-settings-admin.php:108
 msgid "Forced access to links even if they are recorded in DB."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:121
-#: ../lib/pz-linkcard-settings-error.php:3
+#: ../lib/pz-linkcard-settings-admin.php:115
+#: ../lib/pz-linkcard-settings-error.php:4
 msgid "Error Settings"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:124
+#: ../lib/pz-linkcard-settings-admin.php:118
 msgid "Error Conditions"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:129
+#: ../lib/pz-linkcard-settings-admin.php:123
 msgid "Check to enable error conditions."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:134
-#: ../lib/pz-linkcard-settings-error.php:15
+#: ../lib/pz-linkcard-settings-admin.php:132
+#: ../lib/pz-linkcard-settings-error.php:16
 msgid "Post URL"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:138
-#: ../lib/pz-linkcard-settings-error.php:21
+#: ../lib/pz-linkcard-settings-admin.php:136
+#: ../lib/pz-linkcard-settings-error.php:22
 msgid "Occurrence Time"
 msgstr ""
 
+#: ../lib/pz-linkcard-settings-admin.php:146
 #: ../lib/pz-linkcard-settings-admin.php:148
-#: ../lib/pz-linkcard-settings-admin.php:150
 msgid "Execution Result"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:157
+#: ../lib/pz-linkcard-settings-admin.php:155
 msgid "WP-Cron Information"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:161
+#: ../lib/pz-linkcard-settings-admin.php:159
 msgid "View all schedules."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:168
+#: ../lib/pz-linkcard-settings-admin.php:166
 msgid "Hook"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:169
+#: ../lib/pz-linkcard-settings-admin.php:167
 msgid "Next Time"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:169
+#: ../lib/pz-linkcard-settings-admin.php:167
 msgid "▼"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-admin.php:170
+#: ../lib/pz-linkcard-settings-admin.php:168
 msgid "Schedule"
 msgstr ""
 
@@ -877,11 +858,11 @@ msgstr ""
 msgid "Currently working in a development environment."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:4
+#: ../lib/pz-linkcard-settings-basic.php:18
 msgid "Basic Settings"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:11
+#: ../lib/pz-linkcard-settings-basic.php:23
 #: ../lib/pz-linkcard-settings-card.php:351
 #: ../lib/pz-linkcard-settings-card.php:410
 #: ../lib/pz-linkcard-settings-display.php:11
@@ -896,159 +877,159 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:12
+#: ../lib/pz-linkcard-settings-basic.php:24
 msgid "Pz-LkC Default"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:13
+#: ../lib/pz-linkcard-settings-basic.php:25
 msgid "Normal"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:14
+#: ../lib/pz-linkcard-settings-basic.php:26
 msgid "Compact"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:15
+#: ../lib/pz-linkcard-settings-basic.php:27
 msgid "Simple"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:16
+#: ../lib/pz-linkcard-settings-basic.php:28
 msgid "Headline"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:17
+#: ../lib/pz-linkcard-settings-basic.php:29
 msgid "Cellophane tape \"center\""
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:18
+#: ../lib/pz-linkcard-settings-basic.php:30
 msgid "Cellophane tape \"Top corner\""
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:19
+#: ../lib/pz-linkcard-settings-basic.php:31
 msgid "Cellophane tape \"long\""
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:20
+#: ../lib/pz-linkcard-settings-basic.php:32
 msgid "Cellophane tape \"digonal\""
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:21
+#: ../lib/pz-linkcard-settings-basic.php:33
 msgid "Cellophane tape and curling"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:22
+#: ../lib/pz-linkcard-settings-basic.php:34
 msgid "Curling paper"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:23
+#: ../lib/pz-linkcard-settings-basic.php:35
 msgid "Stitch blue & red"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:24
+#: ../lib/pz-linkcard-settings-basic.php:36
 msgid "Stitch green & yellow"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:25
+#: ../lib/pz-linkcard-settings-basic.php:37
 msgid "Square"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:26
+#: ../lib/pz-linkcard-settings-basic.php:38
 msgid "Enclose"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:27
+#: ../lib/pz-linkcard-settings-basic.php:39
 msgid "Reflection"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:28
+#: ../lib/pz-linkcard-settings-basic.php:40
 msgid "Infomation orange"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:29
+#: ../lib/pz-linkcard-settings-basic.php:41
 msgid "Neutral bluegreen"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:30
+#: ../lib/pz-linkcard-settings-basic.php:42
 msgid "Enlightened green"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:31
+#: ../lib/pz-linkcard-settings-basic.php:43
 msgid "Resistance blue"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:32
+#: ../lib/pz-linkcard-settings-basic.php:44
 msgid "Windows XP"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:33
+#: ../lib/pz-linkcard-settings-basic.php:45
 msgid "Windows 95"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:34
+#: ../lib/pz-linkcard-settings-basic.php:46
 msgid "Slanting"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:35
+#: ../lib/pz-linkcard-settings-basic.php:47
 msgid "3D Rotate"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:36
+#: ../lib/pz-linkcard-settings-basic.php:48
 msgid "Pushpin"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:38
+#: ../lib/pz-linkcard-settings-basic.php:50
 msgid "Easy Format"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:39
+#: ../lib/pz-linkcard-settings-basic.php:51
 msgid "It applies over other formatting settings."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:44
+#: ../lib/pz-linkcard-settings-basic.php:55
 msgid "Saved Datetime"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:53
+#: ../lib/pz-linkcard-settings-basic.php:64
 msgid "Changelog"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:59
+#: ../lib/pz-linkcard-settings-basic.php:70
 msgid "Related Information"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:62
+#: ../lib/pz-linkcard-settings-basic.php:73
 msgid "How to"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:62
+#: ../lib/pz-linkcard-settings-basic.php:73
 msgid "Japanese Only"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:69
+#: ../lib/pz-linkcard-settings-basic.php:80
 msgid "Author's Site"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:70
+#: ../lib/pz-linkcard-settings-basic.php:81
 msgid "Popozure."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:70
+#: ../lib/pz-linkcard-settings-basic.php:81
 msgid "Poporon's PC Daily Diary"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:73
+#: ../lib/pz-linkcard-settings-basic.php:84
 msgid "When in Trouble"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:74
-msgid "Twitter Account"
+#: ../lib/pz-linkcard-settings-basic.php:85
+msgid "X Account"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:78
+#: ../lib/pz-linkcard-settings-basic.php:89
 msgid "Donation"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-basic.php:79
+#: ../lib/pz-linkcard-settings-basic.php:90
 msgid "Wishlist"
 msgstr ""
 
@@ -1064,7 +1045,7 @@ msgstr ""
 msgid "Same Page Link Settings"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-card.php:23 ../lib/pz-linkcard-settings.php:420
+#: ../lib/pz-linkcard-settings-card.php:23 ../lib/pz-linkcard-settings.php:419
 msgid "Basic"
 msgstr ""
 
@@ -1700,25 +1681,25 @@ msgid ""
 "parameter and `content` parameter"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-error.php:5
+#: ../lib/pz-linkcard-settings-error.php:6
 msgid ""
 "The shortcode description is incorrect. Please open the \"Linked Articles\" "
 "section and correct it."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-error.php:27
+#: ../lib/pz-linkcard-settings-error.php:28
 msgid "Error Reset"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-error.php:29
+#: ../lib/pz-linkcard-settings-error.php:30
 msgid "Reset"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-error.php:30
+#: ../lib/pz-linkcard-settings-error.php:31
 msgid "Cancel the error condition."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-error.php:31
+#: ../lib/pz-linkcard-settings-error.php:32
 msgid ""
 "* If you have not corrected the error, you may still get an error even if "
 "you cancel the error."
@@ -1755,7 +1736,7 @@ msgid "(Compressed)"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-etc.php:29
-msgid "Stylesheet Templete File"
+msgid "Stylesheet Template File"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-etc.php:36
@@ -1833,7 +1814,7 @@ msgid "Log Directory"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-initialize.php:4
-#: ../lib/pz-linkcard-settings.php:432
+#: ../lib/pz-linkcard-settings.php:431
 msgid "Initialize"
 msgstr ""
 
@@ -1914,7 +1895,7 @@ msgid "Underline"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-letter.php:18
-msgid "Underline<br />On Hover"
+msgid "Underline<br>On Hover"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-letter.php:25
@@ -1933,8 +1914,8 @@ msgstr ""
 msgid "Added Text"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings-letter.php:30 ../pz-linkcard.php:1939
-#: ../pz-linkcard.php:1943
+#: ../lib/pz-linkcard-settings-letter.php:30 ../pz-linkcard.php:1828
+#: ../pz-linkcard.php:1832
 msgid "Category"
 msgstr ""
 
@@ -1955,7 +1936,7 @@ msgid "*** Cannot be changed ***"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:8
-#: ../lib/pz-linkcard-settings.php:429
+#: ../lib/pz-linkcard-settings.php:428
 msgid "Multi Site"
 msgstr ""
 
@@ -2055,7 +2036,7 @@ msgid "Use SiteName"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:92
-#: ../lib/pz-linkcard-settings.php:421
+#: ../lib/pz-linkcard-settings.php:420
 msgid "Position"
 msgstr ""
 
@@ -2374,12 +2355,12 @@ msgstr ""
 msgid "Other Than Mobile"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:174 ../pz-linkcard.php:2809
+#: ../lib/pz-linkcard-settings.php:174 ../pz-linkcard.php:2682
 msgid "Manager"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:176 ../pz-linkcard.php:2674
-#: ../pz-linkcard.php:2683 ../pz-linkcard.php:2802
+#: ../lib/pz-linkcard-settings.php:176 ../pz-linkcard.php:2554
+#: ../pz-linkcard.php:2675
 msgid "Pz-LinkCard Settings"
 msgstr ""
 
@@ -2390,14 +2371,14 @@ msgstr ""
 #: ../lib/pz-linkcard-settings.php:220
 #, php-format
 msgid ""
-"Undefined key \"%s\" in Properties.<br/>It may be a glitch. Please inform "
-"the developer. (%s)"
+"Undefined key \"%s\" in Properties.<br>It may be a glitch. Please inform the "
+"developer. (%s)"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:225
 #, php-format
 msgid ""
-"Undefined key \"%s\" in DEFAULTS.<br/>It may be a glitch. Please inform the "
+"Undefined key \"%s\" in DEFAULTS.<br>It may be a glitch. Please inform the "
 "developer. (%s)"
 msgstr ""
 
@@ -2461,150 +2442,166 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:419
+#: ../lib/pz-linkcard-settings.php:418
 msgid "Error"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:422
+#: ../lib/pz-linkcard-settings.php:421
 msgid "Display"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:423
+#: ../lib/pz-linkcard-settings.php:422
 msgid "Letter"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:424
+#: ../lib/pz-linkcard-settings.php:423
 msgid "External Link"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:425
+#: ../lib/pz-linkcard-settings.php:424
 msgid "Internal Link"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:426
+#: ../lib/pz-linkcard-settings.php:425
 msgid "Same Page Link"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:427
+#: ../lib/pz-linkcard-settings.php:426
 msgid "Link Check"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:428
+#: ../lib/pz-linkcard-settings.php:427
 msgid "Editor"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:430
+#: ../lib/pz-linkcard-settings.php:429
 msgid "Advanced"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:431
+#: ../lib/pz-linkcard-settings.php:430
 msgid "etc."
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:433
+#: ../lib/pz-linkcard-settings.php:432
 msgid "Admin"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:456
+#: ../lib/pz-linkcard-settings.php:455
 msgid "Scroll to the top"
 msgstr ""
 
-#: ../lib/pz-linkcard-settings.php:456
-msgid "^<br/>Top"
+#: ../lib/pz-linkcard-settings.php:455
+msgid "^<br>Top"
 msgstr ""
 
-#: ../pz-linkcard.php:605
+#: ../pz-linkcard.php:584
 msgid "-"
 msgstr ""
 
-#: ../pz-linkcard.php:605
+#: ../pz-linkcard.php:584
 msgid "Incorrect URL specification."
 msgstr ""
 
-#: ../pz-linkcard.php:1046
+#: ../pz-linkcard.php:1023
 #, php-format
 msgid "%d tweet"
 msgstr ""
 
-#: ../pz-linkcard.php:1046
+#: ../pz-linkcard.php:1023
 #, php-format
 msgid "%d tweets"
 msgstr ""
 
-#: ../pz-linkcard.php:1048
+#: ../pz-linkcard.php:1025
 #, php-format
 msgid "%d post"
 msgstr ""
 
-#: ../pz-linkcard.php:1048
+#: ../pz-linkcard.php:1025
 #, php-format
 msgid "%d posts"
 msgstr ""
 
-#: ../pz-linkcard.php:1052
+#: ../pz-linkcard.php:1029
 #, php-format
 msgid "%d share"
 msgstr ""
 
-#: ../pz-linkcard.php:1052
+#: ../pz-linkcard.php:1029
 #, php-format
 msgid "%d shares"
 msgstr ""
 
-#: ../pz-linkcard.php:1055
+#: ../pz-linkcard.php:1032
 #, php-format
 msgid "%d user"
 msgstr ""
 
-#: ../pz-linkcard.php:1055
+#: ../pz-linkcard.php:1032
 #, php-format
 msgid "%d users"
 msgstr ""
 
-#: ../pz-linkcard.php:1058
+#: ../pz-linkcard.php:1035
 #, php-format
 msgid "%d pocket"
 msgstr ""
 
-#: ../pz-linkcard.php:1058
+#: ../pz-linkcard.php:1035
 #, php-format
 msgid "%d pockets"
 msgstr ""
 
-#: ../pz-linkcard.php:1117 ../pz-linkcard.php:1120 ../pz-linkcard.php:1123
+#: ../pz-linkcard.php:1094 ../pz-linkcard.php:1097 ../pz-linkcard.php:1100
 msgid "&#x1f552;&#xfe0f;"
 msgstr ""
 
-#: ../pz-linkcard.php:1123
+#: ../pz-linkcard.php:1100
 msgid "&#x1F501;&#xfe0f;"
 msgstr ""
 
-#: ../pz-linkcard.php:1939 ../pz-linkcard.php:1943 ../pz-linkcard.php:1956
-#: ../pz-linkcard.php:1960
+#: ../pz-linkcard.php:1828 ../pz-linkcard.php:1832 ../pz-linkcard.php:1845
+#: ../pz-linkcard.php:1849
 msgid "‘"
 msgstr ""
 
-#: ../pz-linkcard.php:1939 ../pz-linkcard.php:1943 ../pz-linkcard.php:1956
-#: ../pz-linkcard.php:1960
+#: ../pz-linkcard.php:1828 ../pz-linkcard.php:1832 ../pz-linkcard.php:1845
+#: ../pz-linkcard.php:1849
 msgid "’"
 msgstr ""
 
-#: ../pz-linkcard.php:1940 ../pz-linkcard.php:1957
+#: ../pz-linkcard.php:1829 ../pz-linkcard.php:1846
 msgid "Count"
 msgstr ""
 
-#: ../pz-linkcard.php:1944 ../pz-linkcard.php:1961
+#: ../pz-linkcard.php:1833 ../pz-linkcard.php:1850
 msgid "Not Found"
 msgstr ""
 
-#: ../pz-linkcard.php:1956 ../pz-linkcard.php:1960
+#: ../pz-linkcard.php:1845 ../pz-linkcard.php:1849
 msgid "Tag"
 msgstr ""
 
-#: ../pz-linkcard.php:2756
+#: ../pz-linkcard.php:2540
+msgid "[Pz] LinkCard2 Manager"
+msgstr ""
+
+#: ../pz-linkcard.php:2541
+msgid "[Pz] LinkCard2 Settings"
+msgstr ""
+
+#: ../pz-linkcard.php:2543
+msgid "[Pz] LinkCard Manager"
+msgstr ""
+
+#: ../pz-linkcard.php:2544
+msgid "[Pz] LinkCard Settings"
+msgstr ""
+
+#: ../pz-linkcard.php:2629
 msgid "Linkcard"
 msgstr ""
 
-#: ../pz-linkcard.php:2756
+#: ../pz-linkcard.php:2629
 msgid "Make Linkcard"
 msgstr ""

@@ -1,9 +1,9 @@
 === Pz-LinkCard ===
 Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
-Requires at least: 5.7
-Tested up to: 6.7.3
-Requires PHP: 7.4.33
+Requires at least: 6.0
+Tested up to: 6.8.2
+Requires PHP: 8.1.29
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -149,6 +149,16 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 
 == Changelog ==
+
+= 2.5.7 =
+* [Tested] WordPress 6.8.2 での動作確認を行いました。
+* [Tested] PHP 8.1.29 での動作確認を行いました。PHPの最低要件を同バージョンとしました。
+* [Tested] PHP 8.4.10 での動作確認を行いました。
+* [Removed] Pocketのサービス終了に伴い、Pocketのカウント取得・表示の機能を削除しました。
+* [Added] 設定画面の「リンク先の検査」タブに「クリック件数」を追加しました。クリックされた件数を取り、カード管理画面に表示します。
+* [Added] カード管理画面に「クリック件数」を追加しました。
+* [Added] ローカルプライベートアドレス、ループバックアドレスを指定禁止にしました。
+* [Fixed] 内部リンクでカテゴリーページを指定した際の処理を見直しました。
 
 = 2.5.6.5 =
 * [Tested] WordPress 6.8 での動作確認を行いました。

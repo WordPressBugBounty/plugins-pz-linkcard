@@ -1,239 +1,195 @@
-(function() {
-	// Pz-LinkCardの設定画面のときのみ動作
-	if	(jQuery('.pz-dashboard').is('*') ) {
-		// WordPress標準のカラーピッカー
-		// jQuery('.wp-color-picker').wpColorPicker();
-		jQuery('.pz-wp-color-picker').wpColorPicker();
+document.addEventListener("DOMContentLoaded", () => {
 
-		// スクロール位置の調整
-		jQuery(window).scrollTop(jQuery('input[name="scroll-now"]').val());
+	const dashboard = document.querySelector(".pz-dashboard");
+    if (!dashboard) return;
+
+	// 処理中オーバーレイを非表示
+	document.querySelector("#pz-overlay-proc").style.display = "none";
+
+	// WordPress 標準のカラーピッカー (wpColorPicker) は jQuery 依存なので注意！
+    document.querySelectorAll(".pz-wp-color-picker").forEach(el => {
+        if (typeof jQuery !== "undefined" && typeof jQuery(el).wpColorPicker === "function") {
+            jQuery(el).wpColorPicker();
+        }
+    });
+
+	// スクロール位置の調整
+    const scrollNow = document.querySelector("input[name='scroll-now']");
+    if (scrollNow) window.scrollTo(0, scrollNow.value);
+
+    window.addEventListener("load", () => {
+        document.querySelector("#pz-overlay-proc")?.classList.add("hidden");
+
+        switchEnabled();
+
+        // 一番上に行くボタン
+        document.querySelectorAll(".pz-button-top").forEach(btn =>
+            btn.addEventListener("click", buttonTopClick)
+        );
+        window.addEventListener("scroll", topButtonScroll);
+
+        // ショートコードをコピー
+        document.querySelectorAll(".pz-shortcode-1").forEach(el =>
+            el.addEventListener("keyup", copyShortcode)
+        );
+
+        // ショートコードの入力チェック
+        ["code1","code2","code3","code4"].forEach(code => {
+            const el = document.querySelector(`input[name="properties[${code}]"]`);
+            if (el) el.addEventListener("keydown", checkShortcodeKey);
+        });
+
+        // すべてのWP-Cronスケジュールを表示
+        document.querySelectorAll(".pz-cron-all").forEach(el =>
+            el.addEventListener("change", showAllCron)
+        );
+
+        // submit時にスクロール位置保存
+        document.querySelectorAll("form").forEach(form => {
+            form.addEventListener("submit", () => {
+                if (scrollNow) scrollNow.value = window.scrollY;
+                const inhibit = document.querySelector("input[name='properties[flg-inhibit]']");
+                if (inhibit?.checked) {
+                    document.querySelector("#pz-overlay-proc")?.classList.remove("hidden");
+                }
+            });
+        });
+
+        // クリックで全選択
+        document.querySelectorAll(".pz-click-all-select").forEach(el =>
+            el.addEventListener("click", allSelect)
+        );
+
+        // readonly チェックボックス無効化
+        document.querySelectorAll("input[type=checkbox]").forEach(el =>
+            el.addEventListener("click", checkboxReadonly)
+        );
+
+        // 自動変換チェック
+        document.querySelectorAll(".pz-sync-check,.pz-show").forEach(el =>
+            el.addEventListener("change", switchEnabled)
+        );
+
+        document.querySelector("#pz-overlay-proc")?.classList.add("hidden");
+    });
+
+    // ----------- 関数群 -----------
+
+    // 一番上へ行く
+    function buttonTopClick(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // TOPボタンの表示切替
+    function topButtonScroll() {
+        const btn = document.querySelector(".pz-button-top");
+        if (!btn) return;
+        if (window.scrollY > 80) {
+            btn.style.display = "block";
+        } else {
+            btn.style.display = "none";
+        }
+    }
+
+    // 項目の有効化／無効化
+    function switchEnabled() {
+        const setDisabled = (selector, disabled, readonly=false, color=null) => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.disabled = disabled;
+                el.readOnly = readonly;
+                if (color !== null) el.parentElement.style.color = color;
+            });
+        };
+
+        // カスタムフィールド
+        const inGet = document.querySelector("select[name='properties[in-get]']")?.value;
+        setDisabled("input[name='properties[in-field-title]']", inGet != "3");
+        setDisabled("input[name='properties[in-field-excerpt]']", inGet != "3");
+
+        // サムネイル（外部）
+        const exThumb = document.querySelector("select[name='properties[ex-thumbnail]']")?.value;
+        setDisabled("select[name='properties[ex-thumbnail-size]']", !(exThumb == "1" || exThumb == "13"));
+
+        // サムネイル（内部）
+        const inThumb = document.querySelector("select[name='properties[in-thumbnail]']")?.value;
+        setDisabled("select[name='properties[in-thumbnail-size]']", !(inThumb == "1" || inThumb == "13"));
+
+        // ユーザーエージェント
+        const flgAgentEl = document.querySelector("input[name='properties[flg-agent]'][type=checkbox]");
+		const flgAgent = flgAgentEl ? flgAgentEl.checked : false;
+		setDisabled("input[name='properties[user-agent]']", !flgAgent, !flgAgent );
+
+		// 自動変換関連
+		const autoAtagEl = document.querySelector("input[name='properties[auto-atag]'][type=checkbox]");
+		const autoUrlEl  = document.querySelector("input[name='properties[auto-url]'][type=checkbox]");
+		const autoAtag = autoAtagEl ? autoAtagEl.checked : false;
+		const autoUrl = autoUrlEl ? autoUrlEl.checked : false;
+		const enabled = autoAtag || autoUrl;
+		setDisabled("input[name='properties[auto-external]'][type=checkbox]", !enabled, !enabled, enabled ? "#444" : "#ddd");
+		setDisabled("input[name='properties[flg-do-shortcode]'][type=checkbox]", !enabled, !enabled, enabled ? "#444" : "#ddd");
 	}
 
-	// 画面表示された時に実行
-	jQuery(window).load(function() {
+    // ショートコードをコピー
+    function copyShortcode(e) {
+        const val = e.target.value;
+        document.querySelectorAll(".pz-shortcode-copy").forEach(el => {
+            el.textContent = val;
+        });
+        document.querySelectorAll(".pz-shortcode-enabled").forEach(el => {
+            el.disabled = val.length === 0;
+        });
+    }
 
-		if	(jQuery('.pz-dashboard').is('*') ) {
-			jQuery('#pz-overlay-proc').hide();
+    // ショートコード入力チェック
+    function checkShortcodeKey(e) {
+        if (e.key === " ") {
+            e.preventDefault();
+        }
+    }
 
-			// 項目の有効化／無効化
-			var rs = switch_enabled();
+    // WP-Cron 一覧の表示切替
+    function showAllCron(e) {
+        document.querySelectorAll(".pz-cron-list-other").forEach(el => {
+            if (e.target.checked) {
+                el.style.display = "table-row";
+                el.classList.add("pz-show");
+                el.classList.remove("pz-hide");
+            } else {
+                el.style.display = "none";
+                el.classList.remove("pz-show");
+                el.classList.add("pz-hide");
+            }
+        });
+    }
 
-			// 一番上に行くボタンをクリック
-			jQuery('.pz-button-top').on('click', button_top_click);
+    // カラーピッカーとテキスト同期
+    function syncColor(e) {
+        const name = e.target.getAttribute("name");
+        const value = e.target.value;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(el => {
+            el.value = value;
+        });
+    }
 
-			// 一番上に行くボタンをスクロール位置で「TOP」ボタンを表示／非表示
-			jQuery(window).scroll(top_button_scroll);
+    // readonly チェックボックス無効化
+    function checkboxReadonly(e) {
+        if (e.target.readOnly) {
+            e.preventDefault();
+        }
+    }
 
-			// イベント：ショートコードをコピーする
-			jQuery('.pz-shortcode-1').on('keyup', copy_shortcode);
-
-			// イベント：ショートコードの入力チェック
-			jQuery('input[name="properties[code1]"]:text').on('keydown', check_shortcode_key);
-			jQuery('input[name="properties[code2]"]:text').on('keydown', check_shortcode_key);
-			jQuery('input[name="properties[code3]"]:text').on('keydown', check_shortcode_key);
-			jQuery('input[name="properties[code4]"]:text').on('keydown', check_shortcode_key);
-
-			// イベント：カラーピッカーとテキストボックスの同期
-			jQuery('.pz-sync-text').on('keyup change', sync_color);
-
-			// イベント：すべてのWP-Cronスケジュールを表示する
-			jQuery('.pz-cron-all').on('change', show_all_cron);
-
-			// submitをクリックしたら
-			jQuery('form').submit( function() {
-				jQuery('input[name="scroll-now"]').val(jQuery(window).scrollTop());
-				if	(jQuery('input[name="properties[flg-inhibit]"]:checkbox').prop('checked') == true) {
-					jQuery('#pz-overlay-proc').show();
-				}
-			});
-
-			// クリックしたらテキスト全選択
-			jQuery('.pz-click-all-select').on('click', all_select);
-
-			// イベント：ReadOnlyになったチェックボックスを動作させなくする
-			jQuery('input:checkbox').on('click', checkbox_readonly);
-
-			// 自動変換のチェックが入っているときだけ、オプション設定を有効化
-			jQuery('.pz-sync-check,.pz-show').on('change', switch_enabled);
-
-			// 設定画面＆管理画面
-			//if	(jQuery('.pz-man-count-list').is('*') != false) {
-			//	// イベント：カラーピッカーとテキストボックスの同期
-			//	jQuery('.pz-sync-text').on('keyup change', sync_color);
-			//}
-
-			// 画面表示する
-			jQuery('#pz-overlay-proc').hide();
-		}
-	});
-
-	// スクロールしていた位置
-	function to_scroll() {
-		var pos_y = jQuery('input[name="scroll-now"]').val();
-		jQuery(window).scrollTop(pos_y);
-	}
-
-	// textarea で Tab 入力
-	function textarea_ex(e) {
-		if	(e.key == 'Tab' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-			e.preventDefault();
-			document.execCommand('insertText', false, '\t');
-		}
-	}
-
-	// 一番上へ行くボタンをクリック
-	function button_top_click() {
-		jQuery('body, html').animate({ scrollTop: 0 }, 200);
-		return false;
-	}
-
-	// 一番上へ行くボタンの表示・非表示
-	function top_button_scroll() {
-		if	(jQuery(window).scrollTop() > 80) {
-			jQuery('.pz-button-top').fadeIn('slow');
-		} else {
-			jQuery('.pz-button-top').fadeOut('slow');
-		}
-	}
-
-	// 特定の項目の値によって、連動する項目を有効化／無効化する
-	function switch_enabled() {
-		// 記事取得方法によってカスタムフィールドを有効／無効
-		if	(jQuery('select[name="properties[in-get]"]').val() == 3) {
-			var flags = false;
-		} else {
-			var flags = true;
-		}
-		jQuery('input[name="properties[in-field-title]"]').prop('disabled', flags);
-		jQuery('input[name="properties[in-field-excerpt]"]').prop('disabled', flags);
-		
-		// 外部サイト・サムネイル選択によって、サムネイルサイズを有効／無効
-		if	(jQuery('select[name="properties[ex-thumbnail]"]').val() == 1 || jQuery('select[name="properties[ex-thumbnail]"]').val() == 13) {
-			var flags = false;
-		} else {
-			var flags = true;
-		}
-		jQuery('select[name="properties[ex-thumbnail-size]"]').prop('disabled', flags);
-		
-		// 内部サイト・サムネイル選択によって、サムネイルサイズを有効／無効
-		if	(jQuery('select[name="properties[in-thumbnail]"]').val() == 1 || jQuery('select[name="properties[in-thumbnail]"]').val() == 13) {
-			var flags = false;
-		} else {
-			var flags = true;
-		}
-		jQuery('select[name="properties[in-thumbnail-size]"]').prop('disabled', flags);
-		
-		// リンク検査：ユーザーエージェント使用選択によってユーザーエージェント文字列を有効／無効
-		if	(jQuery('input[name="properties[flg-agent]"]:checkbox').prop('checked') == true) {
-			var flags = false;
-		} else {
-			var flags = true;
-		}
-		jQuery('input[name="properties[user-agent]"]').prop('readonly', flags);
-		
-		// エディタまたは自動変換選択によって、外部のみとショートコード実行を有効／無効
-		if	(jQuery('input[name="properties[auto-atag]"]:checkbox').prop('checked') == true  || jQuery('input[name="properties[auto-url]"]:checkbox').prop('checked') == true) {
-			var flags = false;
-			var color = '#444';
-		} else {
-			var flags = true;
-			var color = '#ddd';
-		}
-		jQuery('input[name="properties[auto-external]"]').prop('disabled', flags);
-		jQuery('input[name="properties[auto-external]"]').prop('readonly', flags);
-		jQuery('input[name="properties[auto-external]"]').parent().css('color', color);
-		jQuery('input[name="properties[flg-do-shortcode]"]').prop('disabled', flags);
-		jQuery('input[name="properties[flg-do-shortcode]"]').prop('readonly', flags);
-		jQuery('input[name="properties[flg-do-shortcode]"]').parent().css('color', color);
-
-		// ふちどりの色（文字）
-		jQuery('input[name="properties[title-outline-color]"]').prop('disabled', jQuery('input[name="properties[title-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[url-outline-color]"]').prop('disabled', jQuery('input[name="properties[url-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[excerpt-outline-color]"]').prop('disabled', jQuery('input[name="properties[excerpt-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[date-outline-color]"]').prop('disabled', jQuery('input[name="properties[date-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[info-outline-color]"]').prop('disabled', jQuery('input[name="properties[info-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[added-outline-color]"]').prop('disabled', jQuery('input[name="properties[added-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[heading-outline-color]"]').prop('disabled', jQuery('input[name="properties[heading-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[more-outline-color]"]').prop('disabled', jQuery('input[name="properties[more-outline]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[cat-outline-color]"]').prop('disabled', jQuery('input[name="properties[cat-outline]"]:checkbox').prop('checked') == false );
-
-		// 背景色（文字）
-		jQuery('input[name="properties[title-bg-color]"]').prop('disabled', jQuery('input[name="properties[title-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[url-bg-color]"]').prop('disabled', jQuery('input[name="properties[url-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[excerpt-bg-color]"]').prop('disabled', jQuery('input[name="properties[excerpt-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[date-bg-color]"]').prop('disabled', jQuery('input[name="properties[date-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[info-bg-color]"]').prop('disabled', jQuery('input[name="properties[info-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[added-bg-color]"]').prop('disabled', jQuery('input[name="properties[added-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[heading-bg-color]"]').prop('disabled', jQuery('input[name="properties[heading-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[more-bg-color]"]').prop('disabled', jQuery('input[name="properties[more-bg]"]:checkbox').prop('checked') == false );
-		jQuery('input[name="properties[cat-bg-color]"]').prop('disabled', jQuery('input[name="properties[cat-bg]"]:checkbox').prop('checked') == false );
-
-		// 背景色（リンク種別別）
-		jQuery('input[name="properties[ex-bg-color]"]').prop('disabled', jQuery('input[name="properties[ex-bg]"]:checkbox').prop('checked') == false );
-	}
-
-	// ショートコードをコピーする
-	function copy_shortcode() {
-		var t = jQuery(this).val();
-		jQuery('.pz-shortcode-copy').each(function() {
-			jQuery(this).text(t);
-			if	(t.length == 0) {
-				jQuery('.pz-shortcode-enabled').prop('disabled', true);
-			} else {
-				jQuery('.pz-shortcode-enabled').prop('disabled', false);
-			}
-		})
-	}
-
-	// ショートコードの入力チェック
-	function check_shortcode_key(e) {
-		switch (e.keyCode) {
-		case 32:						// [Space]
-			return	false;
-		}
-	}
-
-	// すべてのWP-Cronスケジュールを表示する
-	function show_all_cron() {
-		if	(jQuery(this).prop('checked') == true) {
-			jQuery('.pz-cron-list-other').show();
-			jQuery('.pz-cron-list-other').removeClass('pz-hide');
-			jQuery('.pz-cron-list-other').addClass('pz-show');
-		} else {
-			jQuery('.pz-cron-list-other').hide();
-			jQuery('.pz-cron-list-other').removeClass('pz-show');
-			jQuery('.pz-cron-list-other').addClass('pz-hide');
-		}
-	}
-
-	// カラーピッカーとテキストボックスの同期
-	function sync_color() {
-		var name = jQuery(this).attr('name');
-		var value = jQuery(this).val();
-		jQuery('input[name="' + name + '"]').each(function() {jQuery(this).val(value);});
-	}
-
-	// readonlyのチェックボックスを動作させない
-	function checkbox_readonly() {
-		if	(jQuery(this).prop('readonly') == true) {
-			return false;
-		}
-	}
-
-	// テキストを全選択
-	function all_select() {
-		switch (jQuery(this).prop('tagName')) {
-		case 'INPUT':
-			jQuery(this).select();
-			break;
-		case 'DIV':
-			var range = document.createRange();
-			range.selectNodeContents(this);
-			var selection = window.getSelection();
-			selection.removeAllRanges();
-			selection.addRange(range);
-			break;
-		}
-	}
-
-})(jQuery);
+    // 全選択
+    function allSelect(e) {
+        const el = e.target;
+        if (el.tagName === "INPUT") {
+            el.select();
+        } else if (el.tagName === "DIV") {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    }
+});
