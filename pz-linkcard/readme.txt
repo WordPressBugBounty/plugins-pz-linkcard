@@ -84,7 +84,7 @@ WordPress.org からのダウンロードおよびインストール
 3. 先ほど変更したディレクトリ名を元に戻します（戻してもプラグインは勝手に有効化されません）
 4. プラグインのページから古い安定版をダウンロードします
 5. 上書きコピーを行ったあと、有効化を選んで、有効化します
-6. 不具合が起きた状態や状況、テストサイトであれば、アクセスするためのURLを教えていただけると早急に修正できる場合があります
+6. 不具合が起きた状態や状況、テストサイトであれば、アクセスするためのURLを教えていただけると早急に修正出来る場合があります
 
 
 == Frequently asked questions ==
@@ -125,13 +125,13 @@ Googleではnofollowを指定したリンク先はリンク元のサイトの評
 
 = noopenerの設定は重要ですか？ =
 
-外部リンクにnoopenerを設定する事で、悪意を持ったサイトからリンク元のタブを保護する事ができるため設定する事を推奨します。
+外部リンクにnoopenerを設定する事で、悪意を持ったサイトからリンク元のタブを保護する事が出来るため設定する事を推奨します。
 最近のウェブブラウザでは指定が無くてもnoopenerの動作をする物が増えています。
 
 = 直接取得したサムネイルが粗い。 =
 
 外部リンクのサムネイルの直接取得は著作権法上の引用の範囲を超える事のないように低解像度（100px四方）としていました。
-Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるように変更しました。
+Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るように変更しました。
 イラストや写真が載っているサイトの画像を高画質で取得し、ギャラリーのような形で表示した場合等は違法と判断される恐れがあります。
 
 = 「続きを読む」ボタンが表示されない。 =
@@ -149,6 +149,13 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 
 
 == Changelog ==
+
+= 2.5.7.1 =
+* [Fixed] 設定画面に入った際にエラーになり画面表示されない不具合を修正しました。
+* [Fixed] PHP8を使用したときに文字コード判定が誤ってしまう不具合を修正しました。
+* [Fixed] PHP8を使用したときにエクスポート時に警告が出てしまうのを修正しました。
+* [Fixed] カード管理画面のページ数を直接入力してもページが変更出来ない不具合を修正しました。
+* [Removed] カード管理画面の一覧の下側にあるページ数を削除しました。
 
 = 2.5.7 =
 * [Tested] WordPress 6.8.2 での動作確認を行いました。
@@ -261,7 +268,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 = 2.5.4 =
 * WordPress 6.5.3 での動作確認。
   Tested: Compatible with WordPress 6.5.3.
-* 設定画面で [Ctrl]+[←] でひとつ前のタブ、[Ctrl]+[→]でひとつ後のタブを選択できるように機能追加。
+* 設定画面で [Ctrl]+[←] でひとつ前のタブ、[Ctrl]+[→]でひとつ後のタブを選択出来るように機能追加。
   Added: Press CTRL+RIGHT on the settings screen to move to the next tab, or CTRL+LEFT to move to the previous tab.
 * 設定画面で [Ctrl]+[S] で「変更を保存」をクリックした動作をするように機能追加。
   Added: Press CTRL+S in the settings screen to save changes.
@@ -326,7 +333,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 = 2.5.0.1 =
 * カード管理画面にて外部サイトへのリンクを外しました。
   Fixed: Fixed to remove the link from the URL as a response to the vulnerability.
-* サイトアイコンが取得できない不具合を修正。(Thanks 澤田 芳弘 @SWD on x.com)
+* サイトアイコンが取得出来ない不具合を修正。(Thanks 澤田 芳弘 @SWD on x.com)
   Fixed: Fixed a bug that site icons could not be retrieved.
 
 = 2.5.0 =
@@ -358,7 +365,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Added: Added "ALT Text" settings for "Thumbnail" and "Site Icon" to the "Internal Links" tab of the Settings page.
 * 設定画面の「Twitter」のシェア数の単位を「Posts」と「Tweets」から選べる設定を追加。
   Added: Added a setting that allows users to choose between "Posts" and "Tweets" as the unit for the number of shares for "Twitter" on the settings screen.
-* X (Twitter)のシェア数が取得できないため、WebAPIの利用を停止。
+* X (Twitter)のシェア数が取得出来ないため、WebAPIの利用を停止。
   Modified: Stopped using WebAPI because the number of X (Twitter) shares cannot be obtained.
 
 = 2.4.7 =
@@ -370,7 +377,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 = 2.4.6.1 =
 * WordPress 6.0.1 での動作確認。
   Tested: Compatible with WordPress 6.0.1.
-* 国際化ドメイン（日本語ドメイン）の記事が取得できない不具合を修正。(Thanks @kozy_1919 on Twitter)
+* 国際化ドメイン（日本語ドメイン）の記事が取得出来ない不具合を修正。(Thanks @kozy_1919 on Twitter)
   Fixed: Fixed a bug that prevented the acquisition of articles with an IDNA-ASCII-Domain.
 
 = 2.4.6 =
@@ -500,7 +507,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Modified: Moved any setting item on the setting screen from the "Advanced Settings" to the "Senior Settings".
 * 設定画面の「上級者向け」タブ内の「上級者向けの設定」から一部項目を「拡張機能の設定」へ移動。
   Modified: Moved any setting item on the setting screen from the "Advanced Settings" to the "Extension Settings".
-* 設定画面の「マルチサイト」タブに設定が変更できない旨のメッセージを追加。
+* 設定画面の「マルチサイト」タブに設定が変更出来ない旨のメッセージを追加。
   Added: Added a message to the "Multi-site" tab of the setting screen that it cannot be changed.
 * 設定画面の「マルチサイト」タブに「テーブル名称」を追加。
   Added: Added "Multi-site" tab "Table name" on the setting screen.
@@ -696,7 +703,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
   Modified: Modified date format on card management screen.
 * 設定を更新した時、ブラウザのキャッシュに関係無くCSSファイルを読み直すように修正。
   Modified: Modified to read the CSS file again when updating the settings.
-* facebookのシェア数が取得できないため、WebAPIの利用を停止。
+* facebookのシェア数が取得出来ないため、WebAPIの利用を停止。
   Modified: Suspended because the number of shares on facebook cannot be obtained.
 * 設定画面の「エディタ」タブの「ショートコード実行」の初期選択をチェック有りに変更。
   Modified: Modified the initial settings.
@@ -724,13 +731,13 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定できるよ
 = 2.4.1 =
 * WordPress 5.6 での動作確認。
   Tested: Compatible with WordPress 5.6.
-* 外部リンクの画像をキャッシュするときのサイズを選択できる機能を追加。(Thanks @peacediner on Twitter)
+* 外部リンクの画像をキャッシュするときのサイズを選択出来る機能を追加。(Thanks @peacediner on Twitter)
   Added: Added settings to allow you to choose the size when caching images from external link.
 
 = 2.4.0 =
 * WordPress 5.5.3 での動作確認。
   Tested: Compatible with WordPress 5.5.3.
-* 記事では無いページでURL指定エラーが発生する不具合を修正。（ポストIDが取得できないURLを除外）(Thanks @rindark on Twitter)(Thanks @Rina_sendai on Twitter)
+* 記事では無いページでURL指定エラーが発生する不具合を修正。（ポストIDが取得出来ないURLを除外）(Thanks @rindark on Twitter)(Thanks @Rina_sendai on Twitter)
   Fixed: Suppressed incorrect error display.
 * サブディレクトリ型マルチサイトの判定において警告エラーが発生する不具合を修正。
   Fixed: Suppressed incorrect error display.

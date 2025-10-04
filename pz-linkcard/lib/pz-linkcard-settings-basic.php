@@ -15,44 +15,44 @@
 	</div>
 
 	<table class="form-table">
-	<h2><?php echo	__('Basic Settings', PZLKC_TEXT_DOMAIN ).$help_open.'basic'.$help_close; ?></h2>
+	<h2><?php echo	__('Basic Settings', 'pz-linkcard' ).$help_open.'basic'.$help_close; ?></h2>
 <?php
 	// 簡単書式設定
 	$item_name		=	'special-format';
 	$item_list		=	array(
-		''			=>		__('None',							PZLKC_TEXT_DOMAIN),
-		'LkC'		=>		__('Pz-LkC Default',				PZLKC_TEXT_DOMAIN),
-		'hbc'		=>		__('Normal',						PZLKC_TEXT_DOMAIN),
-		'cmp'		=>		__('Compact',						PZLKC_TEXT_DOMAIN),
-		'smp'		=>		__('Simple',						PZLKC_TEXT_DOMAIN),
-		'JIN'		=>		__('Headline',						PZLKC_TEXT_DOMAIN),
-		'ct1'		=>		__('Cellophane tape "center"',		PZLKC_TEXT_DOMAIN),
-		'ct2'		=>		__('Cellophane tape "Top corner"',	PZLKC_TEXT_DOMAIN),
-		'ct3'		=>		__('Cellophane tape "long"',		PZLKC_TEXT_DOMAIN),
-		'ct4'		=>		__('Cellophane tape "digonal"',		PZLKC_TEXT_DOMAIN),
-		'tac'		=>		__('Cellophane tape and curling',	PZLKC_TEXT_DOMAIN),
-		'ppc'		=>		__('Curling paper',					PZLKC_TEXT_DOMAIN),
-		'sBR'		=>		__('Stitch blue & red',				PZLKC_TEXT_DOMAIN),
-		'sGY'		=>		__('Stitch green & yellow',			PZLKC_TEXT_DOMAIN),
-		'sqr'		=>		__('Square',						PZLKC_TEXT_DOMAIN),
-		'ecl'		=>		__('Enclose',						PZLKC_TEXT_DOMAIN),
-		'ref'		=>		__('Reflection',					PZLKC_TEXT_DOMAIN),
-		'inI'		=>		__('Infomation orange',				PZLKC_TEXT_DOMAIN),
-		'inN'		=>		__('Neutral bluegreen',				PZLKC_TEXT_DOMAIN),
-		'inE'		=>		__('Enlightened green',				PZLKC_TEXT_DOMAIN),
-		'inR'		=>		__('Resistance blue',				PZLKC_TEXT_DOMAIN),
-		'wxp'		=>		__('Windows XP',					PZLKC_TEXT_DOMAIN),
-		'w95'		=>		__('Windows 95',					PZLKC_TEXT_DOMAIN),
-		'slt'		=>		__('Slanting',						PZLKC_TEXT_DOMAIN),
-		'3Dr'		=>		__('3D Rotate',						PZLKC_TEXT_DOMAIN),
-		'pin'		=>		__('Pushpin',						PZLKC_TEXT_DOMAIN),
+		''			=>		__('None',							'pz-linkcard'),
+		'LkC'		=>		__('Pz-LkC Default',				'pz-linkcard'),
+		'hbc'		=>		__('Normal',						'pz-linkcard'),
+		'cmp'		=>		__('Compact',						'pz-linkcard'),
+		'smp'		=>		__('Simple',						'pz-linkcard'),
+		'JIN'		=>		__('Headline',						'pz-linkcard'),
+		'ct1'		=>		__('Cellophane tape "center"',		'pz-linkcard'),
+		'ct2'		=>		__('Cellophane tape "Top corner"',	'pz-linkcard'),
+		'ct3'		=>		__('Cellophane tape "long"',		'pz-linkcard'),
+		'ct4'		=>		__('Cellophane tape "digonal"',		'pz-linkcard'),
+		'tac'		=>		__('Cellophane tape and curling',	'pz-linkcard'),
+		'ppc'		=>		__('Curling paper',					'pz-linkcard'),
+		'sBR'		=>		__('Stitch blue & red',				'pz-linkcard'),
+		'sGY'		=>		__('Stitch green & yellow',			'pz-linkcard'),
+		'sqr'		=>		__('Square',						'pz-linkcard'),
+		'ecl'		=>		__('Enclose',						'pz-linkcard'),
+		'ref'		=>		__('Reflection',					'pz-linkcard'),
+		'inI'		=>		__('Infomation orange',				'pz-linkcard'),
+		'inN'		=>		__('Neutral bluegreen',				'pz-linkcard'),
+		'inE'		=>		__('Enlightened green',				'pz-linkcard'),
+		'inR'		=>		__('Resistance blue',				'pz-linkcard'),
+		'wxp'		=>		__('Windows XP',					'pz-linkcard'),
+		'w95'		=>		__('Windows 95',					'pz-linkcard'),
+		'slt'		=>		__('Slanting',						'pz-linkcard'),
+		'3Dr'		=>		__('3D Rotate',						'pz-linkcard'),
+		'pin'		=>		__('Pushpin',						'pz-linkcard'),
 	);
-	$item_descript		=	__('Easy Format',					PZLKC_TEXT_DOMAIN );
-	$item_notice		=	__('*', PZLKC_TEXT_DOMAIN ).' '.__('It applies over other formatting settings.', PZLKC_TEXT_DOMAIN );
+	$item_descript		=	__('Easy Format',					'pz-linkcard' );
+	$item_notice		=	__('*', 'pz-linkcard' ).' '.__('It applies over other formatting settings.', 'pz-linkcard' );
 	echo_list($item_name, $prop[$item_name], $item_list, $item_descript, $item_notice );
 ?>
 		<tr>
-			<th scope="row"><?php _e('Saved Datetime', PZLKC_TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e('Saved Datetime', 'pz-linkcard' ); ?></th>
 			<td>
 				<input type="text" size="40" value="<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : $this->options['saved-date']; ?>" readonly="readonly" />
 				<input name="properties[saved-date]" type="text" value="<?php echo $this->options['saved-date']; ?>" class="pz-admin-only" readonly="readonly" />
@@ -61,33 +61,33 @@
 	</table>
 	<?php submit_button(); ?>
 
-	<h2><?php echo	__('Changelog', PZLKC_TEXT_DOMAIN ); ?></h2>
+	<h2><?php echo	__('Changelog', 'pz-linkcard' ); ?></h2>
 	<div class="pz-changelog">
 		<?php echo	$changelog; ?>
 	</div>
 	<?php submit_button(); ?>
 
-	<h2><?php echo	__('Related Information', PZLKC_TEXT_DOMAIN ); ?></h2>
+	<h2><?php echo	__('Related Information', 'pz-linkcard' ); ?></h2>
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php echo	__('How to', PZLKC_TEXT_DOMAIN ).' '.__('(', PZLKC_TEXT_DOMAIN ).__('Japanese Only', PZLKC_TEXT_DOMAIN ).__(')', PZLKC_TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php echo	__('How to', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('Japanese Only', 'pz-linkcard' ).__(')', 'pz-linkcard' ); ?></th>
 			<td>
 				<p><?php echo	self::PLUGIN_NAME.' Ver.'.PZLKC_PLUGIN_VERSION; ?></p>
 				<p><a href="<?php echo	esc_attr($plugin_url ); ?>" rel="external noopener" target="_blank"><?php echo	esc_attr($plugin_url ); ?></a></p>
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e("Author's Site", PZLKC_TEXT_DOMAIN ); ?></th>
-			<td><?php echo	__('Popozure.', PZLKC_TEXT_DOMAIN ).' ('.__("Poporon's PC Daily Diary", PZLKC_TEXT_DOMAIN ).')'; ?><BR><a href="<?php echo $pz_url; ?>" rel="external noopener" target="_blank"><?php echo $pz_url; ?></A></td>
+			<th scope="row"><?php _e("Author's Site", 'pz-linkcard' ); ?></th>
+			<td><?php echo	__('Popozure.', 'pz-linkcard' ).' ('.__("Poporon's PC Daily Diary", 'pz-linkcard' ).')'; ?><BR><a href="<?php echo $pz_url; ?>" rel="external noopener" target="_blank"><?php echo $pz_url; ?></A></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('When in Trouble', PZLKC_TEXT_DOMAIN ); ?></th>
-			<td><?php echo	__('X Account', PZLKC_TEXT_DOMAIN ); ?><BR><a href="<?php echo self::AUTHOR_TWITTER_URL; ?>" rel="external noopener" target="_blank"><?php echo self::AUTHOR_TWITTER; ?></A></td>
+			<th scope="row"><?php _e('When in Trouble', 'pz-linkcard' ); ?></th>
+			<td><?php echo	__('X Account', 'pz-linkcard' ); ?><BR><a href="<?php echo self::AUTHOR_TWITTER_URL; ?>" rel="external noopener" target="_blank"><?php echo self::AUTHOR_TWITTER; ?></A></td>
 		</tr>
 
 		<tr class="pz-debug-only">
-			<th scope="row"><?php _e('Donation', PZLKC_TEXT_DOMAIN ); ?></th>
-			<td><a href="<?php echo self::AUTHOR_DONATE_URL; ?>" rel="external noopenner noreferrer" target="_blank" target="_blank"><?php _e('Wishlist', PZLKC_TEXT_DOMAIN ); ?></a></td>
+			<th scope="row"><?php _e('Donation', 'pz-linkcard' ); ?></th>
+			<td><a href="<?php echo self::AUTHOR_DONATE_URL; ?>" rel="external noopenner noreferrer" target="_blank" target="_blank"><?php _e('Wishlist', 'pz-linkcard' ); ?></a></td>
 		</tr>
 
 	</table>

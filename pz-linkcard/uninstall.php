@@ -1,20 +1,30 @@
-<?php defined('ABSPATH' ) || wp_die; ?>
+<?php defined('ABSPATH' ) || wp_die(); ?>
 <?php
-	// パラメータ準備
-	$slug				=	basename(dirname(__FILE__ ) );
-	$wp_upload_dir		=	wp_upload_dir();
-	$upload_dir_path	=	$wp_upload_dir['basedir'].'/'.$slug;
+	// アンインストーラー
 
-	// DBの削除
-	global			$wpdb;
-	$db_name	=	$wpdb->prefix.'pz_linkcard';
-	$sql		=	"DROP TABLE ".$db_name;
-	$wpdb->query($sql );
+	////////////////////////////////////////////////////////////////////////////////
 
 	// ディレクトリの削除（画像キャッシュ、スタイルシート）
-	$result		=	remove_directory($upload_dir_path );
+	$result		=	remove_directory_pre('pz-linkcard' );
 
-	// ディレクトリの削除
+	// DBの削除
+	$result		=	drop_table($wpdb->prefix.'_pz_linkcard' );
+
+	// 設定の削除
+	$result		=	delete_option('pz_listcard_options' );
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	// ディレクトリの削除（準備）
+	function remove_directory_pre($dir_name ) {
+		$wp_upload_dir		=	wp_upload_dir();
+		$upload_dir_path	=	$wp_upload_dir['basedir'].'/'.$dir_name;
+		if (file_exists($upload_dir_path ) ) {
+			remove_directory($upload_dir_path );
+		}
+	}
+
+	// ディレクトリの削除（処理）
 	function remove_directory($dir ) {
 		if	(mb_substr($dir, -1, 1) <> '/' ) {
 			$dir	=	$dir.'/';
@@ -28,4 +38,11 @@
 			}
 		}
 		return rmdir($dir );
+	}
+
+	// DBテーブルの削除
+	function drop_table($table_name ) {
+		global	$wpdb;
+		$sql	=	"DROP TABLE IF EXISTS ".$table_name;
+		$wpdb->query($sql );
 	}

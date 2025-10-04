@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pz-LinkCard\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2025-09-15 07:10+0900\n"
-"PO-Revision-Date: 2025-09-15 07:11+0900\n"
+"POT-Creation-Date: 2025-09-19 18:56+0900\n"
+"PO-Revision-Date: 2025-09-19 18:57+0900\n"
 "Last-Translator: poporon\n"
 "Language-Team: poporon\n"
 "Language: ja_JP\n"
@@ -422,8 +422,7 @@ msgstr "設定"
 msgid "&#x1f5c3;&#xfe0f;"
 msgstr "&#x1f5c3;&#xfe0f;"
 
-#: ../lib/pz-linkcard-cacheman.php:106 ../pz-linkcard.php:2595
-#: ../pz-linkcard.php:2729
+#: ../lib/pz-linkcard-cacheman.php:106 ../pz-linkcard.php:2729
 msgid "Pz-LinkCard Manager"
 msgstr "Pz カード管理"
 
@@ -2391,8 +2390,7 @@ msgstr "モバイル端末以外"
 msgid "Manager"
 msgstr "管理"
 
-#: ../lib/pz-linkcard-settings.php:176 ../pz-linkcard.php:2596
-#: ../pz-linkcard.php:2730
+#: ../lib/pz-linkcard-settings.php:176 ../pz-linkcard.php:2730
 msgid "Pz-LinkCard Settings"
 msgstr "Pz カード設定"
 
@@ -2631,11 +2629,11 @@ msgstr "使用出来ないURLです"
 
 #: ../pz-linkcard.php:2582
 msgid "[Pz] LinkCard2 Manager"
-msgstr "[Pz] カード管理2"
+msgstr "[Pz] カード管理 v2"
 
 #: ../pz-linkcard.php:2583
 msgid "[Pz] LinkCard2 Settings"
-msgstr "[Pz] カード設定2"
+msgstr "[Pz] カード設定 v2"
 
 #: ../pz-linkcard.php:2585
 msgid "[Pz] LinkCard Manager"

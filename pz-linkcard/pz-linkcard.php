@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.7
+Version:		2.5.7.1
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -256,7 +256,7 @@ class class_pz_linkcard {
 			'initialize-exception'	=>	0,				// 🟦Cache
 			'flg-delete-db'			=>	1,				// 🟦Cache
 			'flg-delete-settings'	=>	1,				// 🟦Cache
-);
+		);
 
 	// 定数・プラグイン情報
 	private		const	PLUGIN_NAME			=	'Pz-LinkCard';
@@ -325,8 +325,6 @@ class class_pz_linkcard {
 		define('PZLKC_PLUGIN_VERSION',	$plugin_info['Version'] );								// バージョン
 
 		// 定数
-		define('PZLKC_TEXT_DOMAIN',		$plugin_info['TextDomain'] );							// テキストドメイン
-
 		define('PZLKC_PZLKC_URL_ADMIN_JS',		plugins_url('js/admin-settings.js', __FILE__ ) );		// 管理画面のJSのURL（設定画面）
 		define('PZLKC_PZLKC_URL_ADMIN_TAB',		plugins_url('js/admin-tabs.js', __FILE__ ) );			// 管理画面のJSのURL（設定画面タブ）
 		define('PZLKC_JS_COUNT',		plugins_url('js/click-count.js', __FILE__ ) );			// 管理画面のJSのURL（クリックカウント）
@@ -398,7 +396,7 @@ class class_pz_linkcard {
 		$this->domain_url			=	$url_info['domain_url'];	// 自サイトのドメインURL
 
 		// 言語の国際化（日本語化）
-		load_plugin_textdomain(PZLKC_TEXT_DOMAIN, false, $this->slug.'/languages' );
+		load_plugin_textdomain('pz-linkcard', false, $this->slug.'/languages' );
 
 		// 管理画面のとき
 		if	(is_admin() ) {
@@ -579,7 +577,7 @@ class class_pz_linkcard {
 					$result	=	$this->pz_SaveOptions();
 				}
 			}
-			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', PZLKC_TEXT_DOMAIN ).' '.__('Incorrect URL specification.', PZLKC_TEXT_DOMAIN ).'<br>'.__('-', PZLKC_TEXT_DOMAIN ).' '.__('URL', PZLKC_TEXT_DOMAIN ).'='.html_entity_decode($url_org ).'</div></div></div>';
+			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.html_entity_decode($url_org ).'</div></div></div>';
 			$err_info	=	print_r($atts, true );
 			return			PHP_EOL.$tag.PHP_EOL.'<!--'.html_entity_decode($err_info ).'-->'.PHP_EOL.PHP_EOL;
 		}
@@ -1002,19 +1000,19 @@ class class_pz_linkcard {
 			if	($this->options['link-all'] ) {
 				if	($this->options['sns-tw'] && $sns_tw > 0 ) {
 					if	($this->options['sns-tw-x'] ) {
-						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d tweet', PZLKC_TEXT_DOMAIN ) : __('%d tweets', PZLKC_TEXT_DOMAIN ) ), $sns_tw ).'</div>';
+						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d tweet', 'pz-linkcard' ) : __('%d tweets', 'pz-linkcard' ) ), $sns_tw ).'</div>';
 					} else {
-						$sns	.=	' <div class="lkc-sns-x">'.sprintf(($sns_tw == 1 ? __('%d post',  PZLKC_TEXT_DOMAIN ) : __('%d posts',  PZLKC_TEXT_DOMAIN ) ), $sns_tw ).'</div>';
+						$sns	.=	' <div class="lkc-sns-x">'.sprintf(($sns_tw == 1 ? __('%d post',  'pz-linkcard' ) : __('%d posts',  'pz-linkcard' ) ), $sns_tw ).'</div>';
 					}
 				}
 				if	($this->options['sns-fb'] && $sns_fb > 0 ) {
-					$sns	.=	' <div class="lkc-sns-fb">'.sprintf(($sns_fb == 1 ? __('%d share',  PZLKC_TEXT_DOMAIN ) : __('%d shares',  PZLKC_TEXT_DOMAIN ) ), $sns_fb ).'</div>';
+					$sns	.=	' <div class="lkc-sns-fb">'.sprintf(($sns_fb == 1 ? __('%d share',  'pz-linkcard' ) : __('%d shares',  'pz-linkcard' ) ), $sns_fb ).'</div>';
 				}
 				if	($this->options['sns-hb'] && $sns_hb > 0 ) {
-					$sns	.=	' <div class="lkc-sns-hb">'.sprintf(($sns_hb == 1 ? __('%d user',   PZLKC_TEXT_DOMAIN ) : __('%d users',   PZLKC_TEXT_DOMAIN ) ), $sns_hb ).'</div>';
+					$sns	.=	' <div class="lkc-sns-hb">'.sprintf(($sns_hb == 1 ? __('%d user',   'pz-linkcard' ) : __('%d users',   'pz-linkcard' ) ), $sns_hb ).'</div>';
 				}
 				if	($this->options['sns-po'] && $sns_po > 0 ) {
-					$sns	.=	' <div class="lkc-sns-po">'.sprintf(($sns_po == 1 ? __('%d pocket', PZLKC_TEXT_DOMAIN ) : __('%d pockets', PZLKC_TEXT_DOMAIN ) ), $sns_po ).'</div>';
+					$sns	.=	' <div class="lkc-sns-po">'.sprintf(($sns_po == 1 ? __('%d pocket', 'pz-linkcard' ) : __('%d pockets', 'pz-linkcard' ) ), $sns_po ).'</div>';
 				}
 			} else {
 				// 外部リンクアイコンを表示させるプラグイン対応のため no_icon を付与
@@ -1073,13 +1071,13 @@ class class_pz_linkcard {
 			$html_url2	=	null;
 			switch		($this->options['display-date'] ) {
 			case	1:
-				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', PZLKC_TEXT_DOMAIN ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
 				break;
 			case	2:
-				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', PZLKC_TEXT_DOMAIN ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_modified ) ).'</div>';
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_modified ) ).'</div>';
 				break;
 			case	3:
-				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', PZLKC_TEXT_DOMAIN ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'&ensp;'.__('&#x1F501;&#xfe0f;', PZLKC_TEXT_DOMAIN ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'&ensp;'.__('&#x1F501;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
 				break;
 			}
 		}
@@ -1737,12 +1735,12 @@ class class_pz_linkcard {
 					$cat_data		=	get_category_by_slug($cat_last_slug );
 					if	($cat_data ) {
 						$cat_count		=	($cat_data->count - 0 );
-						$title			=	__('Category', PZLKC_TEXT_DOMAIN ).' '.__('‘', PZLKC_TEXT_DOMAIN ).$cat_data->name.__('’', PZLKC_TEXT_DOMAIN );
-						$excerpt		=	__('(', PZLKC_TEXT_DOMAIN ).__('Count', PZLKC_TEXT_DOMAIN ).':'.($cat_data->count - 0 ).__(')', PZLKC_TEXT_DOMAIN ).' '.$cat_data->description;
+						$title			=	__('Category', 'pz-linkcard' ).' '.__('‘', 'pz-linkcard' ).$cat_data->name.__('’', 'pz-linkcard' );
+						$excerpt		=	__('(', 'pz-linkcard' ).__('Count', 'pz-linkcard' ).':'.($cat_data->count - 0 ).__(')', 'pz-linkcard' ).' '.$cat_data->description;
 						$update_result	=	200;
 					} else {
-						$title			=	__('Category', PZLKC_TEXT_DOMAIN ).' '.__('‘', PZLKC_TEXT_DOMAIN ).$cat_slug.__('’', PZLKC_TEXT_DOMAIN );
-						$excerpt		=	__('Not Found', PZLKC_TEXT_DOMAIN );
+						$title			=	__('Category', 'pz-linkcard' ).' '.__('‘', 'pz-linkcard' ).$cat_slug.__('’', 'pz-linkcard' );
+						$excerpt		=	__('Not Found', 'pz-linkcard' );
 						$update_result	=	403;
 					}
 				} else {
@@ -1754,12 +1752,12 @@ class class_pz_linkcard {
 						$cat_slug		=	mb_substr($url, $cat_len );
 						$cat_data		=	get_tags(array('slug' => $cat_slug ) );
 						if	($cat_data ) {
-							$title			=	__('Tag', PZLKC_TEXT_DOMAIN ).' '.__('‘', PZLKC_TEXT_DOMAIN ).$cat_data[0]->name.__('’', PZLKC_TEXT_DOMAIN );
-							$excerpt		=	__('(', PZLKC_TEXT_DOMAIN ).__('Count', PZLKC_TEXT_DOMAIN ).':'.($cat_data[0]->count - 0 ).__(')', PZLKC_TEXT_DOMAIN ).' '.$cat_data[0]->description;
+							$title			=	__('Tag', 'pz-linkcard' ).' '.__('‘', 'pz-linkcard' ).$cat_data[0]->name.__('’', 'pz-linkcard' );
+							$excerpt		=	__('(', 'pz-linkcard' ).__('Count', 'pz-linkcard' ).':'.($cat_data[0]->count - 0 ).__(')', 'pz-linkcard' ).' '.$cat_data[0]->description;
 							$update_result	=	200;
 						} else {
-							$title			=	__('Tag', PZLKC_TEXT_DOMAIN ).' '.__('‘', PZLKC_TEXT_DOMAIN ).rawurldecode($cat_slug ).__('’', PZLKC_TEXT_DOMAIN );
-							$excerpt		=	__('Not Found', PZLKC_TEXT_DOMAIN );
+							$title			=	__('Tag', 'pz-linkcard' ).' '.__('‘', 'pz-linkcard' ).rawurldecode($cat_slug ).__('’', 'pz-linkcard' );
+							$excerpt		=	__('Not Found', 'pz-linkcard' );
 							$update_result	=	403;
 						}
 					} else {
@@ -1904,7 +1902,7 @@ class class_pz_linkcard {
 			$data['url_key']			=	$data['url_key'] ?? '';			// リンク先：URLハッシュ値
 			$data['scheme']				=	$data['scheme'] ?? '';																	// リンク先：URLスキーム
 			$data['domain']				=	$data['domain'] ?? '';																	// リンク先：URLドメイン
-			$data['title']				=	__('Invalid URL', PZLKC_TEXT_DOMAIN );											// リンク先：タイトル
+			$data['title']				=	__('Invalid URL', 'pz-linkcard' );											// リンク先：タイトル
 			$data['excerpt']			=	'';																			// リンク先：抜粋文
 			$data['regist_title']		=	$data['title'] ?? '';																// リンク先：タイトル
 			$data['regist_excerpt']		=	'';															// リンク先：抜粋文
@@ -1986,9 +1984,8 @@ class class_pz_linkcard {
 				}
 			}
 		}
-
 		if	(strtolower(substr($http_type, 0, 9) ) === 'text/html' && $http_body ) {
-			$charset		=	mb_detect_encoding($http_body, null, false );
+			$charset		=	mb_detect_encoding($http_body, ['UTF-8', 'eucJP-win', 'SJIS-win', 'ASCII', 'EUC-JP', 'SJIS', 'JIS'], false );
 			if	($charset ) {
 				$http_body	=	mb_convert_encoding($http_body, $this->charset, $charset );
 			}
@@ -2201,18 +2198,18 @@ class class_pz_linkcard {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__, '$url='.$url ); }
 
 		$host = parse_url( $url, PHP_URL_HOST );
-		if ( ! $host ) {
+		if (!$host ) {
 			return	true;
 		}
 
 		// .local ドメインを判定
-		if ( preg_match( '/\.local$/i', $host ) ) {
+		if (preg_match( '/\.local$/i', $host ) ) {
 			return	true;
 		}
 
 		// ホストをIPに解決
 		$ip = gethostbyname( $host );
-		if ( ! $ip || $ip === $host ) {
+		if (!$ip || $ip === $host ) {
 			return	true;
 		}
 
@@ -2222,11 +2219,7 @@ class class_pz_linkcard {
 		}
 
 		// プライベート / 予約済み / リンクローカルを判定
-		if ( filter_var(
-			$ip,
-			FILTER_VALIDATE_IP,
-			FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-		) === false ) {
+		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
 			return	true;
 		}
 
@@ -2579,11 +2572,11 @@ class class_pz_linkcard {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
 		if	((function_exists('is_plugin_active' ) && is_plugin_active('pz-linkcard3/pz-linkcard3.php' ) ) || (function_exists('is_plugin_active_for_network' ) && is_plugin_active_for_network('pz-linkcard3/pz-linkcard3.php' ) ) ) {
-			$menu_manager	=	__('[Pz] LinkCard2 Manager',	PZLKC_TEXT_DOMAIN );
-			$menu_settings	=	__('[Pz] LinkCard2 Settings',	PZLKC_TEXT_DOMAIN );
+			$menu_manager	=	__('[Pz] LinkCard2 Manager',	'pz-linkcard' );
+			$menu_settings	=	__('[Pz] LinkCard2 Settings',	'pz-linkcard' );
 		} else {
-			$menu_manager	=	__('[Pz] LinkCard Manager',		PZLKC_TEXT_DOMAIN );
-			$menu_settings	=	__('[Pz] LinkCard Settings',	PZLKC_TEXT_DOMAIN );
+			$menu_manager	=	__('[Pz] LinkCard Manager',		'pz-linkcard' );
+			$menu_settings	=	__('[Pz] LinkCard Settings',	'pz-linkcard' );
 		}
 		if	($this->options['flg-alive'] && $this->options['flg-alive-count'] ) {
 			global	$wpdb;
@@ -2592,8 +2585,8 @@ class class_pz_linkcard {
 				$menu_manager	.=	'&nbsp;<span class="update-plugins"><span class="update-count lkc-menu-count">'.$result->count.'</span></span>';
 			}
 		}
-		add_management_page	(__('Pz-LinkCard Manager',		PZLKC_TEXT_DOMAIN ),	$menu_manager,		'manage_options', 	self::CACHEMAN_PAGE,	array($this, 'page_cacheman' ) );
-		add_options_page	(__('Pz-LinkCard Settings',		PZLKC_TEXT_DOMAIN ),	$menu_settings,		'manage_options', 	self::SETTINGS_PAGE,	array($this, 'page_settings' ) );
+		add_management_page	('pz-linkcard-manager',		$menu_manager,		'manage_options', 	self::CACHEMAN_PAGE,	array($this, 'page_cacheman' ) );
+		add_options_page	('pz-linkcard-settings',	$menu_settings,		'manage_options', 	self::SETTINGS_PAGE,	array($this, 'page_settings' ) );
 	}
 	
 	// 管理画面＞Pz カード管理
@@ -2634,7 +2627,7 @@ class class_pz_linkcard {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-css',			PZLKC_URL_STYLE.'style.css',			array(),	$css_version );
 		}
 		if	($this->options['css-add-url'] ) {
-			wp_enqueue_style	(self::PLUGIN_SLUG.'-css-add',		$this->options['css-add-url'],	array(),	$css_version );
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-css-add',		$this->options['css-add-url'],			array(),	$css_version );
 		}
 		// クリック回数
 		// if	($this->options['flg-click-count'] ) {
@@ -2642,7 +2635,7 @@ class class_pz_linkcard {
 				'pz-lkc-click',	
 				plugin_dir_url(__FILE__) . 'js/click-counter.js',	
 				[],		
-				null,	
+				PZLKC_PLUGIN_VERSION,
 				true );
 			wp_localize_script	('pz-lkc-click',	'pz_lkc_ajax', [
 				'ajax_url'		=>	admin_url('admin-ajax.php' ),
@@ -2669,7 +2662,7 @@ class class_pz_linkcard {
 
 	//	if	($this->options['error-mode'] ) {
 	//		if	(!$this->options['error-mode-hide'] ) {
-	//			echo '<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', PZLKC_TEXT_DOMAIN ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', PZLKC_TEXT_DOMAIN ).' '.__('You can cancel this message from <a href=".'.self::SETTINGS_URL.'">the setting screen</a>.', PZLKC_TEXT_DOMAIN ).'</p></div>';
+	//			echo '<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can cancel this message from <a href=".'.self::SETTINGS_URL.'">the setting screen</a>.', 'pz-linkcard' ).'</p></div>';
 	//		}
 	//	}
 	}
@@ -2681,7 +2674,7 @@ class class_pz_linkcard {
 		// テキスト エディタ用のクイックタグ
 		if	($this->options['flg-edit-qtag'] ) {
 			if	(wp_script_is('quicktags' ) ) {
-				echo '<script>QTags.addButton(\'pz-lkc\',\''.__('Linkcard', PZLKC_TEXT_DOMAIN ).'\',\'['.$this->options['code1'].' url="\',\'"]\',\'\',\''.__('Make Linkcard', PZLKC_TEXT_DOMAIN ).'\' );</script>';
+				echo '<script>QTags.addButton(\'pz-lkc\',\''.__('Linkcard', 'pz-linkcard' ).'\',\'['.$this->options['code1'].' url="\',\'"]\',\'\',\''.__('Make Linkcard', 'pz-linkcard' ).'\' );</script>';
 			}
 		}
 		// ビジュアル エディタ用の挿入ダイアログ
@@ -2726,8 +2719,8 @@ class class_pz_linkcard {
 
 		global $wp_admin_bar;
 		$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => 'Pzカード',									'href' => '#' ) );
-		$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Manager',	PZLKC_TEXT_DOMAIN ),	'href' => $this->cacheman_url,	'meta' => array('target' => '_parent' ) ) );
-		$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Settings',	PZLKC_TEXT_DOMAIN ),	'href' => $this->settings_url,	'meta' => array('target' => '_parent' ) ) );
+		$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Manager',	'pz-linkcard' ),	'href' => $this->cacheman_url,	'meta' => array('target' => '_parent' ) ) );
+		$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Settings',	'pz-linkcard' ),	'href' => $this->settings_url,	'meta' => array('target' => '_parent' ) ) );
 	}
 
 	// クリックカウント
@@ -2760,8 +2753,8 @@ class class_pz_linkcard {
 	public	function	filter_plugin_action_links($links ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__, '$links='.print_r($links, true ) ); }
 
-		$links['manager']	=	'<a href="'.$this->cacheman_url.'">'.__('Manager' , PZLKC_TEXT_DOMAIN ).'</a>';
-		$links['settings']	=	'<a href="'.$this->settings_url.'">'.__('Settings', PZLKC_TEXT_DOMAIN ).'</a>';
+		$links['manager']	=	'<a href="'.$this->cacheman_url.'">'.__('Manager' , 'pz-linkcard' ).'</a>';
+		$links['settings']	=	'<a href="'.$this->settings_url.'">'.__('Settings', 'pz-linkcard' ).'</a>';
 		return	$links;
 	}
 

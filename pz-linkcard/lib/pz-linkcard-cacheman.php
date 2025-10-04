@@ -92,20 +92,20 @@
 
 	// プラグイン名・バージョン・環境表示
 	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PZLKC_PLUGIN_VERSION.$html_plugin.
-			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', PZLKC_TEXT_DOMAIN ).'</span>'				:	'' ).
-			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', PZLKC_TEXT_DOMAIN ).'</span>'	:	'' ).
-			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', PZLKC_TEXT_DOMAIN ).'</span>'	:	'' ).
+			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', 'pz-linkcard' ).'</span>'				:	'' ).
+			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', 'pz-linkcard' ).'</span>'	:	'' ).
+			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', 'pz-linkcard' ).'</span>'	:	'' ).
 			'</div>';
 
 	// ページの見出し表示（設定）
 	$page_class	=	' pz-cacheman';
 	$switch_link	=	esc_url($this->settings_url );
-	$switch_icon	=	__('&#x2699;&#xfe0f;', PZLKC_TEXT_DOMAIN );
-	$switch_label	=	__('Settings', PZLKC_TEXT_DOMAIN );
-	$title_icon		=	__('&#x1f5c3;&#xfe0f;', PZLKC_TEXT_DOMAIN );
-	$title_label	=	__('Pz-LinkCard Manager', PZLKC_TEXT_DOMAIN );
+	$switch_icon	=	__('&#x2699;&#xfe0f;', 'pz-linkcard' );
+	$switch_label	=	__('Settings', 'pz-linkcard' );
+	$title_icon		=	__('&#x1f5c3;&#xfe0f;', 'pz-linkcard' );
+	$title_label	=	__('Pz-LinkCard Manager', 'pz-linkcard' );
 	$help_page		=	self::AUTHOR_URL.'/pz-linkcard-manager';
-	$html_title		=	'<div class="pz-header"><a class="pz-header-switch" href="'.$switch_link.'"><span class="pz-header-switch-icon">'.$switch_icon.'</span><span class="pz-header-switch-label">'.$switch_label.'</span></a><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', PZLKC_TEXT_DOMAIN ).'" alt="help" /></a></span></h1></div>';
+	$html_title		=	'<div class="pz-header"><a class="pz-header-switch" href="'.$switch_link.'"><span class="pz-header-switch-icon">'.$switch_icon.'</span><span class="pz-header-switch-label">'.$switch_label.'</span></a><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
 
 	// POSTする値 INPUT要素
 	$temp_param		=
@@ -150,7 +150,7 @@
 	// 記述エラー
 	if	($this->options['error-mode'] ) {
 		if	(!$this->options['error-mode-hide'] ) {
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', PZLKC_TEXT_DOMAIN ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', PZLKC_TEXT_DOMAIN ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', PZLKC_TEXT_DOMAIN ).'</p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', 'pz-linkcard' ).'</p></div>';
 		}
 	}
 
@@ -159,6 +159,10 @@
 		check_admin_referer('pz-cacheman' );
 
 		switch	($action ) {
+		case	'jump-page':				// ページ数
+			$page_now				=	(isset($_POST['page_now'] ) ? intval($_POST['page_now'] ) : 1 );
+			break;
+
 		case	'search':					// 検索ボタン
 			break;
 		
@@ -180,7 +184,7 @@
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($data ) || !is_array($data ) || !isset($data['id'] ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($data			as	$key => $value ) {
@@ -192,14 +196,14 @@
 			if	(isset($data ) && is_array($data ) && isset($data['id'] ) ) {
 				$success_count++;
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Update Cache', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Update Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'renew':					// 記事内容の再取得
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($select_id as $data_id ) {
@@ -212,14 +216,14 @@
 					$skip_count++;
 				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Cache', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'renew_thumbnail':			// サムネイルの再取得
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			$success_count			=	0;
@@ -234,14 +238,14 @@
 				}
 				$html_notice		.=	'..';
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Thumbnail Image', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Thumbnail Image', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'renew_sns':				// ソーシャルカウントの再取得
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($select_id as $data_id ) {
@@ -255,14 +259,14 @@
 					$skip_count++;
 				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew SNS Count', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew SNS Count', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'renew_postid':				// 記事IDの再取得
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($select_id as $data_id ) {
@@ -277,14 +281,14 @@
 					$skip_count++;
 				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Post Id', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Post Id', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'alive':
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($select_id as $data_id ) {
@@ -313,14 +317,14 @@
 					}
 				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Alive check', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Alive check', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'delete':
 			$success_count			=	0;
 			$skip_count				=	0;
 			if	(!isset($select_id ) || !is_array($select_id ) ) {
-				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+				$html_notice		.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Not selected', 'pz-linkcard' ).'</strong></p></div>';
 				break;
 			}
 			foreach	($select_id as $data_id ) {
@@ -331,7 +335,7 @@
  					$skip_count++;
  				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Delete Cache', PZLKC_TEXT_DOMAIN ).__('...', PZLKC_TEXT_DOMAIN ).__('(', PZLKC_TEXT_DOMAIN ).__('Success:', PZLKC_TEXT_DOMAIN ).$success_count.' '.__('Skip:', PZLKC_TEXT_DOMAIN ).$skip_count.__(')', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Delete Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'exec-import':			// インポート実行
@@ -346,7 +350,7 @@
 			break;
 
 		default:
-			$html_notice			.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Undefined process chosen.', PZLKC_TEXT_DOMAIN ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Undefined process chosen.', 'pz-linkcard' ).'</strong></p></div>';
 		}
 	}
 

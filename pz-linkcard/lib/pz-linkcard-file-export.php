@@ -47,9 +47,10 @@
 		// データ行出力
 		foreach($data_all as &$data ) {
 			foreach($data as &$item ) {
-				$item	=	str_replace(array("\r", "\n", "\t" ), ' ', $item );
+				$item	=	str_replace(array("\r", "\n", "\t" ), ' ', ($item ?? '' ) );
 			}
-			fputcsv($handle, $data, ',', '"' );
+			// fputcsv($handle, ($data ?? '' ), ',', '"' );
+			fputcsv($handle, $data, ',', '"', '\\' );
 			$record_count++;
 		}
 
@@ -57,5 +58,5 @@
 		fclose($handle );
 
 		// ダウンロード用ボタンを表示
-		echo '<div><button type="submit" id="export_button" class="pz-man-file-button button button-primary" name="action" value="show-export" onclick="window.open('."'".$export_path_url."'".');">'.__('Download Export File', PZLKC_TEXT_DOMAIN ).'</button></div>';
+		echo '<div><button type="submit" id="export_button" class="pz-man-file-button button button-primary" name="action" value="show-export" onclick="window.open('."'".$export_path_url."'".');">'.__('Download Export File', 'pz-linkcard' ).'</button></div>';
 	}

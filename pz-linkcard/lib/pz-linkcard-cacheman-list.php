@@ -133,36 +133,40 @@
 	$sql			.=	"COUNT( CASE WHEN ( alive_result < 100 OR alive_result >= 400 ) THEN 1 END ) AS count_unlink ";
 	$sql			.=	"FROM $this->db_name";
 	$result			=	$wpdb->get_row($sql );
-	if	(isset($result ) ) {
-		$count_list['all'	  ]	=	isset($result->count_all )		?	$result->count_all		:	0;
-		$count_list['internal']	=	isset($result->count_internal )	?	$result->count_internal	:	0;
-		$count_list['external']	=	isset($result->count_external )	?	$result->count_external	:	0;
-		$count_list['modify'  ]	=	isset($result->count_modify )	?	$result->count_modify	:	0;
-		$count_list['unlink'  ]	=	isset($result->count_unlink )	?	$result->count_unlink	:	0;
-	}
+	$count_list['all'	  ]	=	$result->count_all		??	0;
+	$count_list['internal']	=	$result->count_internal ??	0;
+	$count_list['external']	=	$result->count_external ??	0;
+	$count_list['modify'  ]	=	$result->count_modify	??	0;
+	$count_list['unlink'  ]	=	$result->count_unlink	??	0;
 
 	// ページネーション
 	$temp_button	=	'&nbsp;<button type="submit" name="page_button" value="%d" class="button tablenav-pages-navspan" %s>%s</button>';
-	$temp_text		=	'<span class="paging-input"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-sync-text current-page" size="2" aria-describedby="table-paging" /><span class="total-pages">&nbsp;/&nbsp;%d</span></span>';
+	$temp_text		=	'<span class="paging-input"><form action="jump-page" method="POST"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-sync-text current-page" size="2" aria-describedby="table-paging" /></form><span class="total-pages">&nbsp;/&nbsp;%d</span></span>
+';
+
+
+
 	$paging			=
-		'<div class="pz-man-pages tablenav-pages"><span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', PZLKC_TEXT_DOMAIN ) : __('%s items', PZLKC_TEXT_DOMAIN ) ), number_format($count_now ) ).'</span><span class="pagination-links">'.
-		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;', PZLKC_TEXT_DOMAIN ) ).		// 最初のページ
-		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;', PZLKC_TEXT_DOMAIN ) ).		// 前のページ
+		'<div class="pz-man-pages tablenav-pages">'.
+		'<span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_now ) ).'</span>'.
+		'<span class="pagination-links">'.
+		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;', 'pz-linkcard' ) ).		// 最初のページ
+		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;', 'pz-linkcard' ) ).		// 前のページ
 		'&nbsp;'.
 		sprintf($temp_text,		$page_now,			$page_max ).																						// 今のページ
-		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;', PZLKC_TEXT_DOMAIN ) ).		// 次のページ
-		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;', PZLKC_TEXT_DOMAIN ) ).		// 最後のページ
+		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;', 'pz-linkcard' ) ).		// 次のページ
+		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;', 'pz-linkcard' ) ).		// 最後のページ
 		'</span></div>';
 ?>
 	<div class="pz-man-count-list">
 		<?php
 			$items	=
 				array(
-					'all'		=>	__('All', PZLKC_TEXT_DOMAIN ),
-					'internal'	=>	__('Internal', PZLKC_TEXT_DOMAIN ),
-					'external'	=>	__('External', PZLKC_TEXT_DOMAIN ),
-					'modify'	=>	__('Modify', PZLKC_TEXT_DOMAIN ),
-					'unlink'	=>	__('Unlink', PZLKC_TEXT_DOMAIN ),
+					'all'		=>	__('All', 'pz-linkcard' ),
+					'internal'	=>	__('Internal', 'pz-linkcard' ),
+					'external'	=>	__('External', 'pz-linkcard' ),
+					'modify'	=>	__('Modify', 'pz-linkcard' ),
+					'unlink'	=>	__('Unlink', 'pz-linkcard' ),
 				);
 			$sep		=	'';
 			foreach	($items as $i_code => $i_name ) {
@@ -176,7 +180,7 @@
 	<div class="pz-man-search">
 		<p class="search-box" title="<?php _e('Text search by title and excerpt', 'pz-linkcard' ); ?>">
 			<label>
-				<span><?php echo __('&#x1f50d;&#xfe0f;', PZLKC_TEXT_DOMAIN ); ?></span>
+				<span><?php echo __('&#x1f50d;&#xfe0f;', 'pz-linkcard' ); ?></span>
 				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo $keyword ; ?>" />
 				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php _e('Search', 'pz-linkcard' ); ?></button>
 			</label>
@@ -194,7 +198,7 @@
 				<option value="alive"><?php _e('Check Status', 'pz-linkcard' ); ?></option>
 				<option value="delete"><?php _e('Delete from Cache', 'pz-linkcard' ); ?></option>
 			</select>
-			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm(\''.__('Are you sure?', PZLKC_TEXT_DOMAIN ).'\' );"><?php _e('Apply', 'pz-linkcard' ); ?></button>
+			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm(\''.__('Are you sure?', 'pz-linkcard' ).'\' );"><?php _e('Apply', 'pz-linkcard' ); ?></button>
 			&nbsp;
 		</div>
 		
@@ -222,47 +226,47 @@
 			<tr>
 				<td id="cb" class="pz-man-head-check manage-column column-cb check-column"><input id="cb-select-all-1" type="checkbox" /></td>
 <?php
-	$asc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53c;&#xfe0f;', PZLKC_TEXT_DOMAIN ).'</span>';
-	$desc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53d;&#xfe0f;', PZLKC_TEXT_DOMAIN ).'</span>';
+	$asc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53c;&#xfe0f;', 'pz-linkcard' ).'</span>';
+	$desc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53d;&#xfe0f;', 'pz-linkcard' ).'</span>';
 
 	$item		=	'id';
-	$item_name	=	__('ID', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('ID', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'url';
-	$item_name	=	__('URL', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('URL', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'title';
-	$item_name	=	__('Title', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Title', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'excerpt';
-	$item_name	=	__('Excerpt', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Excerpt', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'charset';
-	$item_name	=	__('Charset', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Charset', 'pz-linkcard' );
 	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'domain';
-	$item_name	=	__('Domain', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Domain', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_twitter';
-	$item_name	=	__('Tw', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Tw', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -270,7 +274,7 @@
 	// echo	'</th>';
 	echo	'<br>';
 	$item		=	'sns_facebook';
-	$item_name	=	__('fb', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('fb', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -278,7 +282,7 @@
 	// echo	'</th>';
 	echo	'<br>';
 	$item		=	'sns_hatena';
-	$item_name	=	__('B!', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('B!', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -286,7 +290,7 @@
 	// echo	'</th>';
 	echo	'<br>';
 	$item		=	'sns_pocket';
-	$item_name	=	__('Po', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Po', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -294,43 +298,43 @@
 	echo	'</th>';
 
 	$item		=	'regist_time';
-	$item_name	=	__('Regist<br>Date', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Regist<br>Date', 'pz-linkcard' );
 	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_time';
-	$item_name	=	__('Update<br>Date', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Update<br>Date', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_time';
-	$item_name	=	__('SNS<br>Check<br>Date', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('SNS<br>Check<br>Date', 'pz-linkcard' );
 	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'alive_time';
-	$item_name	=	__('Alive<br>Check<br>Date', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Alive<br>Check<br>Date', 'pz-linkcard' );
 	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'use_post_id1';
-	$item_name	=	__('Post ID', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Post ID', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'click_count';
-	$item_name	=	__('Click<br/>Count', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Click<br/>Count', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_result';
-	$item_name	=	__('Result<br>code', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('Result<br>code', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -338,7 +342,7 @@
 	// echo	'</th>';
 	echo	'<br>';
 	$item		=	'alive_result';
-	$item_name	=	__('(Last)', PZLKC_TEXT_DOMAIN );
+	$item_name	=	__('(Last)', 'pz-linkcard' );
 	$add_class	=	'';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
@@ -374,13 +378,13 @@
 					$html_url_error		=	'';
 					if	($data->alive_result < 100 || $data->alive_result >= 400 ) {
 						if	($data->no_failure ) {		// エラー無視が有効か
-							$temp_icon	=	__('&#x26a0;&#xfe0f;', PZLKC_TEXT_DOMAIN );		// ⚠️
+							$temp_icon	=	__('&#x26a0;&#xfe0f;', 'pz-linkcard' );		// ⚠️
 							$temp_class	=	'pz-man-body-url-error-ignore';			// エラー無視
 							$temp_title	=	__('The latest HTTP code is in error, but ignore it.', 'pz-linkcard' );
 						} else {
-							$temp_icon	=	__('&#x26d4;&#xfe0f;', PZLKC_TEXT_DOMAIN );		// ⛔️エラー
+							$temp_icon	=	__('&#x26d4;&#xfe0f;', 'pz-linkcard' );		// ⛔️エラー
 							$temp_class	=	'pz-man-body-url-error';				// エラー
-							$temp_title	=	__('The latest HTTP code is in error. You can change it to ignore the error from the edit screen.', PZLKC_TEXT_DOMAIN );
+							$temp_title	=	__('The latest HTTP code is in error. You can change it to ignore the error from the edit screen.', 'pz-linkcard' );
 						}
 						$html_url_error	=	'<span class="'.$temp_class.'" title="'.$temp_title.'">'.$temp_icon.'</span>&nbsp;';
 					}
@@ -468,7 +472,7 @@
 						$html_result	.=	'<br><span class="pz-man-body-result-alive">('.strHTTPCode($data->alive_result, $this->pz_HTTPMessage($data->alive_result ) ).')</span>';
 					}
 					if	($data->no_failure ) {
-						$html_result	=	'<span class="pz-man-body-result-ignore">'.__('Ignore', PZLKC_TEXT_DOMAIN ).'</span><br>'.$html_result;
+						$html_result	=	'<span class="pz-man-body-result-ignore">'.__('Ignore', 'pz-linkcard' ).'</span><br>'.$html_result;
 					}
 
 					// HTML 明細行
@@ -481,8 +485,8 @@
 					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo $html_title; ?></span></div>
 					<div id="inline_<?php echo $data_id; ?>" class="pz-man-body-menu row-actions">
 						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php _e('Edit','pz-linkcard' ); ?></button> | 
-						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', PZLKC_TEXT_DOMAIN )."'"; ?> );"><?php _e('Renew','pz-linkcard' ); ?></button> | 
-						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', PZLKC_TEXT_DOMAIN )."'"; ?> );"><?php _e('Delete','pz-linkcard' ); ?></button>
+						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Renew','pz-linkcard' ); ?></button> | 
+						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Delete','pz-linkcard' ); ?></button>
 					</div>
 				</td>
 				<td><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
@@ -509,11 +513,10 @@
 			<?php } ?>
 		</tbody>
 	</table>
-	<div class="pz-man-navi tablenav"><?php /* ページネーション */ echo $paging; ?></div>
 <?php
 	// ファイルメニュー（インポート・エクスポート）
 	if	($this->options['flg-filemenu'] ) {
-		echo	'<div  class="pz-man-filemenu"><span class="pz-man-filemenu-icon">'.__('&#x1f4c4;&#xfe0f;', PZLKC_TEXT_DOMAIN ).'</span><span class="pz-man-filemenu-text">'.__('File Menu', PZLKC_TEXT_DOMAIN ).'</span><button type="submit" name="action" value="show-import" class="pz-man-filemenu-button button">'.__('Import From Local File', PZLKC_TEXT_DOMAIN ).'</button><button type="submit" name="action" value="show-export" class="pz-man-filemenu-button button">'.__('Export To Local File', PZLKC_TEXT_DOMAIN ).' ('.sprintf(($count_list['all'] == 1 ? __('%s item', PZLKC_TEXT_DOMAIN ) : __('%s items', PZLKC_TEXT_DOMAIN ) ), number_format($count_list['all'] ) ).')'.'</button></div>';
+		echo	'<div  class="pz-man-filemenu"><span class="pz-man-filemenu-icon">'.__('&#x1f4c4;&#xfe0f;', 'pz-linkcard' ).'</span><span class="pz-man-filemenu-text">'.__('File Menu', 'pz-linkcard' ).'</span><button type="submit" name="action" value="show-import" class="pz-man-filemenu-button button">'.__('Import From Local File', 'pz-linkcard' ).'</button><button type="submit" name="action" value="show-export" class="pz-man-filemenu-button button">'.__('Export To Local File', 'pz-linkcard' ).' ('.sprintf(($count_list['all'] == 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_list['all'] ) ).')'.'</button></div>';
 	}
 
 // 関数
