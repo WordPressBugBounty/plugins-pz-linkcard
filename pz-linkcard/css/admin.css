@@ -293,8 +293,19 @@
 }
 .pz-man-domain-list {
 }
-,pz-man-pages {
+.pz-man-pages {
 }
+.pz-man-pages-bottom {
+	display: flex;
+	margin-top: 8px;
+	align-items: center;
+	float: right;
+}
+.pz-man-pages-bottom .paging-input {
+	display: inline;
+	vertical-align: -webkit-baseline-middle;
+}
+
 .pz-man-cache-list {
 }
 .pz-man-cache-list th {

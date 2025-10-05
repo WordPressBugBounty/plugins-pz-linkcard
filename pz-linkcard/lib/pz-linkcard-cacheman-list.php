@@ -141,19 +141,24 @@
 
 	// ページネーション
 	$temp_button	=	'&nbsp;<button type="submit" name="page_button" value="%d" class="button tablenav-pages-navspan" %s>%s</button>';
-	$temp_text		=	'<span class="paging-input"><form action="jump-page" method="POST"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-sync-text current-page" size="2" aria-describedby="table-paging" /></form><span class="total-pages">&nbsp;/&nbsp;%d</span></span>
-';
-
-
+	$temp_text		=	'<span class="paging-input"><input type="text" name="page_trans" value="%d" id="current-page-selector" class="pz-sync-text current-page" size="2" aria-describedby="table-paging" /><span class="total-pages">&nbsp;/&nbsp;%d</span></span>';
+	$temp_text_btm	=	'<span class="paging-input">%d<span class="total-pages">&nbsp;/&nbsp;%d</span></span>';
 
 	$paging			=
-		'<div class="pz-man-pages tablenav-pages">'.
-		'<span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_now ) ).'</span>'.
-		'<span class="pagination-links">'.
+		'<div class="pz-man-pages tablenav-pages"><span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_now ) ).'</span><span class="pagination-links">'.
 		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;', 'pz-linkcard' ) ).		// 最初のページ
 		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;', 'pz-linkcard' ) ).		// 前のページ
 		'&nbsp;'.
 		sprintf($temp_text,		$page_now,			$page_max ).																						// 今のページ
+		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;', 'pz-linkcard' ) ).		// 次のページ
+		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;', 'pz-linkcard' ) ).		// 最後のページ
+		'</span></div>';
+	$paging_bottom			=
+		'<div class="pz-man-pages-bottom tablenav-pages"><span class="displaying-num">'.sprintf(($count_now === 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_now ) ).'</span><span class="pagination-links">'.
+		sprintf($temp_button,	($page_min ),		(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&laquo;', 'pz-linkcard' ) ).		// 最初のページ
+		sprintf($temp_button,	($page_now - 1 ),	(($page_now > $page_min ) ? '' : 'disabled="disabled"' ),	__('&lsaquo;', 'pz-linkcard' ) ).		// 前のページ
+		'&nbsp;'.
+		sprintf($temp_text_btm,	$page_now,		$page_max ).																						// 今のページ
 		sprintf($temp_button,	($page_now + 1 ),	(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&rsaquo;', 'pz-linkcard' ) ).		// 次のページ
 		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;', 'pz-linkcard' ) ).		// 最後のページ
 		'</span></div>';
@@ -513,6 +518,7 @@
 			<?php } ?>
 		</tbody>
 	</table>
+	<?php /* ページネーション */ echo $paging_bottom; ?></div>
 <?php
 	// ファイルメニュー（インポート・エクスポート）
 	if	($this->options['flg-filemenu'] ) {
