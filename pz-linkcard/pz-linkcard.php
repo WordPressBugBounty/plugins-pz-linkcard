@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.7.2
+Version:		2.5.8
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -220,6 +220,7 @@ class class_pz_linkcard {
 			'auto-url'				=>	0,				// 🟦Cache
 			'auto-external'			=>	0,				// 🟦Cache
 			'flg-do-shortcode'		=>	1,				// 🟥CSS
+			'exclude-url'			=>	'',				// 🟦Cache
 			'flg-edit-insert'		=>	1,				// 🟦Cache
 			'mce-priority'			=>	null,			// 🟦Cache
 			'flg-edit-qtag'			=>	1,				// 🟦Cache
@@ -249,7 +250,7 @@ class class_pz_linkcard {
 			'survey-mode'			=>	0,				// 🟦Cache
 
 			'css-add-url'			=>	null,			// 🟦Cache
-			'css-add'				=>	null,			// 🟥CSS
+			'css-add'				=>	'',				// 🟥CSS
 			'css-count'				=>	0,				// 🟦Cache
 			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',	// 🟦Cache
 			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',		// 🟦Cache
@@ -458,46 +459,99 @@ class class_pz_linkcard {
 	public	function	auto_replace($content ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
-		if		(!$this->options['auto-external'] ) {
+		if		(!$this->options['auto-external'] && !$this->options['exclude-url'] ) {
 			// 内部リンクも外部リンクも変換する
 			if	($this->options['auto-atag'] ) {
-				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?<a\s.*href\s*=\s*[\'"]?((https?|file|ftp|data|ogg):\/\/[^\s<>\'"]+)[\'"]?[^<]*<\/a>(<\/p>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
+				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?<a\s.*href\s*=\s*[\'"]?((https?):\/\/[^\s<>\'"]+)[\'"]?[^<]*<\/a>(<\/p>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
 			}
 			if	($this->options['auto-url'] ) {
-				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?((https?|file|ftp|data|ogg):\/\/[^\s<>]+)(<\/p>|<br ?\/?>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
+				$content	=	preg_replace('/(^|<br ?\/?>)(<p.*>)?((https?):\/\/[^\s<>]+)(<\/p>|<br ?\/?>)?$/im', '[pz-linkcard-auto-replace url="$3"]', $content );
 			}
 			if	($this->options['flg-do-shortcode'] && ($this->options['auto-atag'] || $this->options['auto-url'] ) ) {
 				$content	=	do_shortcode($content );
 			}
 			return	$content;
 		} else {
-			// 外部リンクのみを変換する
+			// 「外部リンクのみを変換する」または「除外URLが設定されている」場合
+			$exclude	=	preg_split('/\R/', $this->options['exclude-url'] );	// 除外URLリスト
+
+			// テキストリンク置き換え
 			if	($this->options['auto-atag'] ) {
-				preg_match_all('/(^|<br ?\/?>)(<p.*>)?(<a\s.*href\s*=\s*[\'"]?((https?|file|ftp|data|ogg):\/\/[^\s<>]+)[\'"]?[^<]*<\/a>)(<\/p>)?$/im', $content, $m );
+				preg_match_all('/(^|<br ?\/?>)(<p.*>)?(<a\s.*href\s*=\s*[\'"]?((https?):\/\/[^\s<>\'"]+)[\'"]?[^<]*<\/a>)(<\/p>)?$/im', $content, $m );
 				for ($i = 0 ; $i < count($m[0]) ; $i++ ) {
 					$url			=	$m[4][$i];
-					$url_info		=	$this->Pz_GetURLInfo($url );	// URL解析（自サイトチェック）
-					$is_external	=	$url_info['is_external'];		// 外部リンク
-					if	($is_external ) {
+					$is_exclude		=	false;
+					// 外部リンクのみ
+					if	($this->options['auto-external'] ) {
+						$url_info		=	$this->Pz_GetURLInfo($url );	// URL解析（自サイトチェック）
+						if	(!$url_info['is_external'] ) {	// 外部リンクじゃない場合、
+							$is_exclude	=	true;			// 除外
+						}
+					}
+
+					// 除外URLチェック
+					if	($this->options['exclude-url'] ) {
+						foreach	($exclude as $ex) {
+							$ex			=	trim($ex);
+							// ワイルドカード対応（* を正規表現に変換）
+							$pattern	=	preg_quote($ex, '/' );
+							$pattern	=	str_replace('\*', '.*', $pattern );
+							// 前方一致判定（^で行頭固定）
+							if	(preg_match('/^' . $pattern . '/', $url ) ) {
+								$is_exclude	=	true;	// 除外
+								break;
+							}
+						}
+					}
+
+					// 外部リンクかつ除外URLにマッチしない場合、置き換え
+					if ($is_exclude === false ) {
 						$tag_from	=	$m[0][$i];
 						$tag_to		=	'[pz-linkcard-auto-replace url="'.$url.'"]';
 						$content	=	str_replace($tag_from, $tag_to, $content );
 					}
 				}
 			}
+
+			// URLのみ置き換え
 			if	($this->options['auto-url'] ) {
-				preg_match_all('/(^|<br ?\/?>)(<p.*>)?((https?|file|ftp|data|ogg):\/\/[^\s<>]+)(<\/p>|<br ?\/?>)?$/im', $content, $m );
+				preg_match_all('/(^|<br ?\/?>)(<p.*>)?((https?):\/\/[^\s<>]+)(<\/p>|<br ?\/?>)?$/im', $content, $m );
 				for ($i	= 0 ; $i < count($m[0]) ; $i++ ) {
 					$url	=	$m[3][$i];
-					$url_info		=	$this->Pz_GetURLInfo($url );	// URL解析（自サイトチェック）
-					$is_external	=	$url_info['is_external'];		// 外部リンク
-					if	($is_external ) {
+					$is_exclude		=	false;
+
+					// 外部リンクのみ
+					if	($this->options['auto-external'] ) {
+						$url_info		=	$this->Pz_GetURLInfo($url );	// URL解析（自サイトチェック）
+						if	(!$url_info['is_external'] ) {	// 外部リンクじゃない場合、
+							$is_exclude	=	true;			// 除外
+						}
+					}
+
+					// 除外URLチェック
+					if	($this->options['exclude-url'] ) {
+						foreach	($exclude as $ex) {
+							$ex			=	trim($ex);
+							// ワイルドカード対応（* を正規表現に変換）
+							$pattern	=	preg_quote($ex, '/' );
+							$pattern	=	str_replace('\*', '.*', $pattern );
+							// 前方一致判定（^で行頭固定）
+							if	(preg_match('/^' . $pattern . '/', $url ) ) {
+								$is_exclude	=	true;	// 除外
+								break;
+							}
+						}
+					}
+
+					// 外部リンクかつ除外URLにマッチしない場合、置き換え
+					if ($is_exclude === false ) {
 						$tag_from	=	$m[0][$i];
 						$tag_to		=	'[pz-linkcard-auto-replace url="'.$url.'"]';
 						$content	=	str_replace($tag_from, $tag_to, $content );
 					}
 				}
 			}
+
 			if	($this->options['flg-do-shortcode'] && ($this->options['auto-atag'] || $this->options['auto-url'] ) ) {
 				$content	=	do_shortcode($content );
 			}

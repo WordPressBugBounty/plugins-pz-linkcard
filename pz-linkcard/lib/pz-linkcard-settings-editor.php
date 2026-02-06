@@ -43,6 +43,12 @@
 				</label>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row"><?php _e('Exclude URL', 'pz-linkcard' ); ?></th>
+			<td>
+				<textarea name="properties[exclude-url]" rows="5" cols="80" class="large-text code"><?php echo	esc_textarea($this->options['exclude-url'] ); ?></textarea>
+			</td>
+		</tr>
 	</table>
 	<?php submit_button(); ?>
 

@@ -2,7 +2,7 @@
 Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 6.0
-Tested up to: 6.8.2
+Tested up to: 6.8.3
 Requires PHP: 8.1.29
 Stable tag: trunk
 License: GPLv2 or later
@@ -149,6 +149,10 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 
 == Changelog ==
+
+= 2.5.8 =
+* [Tested] WordPress 6.8.3 での動作確認を行いました。
+* [Added] 設定画面の「エディタ」に「除外URL」を追加しました。リンクカードに変換しないURLを指定出来ます。（Thanks 雑学のあしあと @zatsugaku_ashi on x.com）
 
 = 2.5.7.2 =
 * [Fixed] カード管理画面のインラインメニューが動作しない不具合を修正しました。

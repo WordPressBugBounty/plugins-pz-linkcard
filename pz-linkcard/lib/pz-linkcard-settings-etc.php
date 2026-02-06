@@ -10,7 +10,7 @@
 		<tr>
 			<th scope="row"><?php _e('Stylesheet Text to Add', 'pz-linkcard' ); ?></th>
 			<td>
-				<textarea name="properties[css-add]" maxlength="1024" class="pz-css-add"><?php echo	esc_attr($prop['css-add'] ); ?></textarea>
+				<textarea name="properties[css-add]" maxlength="1024" class="pz-css-add code"><?php echo	esc_textarea($prop['css-add'] ); ?></textarea>
 			</td>
 		</tr>
 		<tr class="pz-debug-only">

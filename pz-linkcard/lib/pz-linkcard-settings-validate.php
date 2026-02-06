@@ -60,7 +60,17 @@
 		$this->options[$key]	=	$temp_value;
 		unset($test_item[$key] );
 	}
-	
+
+	// 除外URL
+	$check_item					=	array('exclude-url' );
+	foreach($check_item as $key ) {
+		$temp_value				=	isset($this->options[$key] )	?	$this->options[$key]	:	'' ;
+		$temp_value				=	preg_replace('/^\s*$/m', '', $temp_value );		// 空行削除
+		$temp_value				=	preg_replace("/\n{2,}/", "\n", $temp_value );	// 連続改行削除
+		$this->options[$key]	=	$temp_value;
+		unset($test_item[$key] );
+	}
+
 	// エラー状態のチェック
 	$temp		=	$this->options['error-time'];
 	if	(!is_numeric($temp ) ) {

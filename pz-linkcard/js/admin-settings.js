@@ -98,7 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(selector).forEach(el => {
                 el.disabled = disabled;
                 el.readOnly = readonly;
-                if (color !== null) el.parentElement.style.color = color;
+                if (color !== null) {
+                    el.parentElement.style.color = color;
+                    el.style.color = color;
+                }
             });
         };
 
@@ -126,8 +129,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		const autoAtag = autoAtagEl ? autoAtagEl.checked : false;
 		const autoUrl = autoUrlEl ? autoUrlEl.checked : false;
 		const enabled = autoAtag || autoUrl;
-		setDisabled("input[name='properties[auto-external]'][type=checkbox]", !enabled, !enabled, enabled ? "#444" : "#ddd");
-		setDisabled("input[name='properties[flg-do-shortcode]'][type=checkbox]", !enabled, !enabled, enabled ? "#444" : "#ddd");
+		setDisabled("input[name='properties[auto-external]'][type=checkbox]", false, !enabled, enabled ? "#444" : "#ddd");
+		setDisabled("input[name='properties[flg-do-shortcode]'][type=checkbox]", false, !enabled, enabled ? "#444" : "#ddd");
+		setDisabled("textarea[name='properties[exclude-url]']", false, !enabled, enabled ? "#444" : "#888");
 	}
 
     // ショートコードをコピー
