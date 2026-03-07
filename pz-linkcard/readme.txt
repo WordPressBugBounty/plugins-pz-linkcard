@@ -2,7 +2,7 @@
 Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 6.0
-Tested up to: 6.8.3
+Tested up to: 6.9.1
 Requires PHP: 8.1.29
 Stable tag: trunk
 License: GPLv2 or later
@@ -149,6 +149,10 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 
 == Changelog ==
+
+= 2.5.8.1 =
+* [Tested] WordPress 6.9.1 での動作確認を行いました。
+* [Fixed] URLエラー時に指定したパラメータをそのまま表示していたのを修正しました。
 
 = 2.5.8 =
 * [Tested] WordPress 6.8.3 での動作確認を行いました。

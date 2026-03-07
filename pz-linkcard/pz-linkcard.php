@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.8
+Version:		2.5.8.1
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -631,9 +631,9 @@ class class_pz_linkcard {
 					$result	=	$this->pz_SaveOptions();
 				}
 			}
-			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.html_entity_decode($url_org ).'</div></div></div>';
-			$err_info	=	print_r($atts, true );
-			return			PHP_EOL.$tag.PHP_EOL.'<!--'.html_entity_decode($err_info ).'-->'.PHP_EOL.PHP_EOL;
+			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
+			$err_info	=	esc_html(print_r($atts, true ) );
+			return			PHP_EOL.$tag.PHP_EOL.'<!--'.$err_info.'-->'.PHP_EOL.PHP_EOL;
 		}
 
 		// URLパラメータに編集後のURLを返す
