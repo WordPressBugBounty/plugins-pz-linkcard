@@ -2,7 +2,13 @@
 <?php
 	// DB使用
 	global		$wpdb;
-	
+
+	// DBテーブル存在チェック
+	$exists_table = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $this->db_name ) );
+	if ($exists_table <> $this->db_name ) {
+		$this->hook_activate();
+	}
+
 	// デバグモード・管理モード
 	$debug_mode		=	isset($this->options['debug-mode'] )	?	intval($this->options['debug-mode'] )	:	0;
 	$admin_mode		=	isset($this->options['admin-mode'] )	?	intval($this->options['admin-mode'] )	:	0;
@@ -231,7 +237,7 @@
 			foreach	($select_id as $data_id ) {
 				$data				=	$this->pz_GetCache(array('id' => $data_id ) );
 				if	(isset($data ) && is_array($data ) ) {
-					$data			=	$this->pz_GetThumbnail($data['thumbnail'] , true );
+					$data			=	$this->pz_GetImage($data['thumbnail'] , true );
 					$success_count++;
 				} else {
 					$skip_count++;
@@ -368,5 +374,5 @@
 	}
 
 	echo	'</form>';
-	echo	'</div>';
+//	echo	'</div>';
 	// echo	'<div id="pz-overlay-proc"></div>';

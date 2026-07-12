@@ -52,13 +52,17 @@
 
 	// SQL更新チェック（クエリーから求まったMD5の値を比較）
 	$db_version		=	md5($sql, false );
-	if	($this->options['db-version']	==	$db_version	) {		// 前回使用したSQLと変更が無ければ抜ける
-		return;
+
+	// DBテーブルの存在確認
+	if ( $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $this->db_name ) ) === $this->db_name ) {
+		if	($this->options['db-version']	==	$db_version	) {		// 前回使用したSQLと変更が無ければ抜ける
+			return;
+		}
 	}
 
 	// DBテーブル作成・更新
 	require_once(ABSPATH.'wp-admin/includes/upgrade.php' );
-	dbDelta($sql, true );
+	$result		=	dbDelta($sql, true );
 
 	// フィールドを追加したらエクスポート項目も見直すこと
 

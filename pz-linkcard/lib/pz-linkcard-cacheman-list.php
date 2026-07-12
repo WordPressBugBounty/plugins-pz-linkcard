@@ -451,7 +451,7 @@
 						}
 					} else {
 						if	($data->thumbnail ) {
-							$thumbnail_url		=	$this->pz_GetThumbnail($data->thumbnail );
+							$thumbnail_url		=	$this->pz_GetImage($data->thumbnail );
 						}
 					}
 					if	($thumbnail_url ) {

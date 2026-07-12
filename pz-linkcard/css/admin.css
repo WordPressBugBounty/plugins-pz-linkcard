@@ -142,7 +142,7 @@
 }
 .pz-header-title-text {
 }
-.pz-header-switch {
+.pz-header-switch , .pz-header-switch:focus {
 	display: block;
 	float: right;
 	padding: 4px 8px 4px 16px;
@@ -157,6 +157,7 @@
 .pz-header-switch:hover {
 	background-color: #ffc;
 	color: #222;
+	border-radius: 16px 0 0 16px;
 	box-shadow: 4px 4px 4px #888;
 }
 .pz-header-switch-icon {
