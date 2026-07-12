@@ -150,11 +150,14 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 == Changelog ==
 
+= 2.5.9.1 =
+* [Fixed] ブロックエディタで記事投稿時にJSONエラーが出るのを修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+
 = 2.5.9 =
 * [Tested] WordPress 7.0 での動作確認を行いました。
 * [Tested] WordPress 7.0.1 での動作確認を行いました。
-* [Fixed] 再インストール後、DBテーブルが作成されない不具合を修正しました。
-* [Modified] サムネイル画像をJPEG形式からWEBP形式へ変更しました。
+* [Fixed] 再インストール後、DBテーブルが作成されない不具合を修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Modified] サムネイル画像をJPEG形式からWEBP形式へ変更しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
 
 = 2.5.8.1 =
 * [Tested] WordPress 6.9.1 での動作確認を行いました。
