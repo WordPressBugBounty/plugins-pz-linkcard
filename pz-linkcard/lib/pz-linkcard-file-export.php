@@ -1,5 +1,7 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
+	check_admin_referer('pz_export_file_action' );
+
 	// 出力除外する項目（カラム名）
 	$column_omit	=	array('url_key' );
 	
@@ -18,27 +20,25 @@
 
 	// ディレクトリ名とファイル名に付ける日時の文字列
 	$datetime		=	date('Ymd_His');
-	$datetime_hash	=	bin2hex(hash('sha256', $datetime, true ) );
-
-	// ダウンロード用のディレクトリ
-	$export_dir		=	PZLKC_DIR_UPLOAD.'export/'.$datetime_hash.'/';
-	$export_dir_url	=	PZLKC_URL_UPLOAD.'export/'.$datetime_hash.'/';
 
 	// エクスポートするファイル名
-	$export_file	=	'pz_linkcard_export_utf8_'.$datetime.'.csv';
+	$filename	=	'pz_linkcard_export_utf8_'.$datetime.'.csv';
 	
-	// エクスポートするファイルのフルパスとURL
-	$export_path	=	$export_dir.$export_file;
-	$export_path_url=	$export_dir_url.$export_file;
-
-	// ディレクトリが無かったら作成
-	wp_mkdir_p($export_dir );
-
 	// エクスポートファイルを開く（書き込み）
-	$handle			=	fopen($export_path, 'w');
+	$handle			=	fopen('php://output', 'w');
+
+	if	(!$handle ) {
+		wp_die(__('Failed to open the export file.', 'pz-linkcard' ) );
+	}
+
+	header('Content-Type: text/csv; charset=UTF-8' );
+	header('Content-Disposition: attachment; filename="'.$filename.'"' );
+	header('Cache-Control: no-cache, no-store, must-revalidate' );
+	header('Pragma: no-cache' );
 
 	// CSVファイル出力
 	$record_count	=	0;
+
 	if	($handle ) {
 
 		// ヘッダー行出力
@@ -57,6 +57,4 @@
 		// ファイルを閉じる
 		fclose($handle );
 
-		// ダウンロード用ボタンを表示
-		echo '<div><button type="submit" id="export_button" class="pz-man-file-button button button-primary" name="action" value="show-export" onclick="window.open('."'".$export_path_url."'".');">'.__('Download Export File', 'pz-linkcard' ).'</button></div>';
 	}

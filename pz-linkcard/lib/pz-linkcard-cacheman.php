@@ -352,7 +352,6 @@
 			break;
 
 		case	'show-export':			// ファイルのエクスポートボタンを表示
-			require_once ('pz-linkcard-file-export.php');
 			break;
 
 		default:

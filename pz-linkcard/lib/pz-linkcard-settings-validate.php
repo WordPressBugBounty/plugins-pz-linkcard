@@ -25,6 +25,14 @@
 		unset($test_item[$key] );
 	}
 
+	// 英数字
+	$check_item					=	array('code1', 'code2', 'code3', 'code4' );
+	foreach($check_item			as	$key ) {
+		$temp_value				=	isset($this->options[$key] )	?	$this->options[$key]	:	'' ;
+		$this->options[$key]	=	preg_replace('/[^0-9a-zA-Z]/', '', $temp_value );
+		unset($test_item[$key] );
+	}
+
 	// 数値
 	$check_item					=	array('title-length', 'url-length', 'excerpt-length', 'info-length' );
 	foreach($check_item			as	$key ) {

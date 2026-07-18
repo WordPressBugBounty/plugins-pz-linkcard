@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.9.1
+Version:		2.5.9.2
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -414,6 +414,7 @@ class class_pz_linkcard {
 			add_action		('init',										array($this, 'action_init' ),						10, 1 );		// プラグイン初期化
 			add_action		('plugins_loaded',								array($this, 'action_plugins_loaded' ),				10, 1 );		// WordPressロード後
 			add_action		('upgrader_process_complete',					array($this, 'action_upgrader_process_complete' ),	10, 2 );		// アップデートしたときの処理
+			add_action		('admin_post_pz_export_file',					array($this, 'action_export_file' ),				10, 1 );		// エクスポート処理
 
 			if ($this->options['flg-alive'] ) {
 				add_action(self::CRON_ALIVE, array($this, 'schedule_hook_alive' ) );
@@ -885,7 +886,7 @@ class class_pz_linkcard {
 			$before				=	$disp_sitename;
 			$disp_sitename		=	mb_strimwidth($before, 0, $this->options['info-length'] , '...' );
 			if	($disp_sitename	<>	$before ) {		// 省略された場合はtitleタグにセットする
-				$title_sitename	=	' title="'.esc_html($site_name ).'"';
+				$title_sitename	=	' title="'.esc_attr($site_name ).'"';
 			}
 		}
 
@@ -970,7 +971,7 @@ class class_pz_linkcard {
 					$thumbnail_url	=	$this->pz_GetImage($thumbnail_url );		// 外部サイトのサムネイルをキャッシュ
 				}
 				if	($thumbnail_url ) {
-					$html_thumbnail		=	'<img class="lkc-thumbnail-img" src="'.$thumbnail_url.'" width="'.$this->options['thumbnail-width'].'" height="'.$this->options['content-height'].'" alt="'.$thumbnail_alt.'" />';
+					$html_thumbnail		=	'<img class="lkc-thumbnail-img" src="'.esc_url($thumbnail_url ).'" width="'.esc_attr($this->options['thumbnail-width'] ).'" height="'.esc_attr($this->options['content-height'] ).'" alt="'.esc_attr($thumbnail_alt ).'" />';
 				} elseif	($sw_thumbnail == 13 ) {								// 直接取得に失敗
 					$sw_thumbnail	=	3;
 				}
@@ -986,7 +987,7 @@ class class_pz_linkcard {
 						$temp				=	preg_replace('/%DOMAIN%/',		$domain,				$temp );
 						$temp				=	preg_replace('/%URL%/',			rawurlencode($url ),	$temp );
 					}
-					$html_thumbnail	=	'<img class="lkc-thumbnail-img" src="'.$temp.'" width="'.$this->options['thumbnail-width'].'" height="'.$this->options['content-height'].'" alt="'.$thumbnail_alt.'" />';
+					$html_thumbnail	=	'<img class="lkc-thumbnail-img" src="'.esc_url($temp ).'" width="'.esc_attr($this->options['thumbnail-width'] ).'" height="'.esc_attr($this->options['content-height'] ).'" alt="'.esc_attr($thumbnail_alt ).'" />';
 				}
 			}
 		}
@@ -1000,7 +1001,7 @@ class class_pz_linkcard {
 					$favicon_url	=	$this->pz_GetImage($favicon_url );			// 外部サイトのファビコンをキャッシュ
 				}
 				if	($favicon_url ) {
-					$html_favicon	=	'<div  class="lkc-favicon"><img src="'.$favicon_url.'" alt="'.$favicon_alt.'" width="16" height="16" /></div>';
+					$html_favicon	=	'<div  class="lkc-favicon"><img src="'.esc_url($favicon_url ).'" alt="'.esc_attr($favicon_alt ).'" width="16" height="16" /></div>';
 				} elseif	($sw_favicon == 13 ) {									// 直接取得に失敗
 					$sw_favicon	=	3;
 				}
@@ -1016,7 +1017,7 @@ class class_pz_linkcard {
 						$temp				=	preg_replace('/%DOMAIN%/',		$domain,				$temp );
 						$temp				=	preg_replace('/%URL%/',			rawurlencode($url ),	$temp );
 					}
-					$html_favicon	=	'<div class="lkc-favicon"><img src="'.$temp.'" alt="'.$favicon_alt.'" width="16" height="16" /></div>';
+					$html_favicon	=	'<div class="lkc-favicon"><img src="'.esc_url($temp ).'" alt="'.esc_attr($favicon_alt ).'" width="16" height="16" /></div>';
 				}
 			}
 		}
@@ -1032,7 +1033,7 @@ class class_pz_linkcard {
 			$html_st_cl		=	'</strike>';
 		} elseif	($this->options['link-all'] ) {
 			// カード全体をリンク（どこをクリックしても良いのが分かり易い）
-			$html_a_op_all	=	'<a class="lkc-link no_icon" href="'.esc_html($url ).'" data-lkc-id="'.$data_id.'"'.$target.$rel.'>';
+			$html_a_op_all	=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'" data-lkc-id="'.esc_attr($data_id ).'"'.$target.$rel.'>';
 			$html_a_cl_all	=	'</a>';
 			$html_a_op		=	null;
 			$html_a_cl		=	null;
@@ -1042,7 +1043,7 @@ class class_pz_linkcard {
 			// タイトルとかURLとかを個別でリンク（タイトルや抜粋文などの文字を範囲指定をしてコピー等がし易い）
 			$html_a_op_all	=	null;
 			$html_a_cl_all	=	null;
-			$html_a_op		=	'<a class="lkc-link no_icon" href="'.esc_html($url ).'" data-lkc-id="'.$data_id.'"'.$target.$rel.'>';
+			$html_a_op		=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'" data-lkc-id="'.esc_attr($data_id ).'"'.$target.$rel.'>';
 			$html_a_cl		=	'</a>';
 			$html_st_op		=	null;
 			$html_st_cl		=	null;
@@ -1077,19 +1078,19 @@ class class_pz_linkcard {
 
 				if	($this->options['sns-tw'] && $sns_tw > 0 ) {
 					if	($this->options['sns-tw-x'] ) {
-						$sns	.=	' <a class="lkc-sns-tw no_icon" href="https://twitter.com/search?q=' .$url_noscheme.'&text='.esc_html($title ).'" target="_blank">'.$sns_tw.'&nbsp;tweet'.(($sns_tw > 1 ) ? 's' : null ).'</a>';
+						$sns	.=	' <a class="lkc-sns-tw no_icon" href="'.esc_url('https://twitter.com/search?q='.$url_noscheme.'&text='.$title ).'" target="_blank">'.intval($sns_tw ).'&nbsp;tweet'.(($sns_tw > 1 ) ? 's' : null ).'</a>';
 					} else {
-						$sns	.=	' <a class="lkc-sns-tw no_icon" href="https://x.com/search?q=' .$url_noscheme.'&text='.esc_html($title ).'" target="_blank">'.$sns_tw.'&nbsp;post'.(($sns_tw > 1 ) ? 's' : null ).'</a>';
+						$sns	.=	' <a class="lkc-sns-tw no_icon" href="'.esc_url('https://x.com/search?q='.$url_noscheme.'&text='.$title ).'" target="_blank">'.intval($sns_tw ).'&nbsp;post'.(($sns_tw > 1 ) ? 's' : null ).'</a>';
 					}
 				}
 				if	($this->options['sns-fb'] && $sns_fb > 0 ) {
-					$sns	.=	' <a class="lkc-sns-fb no_icon" href="https://www.facebook.com/" target="_blank">'.$sns_fb.'&nbsp;share'.(($sns_fb > 1 ) ? 's' : null ).'</a>';
+					$sns	.=	' <a class="lkc-sns-fb no_icon" href="https://www.facebook.com/" target="_blank">'.intval($sns_fb ).'&nbsp;share'.(($sns_fb > 1 ) ? 's' : null ).'</a>';
 				}
 				if	($this->options['sns-hb'] && $sns_hb > 0 ) {
-					$sns	.=	' <a class="lkc-sns-hb no_icon" href="https://b.hatena.ne.jp/entry/s/' .$url_noscheme.'" target="_blank">'.$sns_hb.'&nbsp;user'.(($sns_hb > 1 ) ? 's' : null ).'</a>';
+					$sns	.=	' <a class="lkc-sns-hb no_icon" href="'.esc_url('https://b.hatena.ne.jp/entry/s/'.$url_noscheme ).'" target="_blank">'.intval($sns_hb ).'&nbsp;user'.(($sns_hb > 1 ) ? 's' : null ).'</a>';
 				}
 				if	($this->options['sns-po'] && $sns_po > 0 ) {
-					$sns	.=	' <a class="lkc-sns-po no_icon" href="https://getpocket.com/" target="_blank">'.$sns_po.'&nbsp;pocket'.(($sns_po > 1 ) ? 's' : null ).'</a>';
+					$sns	.=	' <a class="lkc-sns-po no_icon" href="https://getpocket.com/" target="_blank">'.intval($sns_po ).'&nbsp;pocket'.(($sns_po > 1 ) ? 's' : null ).'</a>';
 				}
 			}
 			if	($sns ) {
@@ -1114,7 +1115,7 @@ class class_pz_linkcard {
 		$html_url2			=	null;
 		switch	($this->options['display-url'] ) {
 		case	1:
-			$html_url1	=	'<div class="lkc-url" title="'.esc_html($url ).'">'.$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
+			$html_url1	=	'<div class="lkc-url" title="'.esc_attr($url ).'">'.$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
 			break;
 		case	2:
 			$html_url2	=	'&nbsp;<div class="lkc-url-info">'.	$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
@@ -1180,7 +1181,7 @@ class class_pz_linkcard {
 				}
 			}
 			if	($this->amp === 1 ) {
-				$html_tag		=	'<div class="lkc-external amp"><table border="1" cellspacing="0" cellpadding="4"><tr><td>'.$excerpt.'<br><a href="'.esc_url($url ).'"'.$target.$rel.'>'.$title.'</a>&nbsp;-&nbsp;'.$site_name.'</td></tr></table></div>';
+				$html_tag		=	'<div class="lkc-external amp"><table border="1" cellspacing="0" cellpadding="4"><tr><td>'.$excerpt.'<br><a href="'.esc_url($url ).'"'.$target.$rel.'>'.$title.'</a>&nbsp;-&nbsp;'.esc_html($site_name ).'</td></tr></table></div>';
 				return	$html_tag;		// タグを出力して終了
 			}
 		}
@@ -2536,6 +2537,13 @@ class class_pz_linkcard {
 		require_once('lib/pz-linkcard-settings.php' );
 	}
 
+	// ファイルエクスポート
+	function action_export_file() {
+		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
+
+		require_once('lib/pz-linkcard-file-export.php' );
+	}
+
 	// 管理画面のスタイルシート、スクリプト設定
 	public	function	action_admin_enqueue_scripts($hook ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
@@ -2607,7 +2615,7 @@ class class_pz_linkcard {
 		// テキスト エディタ用のクイックタグ
 		if	($this->options['flg-edit-qtag'] ) {
 			if	(wp_script_is('quicktags' ) ) {
-				echo '<script>QTags.addButton(\'pz-lkc\',\''.__('Linkcard', 'pz-linkcard' ).'\',\'['.$this->options['code1'].' url="\',\'"]\',\'\',\''.__('Make Linkcard', 'pz-linkcard' ).'\' );</script>';
+				echo '<script>QTags.addButton(\'pz-lkc\',\''.esc_js(__('Linkcard', 'pz-linkcard' ) ).'\',\'['.esc_js($this->options['code1'] ).' url="\',\'"]\',\'\',\''.esc_js(__('Make Linkcard', 'pz-linkcard' ) ).'\' );</script>';
 			}
 		}
 		// ビジュアル エディタ用の挿入ダイアログ
