@@ -168,7 +168,7 @@
 			'</div>';
 
 	// ページの見出し表示（設定）
-	$page_class	=	' pz-settings';
+	$page_class		=	' pz-settings';
 	$switch_link	=	esc_url($this->cacheman_url );
 	$switch_icon	=	__('&#x1f5c3;&#xfe0f;', 'pz-linkcard' );
 	$switch_label	=	__('Manager', 'pz-linkcard' );
@@ -283,7 +283,7 @@
 			$flg_style			=	false;
 			$menu_error			=	0;		
 			$this->options['error-mode']	=	0;
-			$result	=	$this->pz_SaveOptions();	// オプションの更新
+			$result	=	$this->pz_SaveOptions();		// オプションの更新
 			break;
 
 		case	'run-pz_linkcard_check':
@@ -346,7 +346,7 @@
 		$changelog	=	esc_html($changelog );
 		$changelog	=	preg_replace('/^\* (.*)$/mi',				'<span class="pz-log-ja">*&ensp;$1</span>',								$changelog);	// 日本語文の行のインデント調整
 		$changelog	=	preg_replace('/^  (.*)$/mi',				'<span class="pz-log-en">&ensp;&ensp;$1</span>',						$changelog);	// 英文の行のインデント調整
-		$changelog	=	preg_replace('/= (.*) =\n/i',				'<h4>'.__('Version', 'pz-linkcard' ).' $1</h4>',							$changelog);	// バージョン番号の表記調整
+		$changelog	=	preg_replace('/= (.*) =\n/i',				'<h4>'.__('Version', 'pz-linkcard' ).' $1</h4>',						$changelog);	// バージョン番号の表記調整
 
 		$changelog	=	preg_replace('/\[added\]\s*/i',				'<span class="pz-log-added">Added</span>&ensp;',						$changelog);	// 追加
 		$changelog	=	preg_replace('/\[fixed\]\s*/i',				'<span class="pz-log-fixed">Fixed</span>&ensp;',						$changelog);	// 修正
@@ -360,7 +360,7 @@
 		$changelog	=	preg_replace('/&ensp;&ensp;modified:\s*/i',	'&ensp;&ensp;<span class="pz-log-modified">Modified</span>&ensp;',		$changelog);	// 変更
 		$changelog	=	preg_replace('/&ensp;&ensp;removed:\s*/i',	'&ensp;&ensp;<span class="pz-log-removed">Removed</span>&ensp;',		$changelog);	// 修正
 		$changelog	=	preg_replace('/&ensp;&ensp;tested:\s*/i',	'&ensp;&ensp;<span class="pz-log-tested">Tested</span>&ensp;',			$changelog);	// テスト
-		$changelog	=	preg_replace('/&ensp;&ensp;pending:\s*/i',	'&ensp;&ensp;<span class="pz-log-pending">Pending</span>&ensp;',			$changelog);	// テスト
+		$changelog	=	preg_replace('/&ensp;&ensp;pending:\s*/i',	'&ensp;&ensp;<span class="pz-log-pending">Pending</span>&ensp;',		$changelog);	// テスト
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on x.com）/i',					'<a href="https://x.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.						'Thanks<span class="pz-thx-name">$1</span>'.$logo_x. '<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on twitter.com）/i',				'<a href="https://twitter.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.					'Thanks<span class="pz-thx-name">$1</span>'.$logo_tw.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on wordpress.org）/i',			'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">$2</span></a>', $changelog);	
@@ -620,4 +620,3 @@ function	echo_combo($item_name, $item_value, $item_list, $item_title, $item_noti
 	$html_result		.=	'</td></tr>';
 	echo					$html_result;
 }
-

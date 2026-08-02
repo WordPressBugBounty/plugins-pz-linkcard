@@ -3,15 +3,24 @@
 	// アンインストーラー
 
 	////////////////////////////////////////////////////////////////////////////////
+	$settings = get_option('pz_linkcard_options' );
 
 	// ディレクトリの削除（画像キャッシュ、スタイルシート）
-	$result		=	remove_directory_pre('pz-linkcard' );
+	if ($settings['flg-delete-image'] === 1 ) {
+		$result		=	remove_directory_pre('pz-linkcard' );
+	}
 
-	// DBの削除
-	$result		=	drop_table($wpdb->prefix.'_pz_linkcard' );
+	// DBテーブルの削除 
+	if ($settings['flg-delete-db'] === 1 ) {
+		global	$wpdb;
+		$result		=	drop_table($wpdb->prefix.'_pz_linkcard' );
+	}
 
 	// 設定の削除
-	$result		=	delete_option('pz_listcard_options' );
+	if ($settings['flg-delete-settings'] === 1 ) {
+		$result		=	delete_option('pz_linkcard_options' );
+		$result		=	delete_option('Pz_LinkCard_options' );
+	}
 
 	////////////////////////////////////////////////////////////////////////////////
 

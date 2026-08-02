@@ -23,30 +23,38 @@
 	</table>
 	<?php submit_button(); ?>
 
-	<div class="pz-admin-only">
-		<h2><?php echo	__('Deletion Settings', 'pz-linkcard' ); ?></h2>
-		<table class="form-table">
-			<tr>
-				<th scope="row"><?php _e('Delete Settings', 'pz-linkcard' ); ?></th>
-				<td>
-					<label>
-						<input type="hidden"   name="properties[flg-delete-db]" value="" />
-						<input type="checkbox" name="properties[flg-delete-db]" value="1" <?php checked($this->options['flg-delete-db'] ); ?> />
-						<?php echo __('When deleting a plugin, also delete its settings.', 'pz-linkcard' ).__('(Unimplemented)', 'pz-linkcard' ); ?>
-					</label>
-				</td>
-			</tr>
-			<tr>
-				<th scope="row"><?php _e('Delete DataBase', 'pz-linkcard' ); ?></th>
-				<td>
-					<label>
-						<input type="hidden"   name="properties[flg-delete-settings]" value="" />
-						<input type="checkbox" name="properties[flg-delete-settings]" value="1" <?php checked($this->options['flg-delete-settings'] ); ?> />
-						<?php echo __('When deleting a plugin, also delete it from the database.', 'pz-linkcard' ).__('(Unimplemented)', 'pz-linkcard' ); ?>
-					</label>
-				</td>
-			</tr>
-		</table>
-		<?php submit_button(); ?>
-	</div>
+	<h2><?php echo	__('Deletion Settings', 'pz-linkcard' ); ?></h2>
+	<table class="form-table">
+		<tr>
+			<th scope="row"><?php _e('Delete Settings', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-delete-settings]" value="" />
+					<input type="checkbox" name="properties[flg-delete-settings]" value="1" <?php checked($this->options['flg-delete-settings'] ); ?> />
+					<?php echo __('Delete the settings when daleting the plugin.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php _e('Delete Image Cache', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-delete-image]" value="" />
+					<input type="checkbox" name="properties[flg-delete-image]" value="1" <?php checked($this->options['flg-delete-image'] ); ?> />
+					<?php echo __('Delete the image cache when deleting the plugin.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php _e('Delete DataBase', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-delete-db]" value="" />
+					<input type="checkbox" name="properties[flg-delete-db]" value="1" <?php checked($this->options['flg-delete-db'] ); ?> />
+					<?php echo __('Delete the LinkCard data when deleting the plugin.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
+	</table>
+	<?php submit_button(); ?>
 </div>

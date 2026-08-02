@@ -47,9 +47,15 @@
 				} else {
 					$before['mod_excerpt']	=	true;
 				}
+
+				if	($before['alive_result'] < 400 && $after['alive_result'] >= 400 ) {
+					$before['alive_nexttime']	=	$this->now + DAY_IN_SECONDS  * 2 + rand(0, HOUR_IN_SECONDS );		// 次回チェックは2日後
+				} else {
+					$before['alive_nexttime']	=	$this->now + WEEK_IN_SECONDS * 4 + rand(0, DAY_IN_SECONDS );		// 次回チェックは4週間後
+				}
 				$before['alive_result']		=	$after['alive_result'];
 				$before['alive_time']		=	$this->now;
-				$before['alive_nexttime']	=	$this->now + WEEK_IN_SECONDS * 4 + rand(0, DAY_IN_SECONDS);		// 次回チェックは1か月後
+
 				if	(!$before['thumbnail'] ) {
 					$before['thumbnail']	=	$after['thumbnail'];
 				}

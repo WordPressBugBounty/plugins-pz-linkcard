@@ -10,8 +10,7 @@
 		return	null;
 	}
 
-	// アップロードされたファイル名を取得
-	$import_path	=	isset($_FILES['import_file']['name'] )		? $_FILES['import_file']['name'].'_'.date("YmdHis" ) : null;
+	// アップロードされたファイルの一時保存先を取得
 	$temp_path		=	isset($_FILES['import_file']['tmp_name'] )	? $_FILES['import_file']['tmp_name'] : null;
 
 	// キャッシュDBクリア
@@ -61,26 +60,27 @@
 		}
 	}
 
-	$csv_header_nouse	=	array();
 	foreach ($csv_header as $key => $value ) {
 		if (!in_array($value, $col_name ) ) {
-			$csv_header_nouse[$key]	=	$value;
 			unset($csv_header[$key] );
 		}
 	}
+
+	$skip_key	= 	array_flip(array('id', 'url_key' ) );
 
 	// データ行入力
 	while	(($record = fgetcsv($handle ) ) !== false ) {
 		$read_count++;
 		if (count($record ) == $item_count) {
-			unset($import );
+			$import	= 	array();
 			foreach ($csv_header as $key => $value ) {
-				$import[$value]	=	$record[$key];
+				if (isset($skip_key[$value] ) ) {
+					continue;
+				}
+				$import[$value]	= 	$record[$key];
 			}
 
 			// DB更新
-			unset($import['id'] );
-			unset($import['url_key'] );
 			$result			=	$this->pz_SetCache($import );
 			if	(!isset($result['url'] ) || $result['url'] <> $import['url'] ) {
 				$skip_count++;

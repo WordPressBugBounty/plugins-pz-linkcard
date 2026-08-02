@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.5.9.2
+Version:		2.5.9.3
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -17,246 +17,247 @@ class class_pz_linkcard {
 	// 設定値
 	private		const	DEFAULTS	=
 		array(
-			'plugin-version'		=>	null,			// 🟦Cache
-			'db-version'			=>	null,			// 🟦Cache
+			'plugin-version'		=>	null,
+			'db-version'			=>	null,
 
-			'error-mode'			=>	0,				// 🟦Cache
+			'error-mode'			=>	0,
 			'error-hide'			=>	0,
-			'error-url'				=>	null,			// 🟦Cache
-			'error-postid'			=>	null,			// 🟦Cache
-			'error-time'			=>	null,			// 🟦Cache
+			'error-url'				=>	null,
+			'error-postid'			=>	null,
+			'error-time'			=>	null,
 
-			'special-format'		=>	null,			// 🟥CSS
+			'special-format'		=>	null,
 
-			'link-all'				=>	1,				// 🟦Cache
-			'thumbnail-resize'		=>	1,				// 🟥CSS
-			'margin-top'			=>	'16px',			// 🟥CSS
-			'margin-bottom'			=>	'16px',			// 🟥CSS
-			'margin-left'			=>	'16px',			// 🟥CSS
-			'margin-right'			=>	'16px',			// 🟥CSS
-			'card-top'				=>	'8px',			// 🟥CSS
-			'card-bottom'			=>	'8px',			// 🟥CSS
-			'card-left'				=>	'8px',			// 🟥CSS
-			'card-right'			=>	'8px',			// 🟥CSS
-			'thumbnail-position'	=>	2,				// 🟦Cache
-			'thumbnail-width'		=>	'100px',		// 🟥CSS
-			'thumbnail-height'		=>	'100px',		// 🟥CSS
-			'width'					=>	'500px',		// 🟥CSS
-			'content-height'		=>	'100px',		// 🟥CSS
-			'centering'				=>	0,				// 🟥CSS
-			'blockquote'			=>	0,				// 🟦Cache
-			'info-position'			=>	1,				// 🟦Cache
-			'use-sitename'			=>	1,				// 🟦Cache
+			'link-all'				=>	1,
+			'thumbnail-resize'		=>	1,
+			'margin-top'			=>	'16px',
+			'margin-bottom'			=>	'16px',
+			'margin-left'			=>	'16px',
+			'margin-right'			=>	'16px',
+			'card-top'				=>	'8px',
+			'card-bottom'			=>	'8px',
+			'card-left'				=>	'8px',
+			'card-right'			=>	'8px',
+			'thumbnail-position'	=>	2,
+			'thumbnail-width'		=>	'100px',
+			'thumbnail-height'		=>	'100px',
+			'width'					=>	'500px',
+			'content-height'		=>	'100px',
+			'centering'				=>	0,
+			'blockquote'			=>	0,
+			'info-position'			=>	1,
+			'use-sitename'			=>	1,
 
-			'display-date'			=>	1,				// 🟦Cache
-			'separator'				=>	0,				// 🟥CSS
-			'display-url'			=>	1,				// 🟦Cache
-			'shadow'				=>	0,				// 🟥CSS
-			'shadow-inset'			=>	0,				// 🟥CSS
-			'radius'				=>	'4px',			// 🟥CSS
+			'display-date'			=>	1,
+			'separator'				=>	0,
+			'display-url'			=>	1,
+			'shadow'				=>	0,
+			'shadow-inset'			=>	0,
+			'radius'				=>	'4px',
 
-			'border-style'			=>	'solid',		// 🟥CSS
-			'border-width'			=>	'1px',			// 🟥CSS
+			'border-style'			=>	'solid',
+			'border-width'			=>	'1px',
 
-			'thumbnail-border'		=>	null,			// 🟥CSS
-			'thumbnail-shadow'		=>	0,				// 🟥CSS
-			'thumbnail-radius'		=>	'4px',			// 🟥CSS
-			'content-inset'			=>	0,				// 🟥CSS
-			'display-excerpt'		=>	1,				// 🟦Cache
-			'more-style'			=>	'SMP',			// 🟦Cache
-			'border'				=>	0,				// 🟥CSS
-			'radius'				=>	'4px',			// 🟥CSS
-			'hover'					=>	1,				// 🟥CSS
-			'style-reset-img'		=>	1,				// 🟥CSS
-			'sns-position'			=>	2,				// 🟦Cache
-			'sns-tw'				=>	1,				// 🟦Cache
-			'sns-tw-x'				=>	0,				// 🟦Cache
-			'sns-fb'				=>	1,				// 🟦Cache
-			'sns-hb'				=>	1,				// 🟦Cache
-			'sns-po'				=>	1,				// 🟦Cache
+			'thumbnail-border'		=>	null,
+			'thumbnail-shadow'		=>	0,
+			'thumbnail-radius'		=>	'4px',
+			'content-inset'			=>	0,
+			'display-excerpt'		=>	1,
+			'more-style'			=>	'SMP',
+			'border'				=>	0,
+			'radius'				=>	'4px',
+			'hover'					=>	1,
+			'style-reset-img'		=>	1,
+			'sns-position'			=>	2,
+			'sns-tw'				=>	1,
+			'sns-tw-x'				=>	0,
+			'sns-fb'				=>	1,
+			'sns-hb'				=>	1,
+			'sns-po'				=>	1,
 
-			'title-color'			=>	'#111111',		// 🟥CSS
-			'title-outline-color'	=>	null,			// 🟥CSS
-			'title-bg-color'		=>	null,			// 🟥CSS
-			'title-size'			=>	'18px',			// 🟥CSS
-			'title-height'			=>	'24px',			// 🟥CSS
-			'title-maxline'			=>	2,				// 🟥CSS
-			'title-length'			=>	80,				// 🟦Cache
-			'title-bold'			=>	1,				// 🟥CSS
-			'title-italic'			=>	0,				// 🟥CSS
-			'title-underline'		=>	0,				// 🟥CSS
-			'title-hover'			=>	1,				// 🟥CSS
+			'title-color'			=>	'#111111',
+			'title-outline-color'	=>	null,
+			'title-bg-color'		=>	null,
+			'title-size'			=>	'18px',
+			'title-height'			=>	'24px',
+			'title-maxline'			=>	2,
+			'title-length'			=>	80,
+			'title-bold'			=>	1,
+			'title-italic'			=>	0,
+			'title-underline'		=>	0,
+			'title-hover'			=>	1,
 
-			'url-color'				=>	'#4466ff',		// 🟥CSS
-			'url-outline-color'		=>	null,			// 🟥CSS
-			'url-bg-color'			=>	null,			// 🟥CSS
-			'url-size'				=>	'12px',			// 🟥CSS
-			'url-height'			=>	'17px',			// 🟥CSS
-			'url-bold'				=>	0,				// 🟥CSS
-			'url-italic'			=>	0,				// 🟥CSS
-			'url-underline'			=>	1,				// 🟥CSS
-			'url-hover'				=>	1,				// 🟥CSS
+			'url-color'				=>	'#4466ff',
+			'url-outline-color'		=>	null,
+			'url-bg-color'			=>	null,
+			'url-size'				=>	'12px',
+			'url-height'			=>	'17px',
+			'url-bold'				=>	0,
+			'url-italic'			=>	0,
+			'url-underline'			=>	1,
+			'url-hover'				=>	1,
 
-			'excerpt-color'			=>	'#444444',		// 🟥CSS
-			'excerpt-outline-color'	=>	'',				// 🟥CSS
-			'excerpt-bg-color'		=>	null,			// 🟥CSS
-			'excerpt-size'			=>	'11px',			// 🟥CSS
-			'excerpt-height'		=>	'18px',			// 🟥CSS
-			'excerpt-maxline'		=>	null,				// 🟥CSS
-			'excerpt-length'		=>	500,			// 🟦Cache
-			'excerpt-bold'			=>	0,				// 🟥CSS
-			'excerpt-italic'		=>	0,				// 🟥CSS
-			'excerpt-underline'		=>	0,				// 🟥CSS
-			'excerpt-hover'			=>	0,				// 🟥CSS
+			'excerpt-color'			=>	'#444444',
+			'excerpt-outline-color'	=>	'',
+			'excerpt-bg-color'		=>	null,
+			'excerpt-size'			=>	'11px',
+			'excerpt-height'		=>	'18px',
+			'excerpt-maxline'		=>	null,
+			'excerpt-length'		=>	500,
+			'excerpt-bold'			=>	0,
+			'excerpt-italic'		=>	0,
+			'excerpt-underline'		=>	0,
+			'excerpt-hover'			=>	0,
 
-			'date-color'			=>	'#444444',		// 🟥CSS
-			'date-outline-color'	=>	null,			// 🟥CSS
-			'date-bg-color'			=>	null,			// 🟥CSS
-			'date-size'				=>	'10px',			// 🟥CSS
-			'date-height'			=>	'16px',			// 🟥CSS
-			'date-bold'				=>	0,				// 🟥CSS
-			'date-italic'			=>	0,				// 🟥CSS
-			'date-underline'		=>	0,				// 🟥CSS
-			'date-hover'			=>	0,				// 🟥CSS
+			'date-color'			=>	'#444444',
+			'date-outline-color'	=>	null,
+			'date-bg-color'			=>	null,
+			'date-size'				=>	'10px',
+			'date-height'			=>	'16px',
+			'date-bold'				=>	0,
+			'date-italic'			=>	0,
+			'date-underline'		=>	0,
+			'date-hover'			=>	0,
 
-			'info-color'			=>	'#222222',		// 🟥CSS
-			'info-outline-color'	=>	null,			// 🟥CSS
-			'info-bg-color'			=>	null,			// 🟥CSS
-			'info-size'				=>	'12px',			// 🟥CSS
-			'info-height'			=>	'14px',			// 🟥CSS
-			'info-length'			=>	100,			// 🟦Cache
-			'info-bold'				=>	0,				// 🟥CSS
-			'info-italic'			=>	0,				// 🟥CSS
-			'info-underline'		=>	0,				// 🟥CSS
-			'info-hover'			=>	0,				// 🟥CSS
+			'info-color'			=>	'#222222',
+			'info-outline-color'	=>	null,
+			'info-bg-color'			=>	null,
+			'info-size'				=>	'12px',
+			'info-height'			=>	'14px',
+			'info-length'			=>	100,
+			'info-bold'				=>	0,
+			'info-italic'			=>	0,
+			'info-underline'		=>	0,
+			'info-hover'			=>	0,
 
-			'added-color'			=>	'#ffffff',		// 🟥CSS
-			'added-outline-color'	=>	null,			// 🟥CSS
-			'added-bg-color'		=>	'#365cd9',		// 🟥CSS
-			'added-size'			=>	'9px',			// 🟥CSS
-			'added-height'			=>	'10px',			// 🟥CSS
-			'added-bold'			=>	0,				// 🟥CSS
-			'added-italic'			=>	0,				// 🟥CSS
-			'added-underline'		=>	0,				// 🟥CSS
-			'added-hover'			=>	0,				// 🟥CSS
+			'added-color'			=>	'#ffffff',
+			'added-outline-color'	=>	null,
+			'added-bg-color'		=>	'#365cd9',
+			'added-size'			=>	'9px',
+			'added-height'			=>	'10px',
+			'added-bold'			=>	0,
+			'added-italic'			=>	0,
+			'added-underline'		=>	0,
+			'added-hover'			=>	0,
 
-			'heading-color'			=>	'#444444',		// 🟥CSS
-			'heading-outline-color'	=>	null,			// 🟥CSS
-			'heading-bg-color'		=>	null,			// 🟥CSS
-			'heading-size'			=>	'12px',			// 🟥CSS
-			'heading-height'		=>	'32px',			// 🟥CSS
-			'heading-bold'			=>	0,				// 🟥CSS
-			'heading-italic'		=>	0,				// 🟥CSS
-			'heading-underline'		=>	0,				// 🟥CSS
-			'heading-hover'			=>	0,				// 🟥CSS
+			'heading-color'			=>	'#444444',
+			'heading-outline-color'	=>	null,
+			'heading-bg-color'		=>	null,
+			'heading-size'			=>	'12px',
+			'heading-height'		=>	'32px',
+			'heading-bold'			=>	0,
+			'heading-italic'		=>	0,
+			'heading-underline'		=>	0,
+			'heading-hover'			=>	0,
 
-			'more-color'			=>	'#444444',		// 🟥CSS
-			'more-outline-color'	=>	null,			// 🟥CSS
-			'more-bg-color'			=>	null,			// 🟥CSS
-			'more-size'				=>	'12px',			// 🟥CSS
-			'more-height'			=>	'24px',			// 🟥CSS
-			'more-bold'				=>	0,				// 🟥CSS
-			'more-italic'			=>	0,				// 🟥CSS
-			'more-underline'		=>	0,				// 🟥CSS
-			'more-hover'			=>	0,				// 🟥CSS
+			'more-color'			=>	'#444444',
+			'more-outline-color'	=>	null,
+			'more-bg-color'			=>	null,
+			'more-size'				=>	'12px',
+			'more-height'			=>	'24px',
+			'more-bold'				=>	0,
+			'more-italic'			=>	0,
+			'more-underline'		=>	0,
+			'more-hover'			=>	0,
 
-			'ex-border-color'		=>	'#114488',		// 🟥CSS
-			'ex-bg-color'			=>	'#ddeeff',		// 🟥CSS
-			'ex-image'				=>	null,			// 🟥CSS
-			'ex-heading-text'		=>	null,			// 🟦Cache
-			'ex-more-text'			=>	null,			// 🟦Cache
-			'ex-added-text'			=>	null,			// 🟦Cache
-			'ex-favicon'			=>	3,				// 🟦Cache
-			'ex-favicon-alt'		=>	null,			// 🟦Cache
-			'ex-thumbnail'			=>	13,				// 🟦Cache
-			'ex-thumbnail-size'		=>	'thumbnail',	// 🟦Cache
-			'ex-thumbnail-alt'		=>	null,			// 🟦Cache
-			'ex-target'				=>	2,				// 🟦Cache
-			'ex-get'				=>	2,				// 🟥CSS
+			'ex-border-color'		=>	'#114488',
+			'ex-bg-color'			=>	'#ddeeff',
+			'ex-image'				=>	null,
+			'ex-heading-text'		=>	null,
+			'ex-more-text'			=>	null,
+			'ex-added-text'			=>	null,
+			'ex-favicon'			=>	3,
+			'ex-favicon-alt'		=>	null,
+			'ex-thumbnail'			=>	13,
+			'ex-thumbnail-size'		=>	'thumbnail',
+			'ex-thumbnail-alt'		=>	null,
+			'ex-target'				=>	2,
+			'ex-get'				=>	2,
 
-			'in-border-color'		=>	'#888888',		// 🟥CSS
-			'in-bg-color'			=>	'#f8f8f8',		// 🟥CSS
-			'in-image'				=>	null,			// 🟥CSS
-			'in-heading-text'		=>	null,			// 🟦Cache
-			'in-more-text'			=>	null,			// 🟦Cache
-			'in-added-text'			=>	null,			// 🟦Cache
-			'in-favicon'			=>	3,				// 🟦Cache
-			'in-favicon-alt'		=>	null,			// 🟦Cache
-			'in-thumbnail'			=>	1,				// 🟦Cache
-			'in-thumbnail-size'		=>	'thumbnail',	// 🟦Cache
-			'in-thumbnail-alt'		=>	null,			// 🟦Cache
-			'in-target'				=>	null,			// 🟦Cache
-			'in-get'				=>	null,			// 🟦Cache
-			'in-field-title'		=>	null,			// 🟦Cache
-			'in-field-excerpt'		=>	null,			// 🟦Cache
-			'in-get-url'			=>	0,				// 🟦Cache
+			'in-border-color'		=>	'#888888',
+			'in-bg-color'			=>	'#f8f8f8',
+			'in-image'				=>	null,
+			'in-heading-text'		=>	null,
+			'in-more-text'			=>	null,
+			'in-added-text'			=>	null,
+			'in-favicon'			=>	3,
+			'in-favicon-alt'		=>	null,
+			'in-thumbnail'			=>	1,
+			'in-thumbnail-size'		=>	'thumbnail',
+			'in-thumbnail-alt'		=>	null,
+			'in-target'				=>	null,
+			'in-get'				=>	null,
+			'in-field-title'		=>	null,
+			'in-field-excerpt'		=>	null,
+			'in-get-url'			=>	0,
 
-			'th-border-color'		=>	'#666666',		// 🟥CSS
-			'th-bg-color'			=>	'#f4f4f4',		// 🟥CSS
-			'th-image'				=>	null,			// 🟥CSS
-			'th-heading-text'		=>	null,			// 🟦Cache
-			'th-more-text'			=>	null,			// 🟦Cache
-			'th-added-text'			=>	null,			// 🟦Cache
+			'th-border-color'		=>	'#666666',
+			'th-bg-color'			=>	'#f4f4f4',
+			'th-image'				=>	null,
+			'th-heading-text'		=>	null,
+			'th-more-text'			=>	null,
+			'th-added-text'			=>	null,
 
-			'flg-nofollow'			=>	0,				// 🟦Cache
-			'flg-noopener'			=>	1,				// 🟦Cache
-			'flg-referer'			=>	1,				// 🟦Cache
-			'flg-relative-url'		=>	1,				// 🟦Cache
-			'flg-unlink'			=>	1,				// 🟦Cache
-			'flg-ssl'				=>	1,				// 🟦Cache
-			'flg-redir'				=>	1,				// 🟦Cache
-			'flg-agent'				=>	1,				// 🟦Cache
-			'user-agent'			=>	null,			// 🟦Cache
-			'flg-alive'				=>	1,				// 🟦Cache
-			'flg-alive-count'		=>	0,				// 🟦Cache
-			'flg-click-count'		=>	1,				// 🟦Cache
+			'flg-nofollow'			=>	0,
+			'flg-noopener'			=>	1,
+			'flg-referer'			=>	1,
+			'flg-relative-url'		=>	1,
+			'flg-unlink'			=>	1,
+			'flg-ssl'				=>	1,
+			'flg-redir'				=>	1,
+			'flg-agent'				=>	1,
+			'user-agent'			=>	null,
+			'flg-alive'				=>	1,
+			'flg-alive-count'		=>	0,
+			'flg-click-count'		=>	1,
 
-			'code1'					=>	'blogcard',		// 🟦Cache
-			'code2'					=>	null,			// 🟦Cache
-			'code3'					=>	null,			// 🟦Cache
-			'code4'					=>	null,			// 🟦Cache
-			'use-inline'			=>	null,			// 🟦Cache
-			'auto-atag'				=>	0,				// 🟦Cache
-			'auto-url'				=>	0,				// 🟦Cache
-			'auto-external'			=>	0,				// 🟦Cache
-			'flg-do-shortcode'		=>	1,				// 🟥CSS
-			'exclude-url'			=>	'',				// 🟦Cache
-			'flg-edit-insert'		=>	1,				// 🟦Cache
-			'mce-priority'			=>	null,			// 🟦Cache
-			'flg-edit-qtag'			=>	1,				// 🟦Cache
-			'flg-clear-excerpt'		=>	1,				// 🟦Cache
+			'code1'					=>	'blogcard',
+			'code2'					=>	null,
+			'code3'					=>	null,
+			'code4'					=>	null,
+			'use-inline'			=>	null,
+			'auto-atag'				=>	0,
+			'auto-url'				=>	0,
+			'auto-external'			=>	0,
+			'flg-do-shortcode'		=>	1,
+			'exclude-url'			=>	'',
+			'flg-edit-insert'		=>	1,
+			'mce-priority'			=>	null,
+			'flg-edit-qtag'			=>	1,
+			'flg-clear-excerpt'		=>	1,
 
-			'multi-mode'			=>	0,				// 🟥CSS
-			'multi-myid'			=>	0,				// 🟥CSS
-			'multi-count'			=>	0,				// 🟥CSS
+			'multi-mode'			=>	0,
+			'multi-myid'			=>	0,
+			'multi-count'			=>	0,
 
-			'trail-slash'			=>	1,				// 🟦Cache
-			'class-pc'				=>	null,			// 🟦Cache
-			'class-mobile'			=>	null,			// 🟦Cache
-			'date-format-man'		=>	'Y\<\b\r\/\>m/d\<\b\r\/\>H:i',	// 🟥CSS
-			'flg-unti-select'		=>	0,				// 🟥CSS
-			'flg-filemenu'			=>	0,				// 🟥CSS
-			'flg-initialize'		=>	1,				// 🟥CSS
-			'flg-compress'			=>	0,				// 🟥CSS
-			'flg-amp-url'			=>	0,				// 🟦Cache
-			'flg-inhibit'			=>	0,				// 🟦Cache
-			'error-mode-hide'		=>	1,				// 🟦Cache
-			'saved-date'			=>	null,			// 🟦Cache
+			'trail-slash'			=>	1,
+			'class-pc'				=>	null,
+			'class-mobile'			=>	null,
+			'date-format-man'		=>	'Y\<\b\r\/\>m/d\<\b\r\/\>H:i',
+			'flg-unti-select'		=>	0,
+			'flg-filemenu'			=>	0,
+			'flg-initialize'		=>	1,
+			'flg-compress'			=>	0,
+			'flg-amp-url'			=>	0,
+			'flg-inhibit'			=>	0,
+			'error-mode-hide'		=>	1,
+			'saved-date'			=>	null,
 
-			'develop-mode'			=>	0,				// 🟦Cache
-			'admin-mode'			=>	0,				// 🟦Cache
-			'debug-mode'			=>	0,				// 🟦Cache
-			'debug-nocache'			=>	0,				// 🟦Cache
-			'survey-mode'			=>	0,				// 🟦Cache
+			'develop-mode'			=>	0,
+			'admin-mode'			=>	0,
+			'debug-mode'			=>	0,
+			'debug-nocache'			=>	0,
+			'survey-mode'			=>	0,
 
-			'css-add-url'			=>	null,			// 🟦Cache
-			'css-add'				=>	'',				// 🟥CSS
-			'css-count'				=>	0,				// 🟦Cache
-			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',	// 🟦Cache
-			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',		// 🟦Cache
-			'initialize-exception'	=>	0,				// 🟦Cache
-			'flg-delete-db'			=>	1,				// 🟦Cache
-			'flg-delete-settings'	=>	1,				// 🟦Cache
+			'css-add-url'			=>	null,
+			'css-add'				=>	'',
+			'css-count'				=>	0,
+			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',
+			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',
+			'initialize-exception'	=>	0,
+			'flg-delete-db'			=>	0,
+			'flg-delete-image'		=>	0,
+			'flg-delete-settings'	=>	1,
 		);
 
 	// 定数・プラグイン情報
@@ -439,17 +440,21 @@ class class_pz_linkcard {
 				add_filter		('the_content',					array($this, 'auto_replace' ) );
 				add_shortcode	(self::PLUGIN_SLUG.'-auto-replace',	array($this, 'shortcode' ), 10 );
 			}
-			if	($this->options['code1'] ) {																		// ショートコード1
-				add_shortcode($this->options['code1'], array($this, 'shortcode' ), 10 );
+			$code	=	preg_replace("/[^a-zA-Z0-9]/", "", $this->options['code1'] );								// ショートコード1
+			if	($code ) {						
+				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
-			if	($this->options['code2'] ) {																		// ショートコード2
-				add_shortcode($this->options['code2'], array($this, 'shortcode' ), 10 );
+			$code	=	preg_replace("/[^a-zA-Z0-9]/", "", $this->options['code2'] );								// ショートコード2
+			if	($code ) {
+				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
-			if	($this->options['code3'] ) {																		// ショートコード3
-				add_shortcode($this->options['code3'], array($this, 'shortcode' ), 10 );
+			$code	=	preg_replace("/[^a-zA-Z0-9]/", "", $this->options['code3'] );								// ショートコード3
+			if	($code ) {
+				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
-			if	($this->options['code4'] ) {																		// ショートコード4
-				add_shortcode($this->options['code4'], array($this, 'shortcode' ), 10 );
+			$code	=	preg_replace("/[^a-zA-Z0-9]/", "", $this->options['code4'] );								// ショートコード4
+			if	($code ) {
+				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
 		}
 		add_action		('wp_ajax_pz_lkc_click_count', 				[$this, 'action_ajax_lkc_click_count'] );
@@ -564,14 +569,14 @@ class class_pz_linkcard {
 	public	function	shortcode($atts, $content = null, $shortcode = null ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLOG(__FUNCTION__ ); }
 
-		// 実行時間
-		if	($this->options['debug-mode'] ) {
-			if	(function_exists('hrtime' ) ) {
-				$start_time		=	hrtime(true ) / 1000;
-			} else {
-				$start_time		=	microtime(true );
-			}
-		}
+		// // 実行時間
+		// if	($this->options['debug-mode'] ) {
+		// 	if	(function_exists('hrtime' ) ) {
+		// 		$start_time		=	hrtime(true ) / 1000;
+		// 	} else {
+		// 		$start_time		=	microtime(true );
+		// 	}
+		// }
 
 		// キーをすべて小文字にする
 		// $atts = array_change_key_case($atts, CASE_LOWER);
@@ -633,8 +638,7 @@ class class_pz_linkcard {
 				}
 			}
 			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
-			$err_info	=	esc_html(print_r($atts, true ) );
-			return			PHP_EOL.$tag.PHP_EOL.'<!--'.$err_info.'-->'.PHP_EOL.PHP_EOL;
+			return			PHP_EOL.$tag.PHP_EOL;
 		}
 
 		// URLパラメータに編集後のURLを返す
@@ -673,16 +677,16 @@ class class_pz_linkcard {
 		// 記事内容取得
 		$tag	=	$this->pz_GetHTML($atts );
 
-		// 実行時間
-		if	($this->options['debug-mode'] ) {
-			if	(function_exists('hrtime' ) ) {
-				$end_time		=	hrtime(true ) / 1000;
-			} else {
-				$end_time		=	microtime(true );
-			}
-			$elasped_time	=	$end_time - $start_time;
-			$format_time	=	number_format($elasped_time / 1000, 8, '.', ',' );
-		}
+		// // 実行時間
+		// if	($this->options['debug-mode'] ) {
+		// 	if	(function_exists('hrtime' ) ) {
+		// 		$end_time		=	hrtime(true ) / 1000;
+		// 	} else {
+		// 		$end_time		=	microtime(true );
+		// 	}
+		// 	$elasped_time	=	$end_time - $start_time;
+		// 	$format_time	=	number_format($elasped_time / 1000, 8, '.', ',' );
+		// }
 		return	$tag;
 	}
 
@@ -1559,10 +1563,10 @@ class class_pz_linkcard {
 			unset($data['id']);
 		}
 
-		// URL解析（自サイトチェック）
-		$url_info					=	$this->Pz_GetURLInfo($url );
-		$data['scheme']				=	$url_info['scheme'];														// スキーム
-		$data['domain']				=	$url_info['domain'];														// ドメイン名
+		// スキームとドメイン
+		$url_m = parse_url($url);
+		$data['scheme']				=	isset($url_m['scheme'])			?	$url_m['scheme']		: null;
+		$data['domain']				=	isset($url_m['host'])			?	$url_m['host']			: null;
 
 		// 記事内容等
 		$data['site_name']			=	isset($data['site_name'] )		? $data['site_name']		: null;			// リンク先：サイト名称
@@ -1625,7 +1629,7 @@ class class_pz_linkcard {
 
 		// 更新内容
 		$data['mod_title']			=	($data['title'] <> $data['regist_title'] ? true : false );					// 更新：登録後からタイトル変更有無
-		$data['mod_excerpt']		=	($data['title'] <> $data['regist_title'] ? true : false );					// 更新：登録後から抜粋文変更有無
+		$data['mod_excerpt']		=	($data['excerpt'] <> $data['regist_excerpt'] ? true : false );				// 更新：登録後から抜粋文変更有無
 
 		// 最終更新日時
 		$data['update_time']		=	$this->now;
@@ -1670,7 +1674,7 @@ class class_pz_linkcard {
 				}
 			}
 		}
-		return	$this->pz_GetCache($data );	// 登録された内容を読み直す
+		return	$data;
 	}
 
 	// キャッシュデータを削除

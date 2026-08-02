@@ -54,7 +54,7 @@
 		<tr>
 			<th scope="row"><?php _e('Saved Datetime', 'pz-linkcard' ); ?></th>
 			<td>
-				<input type="text" size="40" value="<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : $this->options['saved-date']; ?>" readonly="readonly" />
+				<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : $this->options['saved-date']; ?>
 				<input name="properties[saved-date]" type="text" value="<?php echo $this->options['saved-date']; ?>" class="pz-admin-only" readonly="readonly" />
 			</td>
 		</tr>
