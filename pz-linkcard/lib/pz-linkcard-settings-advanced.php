@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-advanced">
+<div class="pz-page<?php echo $pz_page_active('pz-advanced' ); ?>" id="pz-advanced">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 
 	<h2><?php echo __('Senior Settings', 'pz-linkcard' ).$help_open.'advanced'.$help_close; ?></h2>
@@ -114,6 +114,16 @@
 					<input type="hidden"   name="properties[flg-filemenu]" value="" />
 					<input type="checkbox" name="properties[flg-filemenu]" value="1" <?php checked($this->options['flg-filemenu'] ); ?> />
 					<?php _e('Display the file menu on the card management screen.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php _e('管理者バー', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-adminbar]" value="" />
+					<input type="checkbox" name="properties[flg-adminbar]" value="1" <?php checked($this->options['flg-adminbar'] ?? 0 ); ?> />
+					<?php _e('管理者バーにメニューを表示します。', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>

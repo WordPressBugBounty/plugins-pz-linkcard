@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-check">
+<div class="pz-page<?php echo $pz_page_active('pz-check' ); ?>" id="pz-check">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Link Check Settings', 'pz-linkcard' ).$help_open.'link-check'.$help_close; ?></h2>
 	<table class="form-table">
@@ -20,16 +20,6 @@
 					<input type="hidden"   name="properties[flg-noopener]" value="" />
 					<input type="checkbox" name="properties[flg-noopener]" value="1" <?php checked($this->options['flg-noopener'] ); ?> />
 					<?php	echo __('In the case of an external site, it puts the "noopener".', 'pz-linkcard' ).__('(Recommend)', 'pz-linkcard' ); ?>
-				</label>
-			</td>
-		</tr>
-		<tr>
-			<th scope="row"><?php _e('Set Referer', 'pz-linkcard' ); ?></th>
-			<td>
-				<label>
-					<input type="hidden"   name="properties[flg-referer]" value="" />
-					<input type="checkbox" name="properties[flg-referer]" value="1" <?php checked($this->options['flg-referer'] ); ?> />
-					<?php _e('Notify the article URL to the link destination.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -59,7 +49,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-ssl]" value="" />
 					<input type="checkbox" name="properties[flg-ssl]" value="1" <?php checked($this->options['flg-ssl'] ); ?> />
-					<?php _e('Try setting if the contents of the SSL site can not be acquired.', 'pz-linkcard' ); ?>
+					<?php echo __('Try setting if the contents of the SSL site can not be acquired.', 'pz-linkcard' ).__('(Deprecation)', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>

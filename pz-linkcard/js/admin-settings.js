@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!dashboard) return;
 
 	// 処理中オーバーレイを非表示
-	document.querySelector("#pz-overlay-proc").style.display = "none";
+    document.querySelector("#pz-overlay-proc")?.style.setProperty("display", "none");
 
 	// WordPress 標準のカラーピッカー (wpColorPicker) は jQuery 依存なので注意！
     document.querySelectorAll(".pz-wp-color-picker").forEach(el => {
@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// スクロール位置の調整
     const scrollNow = document.querySelector("input[name='scroll-now']");
-    if (scrollNow) window.scrollTo(0, scrollNow.value);
+    const cacheEditor = document.querySelector(".pz-man-cache-editor");
+    if (scrollNow && !cacheEditor) window.scrollTo(0, scrollNow.value);
 
     window.addEventListener("load", () => {
         document.querySelector("#pz-overlay-proc")?.classList.add("hidden");
@@ -47,10 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
         // submit時にスクロール位置保存
         document.querySelectorAll("form").forEach(form => {
             form.addEventListener("submit", () => {
-                if (scrollNow) scrollNow.value = window.scrollY;
+                if (scrollNow && !cacheEditor) scrollNow.value = window.scrollY;
                 const inhibit = document.querySelector("input[name='properties[flg-inhibit]']");
                 if (inhibit?.checked) {
-                    document.querySelector("#pz-overlay-proc")?.classList.remove("hidden");
+                    const overlay = document.querySelector("#pz-overlay-proc");
+                    if (overlay) {
+                        overlay.classList.remove("hidden");
+                        overlay.style.display = "block";
+                    }
                 }
             });
         });

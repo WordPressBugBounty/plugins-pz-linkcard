@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-letter">
+<div class="pz-page<?php echo $pz_page_active('pz-letter' ); ?>" id="pz-letter">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Letter Settings', 'pz-linkcard' ).$help_open.'letter'.$help_close; ?></h2>
 	<table class="pz-letter-table form-table">

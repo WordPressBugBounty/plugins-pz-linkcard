@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-basic">
+<div class="pz-page<?php echo $pz_page_active('pz-basic' ); ?>" id="pz-basic">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 
 	<div class="pz-tips" style="
@@ -54,8 +54,8 @@
 		<tr>
 			<th scope="row"><?php _e('Saved Datetime', 'pz-linkcard' ); ?></th>
 			<td>
-				<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : $this->options['saved-date']; ?>
-				<input name="properties[saved-date]" type="text" value="<?php echo $this->options['saved-date']; ?>" class="pz-admin-only" readonly="readonly" />
+				<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : esc_html($this->options['saved-date'] ); ?>
+				<input name="properties[saved-date]" type="text" value="<?php echo esc_attr($this->options['saved-date'] ); ?>" class="pz-admin-only" readonly="readonly" />
 			</td>
 		</tr>
 	</table>

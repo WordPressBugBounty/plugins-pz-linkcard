@@ -6,7 +6,7 @@
 		array( 'name' => 'th',	'type' => 'samepage',	'title' => __('Same Page Link Settings',	'pz-linkcard' )	),
 	);
 	foreach ($title_list as $t) {
-		echo	'<div class="pz-page" id="pz-'.$t['type'].'">';
+		echo	'<div class="pz-page'.$pz_page_active('pz-'.$t['type'] ).'" id="pz-'.$t['type'].'">';
 		echo	'<div class="pz-submit-float">';
 		submit_button();
 		echo	'</div>';
@@ -69,7 +69,7 @@
 			$item_value		=	esc_attr($prop[$item_name] );
 		} else {
 			if	($t['name']	==	'th' ) {
-				$item_value	=	__('It is common with setting Internal-link', 'pz-linkcard' );
+				$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );
 			}
 			$item_disabled	=	'disabled="disabled"';
 		}
@@ -134,7 +134,7 @@
 			$item_value		=	$prop[$item_name];
 		} else {
 			if	($t['name'] == 'th' ) {
-				$item_value	=	__('It is common with setting Internal-link', 'pz-linkcard' );
+				$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );
 			}
 			$item_disabled		=	'disabled="disabled"';
 		}
@@ -152,7 +152,7 @@
 			$item_value		=	$prop[$item_name];
 		} else {
 			if	($t['name'] == 'th' ) {
-				$item_value	=	__('It is common with setting Internal-link', 'pz-linkcard' );
+				$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );
 			}
 			$item_disabled		=	'disabled="disabled"';
 		}
@@ -200,7 +200,7 @@
 			$item_name		=	null;
 			$item_value		=	null;
 			$item_title		=	__('Reserved', 'pz-linkcard' );
-			$item_notice	=	__('It is common with setting Internal-link', 'pz-linkcard' );
+			$item_notice	=	__('Use the same setting as Internal Link', 'pz-linkcard' );
 			$item_enabled	=	false;
 			echo	'<tr><th>'.$item_title.'</th><td>';
 			echo_checkbox($item_name, $item_value, $item_list, $item_title, $item_notice, $item_enabled );
@@ -327,14 +327,7 @@
 			$item_value_list	=	LIST_INTERNAL;
 		}
 		foreach		($item_value_list		as	$value	=>	$description ) {
-			
-			if	(($t['name'] == 'ex' ) && ($value == '1' || $value =='13' ) ) {
-				$dis		=	'disabled="disabled"';
-			} else {
-				$dis		=	'';
-			}
-
-			$s_option	.=	'<option value="'.$value.'" '.($item_value == $value ? 'selected="selected"' : '' ).' '.$dis.'>'.$description.'</option>';
+			$s_option	.=	'<option value="'.$value.'" '.($item_value == $value ? 'selected="selected"' : '' ).'>'.$description.'</option>';
 		}
 		echo	sprintf($temp_select,   $item_title, $s_name, $item_class, $s_switch, $s_option, $item_notice );
 
@@ -350,7 +343,7 @@
 			$s_switch	=	'';
 		} else {
 			$s_name		=	'';
-			$item_value	=	__('It is common with setting Internal-link', 'pz-linkcard' );;
+			$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );;
 			$s_switch	=	'disabled="disabled"';
 		}
 		echo	sprintf($temp_text, $item_title, $s_name, $item_value, $s_len, $item_class, $s_switch, $item_notice );
@@ -431,7 +424,7 @@
 			$s_switch	=	'';
 		} else {
 			$s_name		=	'';
-			$item_value	=	__('It is common with setting Internal-link', 'pz-linkcard' );;
+			$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );;
 			$s_switch	=	'disabled="disabled"';
 		}
 		echo	sprintf($temp_text, $item_title, $s_name, $item_value, $s_len, $item_class, $s_switch, $item_notice );

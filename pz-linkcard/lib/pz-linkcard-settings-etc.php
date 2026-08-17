@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-etc">
+<div class="pz-page<?php echo $pz_page_active('pz-etc' ); ?>" id="pz-etc">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Stylesheet Settings', 'pz-linkcard' ).$help_open.'css'.$help_close; ?></h2>
 	<table class="form-table">

@@ -125,6 +125,8 @@
 	/*EXCERPT-BOLD*/
 	/*EXCERPT-ITALIC*/
 	/*EXCERPT-UNDERLINE*/
+
+	/*NONE-EXCERPT*/
 }
 .lkc-excerpt:hover {
 	/*EXCERPT-HOVER*/
@@ -275,6 +277,8 @@
 	/*INFO-BOLD*/
 	/*INFO-ITALIC*/
 	/*INFO-UNDERLINE*/
+
+	/*NONE-INFO*/
 }
 .lkc-external-wrap > .lkc-added {
 	/*EX-ADDED*/

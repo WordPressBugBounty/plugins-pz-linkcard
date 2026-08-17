@@ -186,7 +186,7 @@
 		<p class="search-box" title="<?php _e('Text search by title and excerpt', 'pz-linkcard' ); ?>">
 			<label>
 				<span><?php echo __('&#x1f50d;&#xfe0f;', 'pz-linkcard' ); ?></span>
-				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo $keyword ; ?>" />
+				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo esc_attr($keyword ); ?>" />
 				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php _e('Search', 'pz-linkcard' ); ?></button>
 			</label>
 		</p>
@@ -209,11 +209,11 @@
 		
 		<div class="pz-man-domain-list alignleft actions bulkactions">
 			<select name="refine" id="bulk-action-selector-top">
-				<option value="" selected="selected"><?php _e('All Domain', 'pz-linkcard' ); ?></option>
+				<option value="" selected="selected"><?php _e('All Domains', 'pz-linkcard' ); ?></option>
 					<?php
 						foreach	($domain_list as $rec ) {
 							if (isset($rec['domain'] ) === true && isset($rec['count'] ) === true) {
-								$disp_domain	=	(function_exists('idn_to_utf8' ) && mb_substr($rec['domain'], 0, 4) === 'xn--') ? idn_to_utf8($rec['domain'], 0, INTL_IDNA_VARIANT_UTS46 ) : $rec['domain'] ;
+								$disp_domain	=	(function_exists('idn_to_utf8' ) && defined('INTL_IDNA_VARIANT_UTS46' ) && mb_substr($rec['domain'], 0, 4) === 'xn--') ? idn_to_utf8($rec['domain'], 0, INTL_IDNA_VARIANT_UTS46 ) : $rec['domain'] ;
 								$selected		=	($rec['domain'] === $refine) ? ' selected="selected"' : null ;
 								echo	'<option value="'.htmlspecialchars($rec['domain'] ).'"'.$selected.'>'.htmlspecialchars($disp_domain ).' ('.$rec['count'].')</option>';
 							}
@@ -292,18 +292,10 @@
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
-	// echo	'</th>';
-	echo	'<br>';
-	$item		=	'sns_pocket';
-	$item_name	=	__('Po', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
-	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
-	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	echo	'</th>';
 
 	$item		=	'regist_time';
-	$item_name	=	__('Regist<br>Date', 'pz-linkcard' );
+	$item_name	=	__('Registered<br>Date', 'pz-linkcard' );
 	$add_class	=	' pz-debug-only';
 	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
@@ -381,17 +373,17 @@
 
 					// URLの警告マーク
 					$html_url_error		=	'';
-					if	($data->alive_result < 100 || $data->alive_result >= 400 ) {
+					if	($data->alive_result < 100 || $data->alive_result >= 400 || $data->update_result < 100 || $data->update_result >= 400 ) {
 						if	($data->no_failure ) {		// エラー無視が有効か
 							$temp_icon	=	__('&#x26a0;&#xfe0f;', 'pz-linkcard' );		// ⚠️
-							$temp_class	=	'pz-man-body-url-error-ignore';			// エラー無視
-							$temp_title	=	__('The latest HTTP code is in error, but ignore it.', 'pz-linkcard' );
+							$temp_class	=	'pz-man-body-url-error-ignore';				// エラー無視
+							$temp_title	=	__('The latest HTTP code indicates an error, but it is ignored.', 'pz-linkcard' );
 						} else {
 							$temp_icon	=	__('&#x26d4;&#xfe0f;', 'pz-linkcard' );		// ⛔️エラー
-							$temp_class	=	'pz-man-body-url-error';				// エラー
-							$temp_title	=	__('The latest HTTP code is in error. You can change it to ignore the error from the edit screen.', 'pz-linkcard' );
+							$temp_class	=	'pz-man-body-url-error';					// エラー
+							$temp_title	=	__('The latest HTTP code indicates an error. You can ignore the error from the edit screen.', 'pz-linkcard' );
 						}
-						$html_url_error	=	'<span class="'.$temp_class.'" title="'.$temp_title.'">'.$temp_icon.'</span>&nbsp;';
+						$html_url_error	=	'<span class="'.$temp_class.'" title="'.$temp_title.'">'.$temp_icon.'</span>';
 					}
 
 					// 表示用のURL
@@ -404,7 +396,7 @@
 						$temp_rel		=	'external noopenner noreferrer';
 						$temp_target	=	'_blank';
 					}
-					$html_url			=	'<a href="'.$temp_href.'" title="'.$temp_href.'" rel="'.$temp_rel.'" target="'.$temp_target.'">'.esc_url($this->pz_DecodeURL($url ) ).'</a>';
+					$html_url			=	$html_url_error.'<a href="'.$temp_href.'" title="'.$temp_href.'" rel="'.$temp_rel.'" target="'.$temp_target.'">'.esc_url($this->pz_DecodeURL($url ) ).'</a>';
 
 					// タイトル
 					$title			=	esc_attr(stripslashes($data->title ) );		// 代入しながら判定
@@ -431,7 +423,6 @@
 					$html_sns	=	sns_counter($data->sns_twitter  ).'<br>';
 					$html_sns	.=	sns_counter($data->sns_facebook ).'<br>';
 					$html_sns	.=	sns_counter($data->sns_hatena   ).'<br>';
-					$html_sns	.=	sns_counter($data->sns_pocket   ).'<br>';
 
 					// サムネイル
 					$thumbnail_url				=	null;
@@ -464,7 +455,7 @@
 						$use_post_id	=	'use_post_id'.$j;
 						$post_id		=	$data->$use_post_id;
 						if	($post_id > 0 ) {
-							$html_post_id	.=	'<a href="'.esc_url(get_permalink($post_id ) ).'" target="_blank" title="'.get_the_title($post_id ).'">'.$post_id.'</a><br>';
+							$html_post_id	.=	'<a href="'.esc_url(get_permalink($post_id ) ).'" target="_blank" title="'.esc_attr(get_the_title($post_id ) ).'">'.intval($post_id ).'</a><br>';
 						}
 					}
 
@@ -483,34 +474,36 @@
 					// HTML 明細行
 			?>
 			<tr>
-				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo $data_id; ?>" type="checkbox" name="select_id[]" value="<?php echo $data_id; ?>" /><div class="locked-indicator"></div></th>
-				<td class="pz-man-body-id"><?php echo $data_id.$html_thumbnail; ?></td>
+				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo intval($data_id ); ?>" type="checkbox" name="select_id[]" value="<?php echo intval($data_id ); ?>" /><div class="locked-indicator"></div></th>
+				<td class="pz-man-body-id"><?php echo intval($data_id ).$html_thumbnail; ?></td>
 				<td colspan="2">
 					<div class="pz-man-body-url"><?php echo $html_url; ?></div>
 					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo $html_title; ?></span></div>
-					<div id="inline_<?php echo $data_id; ?>" class="pz-man-body-menu row-actions">
+					<div id="inline_<?php echo intval($data_id ); ?>" class="pz-man-body-menu row-actions">
 						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php _e('Edit','pz-linkcard' ); ?></button> | 
 						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Renew','pz-linkcard' ); ?></button> | 
 						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Delete','pz-linkcard' ); ?></button>
 					</div>
 				</td>
 				<td><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
-				<td class="pz-man-body-charset pz-debug-only"><?php echo htmlspecialchars($data->charset ); ?></td>
+				<td class="pz-man-body-charset pz-debug-only"><?php echo esc_html($data->charset ); ?></td>
 				<td>
 					<div class="pz-man-body-domain">
 						<?php
-							$disp_domain	=	(function_exists('idn_to_utf8' ) && mb_substr($domain, 0, 4) === 'xn--') ? idn_to_utf8($domain, 0, INTL_IDNA_VARIANT_UTS46 ) : $domain ;
-							$disp_sitename	=	esc_html($data->site_name );
+							$disp_domain	=	(function_exists('idn_to_utf8' ) && defined('INTL_IDNA_VARIANT_UTS46' ) && mb_substr($domain, 0, 4) === 'xn--') ? idn_to_utf8($domain, 0, INTL_IDNA_VARIANT_UTS46 ) : $domain ;
+							$disp_sitename	=	$data->site_name;
+							$siteicon_url	=	isset($data->favicon ) && $data->favicon ? $this->pz_GetImage($data->favicon ) : null;
+							$html_siteicon	=	$siteicon_url ? '<img src="'.esc_url($siteicon_url ).'" alt="" width="14" height="14" class="pz-man-body-siteicon" />' : '';
 						?>
-						<span class="pz-man-body-domain"   title="<?php echo $disp_domain;   ?>"><?php echo $disp_domain;   ?></span><br>
-						<span class="pz-man-body-sitename" title="<?php echo $disp_sitename; ?>"><?php echo $disp_sitename; ?></span>
+						<span class="pz-man-body-domain-line" title="<?php echo esc_attr($disp_domain ); ?>"><?php echo $html_siteicon; ?><?php echo esc_html($disp_domain ); ?></span><br>
+						<span class="pz-man-body-sitename" title="<?php echo esc_attr($disp_sitename ); ?>"><?php echo esc_html($disp_sitename ); ?></span>
 					</div>
 				</td>
 				<td class="pz-man-body-sns"><?php echo $html_sns; ?></td>
-				<td class="pz-man-body-resist-time pz-debug-only"><?php $dt=$data->regist_time; ?><span title="<?php echo date(PZLKC_DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-update-time"><?php $dt=$data->update_time; ?><span title="<?php echo date(PZLKC_DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-sns-time pz-debug-only"><?php $dt=$data->sns_time; ?><span title="<?php echo date(PZLKC_DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-alive-time pz-debug-only"><?php $dt=$data->alive_time; ?><span title="<?php echo date(PZLKC_DATETIME_FORMAT, $dt ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-resist-time pz-debug-only"><?php $dt=$data->regist_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-update-time"><?php $dt=$data->update_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-sns-time pz-debug-only"><?php $dt=$data->sns_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
+				<td class="pz-man-body-alive-time pz-debug-only"><?php $dt=$data->alive_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
 				<td class="pz-man-body-post-id"><?php echo $html_post_id; ?></td>
 				<td class="pz-man-body-click-count"><?php echo $html_click; ?></td>
 				<td class="pz-man-body-result"><?php echo $html_result; ?></td>
@@ -536,8 +529,9 @@
 // HTTP結果コード
 function strHTTPCode($result, $message ) {
 	if	($message ) {
-		$message	=	' title="'.$message.'"';
+		$message	=	' title="'.esc_attr($message ).'"';
 	}
+	$result	=	intval($result );
 	if	(($result === 0 ) || ($result >= 100 && $result <= 399 ) ) {
 		return	'<span class="pz-http-ok"'.$message.'>'.$result.'</span>';
 	}

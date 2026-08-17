@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-editor">
+<div class="pz-page<?php echo $pz_page_active('pz-editor' ); ?>" id="pz-editor">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Convert Settings', 'pz-linkcard' ).$help_open.'editor'.$help_close; ?></h2>
 	<table class="form-table">
@@ -54,6 +54,16 @@
 
 	<h2><?php echo	__('Editor Settings', 'pz-linkcard' ).$help_open.'editor'.$help_close; ?></h2>
 	<table class="form-table">
+		<tr>
+			<th scope="row"><?php _e('Add Block', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-edit-block]" value="0" />
+					<input type="checkbox" name="properties[flg-edit-block]" value="1" <?php checked($prop['flg-edit-block'] ); ?> />
+					<?php _e('Add block to block editor.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
 		<tr>
 			<th scope="row"><?php _e('Add Insert Button', 'pz-linkcard' ); ?></th>
 			<td>

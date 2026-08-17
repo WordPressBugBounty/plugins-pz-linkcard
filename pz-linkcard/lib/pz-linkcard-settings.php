@@ -1,7 +1,7 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	// 「内部リンクの設定を参照」
-	define('LIST_INTERNAL',	array(''	=>	__('It is common with setting Internal-card', 'pz-linkcard' ), ) );
+	define('LIST_INTERNAL',	array(''	=>	__('Use the same setting as Internal Link', 'pz-linkcard' ), ) );
 
 	// 「枠線の幅」
 	define('LIST_PX',		array('1px' => __('1px', 'pz-linkcard' ), '2px' => __('2px', 'pz-linkcard' ), '3px' => __('3px', 'pz-linkcard' ), '4px' => __('4px', 'pz-linkcard' ), '5px' => __('5px', 'pz-linkcard' ), '6px' => __('6px', 'pz-linkcard' ), '7px' => __('7px', 'pz-linkcard' ), '8px' => __('8px', 'pz-linkcard' ), '9px' => __('9px', 'pz-linkcard' ), '10px' => __('10px', 'pz-linkcard' ), '11px' => __('11px', 'pz-linkcard' ), '12px' => __('12px', 'pz-linkcard' ), '13px' => __('13px', 'pz-linkcard' ), '14px' => __('14px', 'pz-linkcard' ), '15px' => __('15px', 'pz-linkcard' ), '16px' => __('16px', 'pz-linkcard' ), '17px' => __('17px', 'pz-linkcard' ), '18px' => __('18px', 'pz-linkcard' ), '19px' => __('19px', 'pz-linkcard' ), '20px' => __('20px', 'pz-linkcard' ), '21px' => __('21px', 'pz-linkcard' ), '22px' => __('22px', 'pz-linkcard' ), '23px' => __('23px', 'pz-linkcard' ), '24px' => __('24px', 'pz-linkcard' ), '25px' => __('25px', 'pz-linkcard' ), '26px' => __('26px', 'pz-linkcard' ), '27px' => __('27px', 'pz-linkcard' ), '28px' => __('28px', 'pz-linkcard' ), '29px' => __('29px', 'pz-linkcard' ), '30px' => __('30px', 'pz-linkcard' ), '31px' => __('31px', 'pz-linkcard' ), '32px' => __('32px', 'pz-linkcard' ), '33px' => __('33px', 'pz-linkcard' ), '34px' => __('34px', 'pz-linkcard' ), '35px' => __('35px', 'pz-linkcard' ), '36px' => __('36px', 'pz-linkcard' ), '37px' => __('37px', 'pz-linkcard' ), '38px' => __('38px', 'pz-linkcard' ), '39px' => __('39px', 'pz-linkcard' ), '40px' => __('40px', 'pz-linkcard' ), '41px' => __('41px', 'pz-linkcard' ), '42px' => __('42px', 'pz-linkcard' ), '43px' => __('43px', 'pz-linkcard' ), '44px' => __('44px', 'pz-linkcard' ), '45px' => __('45px', 'pz-linkcard' ), '46px' => __('46px', 'pz-linkcard' ), '47px' => __('47px', 'pz-linkcard' ), '48px' => __('48px', 'pz-linkcard' ), '49px' => __('49px', 'pz-linkcard' ), '50px' => __('50px', 'pz-linkcard' ), '51px' => __('51px', 'pz-linkcard' ), '52px' => __('52px', 'pz-linkcard' ), '53px' => __('53px', 'pz-linkcard' ), '54px' => __('54px', 'pz-linkcard' ), '55px' => __('55px', 'pz-linkcard' ), '56px' => __('56px', 'pz-linkcard' ), '57px' => __('57px', 'pz-linkcard' ), '58px' => __('58px', 'pz-linkcard' ), '59px' => __('59px', 'pz-linkcard' ), '60px' => __('60px', 'pz-linkcard' ), '61px' => __('61px', 'pz-linkcard' ), '62px' => __('62px', 'pz-linkcard' ), '63px' => __('63px', 'pz-linkcard' ), '64px' => __('64px', 'pz-linkcard' ), ) );
@@ -55,12 +55,15 @@
 	// 「新しいタブで開く」の書式
 	define('LIST_NEWTAB',	array(
 		''				=>		__('None',				'pz-linkcard' ),
-		'1'				=>		__('All Client',		'pz-linkcard' ),
-		'2'				=>		__('Other Than Mobile',	'pz-linkcard' ),
+		'1'				=>		__('All Devices',		'pz-linkcard' ),
+		'2'				=>		__('Non-Mobile Devices',	'pz-linkcard' ),
 	) );
 
 	// 引数・変数の設定
 	$page				=	'pz-linkcard-settings';						// 設定画面のページ
+	if	(isset($_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		check_admin_referer('pz-settings' );
+	}
 	$action				=	isset($_POST['action'] )					?	esc_attr($_POST['action'] )					:	null ;
 	$submit				=	isset($_POST['submit'] )					?	esc_attr($_POST['submit'] )					:	null ;
 	$tab_now			=	isset($_POST['tab-now'] )					?	esc_attr($_POST['tab-now'] )				:	'pz-basic' ;
@@ -69,11 +72,6 @@
 	// 変更の保存ボタンを押したとき
 	if	(!$action	&&	$submit ) {
 		$action			=	'save-changed';
-	}
-
-	// nonceチェック
-	if	($action ) {
-		check_admin_referer('pz-settings' );
 	}
 
 	// デバグモード・管理モード
@@ -89,7 +87,7 @@
 	// 入力値
 	$prop		=	null;
 	if	(isset($_POST['properties'] ) ) {
-		$prop		=	self::DEFAULTS;
+		$prop		=	array_merge(self::DEFAULTS, is_array($this->options ) ? $this->options : array() );
 		foreach	($_POST['properties']	as	$key => $value ) {
 			$prop[$key]	=	stripslashes($value );
 		}
@@ -114,6 +112,33 @@
 	$menu_multi			=	isset($prop['multi-mode'] )					?	intval($prop['multi-mode'] )				:	$menu_multi ;
 	$menu_initialize	=	isset($prop['flg-initialize'] )				?	intval($prop['flg-initialize'] )			:	$menu_initialize ;
 	$inhibit			=	isset($prop['flg-inhibit'] )				?	intval($prop['flg-inhibit'] )				:	$inhibit ;
+
+	$visible_tabs		=	array(
+		'pz-error'			=>		($menu_error			!=	0 ),
+		'pz-basic'			=>		true,
+		'pz-position'		=>		true,
+		'pz-display'		=>		true,
+		'pz-letter'			=>		true,
+		'pz-external'		=>		true,
+		'pz-internal'		=>		true,
+		'pz-samepage'		=>		true,
+		'pz-check'			=>		true,
+		'pz-editor'			=>		true,
+		'pz-multisite'		=>		($menu_multi			!=	0 ),
+		'pz-advanced'		=>		true,
+		'pz-etc'			=>		true,
+		'pz-initialize'		=>		($menu_initialize		!=	0 ),
+		'pz-admin'			=>		($admin_mode			!=	0 ),
+	);
+	if	(empty($visible_tabs[$tab_now] ) ) {
+		$tab_now		=	'pz-basic';
+	}
+	$pz_tab_active	=	function($name ) use (&$tab_now ) {
+		return		($tab_now === $name )	?	' pz-tab-active'	:	'';
+	};
+	$pz_page_active	=	function($name ) use (&$tab_now ) {
+		return		($tab_now === $name )	?	' pz-page-active'	:	'';
+	};
 
 	// 暗転（準備中）
 	if	($inhibit ) {
@@ -163,8 +188,8 @@
 	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PZLKC_PLUGIN_VERSION.$html_plugin.
 			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', 'pz-linkcard' ).'</span>'				:	'' ).
 			($survey_mode			?	'<span class="pz-plugin-env pz-plugin-env-survey">'.__('Survey Mode', 'pz-linkcard' ).'</span>'			:	'' ).
-			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', 'pz-linkcard' ).'</span>'	:	'' ).
-			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', 'pz-linkcard' ).'</span>'	:	'' ).
+			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Development Environment', 'pz-linkcard' ).'</span>'	:	'' ).
+			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Production Environment', 'pz-linkcard' ).'</span>'	:	'' ).
 			'</div>';
 
 	// ページの見出し表示（設定）
@@ -203,7 +228,8 @@
 	// 記述エラー
 	if	($this->options['error-mode'] ) {
 		if	(!$this->options['error-mode-hide'] ) {
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', 'pz-linkcard' ).'</p></div>';
+			$error_url		=	$this->options['error-url'];
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.esc_url($error_url ).'#lkc-error" target="_blank">'.esc_html($error_url ).'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can dismiss this message from <a href="./options-general.php?page=pz-linkcard-settings">the settings screen</a>.', 'pz-linkcard' ).'</p></div>';
 		}
 	}
 
@@ -215,12 +241,21 @@
 
 	// 定義漏れチェック
 	if	( ($this->options['admin-mode'] ) && ($prop ) ) {
+		$default_check_exceptions	=	array(
+			'debug-dir',
+			'debug-url',
+			'thumbnail-dir',
+			'thumbnail-url',
+		);
 		foreach	(self::DEFAULTS as $key => $value ) {
 			if	(!array_key_exists($key, $prop ) ) {
 				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in Properties.<br>It may be a glitch. Please inform the developer. (%s)', 'pz-linkcard' ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">@'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
 			}
 		}
 		foreach	($prop as $key => $value ) {
+			if	(in_array($key, $default_check_exceptions, true ) ) {
+				continue;
+			}
 			if	(!array_key_exists($key, self::DEFAULTS ) ) {
 				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%1$s" in DEFAULTS.<br>It may be a glitch. Please inform the developer. (%2$s)', 'pz-linkcard' ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank">'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
 			}
@@ -233,7 +268,7 @@
 		case	'save-changed':								// 変更を保存ボタン
 			$flg_change			=	false;
 			if	(isset($_POST['properties'] ) ) {
-				$prop	=	self::DEFAULTS;
+				$prop	=	array_merge(self::DEFAULTS, is_array($this->options ) ? $this->options : array() );
 				foreach	($_POST['properties']	as	$key => $value ) {
 					$prop[$key]	=	stripslashes($value );
 					if	(array_key_exists($key, $this->options ) ) {
@@ -242,6 +277,7 @@
 						}
 					}
 				}
+				unset($prop['url-length'], $this->options['url-length'] );
 			} else {
 				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Could not retrieve the content to be changed.', 'pz-linkcard' ).'</strong></p></div>';
 			}
@@ -254,9 +290,21 @@
 				if	(!$flg_error ) {
 					$result	=	$this->pz_SaveOptions();				// オプションの更新
 					if	($result ) {
-						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in saving the settings.', 'pz-linkcard' ).'</strong></p></div>';
+						$settings_saved_date	=	!empty($this->options['saved-date'] ) ? '（'.esc_html(date('Y/m/d H:i:s', $this->options['saved-date'] ) ).'）' : '';
+						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Successfully saved the settings.', 'pz-linkcard' ).$settings_saved_date.'</strong></p></div>';
 					} else {
-						$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
+						if	(function_exists('wp_cache_delete' ) ) {
+							wp_cache_delete(self::OPTION_NAME, 'options' );
+							wp_cache_delete('alloptions', 'options' );
+						}
+						global	$wpdb;
+						$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+						$saved_options	=	($saved_value !== null ) ? maybe_unserialize($saved_value ) : array();
+						if	($saved_options != $this->options ) {
+							$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save the settings.', 'pz-linkcard' ).'</strong></p></div>';
+						} else {
+							$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
+						}
 					}
 				}
 			}
@@ -273,7 +321,7 @@
 			if	($result ) {
 				$flg_style		=	true;				// スタイルシートの再生成
 				$prop		=	$this->options;
-				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Succeeded in initialize the settings.', 'pz-linkcard' ).'</strong></p></div>';
+				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Successfully initialized the settings.', 'pz-linkcard' ).'</strong></p></div>';
 			} else {
 				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to initialize the settings.', 'pz-linkcard' ).'</strong></p></div>';
 			}
@@ -304,15 +352,26 @@
 		$result		=	$this->pz_SetStyle();
 		switch		($result ) {
 		case	1:
-			$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Updated the appearance of the LinkCard.', 'pz-linkcard').'</strong></p></div>';
+			$saved_date		=	($action == 'save-changed' && !empty($this->options['saved-date'] ) ) ? '（'.esc_html(date('Y/m/d H:i:s', $this->options['saved-date'] ) ).'）' : '';
+			$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Updated the appearance of the LinkCard.', 'pz-linkcard').$saved_date.'</strong></p></div>';
 			break;
 		case	2:
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save CSS-File.', 'pz-linkcard').'</strong></p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save the CSS file.', 'pz-linkcard').'</strong></p></div>';
 			break;
 		case	9:
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to call CSS-Template.', 'pz-linkcard').'</strong></p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to load the CSS template.', 'pz-linkcard').'</strong></p></div>';
 		default:
 		}
+	}
+
+	global	$wpdb;
+	$option_id	=	$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+	if	(!$option_id ) {
+		$html_notice	.=	'<div class="notice notice-warning is-dismissible"><p><strong>'.esc_html(self::PLUGIN_NAME).': '.esc_html__('Settings option was not found in the database.', 'pz-linkcard' ).'</strong><br>'.
+			esc_html__('Option name', 'pz-linkcard' ).': <code>'.esc_html(self::OPTION_NAME).'</code><br>'.
+			esc_html__('Table', 'pz-linkcard' ).': <code>'.esc_html($wpdb->options).'</code>'.
+			(!empty($GLOBALS['pz_lkc_option_error'] ) ? '<br>'.esc_html__('Database error', 'pz-linkcard' ).': <code>'.esc_html($GLOBALS['pz_lkc_option_error'] ).'</code>' : '' ).
+			'</p></div>';
 	}
 
 	// ぽぽづれ。のURL
@@ -413,21 +472,21 @@ echo	$html_style;
 			echo	$html_notice;
 		?>
 		<div class="pz-tabs">
-			<a class="pz-tab pz-red"		name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php _e('Error', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-hide"		name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php _e('Basic', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php _e('Position', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php _e('Display', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php _e('Letter', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php _e('External Link', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php _e('Internal Link', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-samepage"		href="#pz-samepage"		<?php echo $show_samepage;		?>><?php _e('Same Page Link', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php _e('Link Check', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php _e('Editor', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-orange"		name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php _e('Multi Site', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php _e('Advanced', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php _e('etc.', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab"				name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php _e('Initialize', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-purple"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php _e('Admin', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-red<?php echo $pz_tab_active('pz-error' ); ?>"		name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php _e('Error', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-hide<?php echo $pz_tab_active('pz-basic' ); ?>"		name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php _e('Basic', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-position' ); ?>"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php _e('Position', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-display' ); ?>"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php _e('Display', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-letter' ); ?>"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php _e('Letter', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-external' ); ?>"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php _e('External Link', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-internal' ); ?>"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php _e('Internal Link', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-samepage' ); ?>"				name="pz-samepage"		href="#pz-samepage"		<?php echo $show_samepage;		?>><?php _e('Same Page Link', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-check' ); ?>"				name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php _e('Link Check', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-editor' ); ?>"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php _e('Editor', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-orange<?php echo $pz_tab_active('pz-multisite' ); ?>"		name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php _e('Multisite', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-advanced' ); ?>"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php _e('Advanced', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-etc' ); ?>"					name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php _e('etc.', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo $pz_tab_active('pz-initialize' ); ?>"			name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php _e('Initialize', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-purple<?php echo $pz_tab_active('pz-admin' ); ?>"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php _e('Admin', 'pz-linkcard' ); ?></a>
 		</div>
 	</header>
 	<article>
@@ -484,13 +543,6 @@ function	pz_TrimNumPx($val, $unit_percent = false ) {
 		break;
 	}
 	return		$val.$unit;
-}
-
-// HTMLカラーコード
-function	pz_CheckColorCode($val ) {
-	if	(preg_match('/^#([0-9A-F]{6}|[0-9A-F]{3})$/i', $val ) ) {
-		return true;
-	}
 }
 
 // ディレクトリ配下の使用サイズ

@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-display">
+<div class="pz-page<?php echo $pz_page_active('pz-display' ); ?>" id="pz-display">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Display Settings', 'pz-linkcard' ).$help_open.'display'.$help_close; ?></h2>
 
@@ -123,7 +123,7 @@
 						<label>
 							<input type="hidden"   name="properties[sns-tw]" value="" />
 							<input type="checkbox" name="properties[sns-tw]" value="1" <?php checked($prop['sns-tw'] ); ?> />
-							<?php echo __('X (Twitter)', 'pz-linkcard' ).__('* number is not updated', 'pz-linkcard' ); ?>
+							<?php echo __('X (Twitter)', 'pz-linkcard' ).__('* The count is not updated', 'pz-linkcard' ); ?>
 						</label>
 						<label>
 							<input type="hidden"   name="properties[sns-tw-x]" value="" />
@@ -135,7 +135,7 @@
 						<label>
 							<input type="hidden"   name="properties[sns-fb]" value="" />
 							<input type="checkbox" name="properties[sns-fb]" value="1" <?php checked($prop['sns-fb'] ); ?> />
-							<?php echo __('Facebook', 'pz-linkcard' ).__('* number is not updated', 'pz-linkcard' ); ?>
+							<?php echo __('Facebook', 'pz-linkcard' ).__('* The count is not updated', 'pz-linkcard' ); ?>
 						</label>
 					</li>
 					<li>

@@ -3,7 +3,7 @@
 	check_admin_referer('pz_export_file_action' );
 
 	// 出力除外する項目（カラム名）
-	$column_omit	=	array('url_key' );
+	$column_omit	=	array();
 	
 	// テーブルの項目を確認
 	global				$wpdb;

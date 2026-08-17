@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-error">
+<div class="pz-page<?php echo $pz_page_active('pz-error' ); ?>" id="pz-error">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Error Settings', 'pz-linkcard' ).$help_open.'error'.$help_close; ?></h2>
 	<div class="pz-error-text">
@@ -21,7 +21,7 @@
 		<tr>
 			<th scope="row"><?php _e('Occurrence Time', 'pz-linkcard' ); ?></th>
 			<td>
-				<span><?php echo is_numeric($prop['error-time'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $prop['error-time'] ) ) : $prop['error-time']; ?></span>
+				<span><?php echo is_numeric($prop['error-time'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, esc_attr($prop['error-time'] ) ) ) : esc_attr($prop['error-time'] ); ?></span>
 			</td>
 		</tr>
 		<tr>

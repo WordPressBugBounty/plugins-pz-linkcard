@@ -66,7 +66,7 @@
 		}
 	}
 
-	$skip_key	= 	array_flip(array('id', 'url_key' ) );
+	$skip_key	= 	array_flip(array('id' ) );
 
 	// データ行入力
 	while	(($record = fgetcsv($handle ) ) !== false ) {

@@ -24,10 +24,6 @@
 			<td><input name="data[url_redir]" type="url" value="<?php echo esc_attr($data['url_redir'] ); ?>" size="80" readonly="readonly" /></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('URL Key', 'pz-linkcard' ) ?></th>
-			<td><input name="data[url_key]" type="text" value="<?php echo bin2hex($data['url_key'] ); ?>" size="80" readonly="readonly" /></td>
-		</tr>
-		<tr class="pz-debug-only">
 			<th><?php _e('Scheme', 'pz-linkcard' ) ?></th>
 			<td><input name="data[scheme]" type="text" value="<?php echo esc_attr($data['scheme'] ); ?>" size="80" readonly="readonly" /></td>
 		</tr>
@@ -37,14 +33,14 @@
 		</tr>
 		<tr>
 			<th><?php _e('Domain', 'pz-linkcard' ) ?></th>
-			<?php if (function_exists('idn_to_utf8' ) && substr($data['domain'], 0, 4 ) == 'xn--' ) { ?>
-			<td><input name="data[domain]" type="text" value="<?php echo $data['domain']; ?>" size="40" readonly="readonly" />&nbsp;<input name="data[domain]" type="text" value="<?php echo idn_to_utf8($data['domain'], 0, INTL_IDNA_VARIANT_UTS46 ); ?>" size="31" readonly="readonly" /></td>
+			<?php if (function_exists('idn_to_utf8' ) && defined('INTL_IDNA_VARIANT_UTS46' ) && substr($data['domain'], 0, 4 ) == 'xn--' ) { ?>
+			<td><input name="data[domain]" type="text" value="<?php echo esc_attr($data['domain'] ); ?>" size="40" readonly="readonly" />&nbsp;<input name="data[domain]" type="text" value="<?php echo esc_attr(idn_to_utf8($data['domain'], 0, INTL_IDNA_VARIANT_UTS46 ) ); ?>" size="31" readonly="readonly" /></td>
 			<?php } else { ?>
-			<td><input name="data[domain]" type="text" value="<?php echo $data['domain']; ?>" size="80" readonly="readonly" /></td>
+			<td><input name="data[domain]" type="text" value="<?php echo esc_attr($data['domain'] ); ?>" size="80" readonly="readonly" /></td>
 			<?php } ?>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Registration Title', 'pz-linkcard' ) ?></th>
+			<th><?php _e('Registered Title', 'pz-linkcard' ) ?></th>
 			<td><input name="data[regist_title]" type="text" value="<?php echo esc_attr($data['regist_title'] ); ?>" size="80" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
 		</tr>
 		<tr>
@@ -52,111 +48,110 @@
 			<td><input name="data[title]" type="text" value="<?php echo esc_attr($data['title'] ); ?>" size="80" accesskey="2" /></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Modify Title', 'pz-linkcard' ) ?></th>
-			<td><input name="data[mod_title]" type="text" value="<?php echo ($data['title'] <> $data['regist_title'] ? true : false ); ?>" size="1" readonly="readonly" /></td>
+			<th><?php _e('Modified Title', 'pz-linkcard' ) ?></th>
+			<td><input name="data[mod_title]" type="text" value="<?php echo esc_attr($data['title'] <> $data['regist_title'] ? true : false ); ?>" size="1" readonly="readonly" /></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Registration Excerpt', 'pz-linkcard' ) ?></th>
-			<td><textarea name="data[regist_excerpt]" cols="83" rows="5" wrap="soft" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?>><?php echo esc_attr($data['regist_excerpt'] ); ?></textarea></td>
+			<th><?php _e('Registered Excerpt', 'pz-linkcard' ) ?></th>
+			<td><textarea name="data[regist_excerpt]" cols="83" rows="5" wrap="soft" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?>><?php echo esc_textarea($data['regist_excerpt'] ); ?></textarea></td>
 		</tr>
 		<tr>
 			<th><?php _e('Excerpt', 'pz-linkcard' ) ?> (<span style="text-decoration: underline;">3</span>)</th>
-			<td><textarea name="data[excerpt]" cols="83" rows="5" wrap="soft" accesskey="3"><?php echo esc_attr($data['excerpt'] ); ?></textarea></td>
+			<td><textarea name="data[excerpt]" cols="83" rows="5" wrap="soft" accesskey="3"><?php echo esc_textarea($data['excerpt'] ); ?></textarea></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Modify Excerpt', 'pz-linkcard' ) ?></th>
-			<td><input name="data[mod_excerpt]" type="text" value="<?php echo ($data['excerpt'] <> $data['regist_excerpt'] ? true : false ); ?>" size="1" readonly="readonly" /></td>
+			<th><?php _e('Modified Excerpt', 'pz-linkcard' ) ?></th>
+			<td><input name="data[mod_excerpt]" type="text" value="<?php echo esc_attr($data['excerpt'] <> $data['regist_excerpt'] ? true : false ); ?>" size="1" readonly="readonly" /></td>
 		</tr>
 		<tr>
 			<th><?php _e('Character Set', 'pz-linkcard' ) ?></th>
-			<td><?php echo $data['regist_charset'].'&nbsp;'.__('->', 'pz-linkcard' ); ?>&nbsp;<input name="data[charset]" type="text" value="edit" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
+			<td><?php echo esc_html($data['regist_charset'] ).'&nbsp;'.__('->', 'pz-linkcard' ); ?>&nbsp;<input name="data[charset]" type="text" value="edit" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
 		</tr>
 		<tr>
 			<th><?php _e('Thumbnail URL', 'pz-linkcard' ) ?></th>
-			<td><input name="data[thumbnail]" type="url" value="<?php echo $data['thumbnail']; ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
+			<td><input name="data[thumbnail]" type="url" value="<?php echo esc_attr($data['thumbnail'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
 		</tr>
 		<tr>
 			<th><?php _e('Favicon URL', 'pz-linkcard' ) ?></th>
-			<td><input name="data[favicon]" type="url" value="<?php echo $data['favicon']; ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
+			<td><input name="data[favicon]" type="url" value="<?php echo esc_attr($data['favicon'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
 		</tr>
 		<tr id="update_result">
 			<th><?php _e('Result Code', 'pz-linkcard' ) ?></th>
 			<td>
-				<input name="data[update_result]" type="text" value="<?php echo $data['update_result']; ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				&ensp;<?php $rs = $data['update_result']; echo $rs.' '.$this->pz_HTTPMessage($rs ); ?>
+				<input name="data[update_result]" type="text" value="<?php echo esc_attr($data['update_result'] ); ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				&ensp;<?php $rs = intval($data['update_result'] ); echo esc_html($rs.' '.$this->pz_HTTPMessage($rs ) ); ?>
 			</td>
 		</tr>
 		<tr>
-			<th><?php _e('No Failure', 'pz-linkcard' ) ?> (<span style="text-decoration: underline;">4</span>)</th>
+			<th><?php _e('Ignore Failure', 'pz-linkcard' ) ?> (<span style="text-decoration: underline;">4</span>)</th>
 			<td>
-				<label><input name="data[no_failure]" type="checkbox" value="1" <?php checked(!empty($data['no_failure'] ? true : false ) ); ?> accesskey="4" /><?php _e('The result code is inaccessible but can actually be accessed.', 'pz-linkcard' ); ?></label>
+				<label><input name="data[no_failure]" type="checkbox" value="1" <?php checked(!empty($data['no_failure'] ? true : false ) ); ?> accesskey="4" /><?php _e('The result code indicates that the URL is inaccessible, but it can actually be accessed.', 'pz-linkcard' ); ?></label>
 			</td>
 		</tr>
 		<tr>
 			<th><?php _e('Post ID', 'pz-linkcard' ) ?></th>
 			<td>
-				<input name="data[use_post_id1]" type="text" value="<?php echo $data['use_post_id1']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<input name="data[use_post_id2]" type="text" value="<?php echo $data['use_post_id2']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<input name="data[use_post_id3]" type="text" value="<?php echo $data['use_post_id3']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<input name="data[use_post_id4]" type="text" value="<?php echo $data['use_post_id4']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<input name="data[use_post_id5]" type="text" value="<?php echo $data['use_post_id5']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<input name="data[use_post_id6]" type="text" value="<?php echo $data['use_post_id6']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id1]" type="text" value="<?php echo esc_attr($data['use_post_id1'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id2]" type="text" value="<?php echo esc_attr($data['use_post_id2'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id3]" type="text" value="<?php echo esc_attr($data['use_post_id3'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id4]" type="text" value="<?php echo esc_attr($data['use_post_id4'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id5]" type="text" value="<?php echo esc_attr($data['use_post_id5'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[use_post_id6]" type="text" value="<?php echo esc_attr($data['use_post_id6'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
 			</td>
 		</tr>
 		<tr>
 			<th><?php _e('SNS', 'pz-linkcard' ) ?></th>
 			<td>
-				<?php _e('Tw', 'pz-linkcard' ) ?>:<input name="data[sns_twitter]"  type="text" value="<?php echo $data['sns_twitter'];	 ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<?php _e('fb', 'pz-linkcard' ) ?>:<input name="data[sns_facebook]" type="text" value="<?php echo $data['sns_facebook']; ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<?php _e('B!', 'pz-linkcard' ) ?>:<input name="data[sns_hatena]"   type="text" value="<?php echo $data['sns_hatena'];	 ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				<?php _e('Po', 'pz-linkcard' ) ?>:<input name="data[sns_pocket]"   type="text" value="<?php echo $data['sns_pocket'];	 ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<?php _e('Tw', 'pz-linkcard' ) ?>:<input name="data[sns_twitter]"  type="text" value="<?php echo esc_attr($data['sns_twitter'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<?php _e('fb', 'pz-linkcard' ) ?>:<input name="data[sns_facebook]" type="text" value="<?php echo esc_attr($data['sns_facebook'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<?php _e('B!', 'pz-linkcard' ) ?>:<input name="data[sns_hatena]"   type="text" value="<?php echo esc_attr($data['sns_hatena'] ); ?>" size="5" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
 			</td>
 		</tr>
 		<tr class="pz-debug-only">
 			<th><?php _e('Last SNS Check', 'pz-linkcard' ) ?></th>
-			<td><input name="data[sns_time]" type="text" value="<?php echo $data['sns_time']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['sns_time'] ); ?></td>
+			<td><input name="data[sns_time]" type="text" value="<?php echo esc_attr($data['sns_time'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['sns_time'] ); ?></td>
 		</tr>
 		<tr class="pz-debug-only">
 			<th><?php _e('Next SNS Check', 'pz-linkcard' ) ?></th>
-			<td><input name="data[sns_nexttime]" type="text" value="<?php echo $data['sns_nexttime']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['sns_nexttime'] ); ?></td>
+			<td><input name="data[sns_nexttime]" type="text" value="<?php echo esc_attr($data['sns_nexttime'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['sns_nexttime'] ); ?></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Registration Character Set', 'pz-linkcard' ) ?></th>
-			<td><input name="data[regist_charset]" type="text" value="<?php echo $data['regist_charset']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
+			<th><?php _e('Registered Character Set', 'pz-linkcard' ) ?></th>
+			<td><input name="data[regist_charset]" type="text" value="<?php echo esc_attr($data['regist_charset'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Registration Date', 'pz-linkcard' ) ?></th>
-			<td><input name="data[regist_time]" type="text" value="<?php echo $data['regist_time']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
+			<th><?php _e('Registered Date', 'pz-linkcard' ) ?></th>
+			<td><input name="data[regist_time]" type="text" value="<?php echo esc_attr($data['regist_time'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /></td>
 		</tr>
 		<tr>
-			<th><?php _e('Registration Date', 'pz-linkcard' ) ?></th>
+			<th><?php _e('Registered Date', 'pz-linkcard' ) ?></th>
 			<td><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['regist_time'] ); ?></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Registration Result Code', 'pz-linkcard' ) ?></th>
+			<th><?php _e('Registered Result Code', 'pz-linkcard' ) ?></th>
 			<td>
-				<input name="data[regist_result]" type="text" value="<?php echo $data['regist_result']; ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				&ensp;<?php $rs = $data['regist_result']; echo $rs.' '.$this->pz_HTTPMessage($rs ); ?>
+				<input name="data[regist_result]" type="text" value="<?php echo esc_attr($data['regist_result'] ); ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				&ensp;<?php $rs = intval($data['regist_result'] ); echo esc_html($rs.' '.$this->pz_HTTPMessage($rs ) ); ?>
 			</td>
 		</tr>
 		<tr class="pz-debug-only">
 			<th><?php _e('Last Alive Check', 'pz-linkcard' ) ?></th>
-			<td><input name="data[alive_time]" type="text" value="<?php echo $data['alive_time']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['alive_time'] ); ?></td>
+			<td><input name="data[alive_time]" type="text" value="<?php echo esc_attr($data['alive_time'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['alive_time'] ); ?></td>
 		</tr>
 		<tr class="pz-debug-only">
 			<th><?php _e('Next Alive Check', 'pz-linkcard' ) ?></th>
-			<td><input name="data[alive_nexttime]" type="text" value="<?php echo $data['alive_nexttime']; ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['alive_nexttime'] ); ?></td>
+			<td><input name="data[alive_nexttime]" type="text" value="<?php echo esc_attr($data['alive_nexttime'] ); ?>" size="8" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> /><?php echo ' '.$this->pz_Date(PZLKC_DATETIME_FORMAT, $data['alive_nexttime'] ); ?></td>
 		</tr>
 		<tr class="pz-debug-only">
-			<th><?php _e('Result Code of Alive Check', 'pz-linkcard' ) ?></th>
+			<th><?php _e('Alive Check Result Code', 'pz-linkcard' ) ?></th>
 			<td>
-				<input name="data[alive_result]" type="text" value="<?php echo $data['alive_result']; ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
-				&ensp;<?php $rs = $data['alive_result']; echo $rs.' '.$this->pz_HTTPMessage($rs ); ?>
+				<input name="data[alive_result]" type="text" value="<?php echo esc_attr($data['alive_result'] ); ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				&ensp;<?php $rs = intval($data['alive_result'] ); echo esc_html($rs.' '.$this->pz_HTTPMessage($rs ) ); ?>
 			</td>
 		</tr>
 		<tr class="pz-debug-only">
 			<th><?php _e('Update Date', 'pz-linkcard' ) ?></th>
-			<td><input name="data[update_time]" type="text" value="<?php echo $data['update_time']; ?>" size="8" readonly="readonly" /></td>
+			<td><input name="data[update_time]" type="text" value="<?php echo esc_attr($data['update_time'] ); ?>" size="8" readonly="readonly" /></td>
 		</tr>
 		<tr>
 			<th><?php _e('Update Date', 'pz-linkcard' ) ?></th>

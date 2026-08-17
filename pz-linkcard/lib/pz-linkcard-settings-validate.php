@@ -34,7 +34,7 @@
 	}
 
 	// 数値
-	$check_item					=	array('title-length', 'url-length', 'excerpt-length', 'info-length' );
+	$check_item					=	array('title-length', 'excerpt-length', 'info-length' );
 	foreach($check_item			as	$key ) {
 		$temp_value				=	isset($this->options[$key] )	?	$this->options[$key]	:	'' ;
 		$this->options[$key]	=	preg_replace('/[^0-9]/', '', $temp_value );

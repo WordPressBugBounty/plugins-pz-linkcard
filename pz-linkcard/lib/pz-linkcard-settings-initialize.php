@@ -1,5 +1,5 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-initialize">
+<div class="pz-page<?php echo $pz_page_active('pz-initialize' ); ?>" id="pz-initialize">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Initialize', 'pz-linkcard' ).$help_open.'initialize'.$help_close; ?></h2>
 	<table class="form-table">

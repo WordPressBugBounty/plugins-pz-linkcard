@@ -1,14 +1,14 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<div class="pz-page" id="pz-position">
+<div class="pz-page<?php echo $pz_page_active('pz-position' ); ?>" id="pz-position">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 	<h2><?php echo	__('Position Settings', 'pz-linkcard' ).$help_open.'position'.$help_close; ?></h2>
 
 	<table class="form-table">
 		<tr>
-			<th scope="row"><?php _e('Link the Whole', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php _e('Link the Entire Card', 'pz-linkcard' ); ?></th>
 			<td>
 				<?php
-					pz_Checkbox($prop, 'link-all', __('Enclose the entire card at anchor.', 'pz-linkcard' ) );
+					pz_Checkbox($prop, 'link-all', __('Wrap the entire card in a link.', 'pz-linkcard' ) );
 				?>
 			</td>
 		</tr>
@@ -17,7 +17,7 @@
 				<label>
 					<input type="hidden"   name="properties[thumbnail-resize]" value="" />
 					<input type="checkbox" name="properties[thumbnail-resize]" value="1" <?php checked($prop['thumbnail-resize'] ); ?> />
-					<?php _e('Adjust thumbnail and letter size according to width.', 'pz-linkcard' ); ?>
+					<?php _e('Adjust the thumbnail and text size according to the width.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -61,12 +61,12 @@
 											pz_Select($prop, 'info-position',
 												array(
 													''		=>		__('None',				'pz-linkcard' ),
-													'1'		=>		__('Upper Side',		'pz-linkcard' ),
+													'1'		=>		__('Top Side',			'pz-linkcard' ),
 													'3'		=>		__('Above the Title',	'pz-linkcard' ),
-													'2'		=>		__('Under Side',		'pz-linkcard' ),
+													'2'		=>		__('Bottom Side',		'pz-linkcard' ),
 											) );
 											echo	'&emsp;';
-											pz_Checkbox($prop, 'use-sitename', __('Use SiteName', 'pz-linkcard' ) );
+											pz_Checkbox($prop, 'use-sitename', __('Use Site Name', 'pz-linkcard' ) );
 										?>
 									</td>
 								</tr>
@@ -98,7 +98,7 @@
 													'0'	=>		__('None',			'pz-linkcard' ),
 													'1'	=>		__('Right Side',	'pz-linkcard' ),
 													'2'	=>		__('Left Side',		'pz-linkcard' ),
-													'3'	=>		__('Upper Side',	'pz-linkcard' ),
+													'3'	=>		__('Top Side',		'pz-linkcard' ),
 											) );
 										?>
 									</td>

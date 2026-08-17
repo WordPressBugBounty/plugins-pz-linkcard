@@ -2,9 +2,9 @@
 Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 6.0
-Tested up to: 7.0
-Requires PHP: 8.1.29
-Stable tag: trunk
+Tested up to: 7.0.2
+Requires PHP: 8.0
+Stable tag: 2.5.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.amazon.co.jp/gp/registry/wishlist/2KIBQLC1VLA9X
@@ -150,6 +150,22 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 == Changelog ==
 
+= 2.6.0 =
+* [Tested] WordPress 7.0.2 での動作確認を行いました。
+* [Tested] WordPress 7.0.4 での動作確認を行いました。
+* [Fixed] 「XSS（クロスサイトスクリプティング）」に対する脆弱性があったため、対策を行いました。
+* [Fixed] 環境によって設定が保存出来ない不具合を修正しました。
+* [Fixed] 保存する記事内容の項目が長すぎたときに保存に失敗してしまうのを修正しました。
+* [Fixed] キャッシュされていてもキャッシュから読まないURLがあったのを修正しました。
+* [Added] ブロックエディタ用のPz-LinkCardブロックを追加しました。URLを入力するとショートコードになります。（プレビューはされません）
+* [Added] 設定画面の「外部リンク」タブのサイトアイコンの取得方法で「直接取得」が選べるように修正しました。
+* [Added] 管理画面のドメイン欄にサイトアイコン（直接取得した物のみ）の表示を追加しました。
+* [Modified] セキュリティ対策のため、外部サイトへのアクセスに使用するのをcURLからwp_safe_remote_getに変更しました。
+* [Modified] セキュリティ対策のため、リダイレクトURLの判定方法を修正しました。
+* [Modified] かんたん書式設定の「押しピン」の画像を変更しました。
+* [Modified] かんたん書式設定を調整しました。
+* [Removed] 設定画面の「リンク元の検査」タブから「リファラーの通知」を削除しました。
+
 = 2.5.9.3 =
 * [Fixed] 「XSS（クロスサイトスクリプティング）」に対する脆弱性があったため、対策を行いました。
 * [Added] 設定画面の「初期化」タブにプラグイン削除時に設定・キャッシュ画像・記事内容を削除する設定を追加しました。
@@ -189,7 +205,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 * [Tested] WordPress 6.8.2 での動作確認を行いました。
 * [Tested] PHP 8.1.29 での動作確認を行いました。PHPの最低要件を同バージョンとしました。
 * [Tested] PHP 8.4.10 での動作確認を行いました。
-* [Removed] Pocketのサービス終了に伴い、Pocketのカウント取得・表示の機能を削除しました。
+* [Removed] Pocketのサービス終了（2025/07/08）に伴い、Pocketのカウント取得・表示の機能を削除しました。
 * [Added] 設定画面の「リンク先の検査」タブに「クリック件数」を追加しました。クリックされた件数を取り、カード管理画面に表示します。
 * [Added] カード管理画面に「クリック件数」を追加しました。
 * [Added] ローカルプライベートアドレス、ループバックアドレスを指定禁止にしました。

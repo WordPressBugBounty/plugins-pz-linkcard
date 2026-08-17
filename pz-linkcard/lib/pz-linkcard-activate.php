@@ -85,7 +85,7 @@
 	}
 
 	// 個別に設定しなおす
-	if		($this->options['plugin-version']	<	'2.5.6' ) {
+	if		(version_compare($this->options['plugin-version'],	'2.5.6', '<' ) ) {
 		// 角の丸め
 		switch	($this->options['radius'] ) {
 		case	'2':
@@ -105,25 +105,27 @@
 			break;
 		}
 		// 続きを読むボタン
-		switch	(isset($this->options['flg-more'] ) ) {
-		case	'0':
-			$this->options['more-style']		=	'';
-			break;
-		case	'1':
-			$this->options['more-style']		=	'SMP';
-			break;
-		case	'3':
-			$this->options['more-style']		=	'BTN';
-			break;
-		case	'4':
-			$this->options['more-style']		=	'PSH';
-			break;
-		case	'5':
-			$this->options['more-style']		=	'PSH';
-			break;
+		if	(isset($this->options['flg-more'] ) ) {
+			switch	($this->options['flg-more'] ) {
+			case	'0':
+				$this->options['more-style']		=	'';
+				break;
+			case	'1':
+				$this->options['more-style']		=	'SMP';
+				break;
+			case	'3':
+				$this->options['more-style']		=	'BTN';
+				break;
+			case	'4':
+				$this->options['more-style']		=	'PSH';
+				break;
+			case	'5':
+				$this->options['more-style']		=	'PSH';
+				break;
+			}
+			unset($this->options['flg-more'] );
 		}
-		unset($this->options['flg-more'] );
-		
+			
 		if	(intval($this->options['width'] ) == 0 ) {
 			$this->options['width']				=	'500px';
 		}

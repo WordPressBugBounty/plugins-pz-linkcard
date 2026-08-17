@@ -27,7 +27,9 @@
 				$file_text	=	str_replace('/*EX-BORDER*/',			'border: 1px solid rgba(0,0,0,0.1);', $file_text );
 				$file_text	=	str_replace('/*IN-BORDER*/',			'border: 1px solid rgba(0,0,0,0.1);', $file_text );
 				$file_text	=	str_replace('/*TH-BORDER*/',			'border: 1px solid rgba(0,0,0,0.1);', $file_text );
-				$file_text	=	str_replace('/*RADIUS*/',				'border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;', $file_text );
+				$file_text	=	str_replace('/*EX-RADIUS*/',			'border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;', $file_text );
+				$file_text	=	str_replace('/*IN-RADIUS*/',			'border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;', $file_text );
+				$file_text	=	str_replace('/*TH-RADIUS*/',			'border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;', $file_text );
 				$file_text	=	str_replace('/*SHADOW*/',				'box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);', $file_text );
 				break;
 			case 'smp': // Simple（サムネイルとタイトル）
@@ -44,7 +46,9 @@
 				$file_text	=	str_replace('/*CONTENT-HEIGHT*/',		'height: 108px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-MARGIN*/',			'margin: 0;', $file_text );
 				$file_text	=	str_replace('/*PADDING*/',				'padding: 0;', $file_text );
-				$file_text	=	str_replace('/*RADIUS*/',				'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text	=	str_replace('/*EX-RADIUS*/',			'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text	=	str_replace('/*IN-RADIUS*/',			'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text	=	str_replace('/*TH-RADIUS*/',			'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
 				$file_text	=	str_replace('/*CARD-TOP*/',				'margin: 0;', $file_text );
 				$file_text	=	str_replace('/*CARD-BOTTOM*/',			'', $file_text );
 				$file_text	=	str_replace('/*CARD-LEFT*/',			'', $file_text );
@@ -63,6 +67,7 @@
 				$file_text	=	str_replace('/*THUMBNAIL-MARGIN*/',		'margin: 0 8px 0 0;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-RADIUS*/',		'border-radius: 16px 0 0 16px;', $file_text );
 				$file_text	=	str_replace('/*POSITION-INFO*/',		'position: absolute; top: 8px; left: 108px;', $file_text );
+				$file_text	=	str_replace('/*NONE-INFO*/',			'display: none !important;', $file_text );
 				break;
 			case 'JIN': // 見出し（テーマJIN風）
 				$file_text	=	str_replace('/*MARGIN-TOP*/',			'margin: 24px auto 30px auto;', $file_text );
@@ -74,7 +79,9 @@
 				$file_text	=	str_replace('/*CARD-LEFT*/',			'', $file_text );
 				$file_text	=	str_replace('/*CARD-RIGHT*/',			'', $file_text );
 				$file_text	=	str_replace('/*WIDTH*/',				'max-width: 96%;', $file_text );
-				$file_text	=	str_replace('/*RADIUS*/',				'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text	=	str_replace('/*EX-RADIUS*/',			'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text	=	str_replace('/*IN-RADIUS*/',			'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text	=	str_replace('/*TH-RADIUS*/',			'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-MARGIN*/',			'margin: 0 auto;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL- WIDTH*/',		'max-width: 150px;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL- HEIGHT*/',	'height: 108px; overflow: hidden;', $file_text );
@@ -85,8 +92,6 @@
 				$file_text	=	str_replace('/*ADDED-SIZE*/',			'font-size: 12px;', $file_text );
 				$file_text	=	str_replace('/*ADDED-HEIGHT*/',			'line-height: 30px;', $file_text );
 				$added_height	=	intval(preg_replace('/[^0-9]/', '', isset($prop['added-height'] ) ? $prop['added-height']  : self::DEFAULTS['added-height']  ) );
-				$heading_height	=	intval( $added_height / 2 );
-				$heading_padding =	intval( $added_height / 4 );
 				$file_text		=	str_replace('/*EX-HEADING*/',		'padding: 0 16px !important; position: absolute; top: -15px; left: 20px; padding: 0 10px; '.txt_color('background-color: ', $prop['ex-border-color'] ).' border-radius: 2px;', $file_text );
 				$file_text		=	str_replace('/*IN-HEADING*/',		'padding: 0 16px !important; position: absolute; top: -15px; left: 20px; padding: 0 10px; '.txt_color('background-color: ', $prop['in-border-color'] ).' border-radius: 2px;', $file_text );
 				$file_text		=	str_replace('/*TH-HEADING*/',		'padding: 0 16px !important; position: absolute; top: -15px; left: 20px; padding: 0 10px; '.txt_color('background-color: ', $prop['th-border-color'] ).' border-radius: 2px;', $file_text );
@@ -135,7 +140,7 @@
 				$file_text	=	str_replace('/*THUMBNAIL-MARGIN*/',	'margin: 0 8px;',	$file_text );
 				$file_text	=	str_replace('/*CONTENT-MARGIN*/',	'margin: 8px 0;',	$file_text );
 				$css	=	'.lkc-external-wrap a , .lkc-internal-wrap a , .lkc-this-wrap a { cursor: default; }';
-				$css	=	'.lkc-unlink *	{ color: #888; }';
+				$css	.=	'.lkc-unlink *	{ color: #888; }';
 				$css	.=	'.lkc-card		{ margin: 16px; padding: 0; border: 3px #1f61e3 solid; border-radius: 5px; background: #eeecdf; }';
 				$css	.=	'.lkc-info		{ margin: 0; padding: 4px; background: linear-gradient(to bottom, #2790ff, #1f61e3); background: -webkit-linear-gradient(top, #2790ff, #1f61e3); font-weight: bold; font-size: 11px; line-height: 16px; }';
 				$css	.=	'.lkc-info *	{ color: #fff; }';
@@ -150,7 +155,7 @@
 				$file_text	=	str_replace('/*TH-BORDER*/',		'border: none;', $file_text );
 				$file_text	=	str_replace('/*CONTENT-MARGIN*/',	'margin: 4px 0;', $file_text );
 				$css	=	'.lkc-external-wrap a , .lkc-internal-wrap a , .lkc-this-wrap a { cursor: default; }';
-				$css	=	'.lkc-unlink *	{ color: #888; }';
+				$css	.=	'.lkc-unlink *	{ color: #888; }';
 				$css	.=	'.lkc-card		{ margin: 16px; padding: 4px; border: 3px #c0c7c8 solid; background: #e0e0e0; border: 1px #87888f solid; }';
 				$css	.=	'.lkc-info		{ margin: 0; padding: 4px; border: 1px #87888f solid; background: #0000a8; font-weight: bold; font-size: 11px; line-height: 16px; }';
 				$css	.=	'.lkc-info *	{ color: #fff; font-weight: normal; }';
@@ -164,20 +169,20 @@
 				$file_text	=	str_replace('/*SHADOW*/',			'box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);', $file_text );
 				break;
 			case 'ct2': // セロファンテープ（左右）
-				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'margin-left: 40px;', $file_text );
-				$file_text	=	str_replace('/*MARGIN-RIGHT*/',		'margin-right: 25px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'padding-left: 40px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-RIGHT*/',		'padding-right: 25px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-BEFORE*/',		'content: ""; display: block; position: absolute; left:  -40px; top: -4px; width: 75px; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(-45deg); -moz-transform: rotate(-45deg); -o-transform: rotate(-45deg);', $file_text );
 				$file_text	=	str_replace('/*WRAP-AFTER*/',		'content: ""; display: block; position: absolute; right: -20px; top: -2px; width: 75px; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(16deg); -moz-transform: rotate(16deg); -o-transform: rotate(16deg); transform: rotate(16deg);', $file_text );
 				$file_text	=	str_replace('/*SHADOW*/',			'box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);', $file_text );
 				break;
 			case 'ct3': // セロファンテープ（長め）
-				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'margin-left: 32px;', $file_text );
-				$file_text	=	str_replace('/*MARGIN-RIGHT*/',		'margin-right: 32px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'padding-left: 32px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-RIGHT*/',		'padding-right: 32px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-BEFORE*/', 		'content: ""; display: block; position: absolute; left:   -5%; top: -12px; width: 110%; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(-3deg); -moz-transform: rotate(-3deg); -o-transform: rotate(-3deg);', $file_text );
 				$file_text	=	str_replace('/*SHADOW*/',			'box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);', $file_text );
 				break;
 			case 'ct4': // セロファンテープ（斜め）
-				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'margin-left: 24px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'padding-left: 24px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-BEFORE*/',		'content: ""; display: block; position: absolute; left:  -24px; top: 0px; width: 200px; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(-8deg); -moz-transform: rotate(-8deg); -o-transform: rotate(-8deg);', $file_text );
 				$file_text	=	str_replace('/*SHADOW*/',			'box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);', $file_text );
 				break;
@@ -187,7 +192,7 @@
 				$file_text	=	str_replace('/*OPTION*/',			'article { position: relative; z-index: 0; } article blockquote { position: relative; z-index: 0; }', $file_text );
 				break;
 			case 'tac': // テープと紙めくれ
-				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'margin-left: 24px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-LEFT*/',		'padding-left: 24px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-BEFORE*/',		'content: ""; display: block; position: absolute; left:  -24px; top: 0px; width: 200px; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(-8deg); -moz-transform: rotate(-8deg); -o-transform: rotate(-8deg);', $file_text );
 				$file_text	=	str_replace('/*WRAP-AFTER*/',		'z-index: -1; content:""; height: 10px; width: 60%; position: absolute; right: 16px; bottom: 14px; left: auto; transform: skew(5deg) rotate(3deg); -webkit-transform: skew(5deg) rotate(3deg); -moz-transform: skew(5deg) rotate(3deg); box-shadow: 0 16px 16px rgba(0,0,0,1); -webkit-box-shadow: 0 16px 16px rgba(0,0,0,1); -moz-box-shadow: 0 16px 12px rgba(0,0,0,1);', $file_text );
 				$file_text	=	str_replace('/*SHADOW*/',			'box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.8);', $file_text );
@@ -197,17 +202,17 @@
 				$file_text	=	str_replace('/*EX-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
 				$file_text	=	str_replace('/*IN-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
 				$file_text	=	str_replace('/*TH-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background: #bcddff; box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background: #f8d0d0; box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background: #f29db0; box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background: #bcddff; box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #aabbee, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background: #f8d0d0; box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #e8a8a8, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background: #f29db0; box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #de8899, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
 				break;
 			case 'sGY': // 縫い目（緑＆黄）
 				$file_text	=	str_replace('/*EX-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
 				$file_text	=	str_replace('/*IN-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
 				$file_text	=	str_replace('/*TH-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background: #acefdd; box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background: #ffde51; box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background: #f0e0b0; box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background: #acefdd; box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background: #ffde51; box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background: #f0e0b0; box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #decca0, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
 				break;
 			case 'pin': // 押しピン（綺麗な画像募集中）
 				$file_text	=	str_replace('/*WRAP-AFTER*/',		'content: ""; display: block; position: absolute; background-image: url("'.$this->plugin_dir_url.'img/pin.png"); background-repeat: no-repeat; background-position: center; left: 47%; top: -16px; width: 40px; height: 40px; z-index: 1; pointer-events: none;', $file_text );
@@ -223,9 +228,9 @@
 				$file_text	=	str_replace('/*MORE-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*INFO-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*ADDED-COLOR*/',		'color: '.$color.';', $file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background-color: rgba(  35 , 100 ,  93 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background-color: rgba(   8 ,  25 ,  23 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background-color: rgba(  89 , 251 , 234 , 0.05 );', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background-color: rgba(  35 , 100 ,  93 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background-color: rgba(   8 ,  25 ,  23 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background-color: rgba(  89 , 251 , 234 , 0.05 );', $file_text );
 				break;
 			case 'inI': // 情報オレンジ（イングレス風）
 				$color		=	'#ebbc4a';
@@ -238,9 +243,9 @@
 				$file_text	=	str_replace('/*MORE-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*INFO-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*ADDED-COLOR*/',		'color: '.$color.';', $file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background-color: rgba(  94 ,  75, 29 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background-color: rgba(  23 ,  18,  7 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background-color: rgba( 235 , 188, 74 , 0.05 );', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background-color: rgba(  94 ,  75, 29 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background-color: rgba(  23 ,  18,  7 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background-color: rgba( 235 , 188, 74 , 0.05 );', $file_text );
 				break;
 			case 'inE': // エンライテッドカラー（イングレス風）
 				$color		=	'#28f428';
@@ -253,9 +258,9 @@
 				$file_text	=	str_replace('/*MORE-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*INFO-COLOR*/',		'color: '.$color.';', $file_text );
 				$file_text	=	str_replace('/*ADDED-COLOR*/',		'color: '.$color.';', $file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background-color: rgba(  16 ,  97 ,  16 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background-color: rgba(   4 ,  24 ,   4 , 0.90 );', $file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background-color: rgba(  40 , 244 ,  40 , 0.05 );', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background-color: rgba(  16 ,  97 ,  16 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background-color: rgba(   4 ,  24 ,   4 , 0.90 );', $file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background-color: rgba(  40 , 244 ,  40 , 0.05 );', $file_text );
 				break;
 			case 'inR': // レジスタンスカラー（イングレス風）
 				$color		=	'#00c2ff';
@@ -268,14 +273,14 @@
 				$file_text	=	str_replace('/*MORE-COLOR*/',		'color: '.$color.';',	$file_text );
 				$file_text	=	str_replace('/*INFO-COLOR*/',		'color: '.$color.';',	$file_text );
 				$file_text	=	str_replace('/*ADDED-COLOR*/',		'color: '.$color.';',	$file_text );
-				$file_text	=	str_replace('/*EX-BGCOLOR*/',		'background-color: rgba(   0 ,  77 , 102 , 0.90 );',	$file_text );
-				$file_text	=	str_replace('/*IN-BGCOLOR*/',		'background-color: rgba(   0 ,  19 ,  25 , 0.90 );',	$file_text );
-				$file_text	=	str_replace('/*TH-BGCOLOR*/',		'background-color: rgba(   0 , 194 , 255 , 0.05 );',	$file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background-color: rgba(   0 ,  77 , 102 , 0.90 );',	$file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background-color: rgba(   0 ,  19 ,  25 , 0.90 );',	$file_text );
+				$file_text	=	str_replace('/*TH-BG-COLOR*/',		'background-color: rgba(   0 , 194 , 255 , 0.05 );',	$file_text );
 				break;
 			case 'slt': // ネタ？：斜め
 				$file_text	=	str_replace('/*WRAP*/',					'transform:skew(-10deg) rotate(1deg); -webkit-transform: skew(-10deg) rotate(1deg); -moz-transform:skew(-10deg) rotate(1deg);', $file_text );
-				$file_text	=	str_replace('/*MARGIN-LEFT*/',			'margin-left: 12px;', $file_text );
-				$file_text	=	str_replace('/*MARGIN-RIGHT*/',			'margin-right: 30px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-LEFT*/',			'padding-left: 12px;', $file_text );
+				$file_text	=	str_replace('/*MARGIN-RIGHT*/',			'padding-right: 30px;', $file_text );
 				break;
 			case '3Dr': // ネタ？：立体
 				$file_text	=	str_replace('/*WRAP*/',					'-webkit-transform:perspective(150px) scale3d(0.84,0.9,1) rotate3d(1,0,0,12deg);',			$file_text );
@@ -394,10 +399,10 @@
 				$file_text		=	str_replace('/*MARGIN-BOTTOM*/',	'margin-bottom: '.	$prop['margin-bottom'].' !important;',		$file_text );
 			}
 			if	($prop['margin-left']		!==		'' ) {
-				$file_text		=	str_replace('/*MARGIN-LEFT*/',		'margin-left: '.	$prop['margin-left'].	' !important;',		$file_text );
+				$file_text		=	str_replace('/*MARGIN-LEFT*/',		'padding-left: '.	$prop['margin-left'].	' !important;',		$file_text );
 			}
 			if	($prop['margin-right']		!==		'' ) {
-				$file_text		=	str_replace('/*MARGIN-RIGHT*/',		'margin-right: '.	$prop['margin-right'].	' !important;',		$file_text );
+				$file_text		=	str_replace('/*MARGIN-RIGHT*/',		'padding-right: '.	$prop['margin-right'].	' !important;',		$file_text );
 			}
 
 			// カードの余白等調整
@@ -432,22 +437,34 @@
 			// 角まる指定あり
 			switch ($this->options['radius']) {
 			case null:
-				$file_text = str_replace('/*RADIUS*/',					'', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'', $file_text );
 				break;
 			case '2':
-				$file_text = str_replace('/*RADIUS*/',					'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px;', $file_text );
 				break;
 			case '1':
-				$file_text = str_replace('/*RADIUS*/',					'border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px;', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px;', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px;', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px;', $file_text );
 				break;
 			case '3':
-				$file_text = str_replace('/*RADIUS*/',					'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'border-radius: 16px; -webkit-border-radius: 16px; -moz-border-radius: 16px;', $file_text );
 				break;
 			case '4':
-				$file_text = str_replace('/*RADIUS*/',					'border-radius: 32px; -webkit-border-radius: 32px; -moz-border-radius: 32px;', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'border-radius: 32px; -webkit-border-radius: 32px; -moz-border-radius: 32px;', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'border-radius: 32px; -webkit-border-radius: 32px; -moz-border-radius: 32px;', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'border-radius: 32px; -webkit-border-radius: 32px; -moz-border-radius: 32px;', $file_text );
 				break;
 			case '5':
-				$file_text = str_replace('/*RADIUS*/',					'border-radius: 64px; -webkit-border-radius: 64px; -moz-border-radius: 64px;', $file_text );
+				$file_text = str_replace('/*EX-RADIUS*/',				'border-radius: 64px; -webkit-border-radius: 64px; -moz-border-radius: 64px;', $file_text );
+				$file_text = str_replace('/*IN-RADIUS*/',				'border-radius: 64px; -webkit-border-radius: 64px; -moz-border-radius: 64px;', $file_text );
+				$file_text = str_replace('/*TH-RADIUS*/',				'border-radius: 64px; -webkit-border-radius: 64px; -moz-border-radius: 64px;', $file_text );
 				break;
 			}
 
@@ -513,7 +530,7 @@
 			case '1':			// 右側にサムネイル
 				$file_text	=	str_replace('/*THUMBNAIL-POSITION*/',		'float: right;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-MARGIN*/',			'margin: 0 0 0 8px;', $file_text );
-				$file_text	=	str_replace('/*THUMBNAIL-WIDTH*/',			'width: '.($thumbnail_width + $shadow_adjust ).'px;', $file_text );
+				$file_text	=	str_replace('/*THUMBNAIL-WIDTH*/',			'width: '.($thumbnail_width + $thumbnail_adjust ).'px;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-IMG-WIDTH*/',		'width: '.$thumbnail_width.'px !important;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-IMG-HEIGHT*/',		'height: '.$thumbnail_height.'px !important;', $file_text );
 				break;
@@ -573,7 +590,7 @@
 			if (isset($prop['content-inset'] ) && $prop['content-inset'] == '1' ) {
 				$file_text	=	str_replace('/*CONTENT-PADDING*/',	'padding: 6px;', $file_text );
 				$file_text	=	str_replace('/*CONTENT-INSET*/',	'box-shadow:  inset 4px 4px 4px rgba(255,255,255,1);', $file_text );
-				$file_text	=	str_replace('/*CONTENT-BGCOLOR*/',	'background-color: rgba(255, 255, 255, 0.8 );', $file_text );
+				$file_text	=	str_replace('/*CONTENT-BG-COLOR*/',	'background-color: rgba(255, 255, 255, 0.8 );', $file_text );
 			}
 
 			// 記事情報のマージン（上下）
@@ -628,7 +645,7 @@
 				$value				=	$prop[$key];
 				$pname				=	strtoupper($key );
 				if		($value ) {
-					if	(preg_match('/https?(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/',	$prop[$value] ) ) {
+					if	(preg_match('/https?(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)$/',	$$value ) ) {
 						$file_text	=	str_replace('/*'.$pname.'*/',	'background-image: url("'.esc_url($value ).'");',		$file_text );
 					} else {
 						$file_text	=	str_replace('/*'.$pname.'*/',	'background-image: '.esc_html($value ).';',				$file_text );

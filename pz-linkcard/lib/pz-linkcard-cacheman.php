@@ -16,16 +16,20 @@
 
 	// 引数・変数の設定
 	$page			=	'pz-linkcard-cacheman';			// ツール画面のページ
+	if	(isset($_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		check_admin_referer('pz-cacheman' );
+	}
 	$action			=	isset($_POST['action'] )		?	esc_attr($_POST['action'] )					:	null;
 	$select_id		=	isset($_POST['select_id'] )		?	$_POST['select_id']							:	null;
 	$bulk_action	=	isset($_POST['bulk_action'] )	?	esc_attr($_POST['bulk_action'] )			:	null;
-	$data			=	(isset($_POST['data'] ) && is_array($_POST['data'] ) )		?	$_POST['data']		:	null;
+	$data			=	(isset($_POST['data'] ) && is_array($_POST['data'] ) )		?	$_POST['data']	:	null;
 	$param_refine	=	isset($_POST['refine'] )		?	esc_attr($_POST['refine'] )					:	null;
-	$keyword		=	isset($_POST['keyword'] )		?	stripslashes($_POST['keyword'] )			:	null;
+	$keyword		=	isset($_POST['keyword'] )		?	esc_attr(stripslashes($_POST['keyword'] ) )	:	null;
 	$filter			=	isset($_POST['filter'] )		?	esc_attr($_POST['filter'] )					:	'all';
 	$header			=	isset($_POST['header'] )		?	esc_attr(strtolower($_POST['header'] ) )	:	null;
 	$orderby		=	isset($_POST['orderby'] )		?	esc_attr(strtolower($_POST['orderby'] ) )	:	'id';
 	$order			=	isset($_POST['order'] )			?	esc_attr(strtolower($_POST['order'] ) )		:	'desc';
+	$scroll_now		=	isset($_POST['scroll-now'] )		?	esc_attr($_POST['scroll-now'] )			:	null;
 	$page_now		=	(isset($_POST['page_button'] )	?	intval($_POST['page_button'] )				:	
 						(isset($_POST['page_trans'] )	?	intval($_POST['page_trans'] )				:	
 						(isset($_POST['page_now'] )		?	intval($_POST['page_now'] )					:	0 ) ) );
@@ -99,8 +103,8 @@
 	// プラグイン名・バージョン・環境表示
 	$html_plugin		=	'<div class="pz-plugin">'.self::PLUGIN_NAME.' ver.'.PZLKC_PLUGIN_VERSION.$html_plugin.
 			($debug_mode			?	'<span class="pz-plugin-env pz-plugin-env-debug">'.__('Debug Mode', 'pz-linkcard' ).'</span>'				:	'' ).
-			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Develop Environment', 'pz-linkcard' ).'</span>'	:	'' ).
-			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Product Environment', 'pz-linkcard' ).'</span>'	:	'' ).
+			($develop_mode	==	1	?	'<span class="pz-plugin-env pz-plugin-env-develop">'.__('Development Environment', 'pz-linkcard' ).'</span>'	:	'' ).
+			($develop_mode	==	2	?	'<span class="pz-plugin-env pz-plugin-env-product">'.__('Production Environment', 'pz-linkcard' ).'</span>'	:	'' ).
 			'</div>';
 
 	// ページの見出し表示（設定）
@@ -120,9 +124,9 @@
 			'page_now'			=>		intval($page_now ),
 			'refine'			=>		$param_refine,
 			'filter'			=>		$filter,
-			'header'			=>		$header,
 			'orderby'			=>		$orderby,
 			'order'				=>		$order,
+			'scroll-now'		=>		esc_attr($scroll_now ),
 			'debug-mode'		=>		$debug_mode,
 			'admin-mode'		=>		$admin_mode,
 			'develop-mode'		=>		$develop_mode,
@@ -156,14 +160,13 @@
 	// 記述エラー
 	if	($this->options['error-mode'] ) {
 		if	(!$this->options['error-mode-hide'] ) {
-			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.$this->options['error-url'].'#lkc-error" target="_blank">'.$this->options['error-url'].'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can cancel this message from <a href="./options-general.php?page=pz-linkcard-settings">the setting screen</a>.', 'pz-linkcard' ).'</p></div>';
+			$error_url		=	$this->options['error-url'];
+			$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.esc_url($error_url ).'#lkc-error" target="_blank">'.esc_html($error_url ).'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can dismiss this message from <a href="./options-general.php?page=pz-linkcard-settings">the settings screen</a>.', 'pz-linkcard' ).'</p></div>';
 		}
 	}
 
 	// アクションの指示があったとき
 	if	($action ) {
-		check_admin_referer('pz-cacheman' );
-
 		switch	($action ) {
 		case	'jump-page':				// ページ数
 			$page_now				=	(isset($_POST['page_now'] ) ? intval($_POST['page_now'] ) : 1 );
@@ -355,7 +358,7 @@
 			break;
 
 		default:
-			$html_notice			.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('Undefined process chosen.', 'pz-linkcard' ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('An undefined action was selected.', 'pz-linkcard' ).'</strong></p></div>';
 		}
 	}
 

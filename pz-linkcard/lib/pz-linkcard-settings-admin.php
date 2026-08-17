@@ -39,10 +39,10 @@
 				$cron_list[]	=	array(
 					//'key'			=>	($myjob ? '1' : '2' ).$hook,
 					'key'			=>	$timestamp,
-					'hook'			=>	$hook,
+					'hook'			=>	esc_html($hook ),
 					'myjob'			=>	$myjob,
 					'next_time'		=>	esc_html(get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), PZLKC_DATETIME_FORMAT ) ),
-					'schedule'		=>	$schedule,
+					'schedule'		=>	esc_html($schedule ),
 					'interval'		=>	$interval,
 					'button'		=>	'<button type="submit" name="action" '.$button.' onclick="return confirm(\''.__('Are you sure?', 'pz-linkcard' ).'\' );">'.__('Run Now', 'pz-linkcard' ).'</button>',
 					'display'		=>	$display
@@ -53,7 +53,7 @@
 	asort($cron_list );
 
 ?>
-<div class="pz-page pz-page-admin" id="pz-admin">
+<div class="pz-page pz-page-admin<?php echo $pz_page_active('pz-admin' ); ?>" id="pz-admin">
 	<div class="pz-admin-notice"><?php _e('Do not use normally as it can be set to incapacitate.', 'pz-linkcard' ); ?></div>
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
 
@@ -61,24 +61,24 @@
 	<table class="form-table">
 		<tr>
 			<th scope="row"><?php _e('WordPress Version', 'pz-linkcard' ); ?></th>
-			<td><input type="text" size="20" value="<?php echo bloginfo('version' ); ?>" readonly="readonly" ?></td>
+			<td><input type="text" size="20" value="<?php echo esc_attr(get_bloginfo('version' ) ); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('PHP Version', 'pz-linkcard' ); ?></th>
-			<td><input type="text" size="20" value="<?php echo phpversion(); ?>" readonly="readonly" ?></td>
+			<td><input type="text" size="20" value="<?php echo esc_attr(phpversion() ); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('DBMS Version', 'pz-linkcard' ); ?></th>
-			<td><input type="text" size="20" value="<?php global $wpdb; echo $wpdb->db_version(); ?>" readonly="readonly" ?></td>
+			<td><input type="text" size="20" value="<?php global $wpdb; echo esc_attr($wpdb->db_version() ); ?>" readonly="readonly" ?></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('Table Name', 'pz-linkcard' ); ?></th>
-			<td><input type="text" size="40" value="<?php echo esc_html($this->db_name ); ?>" readonly="readonly" /></td>
+			<td><input type="text" size="40" value="<?php echo esc_attr($this->db_name ); ?>" readonly="readonly" /></td>
 		</tr>
 		<tr>
 			<th scope="row"><?php _e('Plugin Version', 'pz-linkcard' ); ?></th>
 			<td>
-				<input type="text" name="properties[plugin-version]" value="<?php echo esc_html(PZLKC_PLUGIN_VERSION ); ?>" size="10" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'ondblclick="this.readOnly=false;" '; }?>/>
+				<input type="text" name="properties[plugin-version]" value="<?php echo esc_attr(PZLKC_PLUGIN_VERSION ); ?>" size="10" readonly="readonly" <?php if ($prop['admin-mode'] ) { echo	'ondblclick="this.readOnly=false;" '; }?>/>
 			</td>
 		</tr>
 		<tr>
@@ -135,8 +135,8 @@
 		<tr>
 			<th scope="row"><?php _e('Occurrence Time', 'pz-linkcard' ); ?></th>
 			<td>
-				<input type="text" size="40" value="<?php echo is_numeric($prop['error-time'] ) ? $this->pz_Date(PZLKC_DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time']; ?>" readonly="readonly" />
-				<input name="properties[error-time]" type="text" value="<?php echo $prop['error-time']; ?>" class="pz-ad______min-only" />
+				<input type="text" size="40" value="<?php echo esc_attr(is_numeric($prop['error-time'] ) ? $this->pz_Date(PZLKC_DATETIME_FORMAT, $prop['error-time'] ) : $prop['error-time'] ); ?>" readonly="readonly" />
+				<input name="properties[error-time]" type="text" value="<?php echo esc_attr($prop['error-time'] ); ?>" class="pz-ad______min-only" />
 			</td>
 		</tr>
 	</table>

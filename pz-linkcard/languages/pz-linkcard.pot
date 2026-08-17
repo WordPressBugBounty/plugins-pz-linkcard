@@ -73,7 +73,7 @@ msgid "Domain"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:47
-msgid "Registration Title"
+msgid "Registered Title"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:51
@@ -83,11 +83,11 @@ msgid "Title"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:55
-msgid "Modify Title"
+msgid "Modified Title"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:59
-msgid "Registration Excerpt"
+msgid "Registered Excerpt"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:63
@@ -97,7 +97,7 @@ msgid "Excerpt"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:67
-msgid "Modify Excerpt"
+msgid "Modified Excerpt"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:71
@@ -121,11 +121,11 @@ msgid "Result Code"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:90
-msgid "No Failure"
+msgid "Ignore Failure"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:92
-msgid "The result code is inaccessible but can actually be accessed."
+msgid "The result code indicates that the URL is inaccessible, but it can actually be accessed."
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:96
@@ -168,16 +168,16 @@ msgid "Next SNS Check"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:124
-msgid "Registration Character Set"
+msgid "Registered Character Set"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:128
 #: ../lib/pz-linkcard-cacheman-edit.php:132
-msgid "Registration Date"
+msgid "Registered Date"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:136
-msgid "Registration Result Code"
+msgid "Registered Result Code"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:143
@@ -189,7 +189,7 @@ msgid "Next Alive Check"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:151
-msgid "Result Code of Alive Check"
+msgid "Alive Check Result Code"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-edit.php:158
@@ -290,7 +290,7 @@ msgid "Apply"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:203
-msgid "All Domain"
+msgid "All Domains"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:214
@@ -310,7 +310,7 @@ msgid "Charset"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:297
-msgid "Regist<br>Date"
+msgid "Registered<br>Date"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:303
@@ -338,7 +338,7 @@ msgid "&#x26a0;&#xfe0f;"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:373
-msgid "The latest HTTP code is in error, but ignore it."
+msgid "The latest HTTP code indicates an error, but it is ignored."
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:375
@@ -347,7 +347,7 @@ msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:377
 msgid ""
-"The latest HTTP code is in error. You can change it to ignore the error from "
+"The latest HTTP code indicates an error. You can ignore the error from "
 "the edit screen."
 msgstr ""
 
@@ -399,11 +399,11 @@ msgid "Debug Mode"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:96 ../lib/pz-linkcard-settings.php:166
-msgid "Develop Environment"
+msgid "Development Environment"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:97 ../lib/pz-linkcard-settings.php:167
-msgid "Product Environment"
+msgid "Production Environment"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:103 ../lib/pz-linkcard-settings.php:175
@@ -439,8 +439,8 @@ msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:153 ../lib/pz-linkcard-settings.php:206
 msgid ""
-"You can cancel this message from <a href=\"./options-general.php?page=pz-"
-"linkcard-settings\">the setting screen</a>."
+"You can dismiss this message from <a href=\"./options-general.php?page=pz-"
+"linkcard-settings\">the settings screen</a>."
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:183 ../lib/pz-linkcard-cacheman.php:202
@@ -515,7 +515,7 @@ msgid "Delete Cache"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:349
-msgid "Undefined process chosen."
+msgid "An undefined action was selected."
 msgstr ""
 
 #: ../lib/pz-linkcard-file-export.php:60
@@ -1072,7 +1072,7 @@ msgstr ""
 #: ../lib/pz-linkcard-settings-card.php:238
 #: ../lib/pz-linkcard-settings-card.php:388
 #: ../lib/pz-linkcard-settings-card.php:469
-msgid "It is common with setting Internal-link"
+msgid "Use the same setting as Internal Link"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-card.php:116
@@ -1513,7 +1513,7 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-display.php:126
 #: ../lib/pz-linkcard-settings-display.php:138
-msgid "* number is not updated"
+msgid "* The count is not updated"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-display.php:131
@@ -1927,7 +1927,7 @@ msgid "px"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:4
-msgid "Multi Site Information"
+msgid "Multisite Information"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:5
@@ -1937,7 +1937,7 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:8
 #: ../lib/pz-linkcard-settings.php:428
-msgid "Multi Site"
+msgid "Multisite"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:11
@@ -1969,7 +1969,7 @@ msgid "Number of Sites"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:42
-msgid "Link to SubSite"
+msgid "Links to Subsites"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-multisite.php:46
@@ -1993,11 +1993,11 @@ msgid "Position Settings"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:8
-msgid "Link the Whole"
+msgid "Link the Entire Card"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:11
-msgid "Enclose the entire card at anchor."
+msgid "Wrap the entire card in a link."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:15
@@ -2005,7 +2005,7 @@ msgid "Resize"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:20
-msgid "Adjust thumbnail and letter size according to width."
+msgid "Adjust the thumbnail and text size according to the width."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:30
@@ -2020,7 +2020,7 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:64
 #: ../lib/pz-linkcard-settings-position.php:101
-msgid "Upper Side"
+msgid "Top Side"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:65
@@ -2028,11 +2028,11 @@ msgid "Above the Title"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:66
-msgid "Under Side"
+msgid "Bottom Side"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:69
-msgid "Use SiteName"
+msgid "Use Site Name"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-position.php:92
@@ -2068,7 +2068,7 @@ msgid "Centering"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:4
-msgid "It is common with setting Internal-card"
+msgid "Use the same setting as Internal Link"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:7
@@ -2348,11 +2348,11 @@ msgid "Outset"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:58
-msgid "All Client"
+msgid "All Devices"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:59
-msgid "Other Than Mobile"
+msgid "Non-Mobile Devices"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:174 ../pz-linkcard.php:2682
@@ -2387,7 +2387,7 @@ msgid "Could not retrieve the content to be changed."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:257
-msgid "Succeeded in saving the settings."
+msgid "Successfully saved the settings."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:259
@@ -2395,7 +2395,7 @@ msgid "The settings have not changed."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:276
-msgid "Succeeded in initialize the settings."
+msgid "Successfully initialized the settings."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:278
@@ -2407,11 +2407,11 @@ msgid "Updated the appearance of the LinkCard."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:310
-msgid "Failed to save CSS-File."
+msgid "Failed to save the CSS file."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:313
-msgid "Failed to call CSS-Template."
+msgid "Failed to load the CSS template."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php:332
@@ -2604,4 +2604,28 @@ msgstr ""
 
 #: ../pz-linkcard.php:2629
 msgid "Make Linkcard"
+msgstr ""
+
+#: ../pz-linkcard.php:2611 ../js/block-editor.js:14
+msgid "Enter URL here..."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-editor.php:61
+msgid "Add Block"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-editor.php:66
+msgid "Add block to block editor."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings.php:331
+msgid "Settings option was not found in the database."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings.php:332
+msgid "Option name"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings.php:333
+msgid "Table"
 msgstr ""
