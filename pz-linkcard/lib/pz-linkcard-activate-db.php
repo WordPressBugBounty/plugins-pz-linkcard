@@ -44,8 +44,7 @@
 				mod_excerpt		INT				UNSIGNED	NOT NULL	DEFAULT 0,
 				update_result	INT										DEFAULT 0,
 				update_time		BIGINT			UNSIGNED	NOT NULL	DEFAULT 0,
-				PRIMARY KEY		(id),
-				UNIQUE KEY		(url)
+				PRIMARY KEY		(id)
 			) ".$wpdb->get_charset_collate()." ;";
 
 	// SQL更新チェック（クエリーから求まったMD5の値を比較）
