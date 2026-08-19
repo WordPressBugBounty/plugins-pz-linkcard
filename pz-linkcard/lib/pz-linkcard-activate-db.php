@@ -60,22 +60,22 @@
 	// DBテーブル作成・更新
 	require_once(ABSPATH.'wp-admin/includes/upgrade.php' );
 	$result		=	dbDelta($sql, true );
-	if	($wpdb->last_error ) {
-		$error_code	=	'';
-		if	(function_exists('mysqli_errno' ) && isset($wpdb->dbh ) && $wpdb->dbh instanceof mysqli ) {
-			$error_code	=	mysqli_errno($wpdb->dbh );
-		}
-		$error_message	=	trim(
-			'dbDelta'.
-			($error_code !== '' ? ' ['.$error_code.']' : '' ).
-			' '.$wpdb->last_error.
-			' '.$wpdb->last_query
-		);
-		if	(function_exists('set_transient' ) ) {
-			set_transient('pz_lkc_dbdelta_error', $error_message, MINUTE_IN_SECONDS * 5 );
-		}
-		$GLOBALS['pz_lkc_dbdelta_error']	=	$error_message;
-	}
+	// if	($wpdb->last_error ) {
+	// 	$error_code	=	'';
+	// 	if	(function_exists('mysqli_errno' ) && isset($wpdb->dbh ) && $wpdb->dbh instanceof mysqli ) {
+	// 		$error_code	=	mysqli_errno($wpdb->dbh );
+	// 	}
+	// 	$error_message	=	trim(
+	// 		'dbDelta'.
+	// 		($error_code !== '' ? ' ['.$error_code.']' : '' ).
+	// 		' '.$wpdb->last_error.
+	// 		' '.$wpdb->last_query
+	// 	);
+	// 	if	(function_exists('set_transient' ) ) {
+	// 		set_transient('pz_lkc_dbdelta_error', $error_message, MINUTE_IN_SECONDS * 5 );
+	// 	}
+	// 	$GLOBALS['pz_lkc_dbdelta_error']	=	$error_message;
+	// }
 
 	// フィールドを追加したらエクスポート項目も見直すこと
 

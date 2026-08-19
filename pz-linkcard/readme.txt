@@ -4,7 +4,7 @@ Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 6.0
 Tested up to: 7.0.2
 Requires PHP: 8.0
-Stable tag: 2.6.0.1
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.amazon.co.jp/gp/registry/wishlist/2KIBQLC1VLA9X
@@ -149,6 +149,15 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 
 == Changelog ==
+
+= 2.6.0.3 =
+* [Fixed] 警告が表示されてしまう不具合を修正しました。
+
+= 2.6.0.2 =
+* [Fixed] URL挿入のテキストボックスとボタンが関係無い画面にも表示されていた不具合を修正しました。（Thanks 澤田芳弘 @SWD on x.com）
+
+= 2.6.0.1 =
+* [Fixed] DBテーブルの作成が失敗する不具合を修正しました。
 
 = 2.6.0 =
 * [Tested] WordPress 7.0.2 での動作確認を行いました。

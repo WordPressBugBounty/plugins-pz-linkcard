@@ -1174,7 +1174,7 @@ button.button.wp-color-result {
 /**/
 #pz-overlay-proc {
 	display: block;
-	z-index: 1001;
+	z-index: 100001;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -1187,7 +1187,7 @@ button.button.wp-color-result {
 /* Visual Editor - Input URL Dialog - Overlay */
 #pz-overlay {
 	display: none;
-	z-index: 1001;
+	z-index: 100001;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -1199,7 +1199,7 @@ button.button.wp-color-result {
 /* Visual Editor - Input URL Dialog - Modal */
 #pz-modal {
 	display: none;
-	z-index: 9991;
+	z-index: 100002;
 	position: fixed;
 	margin: 0 auto;
 	padding: 20px;

@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.6.0.1
+Version:		2.6.0.2
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -2646,6 +2646,11 @@ class class_pz_linkcard {
 	public	function	action_admin_enqueue_scripts($hook ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
+		if	($this->is_editor_modal_screen($hook ) ) {
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			PZLKC_PLUGIN_VERSION );
+			return;
+		}
+
 		$allowed_hooks	=	array(
 			'settings_page_'.self::SETTINGS_PAGE,
 			'tools_page_'.self::CACHEMAN_PAGE,
@@ -2660,6 +2665,37 @@ class class_pz_linkcard {
 
 		wp_enqueue_script	('wp-color-picker' );		// WordPressカラーピッカースクリプト
 		wp_enqueue_style	('wp-color-picker' );		// WordPressカラーピッカースタイルシート
+	}
+
+	// Pz-LinkCard挿入ダイアログを表示する投稿編集画面か
+	private	function	is_editor_modal_screen($hook = null ) {
+		if	(empty($this->options['flg-edit-insert'] ) ) {
+			return	false;
+		}
+		if	($hook && !in_array($hook, array('post.php', 'post-new.php' ), true ) ) {
+			return	false;
+		}
+		if	(!function_exists('get_current_screen' ) ) {
+			return	false;
+		}
+
+		$screen	=	get_current_screen();
+		if	(!$screen || $screen->base !== 'post' ) {
+			return	false;
+		}
+
+		$post_type	=	$screen->post_type;
+		if	(!$post_type && isset($_GET['post'] ) ) {
+			$post_type	=	get_post_type((int)$_GET['post'] );
+		}
+		if	(!$post_type && isset($_GET['post_type'] ) ) {
+			$post_type	=	sanitize_key(wp_unslash($_GET['post_type'] ) );
+		}
+		if	(!$post_type ) {
+			$post_type	=	'post';
+		}
+
+		return	post_type_supports($post_type, 'editor' );
 	}
 
 	// ブロック登録
@@ -2818,6 +2854,9 @@ class class_pz_linkcard {
 			}
 		}
 		// ビジュアル エディタ用の挿入ダイアログ
+		if	(!$this->is_editor_modal_screen() ) {
+			return;
+		}
 		require_once('lib/pz-linkcard-modal.php' );
 	}
 
