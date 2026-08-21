@@ -205,6 +205,23 @@
 	border: 1px solid #ddd;
 	background-color: #fafafa;
 }
+.pz-media-url-field {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: nowrap;
+}
+.pz-media-url-field input[type="url"] {
+	width: 100%;
+	min-width: 0;
+	flex: 1 1 auto;
+	box-sizing: border-box;
+}
+.pz-media-url-field .button {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
 .pz-man-cache-editor-title {
 	display: inline-block;
 	position: absolute;

@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.6.0.3
+Version:		2.6.0.4
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -459,9 +459,10 @@ class class_pz_linkcard {
 				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
 		}
-		add_action		('init',									[$this, 'action_register_block' ],	10, 1 );	// ブロック登録
-		add_action		('wp_ajax_pz_lkc_click_count', 				[$this, 'action_ajax_lkc_click_count'] );
-		add_action		('wp_ajax_nopriv_pz_lkc_click_count',		[$this, 'action_ajax_lkc_click_count'] );
+		add_action		('init',								[$this, 'action_register_block' ],	10, 1 );		// ブロック登録
+		add_action		('wp_ajax_pz_lkc_clear_error_mode',		[$this, 'action_ajax_pz_lkc_error_mode_clear'] );
+		add_action		('wp_ajax_pz_lkc_click_count', 			[$this, 'action_ajax_pz_lkc_click_count'] );
+		add_action		('wp_ajax_nopriv_pz_lkc_click_count',	[$this, 'action_ajax_pz_lkc_click_count'] );
 	}
 
 	// テキストリンクの行とURLのみの行をリンクカードへ置き換える処理（直接HTMLタグにするのでは無くショートコードに変換する。）
@@ -2661,8 +2662,17 @@ class class_pz_linkcard {
 
 		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-tabs',	PZLKC_PZLKC_URL_ADMIN_TAB,			array('jquery' ),	PZLKC_PLUGIN_VERSION, true );
 		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-js',		PZLKC_PZLKC_URL_ADMIN_JS,			array('jquery' ),	PZLKC_PLUGIN_VERSION, true );
+		wp_localize_script	(self::PLUGIN_SLUG.'-admin-js',		'pzLinkCardAdmin', array(
+			'ajaxUrl'		=>	admin_url('admin-ajax.php' ),
+			'noticeNonce'	=>	wp_create_nonce('pz_lkc_clear_error_mode' ),
+			'mediaTitle'	=>	__('Select Image', 'pz-linkcard' ),
+			'mediaButton'	=>	__('Use this image', 'pz-linkcard' ),
+		) );
 		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			PZLKC_PLUGIN_VERSION );
 
+		if	($hook === 'tools_page_'.self::CACHEMAN_PAGE ) {
+			wp_enqueue_media();
+		}
 		wp_enqueue_script	('wp-color-picker' );		// WordPressカラーピッカースクリプト
 		wp_enqueue_style	('wp-color-picker' );		// WordPressカラーピッカースタイルシート
 	}
@@ -2719,9 +2729,6 @@ class class_pz_linkcard {
 				true
 			);
 			$placeholder_url	=	__('Enter URL here...', 'pz-linkcard' );
-			if	($placeholder_url === 'Enter URL here...' && function_exists('determine_locale' ) && strpos(determine_locale(), 'ja' ) === 0 ) {
-				$placeholder_url	=	'URL をここに入力...';
-			}
 			wp_localize_script($editor_script, 'pzLinkCardBlock', array(
 				'shortcode'			=>	$shortcode,
 				'placeholderUrl'	=>	$placeholder_url,
@@ -2901,7 +2908,7 @@ class class_pz_linkcard {
 		}
 
 		global $wp_admin_bar;
-		$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => 'Pzカード',									'href' => '#' ) );
+		$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => __('Pz Card', 'pz-linkcard' ),				'href' => '#' ) );
 		$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Manager',	'pz-linkcard' ),	'href' => $this->cacheman_url,	'meta' => array('target' => '_parent' ) ) );
 		$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Settings',	'pz-linkcard' ),	'href' => $this->settings_url,	'meta' => array('target' => '_parent' ) ) );
 	}
@@ -2914,8 +2921,23 @@ class class_pz_linkcard {
 		return		(array_key_exists($key, $this->options ) ? $this->options[$key] : $default );
 	}
 
+	// URLパラメーターエラー通知を閉じたときにエラー状態を解除
+	public	function	action_ajax_pz_lkc_error_mode_clear() {
+		if	(!current_user_can('manage_options' ) ) {
+			wp_send_json_error('forbidden', 403 );
+		}
+		if	(!check_ajax_referer('pz_lkc_clear_error_mode', 'nonce', false ) ) {
+			wp_send_json_error('invalid nonce', 403 );
+		}
+
+		$this->options['error-mode']	=	0;
+		$this->pz_SaveOptions();
+
+		wp_send_json_success();
+	}
+
 	// クリックカウント
-	public	function	action_ajax_lkc_click_count() {
+	public	function	action_ajax_pz_lkc_click_count() {
 		if	(array_key_exists('debug-mode', $this->options ) && $this->options['debug-mode'] && array_key_exists('survey-mode', $this->options ) && $this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
 		// nonce チェック

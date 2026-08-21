@@ -65,6 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
             el.addEventListener("click", allSelect)
         );
 
+        document.addEventListener("click", errorModeNoticeDismiss);
+        document.addEventListener("click", selectImageFromMedia);
+
         // readonly チェックボックス無効化
         document.querySelectorAll("input[type=checkbox]").forEach(el =>
             el.addEventListener("click", checkboxReadonly)
@@ -186,6 +189,60 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.readOnly) {
             e.preventDefault();
         }
+    }
+
+    function errorModeNoticeDismiss(e) {
+        const notice = e.target.closest(".pz-lkc-error-mode-notice");
+        if (!notice || !e.target.closest(".notice-dismiss")) return;
+
+        const checkbox = document.querySelector('input[type=checkbox][name="properties[error-mode]"]');
+        if (checkbox) {
+            checkbox.checked = false;
+            checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        if (!window.pzLinkCardAdmin?.ajaxUrl || !window.pzLinkCardAdmin?.noticeNonce) return;
+
+        const data = new FormData();
+        data.append("action", "pz_lkc_clear_error_mode");
+        data.append("nonce", window.pzLinkCardAdmin.noticeNonce);
+
+        fetch(window.pzLinkCardAdmin.ajaxUrl, {
+            method: "POST",
+            credentials: "same-origin",
+            body: data
+        }).catch(() => {});
+    }
+
+    function selectImageFromMedia(e) {
+        const button = e.target.closest(".pz-media-select-image");
+        if (!button) return;
+        e.preventDefault();
+
+        const target = button.dataset.target;
+        const input = target ? document.querySelector(`input[name="${target}"]`) : null;
+        if (!input || !window.wp?.media) return;
+
+        const frame = wp.media({
+            title: window.pzLinkCardAdmin?.mediaTitle || "Select Image",
+            button: {
+                text: window.pzLinkCardAdmin?.mediaButton || "Use this image"
+            },
+            library: {
+                type: "image"
+            },
+            multiple: false
+        });
+
+        frame.on("select", () => {
+            const attachment = frame.state().get("selection").first()?.toJSON();
+            if (!attachment?.url) return;
+            input.value = attachment.url;
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+        frame.open();
     }
 
     // 全選択

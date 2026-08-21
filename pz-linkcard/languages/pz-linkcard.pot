@@ -813,10 +813,18 @@ msgid "Display the file menu on the card management screen."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-advanced.php:121
-msgid "Initialize Tab"
+msgid "Admin Bar"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-advanced.php:126
+msgid "Display the menu in the admin bar."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-advanced.php:131
+msgid "Initialize Tab"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-advanced.php:136
 msgid "Display the initialize tab on the settings screen."
 msgstr ""
 
@@ -2608,6 +2616,10 @@ msgstr ""
 
 #: ../pz-linkcard.php:2611 ../js/block-editor.js:14
 msgid "Enter URL here..."
+msgstr ""
+
+#: ../pz-linkcard.php:2914
+msgid "Pz Card"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-editor.php:61

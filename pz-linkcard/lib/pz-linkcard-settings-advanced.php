@@ -118,12 +118,12 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('管理者バー', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php _e('Admin Bar', 'pz-linkcard' ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[flg-adminbar]" value="" />
 					<input type="checkbox" name="properties[flg-adminbar]" value="1" <?php checked($this->options['flg-adminbar'] ?? 0 ); ?> />
-					<?php _e('管理者バーにメニューを表示します。', 'pz-linkcard' ); ?>
+					<?php _e('Display the menu in the admin bar.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>

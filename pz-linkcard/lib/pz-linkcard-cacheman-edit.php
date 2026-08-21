@@ -1,9 +1,9 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
-<!-- 編集用フォーム -->
+<!-- Edit form -->
 &nbsp;
 <div class="pz-man-cache-editor-title"><div class="pz-man-cache-editor-icon"><?php echo __('&#x1f4dd;&#xfe0f;', 'pz-linkcard' ); ?></div>&ensp;<div class="pz-man-cache-editor-text"><?php echo __('Cache Editor', 'pz-linkcard' ); ?></div></div>
 <div class="pz-man-cache-editor">
-	<table class="wp-list-table"><!--  wp-list-table widefat fixed -->
+	<table class="wp-list-table" style="line-height: 32px;"><!--  wp-list-table widefat fixed -->
 		<tr>
 			<td colspan="2" style="text-align: right;">
 				<button type="submit" name="action" value="update" class="button button-primary button-large"><?php _e('Update', 'pz-linkcard' ) ?></button>
@@ -69,16 +69,26 @@
 		</tr>
 		<tr>
 			<th><?php _e('Thumbnail URL', 'pz-linkcard' ) ?></th>
-			<td><input name="data[thumbnail]" type="url" value="<?php echo esc_attr($data['thumbnail'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
+			<td>
+				<div class="pz-media-url-field">
+					<input name="data[thumbnail]" type="url" value="<?php echo esc_attr($data['thumbnail'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" />
+					<span class="pz-debug-only"><button type="button" class="button pz-media-select-image" data-target="data[thumbnail]"><?php _e('Select Image', 'pz-linkcard' ); ?></button></span>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<th><?php _e('Favicon URL', 'pz-linkcard' ) ?></th>
-			<td><input name="data[favicon]" type="url" value="<?php echo esc_attr($data['favicon'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" /></td>
+			<td>
+				<div class="pz-media-url-field">
+					<input name="data[favicon]" type="url" value="<?php echo esc_attr($data['favicon'] ); ?>" size="80" readonly="readonly" ondblclick="this.readOnly=false;" />
+					<span class="pz-debug-only"><button type="button" class="button pz-media-select-image" data-target="data[favicon]"><?php _e('Select Image', 'pz-linkcard' ); ?></button></span>
+				</div>
+			</td>
 		</tr>
 		<tr id="update_result">
 			<th><?php _e('Result Code', 'pz-linkcard' ) ?></th>
 			<td>
-				<input name="data[update_result]" type="text" value="<?php echo esc_attr($data['update_result'] ); ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> />
+				<input name="data[update_result]" type="text" value="<?php echo esc_attr($data['update_result'] ); ?>" size="1" readonly="readonly"<?php if ($this->options['admin-mode'] ) { echo ' ondblclick="this.readOnly=false;"'; } ?> class="pz-debug-only" />
 				&ensp;<?php $rs = intval($data['update_result'] ); echo esc_html($rs.' '.$this->pz_HTTPMessage($rs ) ); ?>
 			</td>
 		</tr>
