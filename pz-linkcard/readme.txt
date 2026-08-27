@@ -150,6 +150,10 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 == Changelog ==
 
+= 2.6.0.5 =
+* [Mofified] ブロックエディタでの表示を調整しました。（Thanks Senri Miura @senribb on wordpress.org）
+* [Added] 設定画面の「外部リンク」「内部リンク」に「ホバー時の背景色」を追加しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+
 = 2.6.0.4 =
 * [Fixed] サムネイル画像とサイトアイコンの直接取得しても表示されない不具合を修正しました。
 * [Modified] URLエラーが表示されているとき右側の×をクリックするとエラーが解除されるように修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）

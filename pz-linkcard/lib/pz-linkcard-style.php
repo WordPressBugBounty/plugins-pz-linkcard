@@ -482,6 +482,9 @@
 			}
 
 			// マウスを乗せたとき
+			$file_text		=	str_replace('/*EX-HOVER*/',		'background-color:'.$this->options['ex-hover-bg-color'], $file_text );
+			$file_text		=	str_replace('/*IN-HOVER*/',		'background-color:'.$this->options['in-hover-bg-color'], $file_text );
+			$file_text		=	str_replace('/*TH-HOVER*/',		'background-color:'.$this->options['in-hover-bg-color'], $file_text );
 			switch ($prop['hover'] ) {
 			case '1':
 				$file_text	=	str_replace('/*HOVER*/',		'opacity: 0.8;', $file_text );

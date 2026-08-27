@@ -33,6 +33,9 @@
 	/*EX-BG-COLOR*/
 	/*EX-IMAGE*/
 }
+.lkc-external-wrap:hover {
+	/*EX-HOVER*/
+}
 .lkc-internal-wrap {
 	/*IN-BORDER*/
 	/*IN-SHADOW*/
@@ -40,12 +43,18 @@
 	/*IN-BG-COLOR*/
 	/*IN-IMAGE*/
 }
+.lkc-internal-wrap:hover {
+	/*IN-HOVER*/
+}
 .lkc-this-wrap {
 	/*TH-BORDER*/
 	/*TH-SHADOW*/
 	/*TH-RADIUS*/
 	/*TH-BG-COLOR*/
 	/*TH-IMAGE*/
+}
+.lkc-this-wrap:hover {
+	/*TH-HOVER*/
 }
 .lkc-external-wrap , .lkc-internal-wrap , .lkc-this-wrap {
 	position:	relative;

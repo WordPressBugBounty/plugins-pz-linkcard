@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	リンクをカード形式で表示します。
-Version:		2.6.0.4
+Version:		2.6.0.5
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -48,26 +48,24 @@ class class_pz_linkcard {
 			'info-position'			=>	1,
 			'use-sitename'			=>	1,
 
+			'style-reset-img'		=>	1,
+			'display-url'			=>	1,
 			'display-date'			=>	1,
 			'separator'				=>	0,
-			'display-url'			=>	1,
+			'display-excerpt'		=>	1,
+			'content-inset'			=>	0,
 			'shadow'				=>	0,
 			'shadow-inset'			=>	0,
 			'radius'				=>	'4px',
-
+			'radius'				=>	'4px',
+			'border'				=>	0,
 			'border-style'			=>	'solid',
 			'border-width'			=>	'1px',
-
+			'more-style'			=>	'SMP',
+			'hover'					=>	1,
 			'thumbnail-border'		=>	null,
 			'thumbnail-shadow'		=>	0,
 			'thumbnail-radius'		=>	'4px',
-			'content-inset'			=>	0,
-			'display-excerpt'		=>	1,
-			'more-style'			=>	'SMP',
-			'border'				=>	0,
-			'radius'				=>	'4px',
-			'hover'					=>	1,
-			'style-reset-img'		=>	1,
 			'sns-position'			=>	2,
 			'sns-tw'				=>	1,
 			'sns-tw-x'				=>	0,
@@ -162,6 +160,7 @@ class class_pz_linkcard {
 
 			'ex-border-color'		=>	'#114488',
 			'ex-bg-color'			=>	'#ddeeff',
+			'ex-hover-bg-color'		=>	'',
 			'ex-image'				=>	null,
 			'ex-heading-text'		=>	null,
 			'ex-more-text'			=>	null,
@@ -176,6 +175,7 @@ class class_pz_linkcard {
 
 			'in-border-color'		=>	'#888888',
 			'in-bg-color'			=>	'#f8f8f8',
+			'in-hover-bg-color'		=>	'',
 			'in-image'				=>	null,
 			'in-heading-text'		=>	null,
 			'in-more-text'			=>	null,

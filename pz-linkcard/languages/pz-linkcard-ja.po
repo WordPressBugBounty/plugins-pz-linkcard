@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pz-LinkCard\n"
 "Report-Msgid-Bugs-To: http://wppolyglots.wordpress.com\n"
-"POT-Creation-Date: 2026-08-21 15:23+0900\n"
-"PO-Revision-Date: 2026-08-21 15:26+0900\n"
+"POT-Creation-Date: 2026-08-22 00:29+0900\n"
+"PO-Revision-Date: 2026-08-22 00:31+0900\n"
 "Last-Translator: poporon\n"
 "Language-Team: poporon\n"
 "Language: ja_JP\n"
@@ -23,10 +23,6 @@ msgstr ""
 msgid "Enter URL here..."
 msgstr "URL をここに入力..."
 
-#: ../pz-linkcard.php:2914
-msgid "Pz Card"
-msgstr "Pzカード"
-
 #: ../js/block-editor.js:76 ../lib/pz-linkcard-cacheman-edit.php:47
 #: ../lib/pz-linkcard-cacheman-list.php:250
 #: ../lib/pz-linkcard-settings-letter.php:22
@@ -37,7 +33,7 @@ msgstr "タイトル"
 msgid "Content"
 msgstr "記事内容"
 
-#: ../js/block-editor.js:116 ../pz-linkcard.php:2743
+#: ../js/block-editor.js:116 ../pz-linkcard.php:2740
 msgid "Insert a Pz-LinkCard shortcode."
 msgstr "リンクカードを挿入"
 
@@ -438,7 +434,7 @@ msgstr "本番環境"
 msgid "&#x2699;&#xfe0f;"
 msgstr "&#x2699;&#xfe0f;"
 
-#: ../lib/pz-linkcard-cacheman.php:114 ../pz-linkcard.php:2975
+#: ../lib/pz-linkcard-cacheman.php:114 ../pz-linkcard.php:2972
 msgid "Settings"
 msgstr "設定"
 
@@ -446,7 +442,7 @@ msgstr "設定"
 msgid "&#x1f5c3;&#xfe0f;"
 msgstr "&#x1f5c3;&#xfe0f;"
 
-#: ../lib/pz-linkcard-cacheman.php:116 ../pz-linkcard.php:2915
+#: ../lib/pz-linkcard-cacheman.php:116 ../pz-linkcard.php:2912
 msgid "Pz-LinkCard Manager"
 msgstr "Pz カード管理"
 
@@ -904,13 +900,13 @@ msgid "Basic Settings"
 msgstr "基本の設定"
 
 #: ../lib/pz-linkcard-settings-basic.php:23
-#: ../lib/pz-linkcard-settings-card.php:316
-#: ../lib/pz-linkcard-settings-card.php:368
-#: ../lib/pz-linkcard-settings-display.php:11
-#: ../lib/pz-linkcard-settings-display.php:65
-#: ../lib/pz-linkcard-settings-display.php:76
-#: ../lib/pz-linkcard-settings-display.php:103
-#: ../lib/pz-linkcard-settings-display.php:117
+#: ../lib/pz-linkcard-settings-card.php:328
+#: ../lib/pz-linkcard-settings-card.php:380
+#: ../lib/pz-linkcard-settings-display.php:18
+#: ../lib/pz-linkcard-settings-display.php:72
+#: ../lib/pz-linkcard-settings-display.php:84
+#: ../lib/pz-linkcard-settings-display.php:106
+#: ../lib/pz-linkcard-settings-display.php:120
 #: ../lib/pz-linkcard-settings-position.php:63
 #: ../lib/pz-linkcard-settings-position.php:98
 #: ../lib/pz-linkcard-settings.php:28 ../lib/pz-linkcard-settings.php:44
@@ -1104,183 +1100,188 @@ msgstr "枠線の色"
 msgid "Background Color"
 msgstr "背景色"
 
-#: ../lib/pz-linkcard-settings-card.php:62
-msgid "Background Image"
-msgstr "背景画像"
+#: ../lib/pz-linkcard-settings-card.php:61
+msgid "On Hover Color"
+msgstr "ホバー時の背景色"
 
-#: ../lib/pz-linkcard-settings-card.php:72
-#: ../lib/pz-linkcard-settings-card.php:137
-#: ../lib/pz-linkcard-settings-card.php:155
-#: ../lib/pz-linkcard-settings-card.php:203
-#: ../lib/pz-linkcard-settings-card.php:346
-#: ../lib/pz-linkcard-settings-card.php:427 ../lib/pz-linkcard-settings.php:4
+#: ../lib/pz-linkcard-settings-card.php:65
+#: ../lib/pz-linkcard-settings-card.php:84
+#: ../lib/pz-linkcard-settings-card.php:149
+#: ../lib/pz-linkcard-settings-card.php:167
+#: ../lib/pz-linkcard-settings-card.php:215
+#: ../lib/pz-linkcard-settings-card.php:358
+#: ../lib/pz-linkcard-settings-card.php:439 ../lib/pz-linkcard-settings.php:4
 msgid "Use the same setting as Internal Link"
 msgstr "内部リンク用の設定が使用されます"
 
-#: ../lib/pz-linkcard-settings-card.php:81
+#: ../lib/pz-linkcard-settings-card.php:74
+msgid "Background Image"
+msgstr "背景画像"
+
+#: ../lib/pz-linkcard-settings-card.php:93
 msgid "Article Content"
 msgstr "記事内容"
 
-#: ../lib/pz-linkcard-settings-card.php:86
+#: ../lib/pz-linkcard-settings-card.php:98
 msgid "Get Contents"
 msgstr "記事取得方法"
 
-#: ../lib/pz-linkcard-settings-card.php:96
+#: ../lib/pz-linkcard-settings-card.php:108
 msgid "Always extract from the latest articles"
 msgstr "常に最新の記事内容から抜粋文を作成する"
 
-#: ../lib/pz-linkcard-settings-card.php:97
+#: ../lib/pz-linkcard-settings-card.php:109
 msgid "Always use the most recent article content. Prioritize \"Excerpt\""
 msgstr "常に最新の記事内容を使用するが、「抜粋文」を優先する"
 
-#: ../lib/pz-linkcard-settings-card.php:98
+#: ../lib/pz-linkcard-settings-card.php:110
 msgid "Always use the most recent article content. Prioritize \"Custom-Field\""
 msgstr "常に最新の記事内容を使用するが、指定したカスタムフィールドを優先する"
 
-#: ../lib/pz-linkcard-settings-card.php:99
+#: ../lib/pz-linkcard-settings-card.php:111
 msgid "Always display the contents registered in card management"
 msgstr "常にカード管理に登録された内容を表示"
 
-#: ../lib/pz-linkcard-settings-card.php:129
+#: ../lib/pz-linkcard-settings-card.php:141
 msgid "Custom Field (Title)"
 msgstr "タイトルにするカスタムフィールド"
 
-#: ../lib/pz-linkcard-settings-card.php:147
+#: ../lib/pz-linkcard-settings-card.php:159
 msgid "Custom Field (Excerpt)"
 msgstr "抜粋文にするカスタムフィールド"
 
-#: ../lib/pz-linkcard-settings-card.php:166
-#: ../lib/pz-linkcard-settings-card.php:167
-#: ../lib/pz-linkcard-settings-card.php:191
-#: ../lib/pz-linkcard-settings-card.php:192
-#: ../lib/pz-linkcard-settings-card.php:202
+#: ../lib/pz-linkcard-settings-card.php:178
+#: ../lib/pz-linkcard-settings-card.php:179
+#: ../lib/pz-linkcard-settings-card.php:203
+#: ../lib/pz-linkcard-settings-card.php:204
+#: ../lib/pz-linkcard-settings-card.php:214
 msgid "Reserved"
 msgstr "予備"
 
-#: ../lib/pz-linkcard-settings-card.php:181
+#: ../lib/pz-linkcard-settings-card.php:193
 msgid "Get Redirect"
 msgstr "リダイレクト先からの取得"
 
-#: ../lib/pz-linkcard-settings-card.php:182
+#: ../lib/pz-linkcard-settings-card.php:194
 msgid "When the `Post ID` can not be acquired, it is acquired again."
 msgstr "記事IDが取得できなかった場合に、リダイレクト先のURLを取得する。"
 
-#: ../lib/pz-linkcard-settings-card.php:215
+#: ../lib/pz-linkcard-settings-card.php:227
 msgid "Heading"
 msgstr "ヘッダー"
 
-#: ../lib/pz-linkcard-settings-card.php:220
-#: ../lib/pz-linkcard-settings-card.php:254
-#: ../lib/pz-linkcard-settings-card.php:283
+#: ../lib/pz-linkcard-settings-card.php:232
+#: ../lib/pz-linkcard-settings-card.php:266
+#: ../lib/pz-linkcard-settings-card.php:295
 msgid "Text"
 msgstr "テキスト"
 
-#: ../lib/pz-linkcard-settings-card.php:221
+#: ../lib/pz-linkcard-settings-card.php:233
 msgid "When a string is entered, it is overlaid on the top border."
 msgstr "文字列を設定すると上側の枠に重ねて表示します。"
 
-#: ../lib/pz-linkcard-settings-card.php:226
-#: ../lib/pz-linkcard-settings-card.php:289
+#: ../lib/pz-linkcard-settings-card.php:238
+#: ../lib/pz-linkcard-settings-card.php:301
 msgid "External site"
 msgstr "外部サイト"
 
-#: ../lib/pz-linkcard-settings-card.php:227
-#: ../lib/pz-linkcard-settings-card.php:290
+#: ../lib/pz-linkcard-settings-card.php:239
+#: ../lib/pz-linkcard-settings-card.php:302
 msgid "This site"
 msgstr "このサイト内"
 
-#: ../lib/pz-linkcard-settings-card.php:228
-#: ../lib/pz-linkcard-settings-card.php:291
+#: ../lib/pz-linkcard-settings-card.php:240
+#: ../lib/pz-linkcard-settings-card.php:303
 msgid "This page"
 msgstr "同ページへのリンク"
 
-#: ../lib/pz-linkcard-settings-card.php:229
+#: ../lib/pz-linkcard-settings-card.php:241
 msgid "Reference"
 msgstr "参考"
 
-#: ../lib/pz-linkcard-settings-card.php:249
+#: ../lib/pz-linkcard-settings-card.php:261
 msgid "More"
 msgstr "続き"
 
-#: ../lib/pz-linkcard-settings-card.php:255
+#: ../lib/pz-linkcard-settings-card.php:267
 msgid ""
 "When a string is entered, it is overlaid on the lower right corner of the "
 "article content."
 msgstr "文字列を設定すると記事内容の右下に重ねて表示します。"
 
-#: ../lib/pz-linkcard-settings-card.php:260
+#: ../lib/pz-linkcard-settings-card.php:272
 msgid "More..."
 msgstr "続き…"
 
-#: ../lib/pz-linkcard-settings-card.php:261
+#: ../lib/pz-linkcard-settings-card.php:273
 msgid "Read more"
 msgstr "続きを読む"
 
-#: ../lib/pz-linkcard-settings-card.php:262
+#: ../lib/pz-linkcard-settings-card.php:274
 msgid "Go read the article"
 msgstr "記事を読みに行く"
 
-#: ../lib/pz-linkcard-settings-card.php:278
+#: ../lib/pz-linkcard-settings-card.php:290
 #: ../lib/pz-linkcard-settings-letter.php:28
 #: ../lib/pz-linkcard-settings-position.php:57
 msgid "Site Information"
 msgstr "サイト情報"
 
-#: ../lib/pz-linkcard-settings-card.php:284
+#: ../lib/pz-linkcard-settings-card.php:296
 msgid "Enter a string to display after the site name."
 msgstr "文字列を設定するとサイト名の後ろに表示します。"
 
-#: ../lib/pz-linkcard-settings-card.php:306
+#: ../lib/pz-linkcard-settings-card.php:318
 msgid "How to get Site-Icon"
 msgstr "サイトアイコンの取得方法"
 
-#: ../lib/pz-linkcard-settings-card.php:317
-#: ../lib/pz-linkcard-settings-card.php:369
+#: ../lib/pz-linkcard-settings-card.php:329
+#: ../lib/pz-linkcard-settings-card.php:381
 msgid "Direct"
 msgstr "直接取得する"
 
-#: ../lib/pz-linkcard-settings-card.php:318
-#: ../lib/pz-linkcard-settings-card.php:370
+#: ../lib/pz-linkcard-settings-card.php:330
+#: ../lib/pz-linkcard-settings-card.php:382
 msgid "Direct > Use WebAPI"
 msgstr "直接取得する、取得出来なかったらWebAPIを利用する"
 
-#: ../lib/pz-linkcard-settings-card.php:319
-#: ../lib/pz-linkcard-settings-card.php:371
+#: ../lib/pz-linkcard-settings-card.php:331
+#: ../lib/pz-linkcard-settings-card.php:383
 msgid "Use WebAPI"
 msgstr "WebAPIを利用する"
 
-#: ../lib/pz-linkcard-settings-card.php:335
+#: ../lib/pz-linkcard-settings-card.php:347
 msgid "Alternative text"
 msgstr "代替テキスト"
 
-#: ../lib/pz-linkcard-settings-card.php:354
-#: ../lib/pz-linkcard-settings-card.php:358
-#: ../lib/pz-linkcard-settings-display.php:90
+#: ../lib/pz-linkcard-settings-card.php:366
+#: ../lib/pz-linkcard-settings-card.php:370
+#: ../lib/pz-linkcard-settings-display.php:93
 #: ../lib/pz-linkcard-settings-position.php:87
 msgid "Thumbnail"
 msgstr "サムネイル"
 
-#: ../lib/pz-linkcard-settings-card.php:387
+#: ../lib/pz-linkcard-settings-card.php:399
 msgid "Thumbnail Size"
 msgstr "サムネイルの大きさ"
 
-#: ../lib/pz-linkcard-settings-card.php:397
+#: ../lib/pz-linkcard-settings-card.php:409
 msgid "Thumbnail (150px)"
 msgstr "小サイズ（150ピクセル）"
 
-#: ../lib/pz-linkcard-settings-card.php:398
+#: ../lib/pz-linkcard-settings-card.php:410
 msgid "Medium (300px)"
 msgstr "中サイズ（300ピクセル）"
 
-#: ../lib/pz-linkcard-settings-card.php:399
+#: ../lib/pz-linkcard-settings-card.php:411
 msgid "Large (1024px)"
 msgstr "大サイズ（1024ピクセル）"
 
-#: ../lib/pz-linkcard-settings-card.php:400
+#: ../lib/pz-linkcard-settings-card.php:412
 msgid "Original Size"
 msgstr "元のサイズ"
 
-#: ../lib/pz-linkcard-settings-card.php:416
+#: ../lib/pz-linkcard-settings-card.php:428
 msgid "Thubnail Alt Text"
 msgstr "サムネイルの代替テキスト"
 
@@ -1383,200 +1384,208 @@ msgid "Display Settings"
 msgstr "表示の設定"
 
 #: ../lib/pz-linkcard-settings-display.php:8
+msgid "Reset Image"
+msgstr "画像スタイルのリセット"
+
+#: ../lib/pz-linkcard-settings-display.php:10
+msgid ""
+"When unnecessary frame is displayed on the image, you can improve it by case"
+msgstr "画像がずれて表示されるときに改善される可能性が有ります（推奨）"
+
+#: ../lib/pz-linkcard-settings-display.php:15
 msgid "Link Card"
 msgstr "リンクカード"
 
-#: ../lib/pz-linkcard-settings-display.php:10
+#: ../lib/pz-linkcard-settings-display.php:17
 msgid "Position to display URL"
 msgstr "URLを表示する位置"
 
-#: ../lib/pz-linkcard-settings-display.php:12
-#: ../lib/pz-linkcard-settings-display.php:118
+#: ../lib/pz-linkcard-settings-display.php:19
+#: ../lib/pz-linkcard-settings-display.php:121
 msgid "Under Title"
 msgstr "タイトルの下の行"
 
-#: ../lib/pz-linkcard-settings-display.php:13
-#: ../lib/pz-linkcard-settings-display.php:119
+#: ../lib/pz-linkcard-settings-display.php:20
+#: ../lib/pz-linkcard-settings-display.php:122
 msgid "Bihind Site-Info"
 msgstr "サイト情報の後ろ"
 
-#: ../lib/pz-linkcard-settings-display.php:18
+#: ../lib/pz-linkcard-settings-display.php:25
 msgid "For internal links, display date instead of URL."
 msgstr "内部リンクの場合、URLの代わりに投稿日／更新日を表示します。"
 
-#: ../lib/pz-linkcard-settings-display.php:19
+#: ../lib/pz-linkcard-settings-display.php:26
 msgid "Off"
 msgstr "オフ"
 
-#: ../lib/pz-linkcard-settings-display.php:20
+#: ../lib/pz-linkcard-settings-display.php:27
 msgid "Post date"
 msgstr "投稿日"
 
-#: ../lib/pz-linkcard-settings-display.php:21
+#: ../lib/pz-linkcard-settings-display.php:28
 msgid "Update date"
 msgstr "更新日"
 
-#: ../lib/pz-linkcard-settings-display.php:22
+#: ../lib/pz-linkcard-settings-display.php:29
 msgid "Post date and Update date"
 msgstr "投稿日と更新日"
 
-#: ../lib/pz-linkcard-settings-display.php:27
+#: ../lib/pz-linkcard-settings-display.php:34
 msgid "Separator Line"
 msgstr "区切り線"
 
-#: ../lib/pz-linkcard-settings-display.php:32
+#: ../lib/pz-linkcard-settings-display.php:39
 msgid "Show Contents Frame"
 msgstr "記事情報に枠を表示する"
 
-#: ../lib/pz-linkcard-settings-display.php:37
+#: ../lib/pz-linkcard-settings-display.php:44
 msgid "Show Excerpt"
 msgstr "抜粋文を表示"
 
-#: ../lib/pz-linkcard-settings-display.php:42
+#: ../lib/pz-linkcard-settings-display.php:49
 msgid "Shadow-inset"
 msgstr "影を内側に付ける"
 
-#: ../lib/pz-linkcard-settings-display.php:47
+#: ../lib/pz-linkcard-settings-display.php:54
 msgid "Shadow"
 msgstr "影を付ける"
 
-#: ../lib/pz-linkcard-settings-display.php:52
-#: ../lib/pz-linkcard-settings-display.php:102
+#: ../lib/pz-linkcard-settings-display.php:59
+#: ../lib/pz-linkcard-settings-display.php:105
 msgid "Round a square"
 msgstr "角を丸める"
 
-#: ../lib/pz-linkcard-settings-display.php:57
+#: ../lib/pz-linkcard-settings-display.php:64
 msgid "Style"
 msgstr "表示設定"
 
-#: ../lib/pz-linkcard-settings-display.php:58
+#: ../lib/pz-linkcard-settings-display.php:65
 #: ../lib/pz-linkcard-settings-position.php:108
 #: ../lib/pz-linkcard-settings-position.php:128
 msgid "Width"
 msgstr "幅"
 
-#: ../lib/pz-linkcard-settings-display.php:64
+#: ../lib/pz-linkcard-settings-display.php:71
 msgid "More button"
 msgstr "続きを読むボタン"
 
-#: ../lib/pz-linkcard-settings-display.php:66
+#: ../lib/pz-linkcard-settings-display.php:73
 msgid "Text only"
 msgstr "テキスト のみ"
 
-#: ../lib/pz-linkcard-settings-display.php:67
+#: ../lib/pz-linkcard-settings-display.php:74
 msgid "Simple button"
 msgstr "シンプルなボタン"
 
-#: ../lib/pz-linkcard-settings-display.php:68
+#: ../lib/pz-linkcard-settings-display.php:75
 msgid "Button"
 msgstr "ボタン"
 
-#: ../lib/pz-linkcard-settings-display.php:69
+#: ../lib/pz-linkcard-settings-display.php:76
 msgid "Push Button"
 msgstr "押せるボタン"
 
-#: ../lib/pz-linkcard-settings-display.php:75
+#: ../lib/pz-linkcard-settings-display.php:81
+msgid "On Hover"
+msgstr "ホバー時"
+
+#: ../lib/pz-linkcard-settings-display.php:83
 msgid "When the mouse is on"
 msgstr "マウスが上に乗ったとき、"
 
-#: ../lib/pz-linkcard-settings-display.php:77
+#: ../lib/pz-linkcard-settings-display.php:85
 msgid "Lighten"
 msgstr "薄色にする"
 
-#: ../lib/pz-linkcard-settings-display.php:78
+#: ../lib/pz-linkcard-settings-display.php:86
 msgid "Hover (Light)"
 msgstr "浮かせる（薄色）"
 
-#: ../lib/pz-linkcard-settings-display.php:79
+#: ../lib/pz-linkcard-settings-display.php:87
 msgid "Hover (Dark)"
 msgstr "浮かせる（濃色）"
 
-#: ../lib/pz-linkcard-settings-display.php:80
+#: ../lib/pz-linkcard-settings-display.php:88
 msgid "Retract (for Shadow)"
 msgstr "沈む（影を付けるとの組み合わせを推奨）"
 
-#: ../lib/pz-linkcard-settings-display.php:81
+#: ../lib/pz-linkcard-settings-display.php:89
 msgid "Radius"
 msgstr "角を丸める"
 
-#: ../lib/pz-linkcard-settings-display.php:86
-msgid ""
-"When unnecessary frame is displayed on the image, you can improve it by case"
-msgstr "画像がずれて表示されるときに改善される可能性が有ります（推奨）"
-
-#: ../lib/pz-linkcard-settings-display.php:92
+#: ../lib/pz-linkcard-settings-display.php:95
 msgid "Show Thumbnail Border"
 msgstr "サムネイル画像に枠線を表示する"
 
-#: ../lib/pz-linkcard-settings-display.php:97
+#: ../lib/pz-linkcard-settings-display.php:100
 msgid "Show Thumbnail Shadow"
 msgstr "サムネイル画像に影を表示する"
 
-#: ../lib/pz-linkcard-settings-display.php:104
+#: ../lib/pz-linkcard-settings-display.php:107
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:29
 msgid "2px"
 msgstr "2px"
 
-#: ../lib/pz-linkcard-settings-display.php:105
+#: ../lib/pz-linkcard-settings-display.php:108
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:13
 #: ../lib/pz-linkcard-settings.php:30
 msgid "4px"
 msgstr "4px"
 
-#: ../lib/pz-linkcard-settings-display.php:106
+#: ../lib/pz-linkcard-settings-display.php:109
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:31
 msgid "6px"
 msgstr "6px"
 
-#: ../lib/pz-linkcard-settings-display.php:107
+#: ../lib/pz-linkcard-settings-display.php:110
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:14
 #: ../lib/pz-linkcard-settings.php:32
 msgid "8px"
 msgstr "8px"
 
-#: ../lib/pz-linkcard-settings-display.php:108
+#: ../lib/pz-linkcard-settings-display.php:111
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:15
 #: ../lib/pz-linkcard-settings.php:33
 msgid "12px"
 msgstr "12px"
 
-#: ../lib/pz-linkcard-settings-display.php:109
+#: ../lib/pz-linkcard-settings-display.php:112
 #: ../lib/pz-linkcard-settings.php:7 ../lib/pz-linkcard-settings.php:16
 #: ../lib/pz-linkcard-settings.php:34
 msgid "16px"
 msgstr "16px"
 
-#: ../lib/pz-linkcard-settings-display.php:110
+#: ../lib/pz-linkcard-settings-display.php:113
 #: ../lib/pz-linkcard-settings.php:39
 msgid "50%"
 msgstr "50%"
 
-#: ../lib/pz-linkcard-settings-display.php:114
+#: ../lib/pz-linkcard-settings-display.php:117
 msgid "Display SNS Count"
 msgstr "シェア数を表示する"
 
-#: ../lib/pz-linkcard-settings-display.php:126
+#: ../lib/pz-linkcard-settings-display.php:129
 msgid "X (Twitter)"
 msgstr "X（旧ツイッター）"
 
-#: ../lib/pz-linkcard-settings-display.php:126
-#: ../lib/pz-linkcard-settings-display.php:138
+#: ../lib/pz-linkcard-settings-display.php:129
+#: ../lib/pz-linkcard-settings-display.php:141
 msgid "* The count is not updated"
 msgstr "※数字は更新されません。"
 
-#: ../lib/pz-linkcard-settings-display.php:131
+#: ../lib/pz-linkcard-settings-display.php:134
 msgid "Change the unit of measure to \"tweets\"."
 msgstr "単位を「Post」では無く「Tweet」にする"
 
-#: ../lib/pz-linkcard-settings-display.php:138
+#: ../lib/pz-linkcard-settings-display.php:141
 msgid "Facebook"
 msgstr "フェイスブック（シェア数）"
 
-#: ../lib/pz-linkcard-settings-display.php:145
+#: ../lib/pz-linkcard-settings-display.php:148
 msgid "Hatena"
 msgstr "はてなブックマーク"
 
-#: ../lib/pz-linkcard-settings-display.php:152
+#: ../lib/pz-linkcard-settings-display.php:155
 msgid "Pocket"
 msgstr "Pocket"
 
@@ -2426,11 +2435,11 @@ msgstr "すべての端末"
 msgid "Non-Mobile Devices"
 msgstr "モバイル端末以外"
 
-#: ../lib/pz-linkcard-settings.php:199 ../pz-linkcard.php:2974
+#: ../lib/pz-linkcard-settings.php:199 ../pz-linkcard.php:2971
 msgid "Manager"
 msgstr "管理"
 
-#: ../lib/pz-linkcard-settings.php:201 ../pz-linkcard.php:2916
+#: ../lib/pz-linkcard-settings.php:201 ../pz-linkcard.php:2913
 msgid "Pz-LinkCard Settings"
 msgstr "Pz カード設定"
 
@@ -2467,10 +2476,8 @@ msgid "Successfully saved the settings."
 msgstr "設定を更新しました。"
 
 #: ../lib/pz-linkcard-settings.php:304
-#, fuzzy
-#| msgid "Failed to initialize the settings."
 msgid "Failed to save the settings."
-msgstr "設定の初期化に失敗しました。"
+msgstr "設定の保存に失敗しました。"
 
 #: ../lib/pz-linkcard-settings.php:306
 msgid "The settings have not changed."
@@ -2681,21 +2688,23 @@ msgstr "[Pz] カード設定"
 
 #: ../pz-linkcard.php:2618 ../pz-linkcard.php:2629 ../pz-linkcard.php:2640
 msgid "Sorry, you are not allowed to access this page."
-msgstr ""
+msgstr "申し訳ありませんが、このページへのアクセスは許可されていません。"
 
 #: ../pz-linkcard.php:2669
-#, fuzzy
-#| msgid "Use to title"
 msgid "Use this image"
-msgstr "タイトルとして使用"
+msgstr "この画像を使用"
 
-#: ../pz-linkcard.php:2863
+#: ../pz-linkcard.php:2860
 msgid "Linkcard"
 msgstr "リンクカード"
 
-#: ../pz-linkcard.php:2863
+#: ../pz-linkcard.php:2860
 msgid "Make Linkcard"
 msgstr "リンクカードのショートコードを挿入する"
+
+#: ../pz-linkcard.php:2911
+msgid "Pz Card"
+msgstr "Pzカード"
 
 #~ msgid "URL Key"
 #~ msgstr "URLキー"
@@ -2867,9 +2876,6 @@ msgstr "リンクカードのショートコードを挿入する"
 
 #~ msgid "Border"
 #~ msgstr "枠線の太さ"
-
-#~ msgid "Reset Image Style"
-#~ msgstr "画像のスタイルのリセット"
 
 #~ msgid "Stylesheet URL"
 #~ msgstr "CSSファイルのURL"
@@ -3221,9 +3227,6 @@ msgstr "リンクカードのショートコードを挿入する"
 
 #~ msgid "etc"
 #~ msgstr "その他"
-
-#~ msgid "Hover"
-#~ msgstr "浮かせる"
 
 #~ msgid "Thinning at mouseover"
 #~ msgstr "マウスでポイントしたときに表示を薄くする"

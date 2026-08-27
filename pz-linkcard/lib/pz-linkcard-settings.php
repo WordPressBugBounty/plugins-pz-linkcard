@@ -399,8 +399,8 @@
 	$changelog		=	'';
 	if	(!function_exists('wp_is_mobile' ) || !wp_is_mobile() ) {
 		$changelog	=	file_get_contents($this->plugin_dir_path.'/readme.txt' );											// readme.txt を読み込み
-		preg_match('/== Changelog ==[^=]*(=\s*[^=]*\s*=[^=]*=\s*[^=]*\s*=[^=]*=\s*[^=]*\s*=[^=]*=\s*[^=]*\s*=[^=]*=\s*[^=]*\s*=[^=]*)/m', $changelog, $m );
-		$changelog	=	$m[1];
+		preg_match('/^== Changelog ==\s*(?<entries>(?:^= [^=\r\n]+ =\s*(?:(?!^= [^=\r\n]+ =|^== ).*\R?)*){1,5})/m', $changelog, $m );
+		$changelog	=	$m['entries'] ?? '';
 		$changelog	=	trim($changelog );
 		$changelog	=	esc_html($changelog );
 		$changelog	=	preg_replace('/^\* (.*)$/mi',				'<span class="pz-log-ja">*&ensp;$1</span>',								$changelog);	// 日本語文の行のインデント調整
@@ -420,10 +420,10 @@
 		$changelog	=	preg_replace('/&ensp;&ensp;removed:\s*/i',	'&ensp;&ensp;<span class="pz-log-removed">Removed</span>&ensp;',		$changelog);	// 修正
 		$changelog	=	preg_replace('/&ensp;&ensp;tested:\s*/i',	'&ensp;&ensp;<span class="pz-log-tested">Tested</span>&ensp;',			$changelog);	// テスト
 		$changelog	=	preg_replace('/&ensp;&ensp;pending:\s*/i',	'&ensp;&ensp;<span class="pz-log-pending">Pending</span>&ensp;',		$changelog);	// テスト
-		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on x.com）/i',					'<a href="https://x.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.						'Thanks<span class="pz-thx-name">$1</span>'.$logo_x. '<span class="pz-thx-account">$2</span></a>', $changelog);	
-		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on twitter.com）/i',				'<a href="https://twitter.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.					'Thanks<span class="pz-thx-name">$1</span>'.$logo_tw.'<span class="pz-thx-account">$2</span></a>', $changelog);	
-		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(@[^\s]*)\s+on wordpress.org）/i',			'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">$2</span></a>', $changelog);	
-		$changelog	=	preg_replace('/（Thanks\s+([^\s@]*)\s*(#[^\s]*)\s+on popozure.info）/i',			'<a href="'.$pz_url.'" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.								'Thanks<span class="pz-thx-name">$1</span>'.$logo_pz.'<span class="pz-thx-account">$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+(?:(.*?)\s+)?@([^\s）]+)\s+on x\.com）/iu',				'<a href="https://x.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.						'Thanks<span class="pz-thx-name">$1</span>'.$logo_x. '<span class="pz-thx-account">@$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+(?:(.*?)\s+)?@([^\s）]+)\s+on twitter\.com）/iu',			'<a href="https://twitter.com/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.					'Thanks<span class="pz-thx-name">$1</span>'.$logo_tw.'<span class="pz-thx-account">@$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+(?:(.*?)\s+)?@([^\s）]+)\s+on wordpress\.org）/iu',		'<a href="https://wordpress.org/support/users/$2" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.	'Thanks<span class="pz-thx-name">$1</span>'.$logo_wp.'<span class="pz-thx-account">@$2</span></a>', $changelog);	
+		$changelog	=	preg_replace('/（Thanks\s+(?:(.*?)\s+)?(#[^\s）]+)\s+on popozure\.info）/iu',		'<a href="'.$pz_url.'" class="pz-thx" rel="external noopener noreferrer" target="_blank">'.								'Thanks<span class="pz-thx-name">$1</span>'.$logo_pz.'<span class="pz-thx-account">$2</span></a>', $changelog);	
 		$changelog	=	str_replace("\r\n",		'<br>',	$changelog );															// 改行をBRタグに変換
 		$changelog	=	str_replace("\r",		'<br>',	$changelog );															// 改行をBRタグに変換
 		$changelog	=	str_replace("\n",		'<br>',	$changelog );															// 改行をBRタグに変換

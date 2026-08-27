@@ -57,6 +57,18 @@
 		echo				'<label><input type="text"     name="properties['.$item_name.']" value="'.$item_value.'" class="pz-wp-color-picker" />';
 		echo				'</td></tr>';
 
+		// 背景色
+		echo				'<tr><th>'.__('On Hover Color', 'pz-linkcard' ).'</th><td>';
+		$item_name		=	$t['name'].'-hover-bg-color';
+		$item_value		=	$prop[$item_name];
+		if	($t['name']	==	'th' ) {
+			$item_value	=	__('Use the same setting as Internal Link', 'pz-linkcard' );
+			echo			'<label><input type="text"     name="properties['.$item_name.']" value="'.$item_value.'" size="30" disabled="disabled" />';
+		} else {
+			echo			'<label><input type="text"     name="properties['.$item_name.']" value="'.$item_value.'" class="pz-wp-color-picker" />';
+		}
+		echo			'</td></tr>';
+
 		// 背景画像
 		$item_name			=	$t['name'].'-image';
 		$item_title			=	__('Background Image', 'pz-linkcard' );

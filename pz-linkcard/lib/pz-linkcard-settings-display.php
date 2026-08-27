@@ -5,7 +5,14 @@
 
 	<table class="form-table" style="width: 100%;">
 		<tr>
-			<th scope="row" rowspan="12"><?php _e('Link Card', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php _e('Reset Image', 'pz-linkcard' ); ?></th>
+			<td>
+				<?php pz_Checkbox($prop, 'style-reset-img', __('When unnecessary frame is displayed on the image, you can improve it by case', 'pz-linkcard' ) ); ?>
+			</td>
+		</tr>
+
+		<tr>
+			<th scope="row" rowspan="10"><?php _e('Link Card', 'pz-linkcard' ); ?></th>
 			<td>
 				<?php pz_Option($prop, 'display-url', __('Position to display URL', 'pz-linkcard' ), array(
 								''		=>		__('None', 'pz-linkcard' ),
@@ -71,6 +78,7 @@
 			</td>
 		</tr>
 		<tr>
+			<th scope="row"><?php _e('On Hover', 'pz-linkcard' ); ?></th>
 			<td>
 				<?php pz_Option($prop, 'hover', __('When the mouse is on', 'pz-linkcard' ), array(
 								''		=>		__('None', 'pz-linkcard' ),
@@ -79,11 +87,6 @@
 								'3'		=>		__('Hover (Dark)', 'pz-linkcard' ),
 								'4'		=>		__('Retract (for Shadow)', 'pz-linkcard' ),
 								'7'		=>		__('Radius', 'pz-linkcard' ), ) ); ?>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<?php pz_Checkbox($prop, 'style-reset-img', __('When unnecessary frame is displayed on the image, you can improve it by case', 'pz-linkcard' ) ); ?>
 			</td>
 		</tr>
 		<tr>
