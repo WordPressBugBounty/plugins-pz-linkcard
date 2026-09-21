@@ -29,7 +29,7 @@
 		'ct1'		=>		__('Cellophane tape "center"',		'pz-linkcard'),
 		'ct2'		=>		__('Cellophane tape "Top corner"',	'pz-linkcard'),
 		'ct3'		=>		__('Cellophane tape "long"',		'pz-linkcard'),
-		'ct4'		=>		__('Cellophane tape "digonal"',		'pz-linkcard'),
+		'ct4'		=>		__('Cellophane tape "diagonal"',		'pz-linkcard'),
 		'tac'		=>		__('Cellophane tape and curling',	'pz-linkcard'),
 		'ppc'		=>		__('Curling paper',					'pz-linkcard'),
 		'sBR'		=>		__('Stitch blue & red',				'pz-linkcard'),
@@ -37,7 +37,7 @@
 		'sqr'		=>		__('Square',						'pz-linkcard'),
 		'ecl'		=>		__('Enclose',						'pz-linkcard'),
 		'ref'		=>		__('Reflection',					'pz-linkcard'),
-		'inI'		=>		__('Infomation orange',				'pz-linkcard'),
+		'inI'		=>		__('Information orange',				'pz-linkcard'),
 		'inN'		=>		__('Neutral bluegreen',				'pz-linkcard'),
 		'inE'		=>		__('Enlightened green',				'pz-linkcard'),
 		'inR'		=>		__('Resistance blue',				'pz-linkcard'),
@@ -52,10 +52,10 @@
 	echo_list($item_name, $prop[$item_name], $item_list, $item_descript, $item_notice );
 ?>
 		<tr>
-			<th scope="row"><?php _e('Saved Datetime', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('Saved Datetime', 'pz-linkcard' ); ?></th>
 			<td>
+				<input name="properties[saved-date]" type="number" min="0" step="1" value="<?php echo esc_attr($this->options['saved-date'] ); ?>" class="pz-admin-only" readonly="readonly" />
 				<?php echo is_numeric($this->options['saved-date'] ) ? esc_html($this->pz_Date(PZLKC_DATETIME_FORMAT, $this->options['saved-date'] ) ) : esc_html($this->options['saved-date'] ); ?>
-				<input name="properties[saved-date]" type="text" value="<?php echo esc_attr($this->options['saved-date'] ); ?>" class="pz-admin-only" readonly="readonly" />
 			</td>
 		</tr>
 	</table>
@@ -77,17 +77,17 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e("Author's Site", 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e("Author's Site", 'pz-linkcard' ); ?></th>
 			<td><?php echo	__('Popozure.', 'pz-linkcard' ).' ('.__("Poporon's PC Daily Diary", 'pz-linkcard' ).')'; ?><BR><a href="<?php echo $pz_url; ?>" rel="external noopener" target="_blank"><?php echo $pz_url; ?></A></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php _e('When in Trouble', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('When in Trouble', 'pz-linkcard' ); ?></th>
 			<td><?php echo	__('X Account', 'pz-linkcard' ); ?><BR><a href="<?php echo self::AUTHOR_TWITTER_URL; ?>" rel="external noopener" target="_blank"><?php echo self::AUTHOR_TWITTER; ?></A></td>
 		</tr>
 
 		<tr class="pz-debug-only">
-			<th scope="row"><?php _e('Donation', 'pz-linkcard' ); ?></th>
-			<td><a href="<?php echo self::AUTHOR_DONATE_URL; ?>" rel="external noopenner noreferrer" target="_blank" target="_blank"><?php _e('Wishlist', 'pz-linkcard' ); ?></a></td>
+			<th scope="row"><?php esc_html_e('Donation', 'pz-linkcard' ); ?></th>
+			<td><a href="<?php echo self::AUTHOR_DONATE_URL; ?>" rel="external noopenner noreferrer" target="_blank" target="_blank"><?php esc_html_e('Wishlist', 'pz-linkcard' ); ?></a></td>
 		</tr>
 
 	</table>

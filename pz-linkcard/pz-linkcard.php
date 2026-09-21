@@ -3,8 +3,8 @@
 /*
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
-Description:	リンクをカード形式で表示します。
-Version:		2.6.0.5
+Description:	Displays links in card format.
+Version:		2.6.1
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -17,249 +17,439 @@ class class_pz_linkcard {
 	// 設定値
 	private		const	DEFAULTS	=
 		array(
-			'plugin-version'		=>	null,
-			'db-version'			=>	null,
+			'plugin-version'					=>	['type'	=>	'version',		'null'	=>	false,	'default'	=>	null, ],
+			'db-version'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
 
-			'error-mode'			=>	0,
-			'error-hide'			=>	0,
-			'error-url'				=>	null,
-			'error-postid'			=>	null,
-			'error-time'			=>	null,
+			'error-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'error-hide'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'error-mode-hide'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'error-url'							=>	['type'	=>	'url',			'null'	=>	true,	'default'	=>	null, ],
+			'error-postid'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'error-time'						=>	['type'	=>	'timestamp',	'null'	=>	true,	'default'	=>	null, ],
 
-			'special-format'		=>	null,
+			'special-format'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
 
-			'link-all'				=>	1,
-			'thumbnail-resize'		=>	1,
-			'margin-top'			=>	'16px',
-			'margin-bottom'			=>	'16px',
-			'margin-left'			=>	'16px',
-			'margin-right'			=>	'16px',
-			'card-top'				=>	'8px',
-			'card-bottom'			=>	'8px',
-			'card-left'				=>	'8px',
-			'card-right'			=>	'8px',
-			'thumbnail-position'	=>	2,
-			'thumbnail-width'		=>	'100px',
-			'thumbnail-height'		=>	'100px',
-			'width'					=>	'500px',
-			'content-height'		=>	'100px',
-			'centering'				=>	0,
-			'blockquote'			=>	0,
-			'info-position'			=>	1,
-			'use-sitename'			=>	1,
+			'flg-linkall'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-resize'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'margin-top'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'16px', ],
+			'margin-bottom'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'16px', ],
+			'margin-left'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'16px', ],
+			'margin-right'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'16px', ],
+			'card-top'							=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'8px', ],
+			'card-bottom'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'8px', ],
+			'card-left'							=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'8px', ],
+			'card-right'						=>	['type'	=>	'pixel',		'null'	=>	true,	'default'	=>	'8px', ],
+			'thumbnail-position'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'thumbnail-width'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	100, ],
+			'thumbnail-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	100, ],
+			'width'								=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	500, ],
+			'width-unit'						=>	['type'	=>	'unit',			'null'	=>	true,	'default'	=>	'px', ],
+			'content-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	104, ],
+			'centering'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'enclose-tag'						=>	['type'	=>	'html_tag',		'null'	=>	false,	'default'	=>	'div', ],
+			'flg-use-sitename'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'info-position'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
 
-			'style-reset-img'		=>	1,
-			'display-url'			=>	1,
-			'display-date'			=>	1,
-			'separator'				=>	0,
-			'display-excerpt'		=>	1,
-			'content-inset'			=>	0,
-			'shadow'				=>	0,
-			'shadow-inset'			=>	0,
-			'radius'				=>	'4px',
-			'radius'				=>	'4px',
-			'border'				=>	0,
-			'border-style'			=>	'solid',
-			'border-width'			=>	'1px',
-			'more-style'			=>	'SMP',
-			'hover'					=>	1,
-			'thumbnail-border'		=>	null,
-			'thumbnail-shadow'		=>	0,
-			'thumbnail-radius'		=>	'4px',
-			'sns-position'			=>	2,
-			'sns-tw'				=>	1,
-			'sns-tw-x'				=>	0,
-			'sns-fb'				=>	1,
-			'sns-hb'				=>	1,
-			'sns-po'				=>	1,
+			'flg-style-reset'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'display-url'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	1, ],
+			'display-date'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	1, ],
+			'separator'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'display-excerpt'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'content-inset'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'sns-position'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'sns-tw'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'sns-tw-x'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'sns-fb'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'sns-hb'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
 
-			'title-color'			=>	'#111111',
-			'title-outline-color'	=>	null,
-			'title-bg-color'		=>	null,
-			'title-size'			=>	'18px',
-			'title-height'			=>	'24px',
-			'title-maxline'			=>	2,
-			'title-length'			=>	80,
-			'title-bold'			=>	1,
-			'title-italic'			=>	0,
-			'title-underline'		=>	0,
-			'title-hover'			=>	1,
+			'title-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#111111', ],
+			'title-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'title-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'title-size'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	18, ],
+			'title-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	23, ],
+			'title-maxline'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	2, ],
+			'title-bold'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'title-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'title-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'title-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
 
-			'url-color'				=>	'#4466ff',
-			'url-outline-color'		=>	null,
-			'url-bg-color'			=>	null,
-			'url-size'				=>	'12px',
-			'url-height'			=>	'17px',
-			'url-bold'				=>	0,
-			'url-italic'			=>	0,
-			'url-underline'			=>	1,
-			'url-hover'				=>	1,
+			'url-color'							=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#4466ff', ],
+			'url-outline-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'url-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'url-size'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	12, ],
+			'url-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	17, ],
+			'url-bold'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'url-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'url-underline'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'url-hover'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
 
-			'excerpt-color'			=>	'#444444',
-			'excerpt-outline-color'	=>	'',
-			'excerpt-bg-color'		=>	null,
-			'excerpt-size'			=>	'11px',
-			'excerpt-height'		=>	'18px',
-			'excerpt-maxline'		=>	null,
-			'excerpt-length'		=>	500,
-			'excerpt-bold'			=>	0,
-			'excerpt-italic'		=>	0,
-			'excerpt-underline'		=>	0,
-			'excerpt-hover'			=>	0,
+			'excerpt-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#444444', ],
+			'excerpt-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'excerpt-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'excerpt-size'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	11, ],
+			'excerpt-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	18, ],
+			'excerpt-maxline'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	3, ],
+			'excerpt-bold'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'excerpt-italic'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'excerpt-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'excerpt-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'date-color'			=>	'#444444',
-			'date-outline-color'	=>	null,
-			'date-bg-color'			=>	null,
-			'date-size'				=>	'10px',
-			'date-height'			=>	'16px',
-			'date-bold'				=>	0,
-			'date-italic'			=>	0,
-			'date-underline'		=>	0,
-			'date-hover'			=>	0,
+			'date-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#444444', ],
+			'date-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'date-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'date-size'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	11, ],
+			'date-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	16, ],
+			'date-bold'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'date-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'date-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'date-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'info-color'			=>	'#222222',
-			'info-outline-color'	=>	null,
-			'info-bg-color'			=>	null,
-			'info-size'				=>	'12px',
-			'info-height'			=>	'14px',
-			'info-length'			=>	100,
-			'info-bold'				=>	0,
-			'info-italic'			=>	0,
-			'info-underline'		=>	0,
-			'info-hover'			=>	0,
+			'info-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#222222', ],
+			'info-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'info-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null],
+			'info-size'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	12],
+			'info-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	16],
+			'info-bold'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'info-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'info-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'info-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'added-color'			=>	'#ffffff',
-			'added-outline-color'	=>	null,
-			'added-bg-color'		=>	'#365cd9',
-			'added-size'			=>	'9px',
-			'added-height'			=>	'10px',
-			'added-bold'			=>	0,
-			'added-italic'			=>	0,
-			'added-underline'		=>	0,
-			'added-hover'			=>	0,
+			'added-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'added-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'added-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#365cd9', ],
+			'added-size'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	9, ],
+			'added-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	10, ],
+			'added-bold'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'added-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'added-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'added-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'heading-color'			=>	'#444444',
-			'heading-outline-color'	=>	null,
-			'heading-bg-color'		=>	null,
-			'heading-size'			=>	'12px',
-			'heading-height'		=>	'32px',
-			'heading-bold'			=>	0,
-			'heading-italic'		=>	0,
-			'heading-underline'		=>	0,
-			'heading-hover'			=>	0,
+			'heading-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'heading-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+//			'heading-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'heading-size'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	12, ],
+			'heading-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	16, ],
+			'heading-bold'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'heading-italic'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'heading-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'heading-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'more-color'			=>	'#444444',
-			'more-outline-color'	=>	null,
-			'more-bg-color'			=>	null,
-			'more-size'				=>	'12px',
-			'more-height'			=>	'24px',
-			'more-bold'				=>	0,
-			'more-italic'			=>	0,
-			'more-underline'		=>	0,
-			'more-hover'			=>	0,
+			'more-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'more-outline-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+//			'more-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'more-size'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	12, ],
+			'more-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	24, ],
+			'more-bold'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'more-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'more-underline'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'more-hover'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'ex-border-color'		=>	'#114488',
-			'ex-bg-color'			=>	'#ddeeff',
-			'ex-hover-bg-color'		=>	'',
-			'ex-image'				=>	null,
-			'ex-heading-text'		=>	null,
-			'ex-more-text'			=>	null,
-			'ex-added-text'			=>	null,
-			'ex-favicon'			=>	3,
-			'ex-favicon-alt'		=>	null,
-			'ex-thumbnail'			=>	13,
-			'ex-thumbnail-size'		=>	'thumbnail',
-			'ex-thumbnail-alt'		=>	null,
-			'ex-target'				=>	2,
-			'ex-get'				=>	2,
+			'cat-color'							=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'cat-outline-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'cat-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffcc88', ],
+			'cat-size'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	12, ],
+			'cat-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	24, ],
+			'cat-bold'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'cat-italic'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'cat-underline'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'cat-hover'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'in-border-color'		=>	'#888888',
-			'in-bg-color'			=>	'#f8f8f8',
-			'in-hover-bg-color'		=>	'',
-			'in-image'				=>	null,
-			'in-heading-text'		=>	null,
-			'in-more-text'			=>	null,
-			'in-added-text'			=>	null,
-			'in-favicon'			=>	3,
-			'in-favicon-alt'		=>	null,
-			'in-thumbnail'			=>	1,
-			'in-thumbnail-size'		=>	'thumbnail',
-			'in-thumbnail-alt'		=>	null,
-			'in-target'				=>	null,
-			'in-get'				=>	null,
-			'in-field-title'		=>	null,
-			'in-field-excerpt'		=>	null,
-			'in-get-url'			=>	0,
+			'ex-target'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'ex-transform-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-transform-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-transform-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-transform-rotate'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-transform-scale'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-opacity'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-bg-enabled'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ddeeff', ],
+			'ex-bg-image'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-border-enabled'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-border-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#114488', ],
+			'ex-border-style'					=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'ex-border-width'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'ex-border-radius'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'ex-shadow-enabled'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-shadow-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#00336688', ],
+			'ex-shadow-x'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-shadow-y'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-shadow-blur'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-shadow-spread'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-shadow-inset'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-transition'						=>	['type'	=>	'float',		'null'	=>	true,	'default'	=>	0.2, ],
+			'ex-hover-transform-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-transform-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	-4, ],
+			'ex-hover-transform-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	-4, ],
+			'ex-hover-transform-rotate'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-transform-scale'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-hover-opacity'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-hover-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-hover-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ddeeff88', ],
+			'ex-hover-bg-image'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-hover-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-border-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#114488', ],
+			'ex-hover-border-style'				=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'ex-hover-border-width'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'ex-hover-border-radius'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'ex-hover-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-shadow-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#00336688', ],
+			'ex-hover-shadow-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-hover-shadow-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-hover-shadow-blur'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-hover-shadow-spread'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-shadow-inset'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-hover-transition'				=>	['type'	=>	'float',		'null'	=>	true,	'default'	=>	0.2, ],
+			'ex-get-from'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	2, ],
+			'ex-heading-text'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-heading-transform-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-transform-x'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-transform-y'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-transform-rotate'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-transform-scale'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-heading-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-heading-bg-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#003366', ],
+			'ex-heading-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-border-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#003366', ],
+			'ex-heading-border-style'			=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'ex-heading-border-width'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'ex-heading-border-radius'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'ex-heading-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-shadow-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#00336688', ],
+			'ex-heading-shadow-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-heading-shadow-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-heading-shadow-blur'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-heading-shadow-spread'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-heading-shadow-inset'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-text'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-more-transform-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-transform-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-transform-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-transform-rotate'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-transform-scale'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-more-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#446688', ],
+			'ex-more-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-border-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#446688', ],
+			'ex-more-border-style'				=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'ex-more-border-width'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'ex-more-border-radius'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'ex-more-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-shadow-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#44668888', ],
+			'ex-more-shadow-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	4, ],
+			'ex-more-shadow-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	4, ],
+			'ex-more-shadow-blur'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-more-shadow-spread'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-more-shadow-inset'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-added-text'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-siteicon'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	3, ],
+			'ex-siteicon-alt'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-thumbnail'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	13, ],
+			'ex-thumbnail-size'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	'thumbnail', ],
+			'ex-thumbnail-alt'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'ex-thumbnail-transform-enabled' 	=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-transform-x'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-transform-y'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-transform-rotate'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-transform-scale'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'ex-thumbnail-bg-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-thumbnail-bg-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'ex-thumbnail-border-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'ex-thumbnail-border-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#888888', ],
+			'ex-thumbnail-border-style'			=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'ex-thumbnail-border-width'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'ex-thumbnail-border-radius'		=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'ex-thumbnail-shadow-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-shadow-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#aaaacc', ],
+			'ex-thumbnail-shadow-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-thumbnail-shadow-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-thumbnail-shadow-blur'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'ex-thumbnail-shadow-spread'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'ex-thumbnail-shadow-inset'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'th-border-color'		=>	'#666666',
-			'th-bg-color'			=>	'#f4f4f4',
-			'th-image'				=>	null,
-			'th-heading-text'		=>	null,
-			'th-more-text'			=>	null,
-			'th-added-text'			=>	null,
+			'in-target'							=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'in-transform-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-transform-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-transform-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-transform-rotate'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-transform-scale'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-opacity'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-bg-enabled'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-bg-color'						=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#fffaf0', ],
+			'in-bg-image'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-border-enabled'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-border-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#998888', ],
+			'in-border-style'					=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'in-border-width'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'in-border-radius'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'in-shadow-enabled'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-shadow-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#66330088', ],
+			'in-shadow-x'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-shadow-y'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-shadow-blur'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-shadow-spread'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-shadow-inset'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-transition'						=>	['type'	=>	'float',		'null'	=>	true,	'default'	=>	0.2, ],
+			'in-hover-transform-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-transform-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	-4, ],
+			'in-hover-transform-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	-4, ],
+			'in-hover-transform-rotate'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-transform-scale'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-hover-opacity'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-hover-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-hover-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#fffaf088', ],
+			'in-hover-bg-image'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-hover-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-border-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#998888', ],
+			'in-hover-border-style'				=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'in-hover-border-width'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	2, ],
+			'in-hover-border-radius'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'in-hover-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-shadow-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#66330088', ],
+			'in-hover-shadow-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-hover-shadow-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-hover-shadow-blur'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-hover-shadow-spread'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-shadow-inset'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-hover-transition'				=>	['type'	=>	'float',		'null'	=>	true,	'default'	=>	0.2, ],
+			'in-get-from'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-field-title'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-field-excerpt'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-get-url'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	0, ],
+			'in-heading-text'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-heading-transform-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-transform-x'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-transform-y'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-transform-rotate'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-transform-scale'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-heading-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-heading-bg-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#998888', ],
+			'in-heading-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-border-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	null, ],
+			'in-heading-border-style'			=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'in-heading-border-width'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'in-heading-border-radius'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'in-heading-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-shadow-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#aaaacc', ],
+			'in-heading-shadow-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-heading-shadow-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-heading-shadow-blur'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-heading-shadow-spread'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-heading-shadow-inset'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-more-text'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-more-transform-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-more-transform-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-more-transform-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-more-transform-rotate'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-more-transform-scale'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-more-bg-enabled'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-more-bg-color'					=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#8c8c70', ],
+			'in-more-border-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-more-border-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#444444', ],
+			'in-more-border-style'				=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'in-more-border-width'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'in-more-border-radius'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'in-more-shadow-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-more-shadow-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#66330088', ],
+			'in-more-shadow-x'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	4, ],
+			'in-more-shadow-y'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	4, ],
+			'in-more-shadow-blur'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-more-shadow-spread'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-more-shadow-inset'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-added-text'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-siteicon'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	3, ],
+			'in-siteicon-alt'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-thumbnail'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	1, ],
+			'in-thumbnail-size'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	'thumbnail', ],
+			'in-thumbnail-alt'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'in-thumbnail-transform-enabled' 	=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-transform-x'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-transform-y'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-transform-rotate'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-transform-scale'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	100, ],
+			'in-thumbnail-bg-enabled'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-thumbnail-bg-color'				=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#ffffff', ],
+			'in-thumbnail-border-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'in-thumbnail-border-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#888888', ],
+			'in-thumbnail-border-style'			=>	['type'	=>	'border',		'null'	=>	true,	'default'	=>	'solid', ],
+			'in-thumbnail-border-width'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	1, ],
+			'in-thumbnail-border-radius'		=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	4, ],
+			'in-thumbnail-shadow-enabled'		=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-shadow-color'			=>	['type'	=>	'color',		'null'	=>	true,	'default'	=>	'#aaaacc', ],
+			'in-thumbnail-shadow-x'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-thumbnail-shadow-y'				=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-thumbnail-shadow-blur'			=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	8, ],
+			'in-thumbnail-shadow-spread'		=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'in-thumbnail-shadow-inset'			=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'flg-nofollow'			=>	0,
-			'flg-noopener'			=>	1,
-			'flg-referer'			=>	1,
-			'flg-relative-url'		=>	1,
-			'flg-unlink'			=>	1,
-			'flg-ssl'				=>	0,
-			'flg-redir'				=>	1,
-			'flg-agent'				=>	1,
-			'user-agent'			=>	null,
-			'flg-alive'				=>	1,
-			'flg-alive-count'		=>	0,
-			'flg-click-count'		=>	1,
+			'flg-nofollow'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-noopener'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-referer'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-relative-url'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-unlink'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-sslverify'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-redir'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-agent'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'user-agent'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'user-agent-text'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'flg-alive'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-alive-count'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-click-count'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'code1'					=>	'blogcard',
-			'code2'					=>	null,
-			'code3'					=>	null,
-			'code4'					=>	null,
-			'use-inline'			=>	null,
-			'auto-atag'				=>	0,
-			'auto-url'				=>	0,
-			'auto-external'			=>	0,
-			'flg-do-shortcode'		=>	1,
-			'exclude-url'			=>	'',
-			'flg-edit-block'		=>	1,
-			'flg-edit-insert'		=>	1,
-			'mce-priority'			=>	null,
-			'flg-edit-qtag'			=>	1,
-			'flg-clear-excerpt'		=>	1,
+			'code1'								=>	['type'	=>	'code',			'null'	=>	true,	'default'	=>	'blogcard', ],
+			'code2'								=>	['type'	=>	'code',			'null'	=>	true,	'default'	=>	null, ],
+			'code3'								=>	['type'	=>	'code',			'null'	=>	true,	'default'	=>	null, ],
+			'use-inline'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	null, ],
+			'auto-atag'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'auto-url'							=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'auto-external'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-do-shortcode'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'exclude-url'						=>	['type'	=>	'textarea',		'null'	=>	true,	'default'	=>	null, ],
+			'flg-edit-block'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-edit-insert'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'mce-priority'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'flg-edit-qtag'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-clear-excerpt'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
 
-			'multi-mode'			=>	0,
-			'multi-myid'			=>	0,
-			'multi-count'			=>	0,
+			'multi-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'multi-myid'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'multi-count'						=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
 
-			'trail-slash'			=>	1,
-			'class-pc'				=>	null,
-			'class-mobile'			=>	null,
-			'date-format-man'		=>	'Y\<\b\r\/\>m/d\<\b\r\/\>H:i',
-			'flg-unti-select'		=>	0,
-			'flg-filemenu'			=>	0,
-			'flg-adminbar'			=>	0,
-			'flg-initialize'		=>	1,
-			'flg-compress'			=>	1,
-			'flg-amp-url'			=>	0,
-			'flg-inhibit'			=>	0,
-			'error-mode-hide'		=>	0,
-			'saved-date'			=>	null,
+			'trail-slash'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'class-pc'							=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'class-mobile'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'date-format-man'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	'Y\<\b\r\/\>m/d\<\b\r\/\>H:i', ],
+			'flg-preview'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'preview-mode'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-left'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-top'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-width'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-docked-height'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-right-docked-width'		=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-two-cards'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-anti-select'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-adminbar'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-initialize'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-compress'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-amp-url'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'flg-inhibit'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'saved-date'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 
-			'develop-mode'			=>	0,
-			'admin-mode'			=>	0,
-			'debug-mode'			=>	0,
-			'debug-nocache'			=>	0,
-			'survey-mode'			=>	0,
+			'develop-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'admin-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'debug-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'debug-nocache'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
+			'survey-mode'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	0, ],
 
-			'css-add-url'			=>	null,
-			'css-add'				=>	'',
-			'css-count'				=>	0,
-			'favicon-api'			=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%',
-			'thumbnail-api'			=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200',
-			'initialize-exception'	=>	0,
-			'flg-delete-db'			=>	1,
-			'flg-delete-image'		=>	1,
-			'flg-delete-settings'	=>	1,
+			'css-add-url'						=>	['type'	=>	'url',			'null'	=>	true,	'default'	=>	null, ],
+			'css-add'							=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'css-count'							=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	0, ],
+			'favicon-api'						=>	['type'	=>	'url_template',	'null'	=>	true,	'default'	=>	'https://www.google.com/s2/favicons?domain=%DOMAIN%', ],
+			'thumbnail-api'						=>	['type'	=>	'url_template',	'null'	=>	true,	'default'	=>	'https://s.wordpress.com/mshots/v1/%URL%?w=200', ],
+			'initialize-exception'				=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	0, ],
+			'flg-delete-db'						=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-delete-image'					=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
+			'flg-delete-settings'				=>	['type'	=>	'flag',			'null'	=>	false,	'default'	=>	1, ],
 		);
 
 	// 定数・プラグイン情報
@@ -314,6 +504,33 @@ class class_pz_linkcard {
 
 	private		$test_count;			// テスト用
 
+	private	static	function	pz_GetOptionDefinitions() {
+		return	self::DEFAULTS;
+	}
+
+	private	static	function	pz_GetDefaultOptions() {
+		$options	=	array();
+		foreach	(self::pz_GetOptionDefinitions() as $key => $default ) {
+			$options[$key]	=	$default['default'];
+		}
+		return	$options;
+	}
+
+	private	static	function	pz_GetDefaultOption($key ) {
+		$definitions	=	self::pz_GetOptionDefinitions();
+		return	array_key_exists($key, $definitions ) ? $definitions[$key]['default'] : null;
+	}
+
+	private	static	function	pz_RemoveThisLinkFallback($options ) {
+		$definitions	=	self::pz_GetOptionDefinitions();
+		foreach	(array_keys($options ) as $key ) {
+			if	(substr($key, 0, 3 ) === 'th-' && !array_key_exists($key, $definitions ) ) {
+				unset($options[$key] );
+			}
+		}
+		return	$options;
+	}
+
 	public	function	__construct() {
 		global						$wpdb;													// DBの宣言
 
@@ -329,9 +546,12 @@ class class_pz_linkcard {
 
 		// 定数
 		define('PZLKC_PZLKC_URL_ADMIN_JS',		plugins_url('js/admin-settings.js', __FILE__ ) );	// 管理画面のJSのURL（設定画面）
+		define('PZLKC_PZLKC_URL_PREVIEW_JS',	plugins_url('js/pz-linkcard-preview.js', __FILE__ ) );	// 管理画面のJSのURL（プレビュー）
 		define('PZLKC_PZLKC_URL_ADMIN_TAB',		plugins_url('js/admin-tabs.js', __FILE__ ) );		// 管理画面のJSのURL（設定画面タブ）
+		define('PZLKC_PZLKC_URL_COLOR_PICKER_JS',	plugins_url('js/color-picker.js', __FILE__ ) );	// 管理画面のJSのURL（カラーピッカー）
 		define('PZLKC_JS_COUNT',		plugins_url('js/click-count.js', __FILE__ ) );				// 管理画面のJSのURL（クリックカウント）
 		define('PZLKC_PZLKC_URL_ADMIN_CSS',		plugins_url('css/admin.css', __FILE__ ) );			// 管理画面のCSSのURL
+		define('PZLKC_PZLKC_URL_COLOR_PICKER_CSS',	plugins_url('css/color-picker.css', __FILE__ ) );	// 管理画面のCSSのURL（カラーピッカー）
 
 		define('PZLKC_DIR_UPLOAD',		wp_upload_dir()['basedir']. '/'.self::PLUGIN_SLUG.'/' );	// アップロード ディレクトリのパス
 		define('PZLKC_URL_UPLOAD',		preg_replace('/(http|https):(\/\/.*)/', '$2', wp_upload_dir()['baseurl'] ).'/'.self::PLUGIN_SLUG.'/' );		// アップロード ディレクトリのURL
@@ -418,6 +638,7 @@ class class_pz_linkcard {
 			add_action		('upgrader_process_complete',				[$this, 'action_upgrader_process_complete' ],	10, 2 );	// アップデートしたときの処理
 			add_action		('admin_post_pz_export_file',				[$this, 'action_export_file' ],					10, 1 );	// エクスポート処理
 			add_action		('enqueue_block_editor_assets',				[$this, 'action_enqueue_block_editor_assets' ],	10, 1 );	// ブロックエディタ用スクリプト
+			add_action		('enqueue_block_assets',					[$this, 'action_enqueue_block_assets' ],		10, 1 );	// ブロックエディタ本文
 
 			if ($this->options['flg-alive'] ) {
 				add_action(self::CRON_ALIVE,	[$this, 'schedule_hook_alive' ] );
@@ -454,13 +675,12 @@ class class_pz_linkcard {
 			if	($code ) {
 				add_shortcode($code, array($this, 'shortcode' ), 10 );
 			}
-			$code	=	preg_replace("/[^a-zA-Z0-9]/", "", $this->options['code4'] );								// ショートコード4
-			if	($code ) {
-				add_shortcode($code, array($this, 'shortcode' ), 10 );
-			}
 		}
 		add_action		('init',								[$this, 'action_register_block' ],	10, 1 );		// ブロック登録
 		add_action		('wp_ajax_pz_lkc_clear_error_mode',		[$this, 'action_ajax_pz_lkc_error_mode_clear'] );
+		add_action		('wp_ajax_pz_lkc_save_cacheman_columns',	[$this, 'action_ajax_pz_lkc_save_cacheman_columns'] );
+		add_action		('wp_ajax_pz_lkc_preview_render',		[$this, 'action_ajax_pz_lkc_preview_render'] );
+		add_action		('wp_ajax_pz_lkc_preview_state',		[$this, 'action_ajax_pz_lkc_preview_state'] );
 		add_action		('wp_ajax_pz_lkc_click_count', 			[$this, 'action_ajax_pz_lkc_click_count'] );
 		add_action		('wp_ajax_nopriv_pz_lkc_click_count',	[$this, 'action_ajax_pz_lkc_click_count'] );
 	}
@@ -641,7 +861,7 @@ class class_pz_linkcard {
 					$result	=	$this->pz_SaveOptions();
 				}
 			}
-			$tag		=	'<div class="linkcard"><a id="lkc-error"></a><div class="lkc-this-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
+			$tag		=	'<div class="linkcard"><a id="lkc-error" class="lkc-error" style="display:block;scroll-margin-top:33vh;"></a><div class="lkc-internal-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
 			return			PHP_EOL.$tag.PHP_EOL;
 		}
 
@@ -708,7 +928,6 @@ class class_pz_linkcard {
 
 		// 変数の用意
 		$is_internal	=	false;
-		$is_samepage	=	false;
 		$is_mobile		=	false;
 		$data_id		=	'';
 		$site_name		=	'';
@@ -738,7 +957,6 @@ class class_pz_linkcard {
 		$domain_url		=	$url_info['domain_url'];	// ドメインURL
 		$is_external	=	$url_info['is_external'];	// 外部リンク
 		$is_internal	=	$url_info['is_internal'];	// 内部リンク
-		$is_samepage	=	$url_info['is_samepage'];	// 同一ページ
 
 		// モバイルかPCかのクラス名を追加
 		$class_id		=	'linkcard';
@@ -749,12 +967,19 @@ class class_pz_linkcard {
 		}
 
 		// キャッシュから取得
+		$is_preview		=	isset($atts['preview-data'] ) && is_array($atts['preview-data'] );
 		$data			=	array('url' => $url );
-		$result			=	$this->pz_GetCache($data );
-		if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
-			$data		=	$result;
-			$data_id	=	$data['id'];
-			$url		=	$data['url'];
+		if	($is_preview ) {
+			$data		=	array_merge($data, $atts['preview-data'] );
+			$data_id	=	'preview';
+			$class_id	.=	' pz-preview-linkcard';
+		} else {
+			$result		=	$this->pz_GetCache($data );
+			if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
+				$data	=	$result;
+				$data_id	=	$data['id'];
+				$url	=	$data['url'];
+			}
 		}
 
 		// 内部リンクの処理
@@ -774,7 +999,9 @@ class class_pz_linkcard {
 			}
 
 			// 記事の取得方法
-			if	($this->options['in-get'] == 2 ) {	// 常にカード管理から
+			if	($is_preview ) {
+				// 設定画面プレビューでは取得・保存を行わず、指定されたサンプルデータを使う。
+			} elseif	($this->options['in-get-from'] == 2 ) {	// 常にカード管理から
 				if	(!$data_id || (isset($atts['force'] ) && $atts['force'] == true ) ) {	// キャッシュに無いとき
 					$data		=	$this->pz_GetPost($data );		// 最新記事内容を取得
 					$result		=	$this->pz_SetCache($data );		// 保存
@@ -808,8 +1035,8 @@ class class_pz_linkcard {
 			$rel			=	' rel="'.$rel.'"';
 
 			// キャッシュが無い、もしくは強制取得
-			if	((!$data_id ) || ($this->options['debug-mode']	==	true  && $this->options['debug-nocache']	==	true ) || (isset($atts['force'] ) && $atts['force'] == true ) ) {
-				$result		=	$this->pz_GetCURL($data );			// cURLで記事内容を取得
+			if	(!$is_preview && ((!$data_id ) || ($this->options['debug-mode']	==	true  && $this->options['debug-nocache']	==	true ) || (isset($atts['force'] ) && $atts['force'] == true ) ) ) {
+				$result		=	$this->pz_GetRemote($data );			// 記事内容を強制取得
 				if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
 					$data	=	$result;
 					$result	=	$this->pz_SetCache($data );
@@ -842,27 +1069,15 @@ class class_pz_linkcard {
 
 		// ラッピング
 		if	($is_internal ) {
-			if	($is_samepage ) {
-				$html_wrap_op		=	'<div class="lkc-this-wrap">';
-				$html_wrap_cl		=	'</div>';
-				$added_text			=	isset($this->options['th-added-text'] )		?	esc_attr($this->options['th-added-text'] )		:	null ;
-				$heading_text		=	isset($this->options['th-heading-text'] )	?	esc_attr($this->options['th-heading-text'] )	:	null ;
-				$more_text			=	isset($this->options['th-more-text'] )		?	esc_attr($this->options['th-more-text'] )		:	null ;
-				$thumbnail_alt		=	isset($this->options['in-thumbnail-alt'] )	?	esc_attr($this->options['in-thumbnail-alt'] )	:	null ;
-				$favicon_alt		=	isset($this->options['in-favicon-alt'] )	?	esc_attr($this->options['in-favicon-alt'] )		:	null ;
-				$sw_thumbnail		=	isset($this->options['in-thumbnail'] )		?	esc_attr($this->options['in-thumbnail'] )		:	0 ;
-				$sw_favicon			=	isset($this->options['in-favicon'] )		?	esc_attr($this->options['in-favicon'] )			:	0 ;
-			} else {
-				$html_wrap_op		=	'<div class="lkc-internal-wrap">';
-				$html_wrap_cl		=	'</div>';
-				$added_text			=	isset($this->options['in-added-text'] )		?	esc_attr($this->options['in-added-text'] )		:	null ;
-				$heading_text		=	isset($this->options['in-heading-text'] )	?	esc_attr($this->options['in-heading-text'] )	:	null ;
-				$more_text			=	isset($this->options['in-more-text'] )		?	esc_attr($this->options['in-more-text'] )		:	null ;
-				$thumbnail_alt		=	isset($this->options['in-thumbnail-alt'] )	?	esc_attr($this->options['in-thumbnail-alt'] )	:	null ;
-				$favicon_alt		=	isset($this->options['in-favicon-alt'] )	?	esc_attr($this->options['in-favicon-alt'] )		:	null ;
-				$sw_thumbnail		=	isset($this->options['in-thumbnail'] )		?	esc_attr($this->options['in-thumbnail'] )		:	0 ;
-				$sw_favicon			=	isset($this->options['in-favicon'] )		?	esc_attr($this->options['in-favicon'] )			:	0 ;
-			}
+			$html_wrap_op		=	'<div class="lkc-internal-wrap">';
+			$html_wrap_cl		=	'</div>';
+			$added_text			=	isset($this->options['in-added-text'] )		?	esc_attr($this->options['in-added-text'] )		:	null ;
+			$heading_text		=	isset($this->options['in-heading-text'] )	?	esc_attr($this->options['in-heading-text'] )	:	null ;
+			$more_text			=	isset($this->options['in-more-text'] )		?	esc_attr($this->options['in-more-text'] )		:	null ;
+			$thumbnail_alt		=	isset($this->options['in-thumbnail-alt'] )	?	esc_attr($this->options['in-thumbnail-alt'] )	:	null ;
+			$favicon_alt		=	isset($this->options['in-siteicon-alt'] )	?	esc_attr($this->options['in-siteicon-alt'] )		:	null ;
+			$sw_thumbnail		=	isset($this->options['in-thumbnail'] )		?	esc_attr($this->options['in-thumbnail'] )		:	0 ;
+			$sw_favicon			=	isset($this->options['in-siteicon'] )		?	esc_attr($this->options['in-siteicon'] )			:	0 ;
 		} else {
 			$html_wrap_op			=	'<div class="lkc-external-wrap">';
 			$html_wrap_cl			=	'</div>';
@@ -870,9 +1085,9 @@ class class_pz_linkcard {
 			$heading_text			=	isset($this->options['ex-heading-text'] )	?	esc_attr($this->options['ex-heading-text'] )	:	null ;
 			$more_text				=	isset($this->options['ex-more-text'] )		?	esc_attr($this->options['ex-more-text'] )		:	null ;
 			$thumbnail_alt			=	isset($this->options['ex-thumbnail-alt'] )	?	esc_attr($this->options['ex-thumbnail-alt'] )	:	null ;
-			$favicon_alt			=	isset($this->options['ex-favicon-alt'] )	?	esc_attr($this->options['ex-favicon-alt'] )		:	null ;
+			$favicon_alt			=	isset($this->options['ex-siteicon-alt'] )	?	esc_attr($this->options['ex-siteicon-alt'] )		:	null ;
 			$sw_thumbnail			=	isset($this->options['ex-thumbnail'] )		?	esc_attr($this->options['ex-thumbnail'] )		:	0 ;
-			$sw_favicon				=	isset($this->options['ex-favicon'] )		?	esc_attr($this->options['ex-favicon'] )			:	0 ;
+			$sw_favicon				=	isset($this->options['ex-siteicon'] )		?	esc_attr($this->options['ex-siteicon'] )			:	0 ;
 		}
 
 		// ドメイン名の準備
@@ -885,7 +1100,7 @@ class class_pz_linkcard {
 		$site_name				=	$site_name;
 
 		// 表示用サイト名
-		if	(($this->options['use-sitename'] ) && ($site_name ) ) {
+		if	(($this->options['flg-use-sitename'] ) && ($site_name ) ) {
 			$disp_sitename		=	$site_name;
 		} else {
 			$disp_sitename		=	$domain_name;
@@ -894,13 +1109,7 @@ class class_pz_linkcard {
 
 		// 表示用サイト名の文字数
 		$title_sitename			=	'';
-		if	($this->options['info-length'] ) {
-			$before				=	$disp_sitename;
-			$disp_sitename		=	mb_strimwidth($before, 0, $this->options['info-length'] , '...' );
-			if	($disp_sitename	<>	$before ) {		// 省略された場合はtitleタグにセットする
-				$title_sitename	=	' title="'.esc_attr($site_name ).'"';
-			}
-		}
+		$disp_sitename		=	mb_strimwidth($disp_sitename, 0, 100 , '...' );
 
 		// タイトル
 		if	(!$title ) {
@@ -924,11 +1133,7 @@ class class_pz_linkcard {
 		$temp			=	$title;												// タイトル
 		$temp			=	strip_tags($temp );									// HTMLタグ除去
 		$temp			=	str_replace(array("\r", "\n"), '', $temp );			// 改行を除去
-		if	($this->options['title-length'] ) {									// 文字数制限
-			$temp		=	mb_strimwidth($temp, 0, $this->options['title-length'] , '...' );
-		} else {
-			$temp		=	mb_strimwidth($temp, 0, 200 , '...' );
-		}
+		$temp			=	mb_strimwidth($temp, 0, 200 , '...' );
 		$title			=	esc_html($temp );
 		$html_title		=	'<div class="lkc-title">'.$title.'</div>';
 
@@ -941,11 +1146,7 @@ class class_pz_linkcard {
 			$temp		=	str_replace(array("\r", "\n"), '', $temp );			// 改行を除去
 			$temp		=	preg_replace('/<!--more-->.+/is', '', $temp );		// moreタグ以降削除
 			$temp		=	preg_replace('/\[[^]]*\]/', '', $temp );			// ショートコードすべて除去
-			if	($this->options['excerpt-length'] ) {							// 文字数制限
-				$temp	=	mb_strimwidth($temp, 0, $this->options['excerpt-length'] , '...' );
-			} else {
-				$temp	=	mb_strimwidth($temp, 0, 500 , '...' );
-			}
+			$temp	=	mb_strimwidth($temp, 0, 500 , '...' );
 			$temp		=	esc_html($temp );									// HTMLエスケープ
 			$excerpt	=	$temp;
 		}
@@ -979,7 +1180,7 @@ class class_pz_linkcard {
 		// サムネイル取得
 		if	($this->options['thumbnail-position'] ) {
 			if	($sw_thumbnail == 1 || $sw_thumbnail == 13 ) {						// 直接取得
-				if	($is_external ) {
+				if	($is_external && !$is_preview ) {
 					$thumbnail_url	=	$this->pz_GetImage($thumbnail_url );		// 外部サイトのサムネイルをキャッシュ
 				}
 				if	($thumbnail_url ) {
@@ -1009,7 +1210,7 @@ class class_pz_linkcard {
 			if	($sw_favicon == 1 || $sw_favicon == 13 ) {							// 直接取得
 				if	($is_internal ) {
 					$favicon_url	=	get_site_icon_url(16 );						// 自サイトのサイトアイコン
-				} else {
+				} elseif	(!$is_preview ) {
 					$favicon_url	=	$this->pz_GetImage($favicon_url );			// 外部サイトのファビコンをキャッシュ
 				}
 				if	($favicon_url ) {
@@ -1019,8 +1220,10 @@ class class_pz_linkcard {
 				}
 			}
 			if	($sw_favicon == 3 ) {												// WebAPIを利用
+				if	($is_preview && $favicon_url ) {
+					$html_favicon	=	'<div class="lkc-favicon"><img src="'.esc_url($favicon_url ).'" alt="'.esc_attr($favicon_alt ).'" width="16" height="16" /></div>';
 				// サイトアイコン取得WebAPI
-				if	($this->options['favicon-api'] ) {
+				} elseif	($this->options['favicon-api'] ) {
 					$temp					=	$this->options['favicon-api'];
 					if	(strstr($temp, '%' )	<>	'' ) {
 						$temp				=	preg_replace('/%TITLE%/',		$title,					$temp );
@@ -1043,7 +1246,7 @@ class class_pz_linkcard {
 			$html_a_cl		=	null;
 			$html_st_op		=	'<strike>';
 			$html_st_cl		=	'</strike>';
-		} elseif	($this->options['link-all'] ) {
+		} elseif	($this->options['flg-linkall'] ) {
 			// カード全体をリンク（どこをクリックしても良いのが分かり易い）
 			$html_a_op_all	=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'" data-lkc-id="'.esc_attr($data_id ).'"'.$target.$rel.'>';
 			$html_a_cl_all	=	'</a>';
@@ -1067,7 +1270,7 @@ class class_pz_linkcard {
 		$html_sns_info		=	null;
 		if	($this->options['sns-position'] ) {
 			// カード全体をリンクにするときは表示のみ
-			if	($this->options['link-all'] ) {
+			if	($this->options['flg-linkall'] ) {
 				if	($this->options['sns-tw'] && $sns_tw > 0 ) {
 					if	($this->options['sns-tw-x'] ) {
 						$sns	.=	' <div class="lkc-sns-tw">'.sprintf(($sns_tw == 1 ? __('%d tweet', 'pz-linkcard' ) : __('%d tweets', 'pz-linkcard' ) ), $sns_tw ).'</div>';
@@ -1134,10 +1337,11 @@ class class_pz_linkcard {
 
 		// 投稿日
 		$html_date	=	null;
-		if	($is_internal && $this->options['display-date'] ) {
+		$display_date_mode	=	$this->options['display-date'] ?: ($is_preview ? 1 : 0);
+		if	($is_internal && $display_date_mode ) {
 			$html_url1	=	null;
 			$html_url2	=	null;
-			switch		($this->options['display-date'] ) {
+			switch		($display_date_mode ) {
 			case	1:
 				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
 				break;
@@ -1145,21 +1349,24 @@ class class_pz_linkcard {
 				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_modified ) ).'</div>';
 				break;
 			case	3:
-				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'&ensp;'.__('&#x1F501;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'</div>';
+				$html_date	=	'<div class="lkc-date">'.__('&#x1f552;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_date ) ).'&ensp;'.__('&#x1F501;&#xfe0f;', 'pz-linkcard' ).$this->pz_date(PZLKC_DATE_FORMAT, strtotime($post_modified ) ).'</div>';
 				break;
 			}
 		}
 
 		// 見出し情報
-		if	($heading_text ) {
-			$html_heading	=	'<div class="lkc-heading">'.$heading_text.'</div>';
+		if (($this->options['special-format'] ?? null) === 'JIN' && ($heading_text === null || $heading_text === '')) {
+			$heading_text = $is_internal ? __('You may also like', 'pz-linkcard' ) : __('Referenced', 'pz-linkcard' );
+		}
+		if	($heading_text || $is_preview ) {
+			$html_heading	=	'<div class="lkc-heading"'.($is_preview ? ' data-pz-preview-heading' : '').'>'.$heading_text.'</div>';
 		} else {
 			$html_heading	=	null;
 		}
 
 		// 続きを読むボタン
-		if	($more_text ) {
-			$html_moretag	=	$html_a_op.'<div class="lkc-more">'.$more_text.'</div>'.$html_a_cl;
+		if	($more_text || $is_preview ) {
+			$html_moretag	=	$html_a_op.'<div class="lkc-more"'.($is_preview ? ' data-pz-preview-more' : '').'>'.$more_text.'</div>'.$html_a_cl;
 
 		} else {
 			$html_moretag	=	null;
@@ -1173,7 +1380,7 @@ class class_pz_linkcard {
 		}
 
 		$html_domain	=	'<div class="lkc-domain"'.$title_sitename.'>'.$disp_sitename.'</div>';
-		$html_info		=	'<div class="lkc-info">'.$html_a_op.$html_favicon.$html_domain.$html_added.$html_a_cl.$html_sns_info.$html_url2.'</div>';
+		$html_info		=	'<div class="lkc-info"'.($is_preview ? ' data-pz-preview-info' : '').'>'.$html_a_op.$html_favicon.$html_domain.$html_added.$html_a_cl.$html_sns_info.$html_url2.'</div>';
 
 		// Google AMP用 簡易タグ作成
 		if	($this->amp <> 2 ) {
@@ -1199,23 +1406,23 @@ class class_pz_linkcard {
 		// HTMLタグ作成
 		switch	($this->options['info-position'] ) {
 		case	1:		// 上側
-			$html_tag	=	$html_wrap_op.$html_a_op_all.$html_heading.'<div class="lkc-card">'.$html_info.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear"></div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
+			$html_tag	=	$html_wrap_op.$html_a_op_all.$html_heading.'<div class="lkc-card">'.$html_info.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear"></div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		case	2:		// 下側
-			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.$html_info.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
+			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.$html_info.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		case	3:		// タイトルの上側
-			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
+			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		default:
-			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content">'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
+			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 		}
-		// 引用文扱い
-		if	($this->options['blockquote'] ) {
-			$html_tag	=	'<div class="'.$class_id.'"><blockquote class="lkc-quote">'.$html_tag.'</blockquote></div>';
-		} else {
-			$html_tag	=	'<div class="'.$class_id.'">'.$html_tag.'</div>';
+		$enclose_tag	=	isset($this->options['enclose-tag'] ) ? strtolower($this->options['enclose-tag'] ) : (!empty($this->options['blockquote'] ) ? 'blockquote' : 'div');
+		if	(!in_array($enclose_tag, array('div', 'blockquote', 'figure', 'article', 'section', 'nav', 'aside' ), true ) ) {
+			$enclose_tag	=	'div';
 		}
+		$enclose_tag	=	tag_escape($enclose_tag ) ?: 'div';
+		$html_tag		=	'<'.$enclose_tag.' class="'.esc_attr($class_id ).'"'.($is_preview && !empty($atts['preview-card'] ) ? ' data-pz-preview-card="'.esc_attr($atts['preview-card'] ).'"' : '').'>'.$html_tag.'</'.$enclose_tag.'>';
 
 		return	$html_tag;
 	}
@@ -1357,10 +1564,18 @@ class class_pz_linkcard {
 	private	function	pz_RelToURL($base_url = null, $rel_path = null ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__, '$base_url='.esc_html($base_url ).' $rel_path="'.esc_html($rel_path ) ); }
 
+		if	(!$base_url || !$rel_path ) {
+			return	$rel_path;
+		}
+
 		// ベースURLをパース
 		$base_url	=	$this->Pz_SanitizeURL($base_url );					// 念のためサニタイズ
 		$info_base	=	$this->Pz_GetURLInfo($base_url );
 		$info_rel	=	$this->Pz_GetURLInfo($rel_path );
+		$base_domain_url	=	$info_base['domain_url'];
+		if	(!empty($info_base['port'] ) ) {
+			$base_domain_url	.=	':'.$info_base['port'];
+		}
 
 		// 絶対パスだった場合（スキームあり）
 		if	($info_rel['scheme'] ) {
@@ -1376,12 +1591,49 @@ class class_pz_linkcard {
 
 		// ルート指定
 		if	(substr($rel_path, 0, 1 )	==	'/' ) {
-			$return_url	=	$info_base['domain_url'].$rel_path;
+			$return_url	=	$base_domain_url.$rel_path;
 			return			$return_url;
 		}
 
-		// とりあえずくっつける
-		$return_url		=	trim($base_url, '/' ).'/'.$rel_path;
+		// ベースURLのディレクトリを基準に相対パスを解決
+		$base_path	=	$info_base['path'] ?? '/';
+		if	(!$base_path ) {
+			$base_path	=	'/';
+		}
+		if	(substr($base_path, -1 ) <> '/' ) {
+			$base_path	=	preg_replace('/\/[^\/]*$/', '/', $base_path );
+		}
+		$rel_query		=	'';
+		$rel_fragment	=	'';
+		$rel_path_only	=	$rel_path;
+		$fragment_pos	=	strpos($rel_path_only, '#' );
+		if	($fragment_pos !== false ) {
+			$rel_fragment	=	substr($rel_path_only, $fragment_pos );
+			$rel_path_only	=	substr($rel_path_only, 0, $fragment_pos );
+		}
+		$query_pos		=	strpos($rel_path_only, '?' );
+		if	($query_pos !== false ) {
+			$rel_query		=	substr($rel_path_only, $query_pos );
+			$rel_path_only	=	substr($rel_path_only, 0, $query_pos );
+		}
+		if	($rel_path_only === '' ) {
+			$target_path	=	$info_base['path'] ?? '/';
+		} else {
+			$target_path	=	$base_path.$rel_path_only;
+		}
+		$path_parts		=	explode('/', $target_path );
+		$resolved_parts	=	array();
+		foreach	($path_parts as $path_part ) {
+			if	($path_part === '' || $path_part === '.' ) {
+				continue;
+			}
+			if	($path_part === '..' ) {
+				array_pop($resolved_parts );
+				continue;
+			}
+			$resolved_parts[]	=	$path_part;
+		}
+		$return_url		=	$base_domain_url.'/'.implode('/', $resolved_parts ).$rel_query.$rel_fragment;
 		return				$return_url;
 	}
 
@@ -1755,12 +2007,12 @@ class class_pz_linkcard {
 			$excerpt			=	$post->post_content;					// 記事内容から抜粋
 
 			// 「抜粋」優先
-			if	($this->options['in-get'] == 1 && $post->post_excerpt ) {	// 記事取得方法：「抜粋文」があった場合、優先する
+			if	($this->options['in-get-from'] == 1 && $post->post_excerpt ) {	// 記事取得方法：「抜粋文」があった場合、優先する
 				$excerpt		=	$post->post_excerpt;					// 抜粋文
 			}
 
 			// 「カスタムフィールド」優先
-			if	($this->options['in-get'] == 3 ) {							// 記事取得方法：「カスタムフィールド」があった場合、優先する
+			if	($this->options['in-get-from'] == 3 ) {						// 記事取得方法：「カスタムフィールド」があった場合、優先する
 				$meta_title		=	get_post_meta($post_id, $this->options['in-field-title'] );
 				if	(array($meta_title ) && array_key_exists(0, $meta_title ) ) {
 					$title		=	$meta_title[0];
@@ -1838,7 +2090,7 @@ class class_pz_linkcard {
 						}
 					} else {
 						if	($this->options['in-get-url'] ) {
-							$result			=	$this->Pz_GetCURL($data );		// 外部サイトとして読み込み
+							$result			=	$this->pz_GetRemote($data );		// 外部サイトとして読み込み
 							if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
 								$data		=	$result;
 								$result		=	$this->pz_SetCache($data );
@@ -1911,7 +2163,7 @@ class class_pz_linkcard {
 	}
 
 	// 外部リンク・記事情報取得
-	private	function	pz_GetCURL($data ) {
+	private	function	pz_GetRemote($data ) {
 		global	$wp_version;
 
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__, '$data='.print_r($data, true ) ); }
@@ -1928,16 +2180,15 @@ class class_pz_linkcard {
 		$rget_args					=	[];
 		$rget_args['user-agent']	=	$this->options['flg-agent']		?	$this->options['user-agent']	// ユーザーエージェントにPz-LinkCard-Crawlerを使う
 																		:	'WordPress/'.$wp_version.'; '.get_bloginfo( 'url' );
-		$rget_args['sslverify']		=	$this->options['flg-ssl']		?	false	:	true ;
+		$rget_args['sslverify']		=	$this->options['flg-sslverify']		?	true	:	false ;
+		$redirect_limit				=	$this->options['flg-redir']			?	8		:	0;
+		$rget_args['redirection']	=	0;
 
 		// URLエンコード
 		$url			=	$this->pz_EncodeURL($url ,true );
 		$url_redir		=	'';
 		$url_access		=	$url;
-		$last_url		=	$url;
-		// リダイレクト確認
-		if	($this->options['flg-redir'] ) {
-				$get_response_url	=	function($response ) {
+		$get_response_url	=	function($response ) {
 				if	(is_wp_error($response ) || !isset($response['http_response'] ) || !is_object($response['http_response'] ) || !method_exists($response['http_response'], 'get_response_object' ) ) {
 					return	null;
 				}
@@ -1947,26 +2198,77 @@ class class_pz_linkcard {
 				}
 				return	null;
 			};
+		$get_location_url	=	function($response, $base_url ) {
+			if	(is_wp_error($response ) ) {
+				return	null;
+			}
+			$location	=	wp_remote_retrieve_header($response, 'location' );
+			if	(is_array($location ) ) {
+				$location	=	end($location );
+			}
+			if	(!$location ) {
+				return	null;
+			}
+			$location	=	trim($location );
+			if	(!preg_match('/^https?:\/\//i', $location ) ) {
+				$location	=	$this->pz_RelToURL($base_url, $location );
+			}
+			return	$this->pz_EncodeURL($location, true );
+		};
+		$trace_redirect_url	=	function($start_url ) use ($rget_args, $get_response_url, $get_location_url, $redirect_limit ) {
+			$current_url	=	$start_url;
+			$trace_args		=	$rget_args;
+			$trace_args['redirection']	=	0;
 
-			$head_args					=	$rget_args;
-			$head_args['method']		=	'HEAD';
-			$head_args['redirection']	=	8;
-			$rget_head					=	wp_safe_remote_head($url, $head_args );		// Bodyを取得せず、リダイレクトだけ確認
-			$last_url					=	$get_response_url($rget_head ) ?: $url;
+			for	($i = 0; $i < $redirect_limit; $i++ ) {
+				if	($this->pz_IsLocalAddress($current_url ) ) {
+					return	$current_url;
+				}
+				$head_args				=	$trace_args;
+				$head_args['method']	=	'HEAD';
+				$response				=	wp_safe_remote_head($current_url, $head_args );
 
-			if	($last_url === $url && (is_wp_error($rget_head ) || intval(wp_remote_retrieve_response_code($rget_head ) ) >= 400 ) ) {
-				$redir_args							=	$rget_args;
-				$redir_args['redirection']			=	8;
-				$redir_args['limit_response_size']	=	1;						// HEAD不可のサイト向けにBody取得を最小化
-				$rget_redir							=	wp_safe_remote_get($url, $redir_args );
-				$last_url							=	$get_response_url($rget_redir ) ?: $url;
+				if	(is_wp_error($response ) ) {
+					$get_args							=	$trace_args;
+					$get_args['limit_response_size']	=	1;
+					$response							=	wp_safe_remote_get($current_url, $get_args );
+				}
+
+				$response_url	=	$get_response_url($response );
+				if	($response_url && $response_url !== $current_url ) {
+					$current_url	=	$this->pz_EncodeURL($response_url, true );
+					if	($this->pz_IsLocalAddress($current_url ) ) {
+						return	$current_url;
+					}
+					continue;
+				}
+
+				$http_code		=	intval(wp_remote_retrieve_response_code($response ) );
+				$location_url	=	$get_location_url($response, $current_url );
+				if	($http_code >= 300 && $http_code < 400 && $location_url && $location_url !== $current_url ) {
+					$current_url	=	$location_url;
+					if	($this->pz_IsLocalAddress($current_url ) ) {
+						return	$current_url;
+					}
+					continue;
+				}
+
+				break;
 			}
 
-			if	($last_url && $url <> $last_url ) {
+			return	$current_url;
+		};
+
+		// リンク先サイトのアクセス
+		if	($redirect_limit > 0 ) {
+			$last_url	=	$trace_redirect_url($url );
+			if	($last_url && $url !== $last_url ) {
 				$url_redir	=	$this->pz_EncodeURL($last_url, true );
 				$url_access	=	$url_redir;
 			}
 		}
+		$blocked_local_url	=	$this->pz_IsLocalAddress($url ) || ($url_redir && $this->pz_IsLocalAddress($url_redir ) );
+		$rget_data			=	$blocked_local_url ? new WP_Error('pz_lkc_local_redirect', 'Local address blocked' ) : wp_safe_remote_get($url_access, $rget_args );	// wp_remote_get実行
 
 		// 初期化
 		$domain			=	'';
@@ -2008,8 +2310,6 @@ class class_pz_linkcard {
 			return	$data;
 		}
 
-		// リンク先サイトのアクセス
-		$rget_data					=	wp_safe_remote_get($url_access, $rget_args );	// wp_remote_get実行
 		$err_no						=	is_wp_error($rget_data );						// wp_remote_getエラー有無
 
 		// エラーチェック
@@ -2080,10 +2380,6 @@ class class_pz_linkcard {
 			}
 			
 			// サムネイル画像
-			if			($thumbnail_url	&& !preg_match('/^https*:\/\//i', $thumbnail_url, $m ) ) {
-				$thumbnail_url	=	$this->pz_RelToURL($url, $thumbnail_url );
-			}
-			$thumbnail_url		=	$this->pz_EncodeURL($thumbnail_url, true );
 			if				(!$thumbnail_url ) {
 				if			($og_image ) {
 					$thumbnail_url =	$og_image;
@@ -2091,6 +2387,10 @@ class class_pz_linkcard {
 					$thumbnail_url =	$tw_image;
 				}
 			}
+			if			($thumbnail_url	&& !preg_match('/^https*:\/\//i', $thumbnail_url, $m ) ) {
+				$thumbnail_url	=	$this->pz_RelToURL($url_access, $thumbnail_url );
+			}
+			$thumbnail_url		=	$this->pz_EncodeURL($thumbnail_url, true );
 
 			// サイト名
 			if				(!$sitename ) {
@@ -2182,17 +2482,12 @@ class class_pz_linkcard {
 		$domain_url			=	$this->home_url;									// ドメインURL
 		if	(mb_substr($url, 0, mb_strlen($domain_url ) ) == $domain_url ) {
 			$is_external	=	false;
-			$is_samepage	=	false;
 			$is_internal	=	true;		// 内部リンク
 			$url_m			=	parse_url($domain_url );							// URLパース（ドメイン名などを抽出）
 			$scheme			=	isset($url_m['scheme'] ) ? $url_m['scheme']	: null;	// スキーム
 			$domain			=	mb_substr($domain_url, mb_strlen($scheme ) + 3 );	// ドメイン
-			if	(get_permalink() == $url ) {
-				$is_samepage	=	true;	// 同一ページリンク
-			}
 		} else {
 			$is_external	=	true;		// 外部リンク
-			$is_samepage	=	false;
 			$is_internal	=	false;
 			$url_m			=	parse_url($url );									// URLパース（ドメイン名などを抽出）
 			$scheme			=	isset($url_m['scheme'] )	? $url_m['scheme']				: null;		// スキーム
@@ -2215,7 +2510,6 @@ class class_pz_linkcard {
 						$domain_url		=	$blog_url;
 						$domain			=	preg_replace('/.*\/\/(.*)/', '$1', $blog_url );
 						$is_external	=	true;		// 外部リンク
-						$is_samepage	=	false;
 						$is_internal	=	false;
 						break;
 					}
@@ -2226,7 +2520,6 @@ class class_pz_linkcard {
 		// 返り値
 		$ret_arr['is_external']	=	$is_external;					// 外部リンク
 		$ret_arr['is_internal']	=	$is_internal;					// 内部リンク
-		$ret_arr['is_samepage']	=	$is_samepage;					// 同一ページリンク
 		$ret_arr['scheme']		=	$scheme;						// スキーム
 		$ret_arr['domain']		=	$domain;						// ドメイン
 		$ret_arr['domain_url']	=	$domain_url;					// ドメインURL
@@ -2331,13 +2624,14 @@ class class_pz_linkcard {
 
 		// metaタグ パース
 		$match	=	null;
-		preg_match_all('/<\s*meta\s(?=[^>]*?\b(?:name|property)\s*=\s*(?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|([^"\'>]*?)(?=\s*\/?\s*>|\s\w+\s*=) ))[^>]*?\bcontent\s*=\s*(?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|([^"\'>]*?)(?=\s*\/?\s*>|\s\w+\s*=) )[^>]*>/is', $html, $match );
-		if	(isset($match ) && is_array($match ) && count($match ) == 3 && count($match[1] ) > 0 ) {
-			foreach($match[1] as &$m ) {
-				$m	=	strtolower($m );
+		preg_match_all('/<\s*meta\b[^>]*>/is', $html, $match );
+		if	(isset($match ) && is_array($match ) && count($match ) == 1 && count($match[0] ) > 0 ) {
+			$attr_value_pattern	=	'(?|"\s*([^"]*?)\s*"|\'\s*([^\']*?)\s*\'|([^"\'\s>]*))';
+			foreach	($match[0] as $meta_tag ) {
+				if	(preg_match('/\b(?:name|property)\s*=\s*'.$attr_value_pattern.'/is', $meta_tag, $match_name ) && preg_match('/\bcontent\s*=\s*'.$attr_value_pattern.'/is', $meta_tag, $match_content ) ) {
+					$tags[strtolower($match_name[1] )]	=	$match_content[1];
+				}
 			}
-			unset($m );
-			$tags	+=	array_combine($match[1], $match[2] );
 		}
 
 		// linkタグ パース
@@ -2367,7 +2661,7 @@ class class_pz_linkcard {
 		$this->options			=	get_option(self::OPTION_NAME );			// オプション値を取得
 
 		if		(!$this->options || !is_array($this->options ) ) {
-			$this->options	=	self::DEFAULTS;
+			$this->options	=	self::pz_GetDefaultOptions();
 			$this->options['saved-date']	=	$this->now;		// 保存日時をセット
 			$GLOBALS['pz_lkc_option_error']	=	'';
 	
@@ -2398,18 +2692,20 @@ class class_pz_linkcard {
 				}
 			}
 		}
+		$this->options	=	array_merge(self::pz_GetDefaultOptions(), $this->options );
 
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 		return	true;
 	}
 
 	// 設定を更新する
-	private	function	pz_SaveOptions() {
+	private	function	pz_SaveOptions($increment_css_count = true ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
+		$this->options	=	self::pz_RemoveThisLinkFallback($this->options );
 
 		// 変更前
 		$return_status	=	false;
-		$before			=	get_option(self::OPTION_NAME, self::DEFAULTS );
+		$before			=	get_option(self::OPTION_NAME, self::pz_GetDefaultOptions() );
 
 		// 変更有無チェック
 		if	($before <> $this->options ) {
@@ -2418,7 +2714,9 @@ class class_pz_linkcard {
 		}
 
 		// CSSバージョン（CSSキャッシュ対策）
-		$this->options['css-count']			+=	1;
+		if	($increment_css_count ) {
+			$this->options['css-count']			+=	1;
+		}
 
 		// プラグインバージョン
 		$this->options['plugin-version']	=	PZLKC_PLUGIN_VERSION;
@@ -2470,27 +2768,37 @@ class class_pz_linkcard {
 	private	function	pz_InitializeOptions() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
-		// 初期化
-		$before				=	$this->options;
-		$this->options		=	self::DEFAULTS;
-		
 		// 引き継ぐ設定値
 		$takeover			=	array('saved-date', 'db-version' );
-		if	($before['initialize-exception'] ) {
+		if	(!empty($this->options['initialize-exception'] ) ) {
 			// 初期化例外が有効の時に引き継ぐ設定値
 			array_push($takeover, 'initialize-exception', 'admin-mode', 'debug-mode' );
 		}
-		
-		// 設定を引き継ぐ
-		foreach($takeover as $key ) {
-			$this->options[$key]			=	$before[$key];
+
+		// 引き継ぐ設定値を一時保存
+		$takeover_options	=	array();
+		foreach	($takeover as $key ) {
+			if	(array_key_exists($key, $this->options ) ) {
+				$takeover_options[$key]	=	$this->options[$key];
+			}
+		}
+
+		// DEFAULTSに存在する項目を初期値で再構築
+		$this->options	=	array();
+		foreach	(self::DEFAULTS as $key => $value ) {
+			$this->options[$key]	=	$value['default'];
+		}
+
+		// 一時保存した設定値を戻す
+		foreach	($takeover_options as $key => $value ) {
+			$this->options[$key]	=	$value;
 		}
 		
 		// ブログID
 		$this->options['multi-myid']		=	get_current_blog_id();
 		
 		// CSS更新用カウント
-		$this->options['css-count']			=	self::DEFAULTS['css-count'];
+		$this->options['css-count']			=	self::pz_GetDefaultOption('css-count' );
 		
 		// プラグインのバージョン
 		$this->options['plugin-version']	=	PZLKC_PLUGIN_VERSION;
@@ -2633,6 +2941,19 @@ class class_pz_linkcard {
 	}
 
 	// ファイルエクスポート
+	private	function	pz_GetFilesystem() {
+		global	$wp_filesystem;
+
+		if	($wp_filesystem instanceof WP_Filesystem_Base ) {
+			return	$wp_filesystem;
+		}
+		require_once ABSPATH.'wp-admin/includes/file.php';
+		if	(!WP_Filesystem() ) {
+			return	false;
+		}
+		return	$wp_filesystem;
+	}
+
 	function action_export_file() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
@@ -2647,8 +2968,9 @@ class class_pz_linkcard {
 	public	function	action_admin_enqueue_scripts($hook ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
+		$admin_css_version	=	PZLKC_PLUGIN_VERSION.'.'.filemtime($this->plugin_dir_path.'css/admin.css' );
 		if	($this->is_editor_modal_screen($hook ) ) {
-			wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			PZLKC_PLUGIN_VERSION );
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			$admin_css_version );
 			return;
 		}
 
@@ -2660,21 +2982,49 @@ class class_pz_linkcard {
 			return;
 		}
 
-		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-tabs',	PZLKC_PZLKC_URL_ADMIN_TAB,			array('jquery' ),	PZLKC_PLUGIN_VERSION, true );
 		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-js',		PZLKC_PZLKC_URL_ADMIN_JS,			array('jquery' ),	PZLKC_PLUGIN_VERSION, true );
 		wp_localize_script	(self::PLUGIN_SLUG.'-admin-js',		'pzLinkCardAdmin', array(
 			'ajaxUrl'		=>	admin_url('admin-ajax.php' ),
 			'noticeNonce'	=>	wp_create_nonce('pz_lkc_clear_error_mode' ),
+			'cachemanColumnsNonce'	=>	wp_create_nonce('pz_lkc_cacheman_columns' ),
 			'mediaTitle'	=>	__('Select Image', 'pz-linkcard' ),
 			'mediaButton'	=>	__('Use this image', 'pz-linkcard' ),
+			'discardChanges'	=>	__('Discard changes?', 'pz-linkcard' ),
 		) );
-		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			PZLKC_PLUGIN_VERSION );
+		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_PZLKC_URL_ADMIN_CSS,			array(),			$admin_css_version );
 
-		if	($hook === 'tools_page_'.self::CACHEMAN_PAGE ) {
+		if	($hook === 'tools_page_'.self::CACHEMAN_PAGE || $hook === 'settings_page_'.self::SETTINGS_PAGE ) {
 			wp_enqueue_media();
 		}
-		wp_enqueue_script	('wp-color-picker' );		// WordPressカラーピッカースクリプト
-		wp_enqueue_style	('wp-color-picker' );		// WordPressカラーピッカースタイルシート
+		if	($hook === 'settings_page_'.self::SETTINGS_PAGE ) {
+			$admin_tabs_version	=	PZLKC_PLUGIN_VERSION.'.'.filemtime($this->plugin_dir_path.'js/admin-tabs.js' );
+			$preview_js_version	=	PZLKC_PLUGIN_VERSION.'.'.filemtime($this->plugin_dir_path.'js/pz-linkcard-preview.js' );
+			wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-tabs',	PZLKC_PZLKC_URL_ADMIN_TAB,	array('jquery' ),	$admin_tabs_version, true );
+			wp_enqueue_script	(self::PLUGIN_SLUG.'-preview',		PZLKC_PZLKC_URL_PREVIEW_JS,	array(),	$preview_js_version, true );
+			wp_localize_script	(self::PLUGIN_SLUG.'-preview',		'pzLinkCardPreview',		array(
+				'ajaxUrl'	=>	admin_url('admin-ajax.php' ),
+				'nonce'		=>	wp_create_nonce('pz_lkc_preview_render' ),
+				'action'	=>	'pz_lkc_preview_render',
+				'stateNonce'	=>	wp_create_nonce('pz_lkc_preview_state' ),
+				'stateAction'	=>	'pz_lkc_preview_state',
+				'labels'	=>	array(
+					'restorePreview'		=>	__('Preview', 'pz-linkcard' ),
+					'restorePreviewAria'	=>	__('Preview', 'pz-linkcard' ),
+					'referenced'			=>	__('Referenced', 'pz-linkcard' ),
+					'youMayAlsoLike'		=>	__('You may also like', 'pz-linkcard' ),
+					'previewPostDate'		=>	$this->pz_date(PZLKC_DATE_FORMAT, strtotime('2026-09-12 00:00:00' ) ),
+					'previewModifiedDate'	=>	$this->pz_date(PZLKC_DATE_FORMAT, strtotime('2026-09-13 00:00:00' ) ),
+				),
+			) );
+			wp_enqueue_script	(self::PLUGIN_SLUG.'-color-picker',	PZLKC_PZLKC_URL_COLOR_PICKER_JS,	array(),	PZLKC_PLUGIN_VERSION, true );
+			wp_localize_script	(self::PLUGIN_SLUG.'-color-picker',	'pz_lkc_color_picker', array(
+				'labels'	=>	array(
+					'clear'			=>	__('Clear', 'pz-linkcard' ),
+					'selectColor'	=>	__('Select color', 'pz-linkcard' ),
+				),
+			) );
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-color-picker',	PZLKC_PZLKC_URL_COLOR_PICKER_CSS,	array(),	PZLKC_PLUGIN_VERSION );
+		}
 	}
 
 	// Pz-LinkCard挿入ダイアログを表示する投稿編集画面か
@@ -2717,74 +3067,131 @@ class class_pz_linkcard {
 			return;
 		}
 
-		$shortcode		=	preg_replace('/[^a-zA-Z0-9]/', '', $this->options['code1'] );
-		$editor_script	=	null;
-		if	($shortcode ) {
-			$editor_script	=	self::PLUGIN_SLUG.'-block-editor';
-			wp_register_script(
-				$editor_script,
-				$this->plugin_dir_url.'js/block-editor.js',
-				array('wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data', 'wp-hooks', 'wp-i18n' ),
-				PZLKC_PLUGIN_VERSION,
-				true
-			);
-			$placeholder_url	=	__('Enter URL here...', 'pz-linkcard' );
-			wp_localize_script($editor_script, 'pzLinkCardBlock', array(
-				'shortcode'			=>	$shortcode,
-				'placeholderUrl'	=>	$placeholder_url,
-			) );
+		$shortcodes	=	array();
+		foreach	(array('code1', 'code2', 'code3' ) as $key ) {
+			$code	=	preg_replace('/[^a-zA-Z0-9]/', '', $this->options[$key] ?? '' );
+			if	($code ) {
+				$shortcodes[]	=	$code;
+			}
 		}
+		if	(!$shortcodes ) {
+			$shortcodes[]	=	self::pz_GetDefaultOption('code1' );
+		}
+		$shortcodes		=	array_values(array_unique($shortcodes ) );
+		$editor_script	=	self::PLUGIN_SLUG.'-block-editor';
+		wp_register_script(
+			$editor_script,
+			$this->plugin_dir_url.'js/block-editor.js',
+			array('wp-blocks', 'wp-block-editor', 'wp-editor', 'wp-components', 'wp-element', 'wp-i18n', 'wp-data', 'wp-hooks', 'wp-compose', 'wp-server-side-render' ),
+			PZLKC_PLUGIN_VERSION,
+			true
+		);
+		wp_localize_script($editor_script, 'pz_lkc_block_icon', array(
+			'blockName'		=>	'pz-linkcard/linkcard',
+			'iconUrl'		=>	$this->plugin_dir_url.'img/icon_lkc_block.svg',
+			'shortcode'		=>	$shortcodes[0],
+			'shortcodes'	=>	$shortcodes,
+			'title'			=>	'Pz-LinkCard',
+			'placeholder'	=>	__('Enter the URL and press Enter', 'pz-linkcard' ),
+			'description'	=>	__('Create a Pz-LinkCard shortcode.', 'pz-linkcard' ),
+		) );
 
 		$block_args	=	array(
 			'title'				=>	'Pz-LinkCard',
-			'description'		=>	__('Insert a Pz-LinkCard shortcode.', 'pz-linkcard' ),
+			'description'		=>	__('Create a Pz-LinkCard shortcode.', 'pz-linkcard' ),
 			'category'			=>	'widgets',
 			'icon'				=>	'admin-links',
 			'supports'			=>	array(
-				'inserter'	=>	true,
+				'inserter'	=>	false,
 			),
 			'attributes'		=>	array(
 				'url'		=>	array(
 					'type'		=>	'string',
 					'default'	=>	'',
 				),
-				'title'		=>	array(
-					'type'		=>	'string',
-					'default'	=>	'',
-				),
-				'content'	=>	array(
+				'shortcode'	=>	array(
 					'type'		=>	'string',
 					'default'	=>	'',
 				),
 			),
 			'render_callback'	=>	array($this, 'render_block_linkcard' ),
 		);
-		if	($editor_script ) {
-			$block_args['editor_script']	=	$editor_script;
-		}
+		$block_args['editor_script']	=	$editor_script;
 		register_block_type('pz-linkcard/linkcard', $block_args );
 	}
 
 	// Pz-LinkCard ブロック描画
 	public	function	render_block_linkcard($attributes, $content = '' ) {
-		$atts	=	array();
-		if	(!empty($attributes['url'] ) ) {
-			$atts['url']	=	$attributes['url'];
+		$url	=	esc_url_raw($attributes['url'] ?? '' );
+		if	(!$url ) {
+			return	'<div class="linkcard"><div class="lkc-internal-wrap"><div class="lkc-info">'.esc_html(self::PLUGIN_NAME).'</div><div class="lkc-excerpt">'.esc_html__('No URL was specified.', 'pz-linkcard' ).'</div></div></div>';
 		}
+		$shortcode	=	preg_replace('/[^a-zA-Z0-9]/', '', $attributes['shortcode'] ?? '' );
+		$available_shortcodes	=	array();
+		foreach	(array('code1', 'code2', 'code3' ) as $key ) {
+			$code	=	preg_replace('/[^a-zA-Z0-9]/', '', $this->options[$key] ?? '' );
+			if	($code ) {
+				$available_shortcodes[]	=	$code;
+			}
+		}
+		if	(!$available_shortcodes ) {
+			$available_shortcodes[]	=	self::pz_GetDefaultOption('code1' );
+		}
+		if	(!$shortcode || !in_array($shortcode, $available_shortcodes, true ) ) {
+			$shortcode	=	$available_shortcodes[0];
+		}
+
+		$atts	=	array();
+		$atts['url']	=	$url;
 		if	(!empty($attributes['title'] ) ) {
 			$atts['title']	=	sanitize_text_field($attributes['title'] );
 		}
 		if	(!empty($attributes['content'] ) ) {
 			$atts['content']	=	sanitize_textarea_field($attributes['content'] );
 		}
-		return	$this->shortcode($atts, null, $this->options['code1'] );
+		return	$this->shortcode($atts, null, $shortcode );
 	}
 
 	// ブロックエディタ用スクリプト
 	public	function	action_enqueue_block_editor_assets() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
 
-		wp_enqueue_style(self::PLUGIN_SLUG.'-block-editor', PZLKC_PZLKC_URL_ADMIN_CSS, array(), PZLKC_PLUGIN_VERSION );
+		wp_enqueue_style(self::PLUGIN_SLUG.'-block-editor', PZLKC_PZLKC_URL_ADMIN_CSS, array(), PZLKC_PLUGIN_VERSION.'.'.filemtime($this->plugin_dir_path.'css/admin.css' ) );
+		$this->enqueue_block_card_styles();
+	}
+
+	// ブロックエディタ本文用スタイルシート
+	public	function	action_enqueue_block_assets() {
+		if	(!is_admin() ) {
+			return;
+		}
+		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
+
+		$this->enqueue_block_card_styles();
+	}
+
+	// ブロックエディタ内プレビュー用カードスタイル
+	private	function	enqueue_block_card_styles() {
+		$css_version	=	PZLKC_PLUGIN_VERSION.'.'.$this->options['css-count'];
+		if	($this->options['flg-compress'] ) {
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css',	PZLKC_URL_STYLE.'style.min.css',	array(),	$css_version );
+		} else {
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css',	PZLKC_URL_STYLE.'style.css',		array(),	$css_version );
+		}
+		if	($this->options['css-add-url'] ) {
+			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css-add',	$this->options['css-add-url'],	array(),	$css_version );
+		}
+		$this->enqueue_excerpt_fit_script();
+	}
+
+	private	function	enqueue_excerpt_fit_script() {
+		wp_enqueue_script	(
+			self::PLUGIN_SLUG.'-excerpt-fit',
+			plugin_dir_url(__FILE__).'js/excerpt-fit.js',
+			array(),
+			PZLKC_PLUGIN_VERSION,
+			true
+		);
 	}
 
 	// 通常時のスタイルシート
@@ -2801,8 +3208,9 @@ class class_pz_linkcard {
 		if	($this->options['css-add-url'] ) {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-css-add',		$this->options['css-add-url'],			array(),	$css_version );
 		}
+		$this->enqueue_excerpt_fit_script();
 		// クリック回数
-		// if	($this->options['flg-click-count'] ) {
+		if	($this->options['flg-click-count'] ) {
 			wp_enqueue_script	(
 				'pz-lkc-click',	
 				plugin_dir_url(__FILE__) . 'js/click-counter.js',	
@@ -2813,7 +3221,7 @@ class class_pz_linkcard {
 				'ajax_url'		=>	admin_url('admin-ajax.php' ),
 				'nonce'			=>	wp_create_nonce('pz_lkc_nonce' ),
 			] );
-		// }
+		}
 	}
 
 	// 管理画面時の設定（スタイルシートの追加）
@@ -2899,6 +3307,17 @@ class class_pz_linkcard {
 	//	}
 	}
 
+	private	function	pz_GetAdminBarIconSvg() {
+		return	'<svg class="pz-lkc-adminbar-icon" width="20" height="20" viewBox="0 0 920 720" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="width: 20px; height: 20px; margin-right: 4px; vertical-align: sub; color: currentColor;">'.
+				'<path d="m 212.20737,246.02307 h 363.915" stroke="currentColor" stroke-width="46.9792" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd" />'.
+				'<path d="m 212.20737,379.02307 h 206.796" stroke="currentColor" stroke-width="46.9792" stroke-linecap="round" stroke-miterlimit="8" fill="none" fill-rule="evenodd" />'.
+				'<path d="m 759.5039,252.24389 c -25.0068,0.18279 -50.0786,8.39512 -70.6035,25.02343 l -52.4609,42.5293 a 73.737587,75.212334 0 0 1 7.8105,-0.42383 73.737587,75.212334 0 0 1 47.5313,17.71094 l 28.791,-23.33984 c 13.2574,-10.74062 29.5717,-15.28849 45.3555,-13.95508 h 0.01 c 15.7837,1.33337 31.0307,8.55424 42.1504,21.35156 22.2351,25.59039 18.8419,63.01751 -7.6699,84.49609 L 658.4219,520.74193 c -26.511,21.47395 -65.2546,18.20002 -87.4941,-7.38281 -16.1178,-18.57162 -18.7691,-43.38191 -8.8829,-63.80273 l -53.1757,43.70312 c 1e-4,6.4e-4 -10e-5,0.001 0,0.002 3.2097,18.12781 11.2461,35.66986 24.2812,50.68945 v 0.008 c 39.3609,45.29988 110.0193,51.26928 156.9336,13.26172 L 832.0703,442.11303 v -0.008 C 878.9804,404.09382 885.1768,335.83074 845.8145,290.52904 826.1343,267.87912 798.6261,255.0598 770.1758,252.656 h 0.027 c -3.5563,-0.30047 -7.1269,-0.43823 -10.6993,-0.41211 z" fill="currentColor" stroke="currentColor" stroke-width="3.54463" fill-rule="evenodd" />'.
+				'<path d="m 483.2719,669.21419 c 25.0068,-0.18279 50.0786,-8.39512 70.6035,-25.02343 l 52.4609,-42.5293 a 73.737587,75.212334 0 0 1 -7.8105,0.42383 73.737587,75.212334 0 0 1 -47.5313,-17.71094 l -28.791,23.33984 c -13.2574,10.74062 -29.5717,15.28849 -45.3555,13.95508 h -0.01 c -15.7837,-1.33337 -31.0307,-8.55424 -42.1504,-21.35156 -22.2351,-25.59039 -18.8419,-63.01751 7.6699,-84.49609 L 584.3539,400.71616 c 26.511,-21.47395 65.2546,-18.20002 87.4941,7.38281 16.1178,18.57162 18.7691,43.38191 8.8829,63.80273 l 53.1757,-43.70313 c -10e-5,-6.3e-4 10e-5,-9.9e-4 0,-0.002 -3.2097,-18.12781 -11.2461,-35.66986 -24.2812,-50.68945 v -0.008 C 670.2645,332.19925 599.6061,326.22985 552.6918,364.23741 L 410.7055,479.34485 v 0.008 c -46.9101,38.0114 -53.1065,106.27448 -13.7442,151.57618 19.6802,22.64992 47.1884,35.46924 75.6387,37.87304 h -0.027 c 3.5563,0.30047 7.1269,0.43823 10.6993,0.41211 z" fill="currentColor" stroke="currentColor" stroke-width="3.54463" fill-rule="evenodd" />'.
+				'<path d="m 838.28841,490.2264 10e-6,69.2172 c 0,24.97305 -20.71999,45.07772 -46.45737,45.07772 l -89.85895,-10e-6" fill="none" stroke="currentColor" stroke-width="45.7624" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="50" />'.
+				'<path d="m 336.05804,601.11245 h -208.8833 c -27.7,0 -50.000004,-22.3 -50.000004,-50 V 151.88977 c 0,-27.7 22.300004,-50 50.000004,-50 v 0 h 657.30431 c 27.7,0 50,22.3 50,50 l -10e-5,74.25782" fill="none" stroke="currentColor" stroke-width="50" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="50" />'.
+				'</svg>';
+	}
+
 	// 管理バーのメニュー追加（記述エラーやリンク切れなど）（未実装）
 	public	function	action_wp_before_admin_bar_render() {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__ ); }
@@ -2908,7 +3327,7 @@ class class_pz_linkcard {
 		}
 
 		global $wp_admin_bar;
-		$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => __('Pz Card', 'pz-linkcard' ),				'href' => '#' ) );
+		$wp_admin_bar->add_menu(array('id' => 'pz-lkc',									'title' => $this->pz_GetAdminBarIconSvg().esc_html__('Pz Card', 'pz-linkcard' ),				'href' => '#' ) );
 		$wp_admin_bar->add_menu(array('id' => 'pz-settings',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Manager',	'pz-linkcard' ),	'href' => $this->cacheman_url,	'meta' => array('target' => '_parent' ) ) );
 		$wp_admin_bar->add_menu(array('id' => 'pz-cacheman',	'parent' => 'pz-lkc',	'title' => __('Pz-LinkCard Settings',	'pz-linkcard' ),	'href' => $this->settings_url,	'meta' => array('target' => '_parent' ) ) );
 	}
@@ -2919,6 +3338,109 @@ class class_pz_linkcard {
 			return	stripslashes($_POST['properties'][$key] );
 		}
 		return		(array_key_exists($key, $this->options ) ? $this->options[$key] : $default );
+	}
+
+	// 設定画面プレビュー用CSS生成
+	public	function	action_ajax_pz_lkc_preview_render() {
+		if	(!current_user_can('manage_options' ) ) {
+			wp_send_json_error('forbidden', 403 );
+		}
+		if	(!check_ajax_referer('pz_lkc_preview_render', 'nonce', false ) ) {
+			wp_send_json_error('invalid nonce', 403 );
+		}
+
+		$original_options	=	$this->options;
+		$properties			=	isset($_POST['properties'] ) && is_array($_POST['properties'] ) ? wp_unslash($_POST['properties'] ) : array();
+		$definitions		=	self::pz_GetOptionDefinitions();
+		$preview_options	=	array_merge(self::pz_GetDefaultOptions(), is_array($this->options ) ? $this->options : array() );
+
+		foreach	($definitions as $key => $definition ) {
+			if	(array_key_exists($key, $properties ) ) {
+				$preview_options[$key]	=	$properties[$key];
+			}
+		}
+		$this->options	=	$preview_options;
+		if	(!defined('LIST_BORDER' ) ) {
+			define('LIST_BORDER', array(
+				'none'		=>	'None',
+				'solid'		=>	'Solid',
+				'dotted'	=>	'Dotted',
+				'dashed'	=>	'Dashed',
+				'double'	=>	'Double',
+				'groove'	=>	'Groove',
+				'ridge'		=>	'Ridge',
+				'inset'		=>	'Inset',
+				'outset'	=>	'Outset',
+			) );
+		}
+		if	(!function_exists('pz_TrimNumPx' ) ) {
+			function	pz_TrimNumPx($val, $unit_percent = false ) {
+				$val	=	mb_convert_kana($val, 'n' );
+				$val	=	strtolower($val );
+				$unit	=	'px';
+				if	(($unit_percent == true ) && (substr($val, -1 ) == '%' ) ) {
+					$unit	=	'%';
+				}
+				$val	=	preg_replace('/[^0-9]/', '', $val );
+				switch	($val ) {
+				case	null:
+				case	0:
+					return	$val;
+				}
+				return	$val.$unit;
+			}
+		}
+		require('lib/pz-linkcard-settings-validate.php' );
+		$this->pz_SetStyle('preview' );
+
+		$css_file	=	PZLKC_DIR_STYLE.'preview.css';
+		$css		=	file_exists($css_file ) ? file_get_contents($css_file ) : '';
+		$this->options	=	$original_options;
+
+		wp_send_json_success(array(
+			'css'	=>	$css,
+		) );
+	}
+
+	// 設定画面プレビュー位置保存
+	public	function	action_ajax_pz_lkc_preview_state() {
+		if	(!current_user_can('manage_options' ) ) {
+			wp_send_json_error('forbidden', 403 );
+		}
+		if	(!check_ajax_referer('pz_lkc_preview_state', 'nonce', false ) ) {
+			wp_send_json_error('invalid nonce', 403 );
+		}
+
+		$mode	=	isset($_POST['preview-mode'] ) ? sanitize_key(wp_unslash($_POST['preview-mode'] ) ) : 'window';
+		if	(!in_array($mode, array('window', 'docked', 'right' ), true ) ) {
+			$mode	=	'window';
+		}
+		$this->options['preview-mode']	=	$mode;
+		$this->options['preview-two-cards']	=	isset($_POST['preview-two-cards'] ) && intval(wp_unslash($_POST['preview-two-cards'] ) ) ? 1 : 0;
+
+		foreach	(array('preview-left', 'preview-top', 'preview-width', 'preview-height', 'preview-docked-height', 'preview-right-docked-width' ) as $key ) {
+			if	(!isset($_POST[$key] ) || $_POST[$key] === '' ) {
+				$this->options[$key]	=	null;
+				continue;
+			}
+			$value	=	intval(wp_unslash($_POST[$key] ) );
+			if	(in_array($key, array('preview-width', 'preview-height', 'preview-docked-height', 'preview-right-docked-width' ), true ) ) {
+				$value	=	max(0, $value );
+			}
+			$this->options[$key]	=	$value;
+		}
+
+		$options	=	get_option(self::OPTION_NAME, self::pz_GetDefaultOptions() );
+		if	(!is_array($options ) ) {
+			$options	=	self::pz_GetDefaultOptions();
+		}
+		foreach	(array('preview-mode', 'preview-left', 'preview-top', 'preview-width', 'preview-height', 'preview-docked-height', 'preview-right-docked-width', 'preview-two-cards' ) as $key ) {
+			$options[$key]	=	$this->options[$key] ?? null;
+		}
+		update_option(self::OPTION_NAME, $options );
+		$this->options	=	$options;
+
+		wp_send_json_success();
 	}
 
 	// URLパラメーターエラー通知を閉じたときにエラー状態を解除
@@ -2934,6 +3456,49 @@ class class_pz_linkcard {
 		$this->pz_SaveOptions();
 
 		wp_send_json_success();
+	}
+
+	// 管理画面・表示オプション保存
+	public	function	action_ajax_pz_lkc_save_cacheman_columns() {
+		if	(!current_user_can('manage_options' ) ) {
+			wp_send_json_error('forbidden', 403 );
+		}
+		if	(!check_ajax_referer('pz_lkc_cacheman_columns', 'nonce', false ) ) {
+			wp_send_json_error('invalid nonce', 403 );
+		}
+
+		$allowed_columns	=	$this->pz_GetCachemanColumnKeys();
+		$columns			=	isset($_POST['columns'] ) && is_array($_POST['columns'] ) ? map_deep(wp_unslash($_POST['columns'] ), 'sanitize_text_field' ) : array();
+		$save_columns		=	array();
+
+		foreach	($allowed_columns as $column ) {
+			$save_columns[$column]	=	isset($columns[$column] ) && ('1' === (string) $columns[$column] || 1 === $columns[$column] );
+		}
+		update_user_meta(get_current_user_id(), 'pz_lkc_cacheman_columns', $save_columns );
+
+		$allowed_per_page	=	$this->pz_GetCachemanPerPageChoices();
+		$per_page			=	isset($_POST['per_page'] ) ? absint(wp_unslash($_POST['per_page'] ) ) : 0;
+		if	(in_array($per_page, $allowed_per_page, true ) ) {
+			update_user_meta(get_current_user_id(), 'pz_lkc_cacheman_per_page', $per_page );
+		} else {
+			$per_page	=	intval(get_user_meta(get_current_user_id(), 'pz_lkc_cacheman_per_page', true ) );
+			if	(!in_array($per_page, $allowed_per_page, true ) ) {
+				$per_page	=	10;
+			}
+		}
+
+		wp_send_json_success(array(
+			'columns'	=>	$save_columns,
+			'per_page'	=>	$per_page,
+		) );
+	}
+
+	private	function	pz_GetCachemanColumnKeys() {
+		return	array('id', 'excerpt', 'charset', 'domain', 'sns', 'regist_time', 'update_time', 'sns_time', 'alive_time', 'post_id', 'click_count', 'result' );
+	}
+
+	private	function	pz_GetCachemanPerPageChoices() {
+		return	array(10, 20, 50, 100);
 	}
 
 	// クリックカウント

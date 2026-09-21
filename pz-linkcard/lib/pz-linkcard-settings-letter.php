@@ -5,17 +5,16 @@
 	<table class="pz-letter-table form-table">
 		<tr class="pz-letter-head">
 			<th></th>
-			<th><?php _e('Letter Color',		'pz-linkcard' ); ?></th>
-			<th><?php _e('Outline Color',		'pz-linkcard' ); ?></th>
-			<th><?php _e('Background Color',	'pz-linkcard' ); ?></th>
-			<th><?php _e('Size',				'pz-linkcard' ); ?></th>
-			<th><?php _e('Line Height',			'pz-linkcard' ); ?></th>
-			<th><?php _e('Line Limit',			'pz-linkcard' ); ?></th>
-			<th><?php _e('Length',				'pz-linkcard' ); ?></th>
-			<th><?php _e('Bold',				'pz-linkcard' ); ?></th>
-			<th><?php _e('Italic',				'pz-linkcard' ); ?></th>
-			<th><?php _e('Underline',			'pz-linkcard' ); ?></th>
-			<th><?php _e('Underline<br>On Hover',			'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Letter Color',		'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Outline Color',		'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Background Color',	'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Size',				'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Line Height',			'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Line Limit',			'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Bold',				'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Italic',				'pz-linkcard' ); ?></th>
+			<th><?php esc_html_e('Underline',			'pz-linkcard' ); ?></th>
+			<th><?php echo wp_kses_post(__('Underline<br>On Hover', 'pz-linkcard' ) ); ?></th>
 		</tr>
 		<?php
 		$table	=	array(
@@ -36,9 +35,9 @@
 			$key		=		$t['name'].'-color';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=		$prop[$key];
-				echo	'<input type="text"     name="properties['.$key.']" value="'.$value.'" class="pz-wp-color-picker" />';
+				echo	'<input type="text"     name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-sync-text pz-color pz-monospace pz-color-picker" />';
 			} else {
-				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-wp-color-picker-dummy" />';
+				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-color-dummy" />';
 			}
 			echo		'</td>';
 
@@ -46,9 +45,9 @@
 			$key		=		$t['name'].'-outline-color';
 			if			(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=		$prop[$key];
-				echo	'<input type="text"     name="properties['.$key.']" value="'.$value.'" class="pz-wp-color-picker" />';
+				echo	'<input type="text"     name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-sync-text pz-color pz-monospace pz-color-picker" />';
 			} else {
-				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-wp-color-picker-dummy" />';
+				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-color-dummy" />';
 			}
 			echo		'</td>';
 
@@ -56,9 +55,9 @@
 			$key		=		$t['name'].'-bg-color';
 			if			(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=		$prop[$key];
-				echo	'<input type="text"     name="properties['.$key.']" value="'.$value.'" class="pz-wp-color-picker" />';
+				echo	'<input type="text"     name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-sync-text pz-color pz-monospace pz-color-picker" />';
 			} else {
-				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-wp-color-picker-dummy" />';
+				echo	'<input type="text"     name="" value="" disabled="disabled" readonly="readonly" class="pz-color-dummy" />';
 			}
 			echo		'</td>';
 
@@ -66,7 +65,7 @@
 			$key		=		$t['name'].'-size';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=	preg_replace('/[^0-9]/', '', ($prop[$key] ?? '') );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
+				echo	'<input type="number"   name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
 			} else {
 				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
 			}
@@ -76,7 +75,7 @@
 			$key		=		$t['name'].'-height';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=	preg_replace('/[^0-9]/', '', ($prop[$key] ?? '') );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
+				echo	'<input type="number"   name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
 			} else {
 				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="999" />'.__('px', 'pz-linkcard' );
 			}
@@ -86,19 +85,9 @@
 			$key		=		$t['name'].'-maxline';
 			if		(array_key_exists($key, self::DEFAULTS ) ) {
 				$value	=	preg_replace('/[^0-9]/', '', ($prop[$key] ?? '') );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="99" />';
+				echo	'<input type="number"   name="properties['.$key.']" value="'.esc_attr($value ).'" class="pz-letter-box-r" min="0" max="99" />';
 			} else {
 				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="99" />';
-			}
-			echo	'</td>';
-
-			echo	'<td>';
-			$key		=		$t['name'].'-length';
-			if		(array_key_exists($key, self::DEFAULTS ) ) {
-				$value	=	preg_replace('/[^0-9]/', '', ($prop[$key] ?? '') );
-				echo	'<input type="number"   name="properties['.$key.']" value="'.$value.'" class="pz-letter-box-r" min="0" max="9999" />';
-			} else {
-				echo	'<input type="number"   name="" value="" disabled="disabled" readonly="readonly" class="pz-letter-box-r" min="0" max="9999" />';
 			}
 			echo	'</td>';
 

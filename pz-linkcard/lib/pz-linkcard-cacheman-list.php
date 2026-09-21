@@ -1,5 +1,7 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
+	require_once __DIR__.'/pz-linkcard-search-query-parser.php';
+
 	// ドメイン一覧
 	$mydomain			=	null;
 	if	(preg_match('{https?://(.*)/}i', $this->home_url.'/',$m ) ) {
@@ -37,86 +39,107 @@
 	}
 
 	// 抽出条件
-	$where				=	null;
+	$cond				=	(string) $keyword;
 
 	switch	($filter ) {
 	case	'all':
-		$where			=	"";
 		break;
 	case	'internal':
-		$where			=	"domain = '".$this->domain."'";
+		$cond			.=	' domain='.$this->domain;
 		break;
 	case	'external':
-		$where			=	"domain <> '".$this->domain."'";
+		$cond			.=	' -domain='.$this->domain;
 		break;
 	case	'modify':
-		$where			=	"alive_result <> update_result";
+		$cond			.=	' alive_result<>update_result';
 		break;
 	case	'unlink':
-		$where			=	"( alive_result < 100 OR alive_result >= 400 )";
+		$cond			.=	' -alive_result:100..399';
 		break;
 	default:
 		if	($this->options['flg-alive'] && $this->options['flg-alive-count']) {
 			$filter		=	'unlink';
-			$where		=	"( alive_result < 100 OR alive_result >= 400 )";
+			$cond		.=	' -alive_result:100..399';
 		} else {
 			$filter		=	'all';
-			$where		=	"";
 		}
 	}	
 
 	// キーワード指定
 	$param				=	array();
-	if	($keyword ) {
-		$like			=	'%' . $wpdb->esc_like($keyword ) . '%';
-		$param[]		=	$like;
-		$param[]		=	$like;
-		if	($where ) {
-			$where		.=	" AND ";
-		}
-		$where			.=	"( title LIKE '%s' OR excerpt LIKE '%s' )";
-	}
 
 	// ドメイン指定
 	if	($refine ) {
-		$param[]		=	$refine;
-		if	($where ) {
-			$where		.=	" AND ";
+		$cond			.=	' domain='.$refine;
+	}
+
+	$parser				=	new pz_LinkCard_Search_Query_Parser($wpdb );
+	$parsed_search		=	$parser->parse($cond );
+	$where				=	$parsed_search['where'];
+	$param				=	$parsed_search['params'];
+
+	// 表示オプション
+	$screen_option_columns	=	array(
+		'id'			=>	array('label' => __('ID', 'pz-linkcard' ) ),
+		'excerpt'		=>	array('label' => __('Excerpt', 'pz-linkcard' ) ),
+		'charset'		=>	array('label' => __('Charset', 'pz-linkcard' ) ),
+		'domain'		=>	array('label' => __('Domain', 'pz-linkcard' ) ),
+		'sns'			=>	array('label' => __('SNS', 'pz-linkcard' ) ),
+		'regist_time'	=>	array('label' => __('Registered Date', 'pz-linkcard' ) ),
+		'update_time'	=>	array('label' => __('Update Date', 'pz-linkcard' ) ),
+		'sns_time'		=>	array('label' => __('SNS Check Date', 'pz-linkcard' ) ),
+		'alive_time'	=>	array('label' => __('Alive Check Date', 'pz-linkcard' ) ),
+		'post_id'		=>	array('label' => __('Post ID', 'pz-linkcard' ) ),
+		'click_count'	=>	array('label' => __('Click Count', 'pz-linkcard' ) ),
+		'result'		=>	array('label' => __('Result code', 'pz-linkcard' ) ),
+	);
+	$screen_option_defaults	=	array(
+		'id'			=>	true,
+		'excerpt'		=>	true,
+		'charset'		=>	false,
+		'domain'		=>	true,
+		'sns'			=>	true,
+		'regist_time'	=>	false,
+		'update_time'	=>	true,
+		'sns_time'		=>	false,
+		'alive_time'	=>	false,
+		'post_id'		=>	true,
+		'click_count'	=>	true,
+		'result'		=>	true,
+	);
+	$screen_option_saved	=	get_user_meta(get_current_user_id(), 'pz_lkc_cacheman_columns', true );
+	if	(!is_array($screen_option_saved ) ) {
+		$screen_option_saved	=	array();
+	}
+	$screen_option_is_visible = function($column_key) use ($screen_option_defaults, $screen_option_saved) {
+		if	(array_key_exists($column_key, $screen_option_saved ) ) {
+			return	(bool) $screen_option_saved[$column_key];
 		}
-		$where			.=	"domain = %s";
+		return	!empty($screen_option_defaults[$column_key] );
+	};
+	$screen_option_hidden_class = function($column_key) use ($screen_option_is_visible) {
+		return	$screen_option_is_visible($column_key ) ? '' : ' pz-man-column-hidden';
+	};
+	$screen_option_per_page_choices	=	method_exists($this, 'pz_GetCachemanPerPageChoices' ) ? $this->pz_GetCachemanPerPageChoices() : array(10, 20, 50, 100);
+	$screen_option_per_page			=	intval(get_user_meta(get_current_user_id(), 'pz_lkc_cacheman_per_page', true ) );
+	if	(!in_array($screen_option_per_page, $screen_option_per_page_choices, true ) ) {
+		$screen_option_per_page	=	10;
 	}
 
 	// 検索SQL作成
-	$sql				=	"SELECT * FROM $this->db_name";
+	$sql				=	"SELECT COUNT(*) FROM $this->db_name";
 	if	($where ) {
 		$sql			.=	" WHERE $where";
-	}
-	if	($orderby ) {
-		$sql			.=	" ORDER BY $orderby $order";
 	}
 	if	(strpos($sql, 'UPDATE' ) || strpos($sql, 'UNION' ) ) { // 気持ち程度のインジェクション対策
 		$sql			=	null;
 	}
 
-	// データ抽出（パラメータ個数による）
-	switch	(count($param ) ) {
-	case	1:
-		$data_now	=	$wpdb->get_results($wpdb->prepare($sql, $param[0] ) );
-		break;
-	case	2:
-		$data_now	=	$wpdb->get_results($wpdb->prepare($sql, $param[0], $param[1] ) );
-		break;
-	case	3:
-		$data_now	=	$wpdb->get_results($wpdb->prepare($sql, $param[0], $param[1], $param[2] ) );
-		break;
-	default:
-		$data_now	=	$wpdb->get_results($sql );
-		break;
-	}
-	$count_now		=	count($data_now );
+	// データ件数
+	$count_now		=	intval(!empty($param ) ? $wpdb->get_var(call_user_func_array(array($wpdb, 'prepare' ), array_merge(array($sql ), $param ) ) ) : $wpdb->get_var($sql ) );
 
 	// ページ数
-	$page_limit		=	10;																						// ページ内の行数
+	$page_limit		=	$screen_option_per_page;																	// ページ内の行数
 	$page_min		=	($count_now > 0 ? 1 : 0 );																// 最初のページ
 	$page_max		=	ceil($count_now /	$page_limit );														// 最後のページ
 	$page_now		=	$page_now		<	$page_min	?	$page_min		:	
@@ -124,6 +147,18 @@
 	$page_prev		=	$page_now		>	$page_min	?	$page_now - 1	:	null;							// 前のページ
 	$page_next		=	$page_now		<	$page_max	?	$page_now + 1	:	null;							// 次のページ
 	$page_top		=	$page_now		<	1			?	0				:	($page_now - 1 ) * $page_limit;	// 表示中のページの最初に表示するのが何件目か
+
+	// データ抽出
+	$sql				=	"SELECT * FROM $this->db_name";
+	if	($where ) {
+		$sql			.=	" WHERE $where";
+	}
+	if	($orderby ) {
+		$sql			.=	" ORDER BY $orderby $order";
+	}
+	$sql				.=	" LIMIT %d OFFSET %d";
+	$data_param			=	array_merge($param, array($page_limit, $page_top ) );
+	$data_now			=	$wpdb->get_results(call_user_func_array(array($wpdb, 'prepare' ), array_merge(array($sql ), $data_param ) ) );
 
 	// 件数確認
 	$sql			=	"SELECT COUNT( * ) AS count_all, ";
@@ -163,6 +198,7 @@
 		sprintf($temp_button,	($page_max ),		(($page_now < $page_max ) ? '' : 'disabled="disabled"' ),	__('&raquo;', 'pz-linkcard' ) ).		// 最後のページ
 		'</span></div>';
 ?>
+	<div class="pz-man-filter-row">
 	<div class="pz-man-count-list">
 		<?php
 			$items	=
@@ -181,35 +217,67 @@
 			}
 		?>
 	</div>
+
+	<div class="pz-man-screen-options">
+		<button type="button" id="pz-man-screen-options-toggle" class="pz-man-screen-options-toggle" aria-expanded="false" aria-controls="pz-man-screen-options-panel" data-no-overlay="1">
+			<?php echo esc_html(__('Screen Options', 'pz-linkcard' ) ); ?><span class="dashicons dashicons-arrow-down-alt2"></span>
+		</button>
+		<div id="pz-man-screen-options-panel" class="pz-man-screen-options-panel" hidden>
+			<fieldset>
+				<legend><?php echo esc_html(__('Columns', 'pz-linkcard' ) ); ?></legend>
+				<?php
+					foreach	($screen_option_columns as $column_key => $column ) {
+						$checked		=	$screen_option_is_visible($column_key) ? ' checked="checked"' : '';
+						$default_class	=	!empty($screen_option_defaults[$column_key] ) ? ' class="pz-man-screen-option-default"' : '';
+						echo	'<label'.wp_kses_post($default_class ).'><input type="checkbox" class="pz-man-screen-column-toggle" data-pz-man-column="'.esc_attr($column_key ).'"'.$checked.'>'.esc_html($column['label'] ).'</label>';
+					}
+				?>
+			</fieldset>
+			<fieldset class="pz-man-screen-options-pagination">
+				<legend><?php echo esc_html(__('Pagination', 'pz-linkcard' ) ); ?></legend>
+				<label class="pz-man-screen-option-per-page">
+					<?php echo esc_html(__('Number of items per page:', 'pz-linkcard' ) ); ?>
+					<select id="pz-man-screen-option-per-page">
+						<?php
+							foreach	($screen_option_per_page_choices as $choice ) {
+								echo	'<option value="'.intval($choice ).'"'.selected($screen_option_per_page, $choice, false ).'>'.intval($choice ).'</option>';
+							}
+						?>
+					</select>
+				</label>
+			</fieldset>
+		</div>
+	</div>
 	
 	<div class="pz-man-search">
-		<p class="search-box" title="<?php _e('Text search by title and excerpt', 'pz-linkcard' ); ?>">
+		<p class="search-box" title="<?php esc_attr_e('Text or field search. Examples: post:1234, id:10, domain:popozure.info', 'pz-linkcard' ); ?>">
 			<label>
-				<span><?php echo __('&#x1f50d;&#xfe0f;', 'pz-linkcard' ); ?></span>
+				<span class="dashicons dashicons-search" style="vertical-align: text-bottom;"></span>
 				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo esc_attr($keyword ); ?>" />
-				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php _e('Search', 'pz-linkcard' ); ?></button>
+				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php esc_html_e('Search', 'pz-linkcard' ); ?></button>
 			</label>
 		</p>
+	</div>
 	</div>
 	
 	<div class="pz-man-navi tablenav top">
 		<div class="pz-man-batch-list alignleft actions bulkactions">
 			<select name="bulk_action" id="bulk-action-selector-top">
-				<option value="" selected="selected"><?php _e('Bulk Actions', 'pz-linkcard' ); ?></option>
-				<option value="renew"><?php _e('Renew Cache', 'pz-linkcard' ); ?></option>
-				<option value="renew_thumbnail"><?php _e('Renew Thumbnail Image', 'pz-linkcard' ); ?></option>
-				<option value="renew_sns"><?php _e('Renew SNS Count', 'pz-linkcard' ); ?></option>
-				<option value="renew_postid"><?php _e('Renew Post ID', 'pz-linkcard' ); ?></option>
-				<option value="alive"><?php _e('Check Status', 'pz-linkcard' ); ?></option>
-				<option value="delete"><?php _e('Delete from Cache', 'pz-linkcard' ); ?></option>
+				<option value="" selected="selected"><?php esc_html_e('Bulk Actions', 'pz-linkcard' ); ?></option>
+				<option value="renew"><?php esc_html_e('Renew Cache', 'pz-linkcard' ); ?></option>
+				<option value="renew_thumbnail"><?php esc_html_e('Renew Thumbnail Image', 'pz-linkcard' ); ?></option>
+				<option value="renew_sns"><?php esc_html_e('Renew SNS Count', 'pz-linkcard' ); ?></option>
+				<option value="renew_postid"><?php esc_html_e('Renew Post ID', 'pz-linkcard' ); ?></option>
+				<option value="alive"><?php esc_html_e('Check Status', 'pz-linkcard' ); ?></option>
+				<option value="delete"><?php esc_html_e('Delete from Cache', 'pz-linkcard' ); ?></option>
 			</select>
-			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm(\''.__('Are you sure?', 'pz-linkcard' ).'\' );"><?php _e('Apply', 'pz-linkcard' ); ?></button>
+			<button type="submit" name="action" value="exec-batch" class="button action" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>' );"><?php esc_html_e('Apply', 'pz-linkcard' ); ?></button>
 			&nbsp;
 		</div>
 		
 		<div class="pz-man-domain-list alignleft actions bulkactions">
 			<select name="refine" id="bulk-action-selector-top">
-				<option value="" selected="selected"><?php _e('All Domains', 'pz-linkcard' ); ?></option>
+				<option value="" selected="selected"><?php esc_html_e('All Domains', 'pz-linkcard' ); ?></option>
 					<?php
 						foreach	($domain_list as $rec ) {
 							if (isset($rec['domain'] ) === true && isset($rec['count'] ) === true) {
@@ -220,7 +288,7 @@
 						}
 					?>
 				</select>
-			<button type="submit" name="action" value="select-domain" class="button action"><?php _e('Refine Search', 'pz-linkcard' ); ?></button>
+			<button type="submit" name="action" value="select-domain" class="button action"><?php esc_html_e('Refine Search', 'pz-linkcard' ); ?></button>
 		</div>
 		<?php /* ページネーション */ echo $paging; ?>
 		<br class="clear">
@@ -231,49 +299,53 @@
 			<tr>
 				<td id="cb" class="pz-man-head-check manage-column column-cb check-column"><input id="cb-select-all-1" type="checkbox" /></td>
 <?php
-	$asc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53c;&#xfe0f;', 'pz-linkcard' ).'</span>';
-	$desc_chr	=	'<span class="pz-man-head-orderby">'.__('&#x1f53d;&#xfe0f;', 'pz-linkcard' ).'</span>';
+	$sort_none	=	'<img class="pz-man-head-orderby" src="'.esc_url($this->plugin_dir_url.'img/sort_none.svg' ).'" alt="" width="16" height="16" />';
+	$sort_asc	=	'<img class="pz-man-head-orderby" src="'.esc_url($this->plugin_dir_url.'img/sort_asc.svg'  ).'" alt="" width="16" height="16" />';
+	$sort_desc	=	'<img class="pz-man-head-orderby" src="'.esc_url($this->plugin_dir_url.'img/sort_desc.svg' ).'" alt="" width="16" height="16" />';
+	$get_sort_icon = function($item) use ($orderby, $order, $sort_none, $sort_asc, $sort_desc) {
+		return	($orderby === $item ? ($order === 'desc' ? $sort_desc : $sort_asc ) : $sort_none );
+	};
 
 	$item		=	'id';
 	$item_name	=	__('ID', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('id');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'url';
 	$item_name	=	__('URL', 'pz-linkcard' );
 	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'title';
 	$item_name	=	__('Title', 'pz-linkcard' );
 	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'excerpt';
 	$item_name	=	__('Excerpt', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('excerpt');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'charset';
 	$item_name	=	__('Charset', 'pz-linkcard' );
-	$add_class	=	' pz-debug-only';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('charset');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'domain';
 	$item_name	=	__('Domain', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('domain');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_twitter';
 	$item_name	=	__('Tw', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('sns');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
@@ -281,7 +353,7 @@
 	$item		=	'sns_facebook';
 	$item_name	=	__('fb', 'pz-linkcard' );
 	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$sort		=	$get_sort_icon($item);
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
@@ -289,51 +361,51 @@
 	$item		=	'sns_hatena';
 	$item_name	=	__('B!', 'pz-linkcard' );
 	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$sort		=	$get_sort_icon($item);
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	echo	'</th>';
 
 	$item		=	'regist_time';
 	$item_name	=	__('Registered<br>Date', 'pz-linkcard' );
-	$add_class	=	' pz-debug-only';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('regist_time');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_time';
 	$item_name	=	__('Update<br>Date', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('update_time');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'sns_time';
 	$item_name	=	__('SNS<br>Check<br>Date', 'pz-linkcard' );
-	$add_class	=	' pz-debug-only';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('sns_time');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'alive_time';
 	$item_name	=	__('Alive<br>Check<br>Date', 'pz-linkcard' );
-	$add_class	=	' pz-debug-only';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('alive_time');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'use_post_id1';
-	$item_name	=	__('Post ID', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$item_name	=	__('Post<br>ID', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class('post_id');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'click_count';
-	$item_name	=	__('Click<br/>Count', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$item_name	=	__('Click<br>Count', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class('click_count');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
 	$item		=	'update_result';
 	$item_name	=	__('Result<br>code', 'pz-linkcard' );
-	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$add_class	=	$screen_option_hidden_class('result');
+	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	// echo	'</th>';
@@ -341,7 +413,7 @@
 	$item		=	'alive_result';
 	$item_name	=	__('(Last)', 'pz-linkcard' );
 	$add_class	=	'';
-	$sort		=	($orderby === $item ? ($order === 'desc' ? $desc_chr : $asc_chr ) : '' );
+	$sort		=	$get_sort_icon($item);
 	// echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'">';
 	echo	'<button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button>';
 	echo	'</th>';
@@ -350,11 +422,7 @@
 		</thead>
 		<tbody>
 			<?php
-				for ($i = $page_top; $i <= ($page_top + $page_limit - 1 ); $i++ ) {
-					if	($i >= count($data_now ) ) {
-						break;
-					}
-					$data		=	$data_now[$i];
+				foreach	($data_now as $data ) {
 
 					// データID
 					$data_id	=	$data->id;
@@ -369,7 +437,6 @@
 					$domain_url		=	$url_info['domain_url'];	// ドメインURL
 					$is_external	=	$url_info['is_external'];	// 外部リンク
 					$is_internal	=	$url_info['is_internal'];	// 内部リンク
-					$is_samepage	=	$url_info['is_samepage'];	// 同一ページ
 
 					// URLの警告マーク
 					$html_url_error		=	'';
@@ -389,18 +456,18 @@
 					// 表示用のURL
 					if	($is_internal ) {
 						$temp_href		=	esc_url($url );
-						$temp_rel		=	'internal';
+						$temp_rel		=	'internal noopener';
 						$temp_target	=	'_self';
 					} else {
 						$temp_href		=	esc_url($url );
-						$temp_rel		=	'external noopenner noreferrer';
+						$temp_rel		=	'external noopener';
 						$temp_target	=	'_blank';
 					}
-					$html_url			=	$html_url_error.'<a href="'.$temp_href.'" title="'.$temp_href.'" rel="'.$temp_rel.'" target="'.$temp_target.'">'.esc_url($this->pz_DecodeURL($url ) ).'</a>';
+					$html_url			=	$html_url_error.'<a href="'.$temp_href.'" title="'.$temp_href.'" rel="'.$temp_rel.'" target="'.$temp_target.'" referrerpolicy="no-referrer">'.esc_url($this->pz_DecodeURL($url ) ).'</a>';
 
 					// タイトル
-					$title			=	esc_attr(stripslashes($data->title ) );		// 代入しながら判定
-					$html_title		=	mb_strimwidth($title, 0, 200 , '...' );		// 200文字にする
+					$title				=	esc_attr(stripslashes($data->title ) );		// 代入しながら判定
+					$html_title			=	mb_strimwidth($title, 0, 200 , '...' );		// 200文字にする
 					if	($data->title	<>	$data->regist_title ) {
 						$html_title		=	'<b>'.$html_title.'</b>';
 					}
@@ -446,7 +513,7 @@
 						}
 					}
 					if	($thumbnail_url ) {
-						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" class="pz-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-man-thumbnail-img"></div></a>';
+						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" rel="noopener" referrerpolicy="no-referrer" class="pz-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-man-thumbnail-img"></div></a>';
 					}
 
 					// 記事ID
@@ -455,12 +522,12 @@
 						$use_post_id	=	'use_post_id'.$j;
 						$post_id		=	$data->$use_post_id;
 						if	($post_id > 0 ) {
-							$html_post_id	.=	'<a href="'.esc_url(get_permalink($post_id ) ).'" target="_blank" title="'.esc_attr(get_the_title($post_id ) ).'">'.intval($post_id ).'</a><br>';
+							$html_post_id	.=	'<a href="'.esc_url(get_permalink($post_id ) ).'" target="_blank" rel="noopener" referrerpolicy="no-referrer" title="'.esc_attr(get_the_title($post_id ) ).'">'.intval($post_id ).'</a><br>';
 						}
 					}
 
 					// クリック数
-					$html_click		=	number_format(intval($data->click_count ), 0  );
+					$html_click			=	number_format(intval($data->click_count ), 0  );
 
 					// HTTPレスポンス
 					$html_result		=	'<span class="pz-man-body-result-update">'.strHTTPCode($data->update_result, $this->pz_HTTPMessage($data->update_result ) ).'</span>';
@@ -475,19 +542,19 @@
 			?>
 			<tr>
 				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo intval($data_id ); ?>" type="checkbox" name="select_id[]" value="<?php echo intval($data_id ); ?>" /><div class="locked-indicator"></div></th>
-				<td class="pz-man-body-id"><?php echo intval($data_id ).$html_thumbnail; ?></td>
-				<td colspan="2">
+				<td class="pz-man-body-id<?php echo esc_attr($screen_option_hidden_class('id') ); ?>"><button type="button" data-pz-man-search-id="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-id-search"><?php echo intval($data_id ); ?></button><?php echo $html_thumbnail; ?></td>
+				<td colspan="2" class="pz-man-body-url-title-cell">
 					<div class="pz-man-body-url"><?php echo $html_url; ?></div>
 					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo $html_title; ?></span></div>
 					<div id="inline_<?php echo intval($data_id ); ?>" class="pz-man-body-menu row-actions">
-						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php _e('Edit','pz-linkcard' ); ?></button> | 
-						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Renew','pz-linkcard' ); ?></button> | 
-						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm(<?php echo "'".__('Are you sure?', 'pz-linkcard' )."'"; ?> );"><?php _e('Delete','pz-linkcard' ); ?></button>
+						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php esc_html_e('Edit','pz-linkcard' ); ?></button> | 
+						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>' );"><?php esc_html_e('Renew','pz-linkcard' ); ?></button> | 
+						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>' );"><?php esc_html_e('Delete','pz-linkcard' ); ?></button>
 					</div>
 				</td>
-				<td><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
-				<td class="pz-man-body-charset pz-debug-only"><?php echo esc_html($data->charset ); ?></td>
-				<td>
+				<td class="pz-man-body-excerpt-cell<?php echo esc_attr($screen_option_hidden_class('excerpt') ); ?>"><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo $html_excerpt; ?></div></td>
+				<td class="pz-man-body-charset<?php echo esc_attr($screen_option_hidden_class('charset') ); ?>"><?php echo esc_html($data->charset ); ?></td>
+				<td class="pz-man-body-domain-cell<?php echo esc_attr($screen_option_hidden_class('domain') ); ?>">
 					<div class="pz-man-body-domain">
 						<?php
 							$disp_domain	=	(function_exists('idn_to_utf8' ) && defined('INTL_IDNA_VARIANT_UTS46' ) && mb_substr($domain, 0, 4) === 'xn--') ? idn_to_utf8($domain, 0, INTL_IDNA_VARIANT_UTS46 ) : $domain ;
@@ -499,31 +566,20 @@
 						<span class="pz-man-body-sitename" title="<?php echo esc_attr($disp_sitename ); ?>"><?php echo esc_html($disp_sitename ); ?></span>
 					</div>
 				</td>
-				<td class="pz-man-body-sns"><?php echo $html_sns; ?></td>
-				<td class="pz-man-body-resist-time pz-debug-only"><?php $dt=$data->regist_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-update-time"><?php $dt=$data->update_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-sns-time pz-debug-only"><?php $dt=$data->sns_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-alive-time pz-debug-only"><?php $dt=$data->alive_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td></td>
-				<td class="pz-man-body-post-id"><?php echo $html_post_id; ?></td>
-				<td class="pz-man-body-click-count"><?php echo $html_click; ?></td>
-				<td class="pz-man-body-result"><?php echo $html_result; ?></td>
+				<td class="pz-man-body-sns<?php echo esc_attr($screen_option_hidden_class('sns') ); ?>"><?php echo $html_sns; ?></td>
+				<td class="pz-man-body-resist-time<?php echo esc_attr($screen_option_hidden_class('regist_time') ); ?>"><?php $dt=$data->regist_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td>
+				<td class="pz-man-body-update-time<?php echo esc_attr($screen_option_hidden_class('update_time') ); ?>"><?php $dt=$data->update_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td>
+				<td class="pz-man-body-sns-time<?php echo esc_attr($screen_option_hidden_class('sns_time') ); ?>"><?php $dt=$data->sns_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td>
+				<td class="pz-man-body-alive-time<?php echo esc_attr($screen_option_hidden_class('alive_time') ); ?>"><?php $dt=$data->alive_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo $this->pz_Date($this->options['date-format-man'], $dt ); ?></span></td>
+				<td class="pz-man-body-post-id<?php echo esc_attr($screen_option_hidden_class('post_id') ); ?>"><?php echo $html_post_id; ?></td>
+				<td class="pz-man-body-click-count<?php echo esc_attr($screen_option_hidden_class('click_count') ); ?>"><?php echo $html_click; ?></td>
+				<td class="pz-man-body-result<?php echo esc_attr($screen_option_hidden_class('result') ); ?>"><?php echo $html_result; ?></td>
 			</tr>
 			<?php } ?>
 		</tbody>
 	</table>
 	<?php /* ページネーション */ echo $paging_bottom; ?></div>
 <?php
-	// ファイルメニュー（インポート・エクスポート）
-	if	($this->options['flg-filemenu'] ) {
-		echo	'<div  class="pz-man-filemenu">';
-		echo	'<span class="pz-man-filemenu-icon">'.__('&#x1f4c4;&#xfe0f;', 'pz-linkcard' ).'</span>';
-		echo	'<span class="pz-man-filemenu-text">'.__('File Menu', 'pz-linkcard' ).'</span>';
-		echo	'<button type="submit" name="action" value="show-import" class="pz-man-filemenu-button button">'.__('Import From Local File', 'pz-linkcard' ).'</button>';
-		echo	'<a href="'.esc_url(wp_nonce_url(admin_url( 'admin-post.php?action=pz_export_file' ), 'pz_export_file_action' ) ).'" class="button">'.__('Export To Local File', 'pz-linkcard' ).' ('.sprintf(($count_list['all'] == 1 ? __('%s item', 'pz-linkcard' ) : __('%s items', 'pz-linkcard' ) ), number_format($count_list['all'] ) ).'</a>';
-		echo	'</div>';
-
-	}
-
 // 関数
 
 // HTTP結果コード
