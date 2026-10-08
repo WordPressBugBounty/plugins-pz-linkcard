@@ -85,6 +85,7 @@
 
 	// Read stored keys before defaults are merged so existing values survive the rename.
 	foreach (array(
+		'favicon-api' => 'siteicon-api',
 		'ex-favicon' => 'ex-siteicon',
 		'ex-favicon-alt' => 'ex-siteicon-alt',
 		'in-favicon' => 'in-siteicon',
@@ -425,7 +426,7 @@
 	$plugin_version_changed	=	($this->options['plugin-version']	<>	PZLKC_PLUGIN_VERSION );
 	if		($plugin_version_changed ) {
 		$this->options['plugin-version']	=	PZLKC_PLUGIN_VERSION;
-		$this->options['css-count']			=	0;
+		$this->options['css-count']			=	1;
 	}
 
 	// DBテーブル作成・更新＆メンテナンス

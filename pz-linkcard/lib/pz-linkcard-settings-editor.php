@@ -11,6 +11,10 @@
 					<input type="checkbox" name="properties[auto-atag]" value="1" <?php checked($prop['auto-atag'] ); ?> class="pz-sync-check" />
 					<?php esc_html_e('Convert lines with text link only to Linkcard.', 'pz-linkcard' ); ?>
 				</label>
+				<div class="pz-autoconv-example-wrap">
+					<?php esc_html_e('ex.', 'pz-linkcard' ); ?>
+					<div class="pz-autoconv-example"><p><?php esc_html_e('Lines like the following are converted.', 'pz-linkcard' ); ?></p><p><a href="#" title="<?php echo esc_attr($plugin_url ); ?>">Pz-LinkCard</a></p><p><?php esc_html_e('Lines like the previous one are converted.', 'pz-linkcard' ); ?></p></div>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -21,6 +25,10 @@
 					<input type="checkbox" name="properties[auto-url]" value="1" <?php checked($prop['auto-url'] ); ?> class="pz-sync-check" />
 					<?php esc_html_e('Convert lines with URL only to Linkcard.', 'pz-linkcard' ); ?>
 				</label>
+				<div class="pz-autoconv-example-wrap">
+					<?php esc_html_e('ex.', 'pz-linkcard' ); ?>
+					<div class="pz-autoconv-example"><p><?php esc_html_e('Lines like the following are converted.', 'pz-linkcard' ); ?></p><p><?php echo esc_url($plugin_url ); ?></p><p><?php esc_html_e('Lines like the previous one are converted.', 'pz-linkcard' ); ?></p></div>
+				</div>
 			</td>
 		</tr>
 		<tr>
@@ -53,9 +61,9 @@
 	<?php submit_button(); ?>
 
 	<h2><?php echo	__('Editor Settings', 'pz-linkcard' ).$help_open.'editor'.$help_close; ?></h2>
-	<table class="form-table">
+	<table class="form-table pz-editor-visual-table">
 		<tr>
-			<th scope="row"><?php esc_html_e('Add Block', 'pz-linkcard' ); ?></th>
+			<th scope="row" colspan="2"><?php esc_html_e('Add Block', 'pz-linkcard' ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[flg-edit-block]" value="0" />
@@ -65,7 +73,8 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e('Add Insert Button', 'pz-linkcard' ); ?></th>
+			<th scope="row" rowspan="2" class="pz-editor-visual-heading"><?php esc_html_e('Visual Editor', 'pz-linkcard' ); ?></th>
+			<th scope="row" class="pz-editor-visual-subheading"><?php esc_html_e('Insert Button', 'pz-linkcard' ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[flg-edit-insert]" value="" />
@@ -75,7 +84,17 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e('Add Quick Tag', 'pz-linkcard' ); ?></th>
+			<th scope="row" class="pz-editor-visual-subheading"><?php esc_html_e('Preview', 'pz-linkcard' ); ?></th>
+			<td>
+				<label>
+					<input type="hidden"   name="properties[flg-edit-preview]" value="" />
+					<input type="checkbox" name="properties[flg-edit-preview]" value="1" <?php checked($prop['flg-edit-preview'] ); ?> />
+					<?php esc_html_e('Display LinkCard previews in the visual editor.', 'pz-linkcard' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row" colspan="2"><?php esc_html_e('Add Quick Tag', 'pz-linkcard' ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[flg-edit-qtag]" value="" />
@@ -85,7 +104,7 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e('Clear Excerpt', 'pz-linkcard' ); ?></th>
+			<th scope="row" colspan="2"><?php esc_html_e('Clear Excerpt', 'pz-linkcard' ); ?></th>
 			<td>
 				<label>
 					<input type="hidden"   name="properties[flg-clear-excerpt]" value="" />

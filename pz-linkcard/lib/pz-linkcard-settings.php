@@ -69,6 +69,32 @@
 		'2'				=>		__('Non-mobile devices',	'pz-linkcard' ),
 	) );
 
+	define('LIST_USER_AGENT', array(
+		'pzlkc'		=>	$this->pz_GetUserAgent('pzlkc' ),
+		'mysite'	=>	$this->pz_GetUserAgent('mysite' ),
+		''			=>	$this->pz_GetUserAgent('' ),
+	) );
+
+	// 定期実行の間隔
+	$period_list	= array();
+	foreach (wp_get_schedules() as $period_key => $period_value ) {
+		$period_list[intval($period_value['interval'] )] = array(
+			'key'		=> $period_key,
+			'display'	=> $period_value['display'],
+		);
+	}
+	ksort($period_list );
+	define('LIST_PERIOD', array('' => __('Do not run', 'pz-linkcard' ) ) + array_column($period_list, 'display', 'key' ) );
+
+	// 1回の定期実行で処理する件数
+	define('LIST_PERIOD_NUMBER', array(
+		'1'		=> __('1 case', 'pz-linkcard' ),
+		'5'		=> __('5 cases', 'pz-linkcard' ),
+		'10'	=> __('10 cases', 'pz-linkcard' ),
+		'20'	=> __('20 cases', 'pz-linkcard' ),
+		'50'	=> __('50 cases', 'pz-linkcard' ),
+	) );
+
 	// 引数・変数の設定
 	$page				=	'pz-linkcard-settings';						// 設定画面のページ
 	if	(isset($_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {
@@ -212,11 +238,12 @@
 	$switch_link	=	esc_url($this->cacheman_url );
 	$switch_icon	=	'<span class="dashicons dashicons-archive" style="vertical-align: text-bottom;"></span>';
 	$switch_label	=	__('Manager', 'pz-linkcard' );
-	$html_plugin	=	'<div id="pz-infobar"><div class="pz-infobar-left"><a href="'.esc_url($this->settings_url ).'" class="pz-infobar-plugin-logo"><img src="'.esc_url($this->plugin_dir_url.'img/pz-linkcard_logo.svg' ).'" width="156px" height="28px" alt="'.esc_attr(self::PLUGIN_NAME ).'"></a><span class="pz-infobar-plugin-ver pz-monospace">ver.'.esc_html(PZLKC_PLUGIN_VERSION ).'</span>'.$html_mode.'</div><div class="pz-infobar-right"><a href="'.$switch_link.'" class="pz-infobar-switch" title="'.esc_attr($switch_label ).'"><span class="pz-infobar-switch-icon">'.$switch_icon.'</span><span class="pz-infobar-switch-label">'.$switch_label.'</span></a></div></div>';
+	$html_search	=	'<div id="pz-infobar-search"><div class="pz-infobar-search-box"><span class="dashicons dashicons-search pz-infobar-search-icon" aria-hidden="true"></span><input type="text" id="pz-search-box" class="pz-infobar-search-text" placeholder="'.esc_attr__('Search settings', 'pz-linkcard' ).'" autocomplete="off"><span id="pz-search-status"></span></div><button type="button" id="pz-search-btn" class="pz-infobar-search-button">'.esc_html__('Find next', 'pz-linkcard' ).'</button><button type="button" id="pz-search-prev-btn" class="pz-infobar-search-button" disabled>'.esc_html__('Find previous', 'pz-linkcard' ).'</button></div>';
+	$html_plugin	=	'<div id="pz-infobar"><div class="pz-infobar-left"><a href="'.esc_url($this->settings_url ).'" class="pz-infobar-plugin-logo"><img src="'.esc_url($this->plugin_dir_url.'img/pz-linkcard_logo.svg' ).'" width="156px" height="28px" alt="'.esc_attr(self::PLUGIN_NAME ).'"></a><span class="pz-infobar-plugin-ver pz-monospace">ver.'.esc_html(PZLKC_PLUGIN_VERSION ).'</span>'.$html_mode.'</div><div class="pz-infobar-right">'.$html_search.'<a href="'.$switch_link.'" class="pz-infobar-switch" title="'.esc_attr($switch_label ).'"><span class="pz-infobar-switch-icon">'.$switch_icon.'</span><span class="pz-infobar-switch-label">'.$switch_label.'</span></a></div></div>';
 	$title_icon		=	'<span class="dashicons dashicons-admin-generic" style="vertical-align: bottom; width: 32px; height: 32px; font-size: 32px;"></span>';
 	$title_label	=	__('Pz-LinkCard Settings', 'pz-linkcard' );
 	$help_page		=	self::AUTHOR_URL.'/pz-linkcard-manager';
-	$html_title		=	'<div class="pz-header"><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
+	$html_title		=	'<div class="pz-header"><h1><span class="pz-header-title"><a class="pz-header-title-link" href="'.esc_url($this->settings_url ).'"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span></a><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
 
 	// POSTする値 INPUT要素
 	$temp_param		=
@@ -330,6 +357,8 @@
 						}
 					}
 				}
+			} elseif (isset($_POST['properties'] ) ) {
+				$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
 			}
 			$flg_style			=	true;				// スタイルシートの再生成
 			break;
@@ -340,6 +369,17 @@
 			$flg_style			=	true;				// スタイルシートの再生成
 			break;
 
+		case	'init-format':
+			$result		=	$this->pz_InitializeFormatOptions();
+			if	($result ) {
+				$flg_style		=	true;
+				$prop		=	$this->options;
+				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Successfully initialized the formatting settings.', 'pz-linkcard' ).'</strong></p></div>';
+			} else {
+				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to initialize the formatting settings.', 'pz-linkcard' ).'</strong></p></div>';
+			}
+			break;
+
 		case	'init-settings':						// 設定の初期化
 			$result		=	$this->pz_InitializeOptions();
 			if	($result ) {
@@ -348,6 +388,50 @@
 				$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Successfully initialized the settings.', 'pz-linkcard' ).'</strong></p></div>';
 			} else {
 				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to initialize the settings.', 'pz-linkcard' ).'</strong></p></div>';
+			}
+			break;
+
+		case	'clear-log':
+			$log_directory	= defined('PZLKC_DIR_DEBUG' ) ? trim((string) PZLKC_DIR_DEBUG ) : '';
+			$real_log_directory = $log_directory !== '' ? realpath($log_directory ) : false;
+			$real_upload_directory = defined('PZLKC_DIR_UPLOAD' ) ? realpath(PZLKC_DIR_UPLOAD ) : false;
+			$log_directory_valid = $real_log_directory !== false && $real_upload_directory !== false && is_dir($real_log_directory ) && strtolower(wp_normalize_path($real_log_directory ) ) !== strtolower(wp_normalize_path($real_upload_directory ) ) && strpos(strtolower(trailingslashit(wp_normalize_path($real_log_directory ) ) ), strtolower(trailingslashit(wp_normalize_path($real_upload_directory ) ) ) ) === 0;
+			$deleted_count	= 0;
+			$failed_count	= 0;
+
+			if	($log_directory_valid ) {
+				$log_root	= trailingslashit(wp_normalize_path($real_log_directory ) );
+				try {
+					$iterator = new RecursiveIteratorIterator(
+						new RecursiveDirectoryIterator($real_log_directory, FilesystemIterator::SKIP_DOTS )
+					);
+					foreach ($iterator as $log_file ) {
+						if	(!$log_file->isFile() || $log_file->isLink() || strtolower($log_file->getExtension() ) !== 'log' ) {
+							continue;
+						}
+						$real_log_file = realpath($log_file->getPathname() );
+						if	($real_log_file === false || strpos(strtolower(wp_normalize_path($real_log_file ) ), strtolower($log_root ) ) !== 0 ) {
+							$failed_count++;
+							continue;
+						}
+						wp_delete_file($real_log_file );
+						if	(!file_exists($real_log_file ) ) {
+							$deleted_count++;
+						} else {
+							$failed_count++;
+						}
+					}
+				} catch (Throwable $exception ) {
+					$failed_count++;
+				}
+			}
+
+			if	(!$log_directory_valid ) {
+				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('The log directory is not configured or does not exist.', 'pz-linkcard' ).'</strong></p></div>';
+			} elseif ($failed_count > 0 ) {
+				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %1$s log files. Failed to delete %2$s log files.', 'pz-linkcard' ), esc_html(number_format_i18n($deleted_count ) ), esc_html(number_format_i18n($failed_count ) ) ).'</strong></p></div>';
+			} else {
+				$html_notice .= '<div class="notice notice-success is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %s log files.', 'pz-linkcard' ), esc_html(number_format_i18n($deleted_count ) ) ).'</strong></p></div>';
 			}
 			break;
 
@@ -424,15 +508,22 @@
 
 	// 修正履歴
 	$html_preview	=	'';
-	if	(true ) {
+	if	(!array_key_exists('flg-preview', $this->options ) || !empty($this->options['flg-preview'] ) ) {
 		$preview_css		=	'';
 		$preview_css_file	=	PZLKC_DIR_STYLE.'preview.css';
 		if	(file_exists($preview_css_file ) ) {
 			$preview_css	=	file_get_contents($preview_css_file );
 		}
 		$preview_image	=	esc_url($this->plugin_dir_url.'img/logo_pz-linkcard.png' );
-		$preview_icon	=	esc_url($this->plugin_dir_url.'img/icon-pz-linkcard.png' );
-		$make_preview_card	=	function($prefix, $url, $site_name, $title, $excerpt) use ($preview_image, $preview_icon) {
+		$preview_external_siteicon	=	esc_url($this->plugin_dir_url.'img/icon_popozure.ico' );
+		$preview_internal_siteicon	=	get_site_icon_url(16 );
+		if	(!$preview_internal_siteicon ) {
+			$preview_internal_siteicon	=	$this->plugin_dir_url.'img/siteicon_dummy.png';
+		}
+		$preview_internal_siteicon	=	esc_url($preview_internal_siteicon );
+		$preview_today	=	current_datetime();
+		$preview_yesterday	=	$preview_today->modify('-1 day' );
+		$make_preview_card	=	function($prefix, $url, $site_name, $title, $excerpt) use ($preview_image, $preview_external_siteicon, $preview_internal_siteicon, $preview_today, $preview_yesterday) {
 			return	$this->pz_GetHTML(array(
 				'url'			=>	$url,
 				'title'			=>	$title,
@@ -444,12 +535,12 @@
 					'title'				=>	$title,
 					'excerpt'			=>	$excerpt,
 					'thumbnail'			=>	$preview_image,
-					'favicon'			=>	$preview_icon,
+					'favicon'			=>	$prefix === 'ex' ? $preview_external_siteicon : $preview_internal_siteicon,
 					'sns_twitter'		=>	1234,
 					'sns_facebook'		=>	1234,
 					'sns_hatena'		=>	1234,
-					'post_date'			=>	'2026-09-12 00:00:00',
-					'post_modified'		=>	'2026-09-13 00:00:00',
+					'post_date'			=>	$preview_yesterday->format('Y-m-d H:i:s' ),
+					'post_modified'		=>	$preview_today->format('Y-m-d H:i:s' ),
 					'update_result'		=>	200,
 					'alive_result'		=>	200,
 					'no_failure'		=>	true,
@@ -461,7 +552,8 @@
 							'<div class="pz-settings-preview-handle" data-pz-preview-handle>'.
 							'<span id="pz-settings-preview-title" class="pz-settings-preview-title">'.esc_html__('Preview', 'pz-linkcard' ).'</span>'.
 							'<span class="pz-settings-preview-controls">'.
-							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode data-no-overlay="1" aria-label="'.esc_attr__('Dock preview', 'pz-linkcard' ).'">_</button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode data-no-overlay="1" aria-label="'.esc_attr__('Dock preview bottom', 'pz-linkcard' ).'">_</button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode-secondary data-no-overlay="1" aria-label="'.esc_attr__('Dock preview right', 'pz-linkcard' ).'">∣</button>'.
 							'<button type="button" class="pz-settings-preview-button" data-pz-preview-close data-no-overlay="1" aria-label="'.esc_attr__('Close preview', 'pz-linkcard' ).'">×</button>'.
 							'</span>'.
 							'</div>'.
@@ -489,9 +581,11 @@
 	}
 
 	$changelog		=	'';
-	if	(!function_exists('wp_is_mobile' ) || !wp_is_mobile() ) {
-		$changelog	=	file_get_contents($this->plugin_dir_path.'/readme.txt' );											// readme.txt を読み込み
-		preg_match('/^== Changelog ==\s*(?<entries>(?:^= [^=\r\n]+ =\s*(?:(?!^= [^=\r\n]+ =|^== ).*\R?)*){1,5})/m', $changelog, $m );
+	$changelog_limit	=	(function_exists('wp_is_mobile' ) && wp_is_mobile() ) ? 3 : 10;
+	$changelog		=	file_get_contents($this->plugin_dir_path.'/readme.txt' );											// readme.txt を読み込み
+	if	(false !== $changelog ) {
+		$changelog_pattern	=	'/^== Changelog ==\s*(?<entries>(?:^= [^=\r\n]+ =\s*(?:(?!^= [^=\r\n]+ =|^== ).*\R?)*){1,'.$changelog_limit.'})/m';
+		preg_match($changelog_pattern, $changelog, $m );
 		$changelog	=	$m['entries'] ?? '';
 		$changelog	=	trim($changelog );
 		$changelog	=	esc_html($changelog );
@@ -557,18 +651,48 @@
 
 
 // 画面描画
-echo	$html_style;
+echo	wp_kses($html_style, array('style' => array() ) );
 ?>
-<div class="pz-dashboard<?php echo $page_class; ?> wrap">
+<div class="pz-dashboard<?php echo esc_attr($page_class ); ?> wrap">
 	<header class="pz-header">
 		<?php
-			echo	$html_plugin;
-			echo	$html_title;
-			echo	$html_standard_notice;
+			$infobar_allowed_html			=	wp_kses_allowed_html('post' );
+			$infobar_allowed_html['input']	=	array(
+				'type'			=> true,
+				'id'			=> true,
+				'class'			=> true,
+				'placeholder'	=> true,
+				'autocomplete'	=> true,
+			);
+			$infobar_allowed_html['button']	=	array(
+				'type'		=> true,
+				'id'		=> true,
+				'class'		=> true,
+				'disabled'	=> true,
+			);
+			echo	wp_kses($html_plugin, $infobar_allowed_html );
+			echo	wp_kses_post($html_title );
+			echo	wp_kses_post($html_standard_notice );
 			if	($html_notice ) {
-				echo	'<div class="pz-toast-container" role="status" aria-live="polite" style="display:none;">'.$html_notice.'</div>';
+				echo	'<div class="pz-toast-container" role="status" aria-live="polite" style="display:none;">'.wp_kses_post($html_notice ).'</div>';
 			}
 		?>
+		<div class="pz-page-help">
+			<button type="button" class="pz-page-help-toggle" aria-expanded="false" aria-controls="pz-settings-help-panel" data-no-overlay="1">
+				<?php esc_html_e('Help', 'pz-linkcard' ); ?><span class="dashicons dashicons-arrow-down-alt2"></span>
+			</button>
+			<div id="pz-settings-help-panel" class="pz-page-help-panel" hidden>
+				<h3><?php esc_html_e('Keyboard Shortcuts'); ?></h3>
+				<dl class="pz-man-shortcut-list">
+					<div><dt><kbd>F2</kbd></dt><dd><?php esc_html_e('Focus current tab', 'pz-linkcard' ); ?></dd></div>
+					<div><dt><kbd>Ctrl+F</kbd> / <kbd>Alt+Q</kbd></dt><dd><?php esc_html_e('Search settings', 'pz-linkcard' ); ?></dd></div>
+					<div><dt><kbd>F3</kbd> / <kbd>Shift+F3</kbd></dt><dd><?php echo esc_html(__('Find next', 'pz-linkcard' ).' / '.__('Find previous', 'pz-linkcard' ) ); ?></dd></div>
+					<div><dt><kbd>Alt+S</kbd></dt><dd><?php esc_html_e('Save Changes'); ?></dd></div>
+					<div><dt><kbd>Ctrl+← / Ctrl+→</kbd></dt><dd><?php esc_html_e('Switch tabs', 'pz-linkcard' ); ?></dd></div>
+					<div><dt><kbd>Shift+<?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd> / <kbd><?php esc_html_e('Right click', 'pz-linkcard' ); ?>+<?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd></dt><dd><?php esc_html_e('Increase or decrease values, or select the previous or next option', 'pz-linkcard' ); ?></dd></div>
+				</dl>
+			</div>
+		</div>
 		<div id="pz-tabbar-wrapper" class="pz-tabbar-wrapper">
 			<button type="button" class="pz-tab-scroll pz-tab-left" aria-label="<?php esc_attr_e('Scroll tabs left', 'pz-linkcard' ); ?>"><span class="dashicons dashicons-arrow-left-alt2"></span></button>
 			<div id="pz-tabbar" class="pz-tabs">
@@ -593,7 +717,21 @@ echo	$html_style;
 	<article>
 		<form action="" method="post">
 			<?php wp_nonce_field('pz-settings' ); ?>
-			<?php echo $html_input; ?>
+			<?php
+				echo wp_kses(
+					$html_input,
+					array(
+						'input' => array(
+							'type'					=> true,
+							'name'					=> true,
+							'value'					=> true,
+							'title'					=> true,
+							'size'					=> true,
+							'data-pz-preview-state'	=> true,
+						),
+					)
+				);
+			?>
 			<div class="pz-submit-hide"><?php submit_button(); ?></div>
 			<?php
 				require_once('pz-linkcard-settings-error.php' );			// 「エラー」タブ
@@ -666,6 +804,28 @@ function	pz_GetDirSize($dir ) {
 		}
 	}
 	return	$size;
+}
+
+// ディレクトリ配下のファイル数
+function pz_GetDirFileCount($dir ) {
+	$count		= 0;
+	$handle		= is_dir($dir ) ? opendir($dir ) : false;
+	if	(!$handle ) {
+		return	0;
+	}
+	while (($file = readdir($handle ) ) !== false ) {
+		if	($file === '.' || $file === '..' ) {
+			continue;
+		}
+		$fullpath = $dir.'/'.$file;
+		if	(is_dir($fullpath ) && !is_link($fullpath ) ) {
+			$count	+= pz_GetDirFileCount($fullpath );
+		} elseif (is_file($fullpath ) ) {
+			$count++;
+		}
+	}
+	closedir($handle );
+	return	$count;
 }
 
 // 数値をKB、MB、TBの単位に変換
@@ -754,6 +914,15 @@ function		echo_list($item_name, $item_value, $item_list, $item_title, $item_noti
 	}
 	$html_result		.=	'</td></tr>';
 	echo					$html_result;
+}
+
+// スケジュール用リスト項目
+function pz_echo_schedule_select($item_name, $item_value, $item_list ) {
+	echo '<select name="properties['.esc_attr($item_name ).']">';
+	foreach ($item_list as $key => $value ) {
+		echo '<option value="'.esc_attr($key ).'" '.selected((string) $key, (string) $item_value, false ).'>'.esc_html($value ).'</option>';
+	}
+	echo '</select>';
 }
 
 // コンボボックス項目

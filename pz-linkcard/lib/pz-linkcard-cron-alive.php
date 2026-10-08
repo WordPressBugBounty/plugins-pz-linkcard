@@ -1,17 +1,17 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	// WP-CRONスケジュール（存在チェック）
-	if (!$this->options['flg-alive'] ) {
+	if (!$this->options['flg-alive'] || !$this->options['alive-period'] ) {
 		$log	.=	'Clear schedule "Site Alive Check".'.PHP_EOL;
 		wp_clear_scheduled_hook(self::CRON_ALIVE );
-		//return	null;
+		return	null;
 	}
 
 	// DBの宣言
 	global	$wpdb;
 
 	// 次回生存確認日時を越えているものを抽出
-	$proc_datas	=	$wpdb->get_results($wpdb->prepare("SELECT url,alive_time FROM $this->db_name WHERE alive_nexttime < %d ORDER BY alive_time ASC, id ASC", $this->now ) );
+	$proc_datas	=	$wpdb->get_results($wpdb->prepare("SELECT url,alive_time FROM $this->db_card WHERE alive_nexttime < %d ORDER BY alive_time ASC, id ASC", $this->now ) );
 
 	// 実行ログ
 	$message	=	sprintf('There were %d links that passed the next "Link Alive Check" confirmation date and time.', count($proc_datas ) );
@@ -22,14 +22,14 @@
 
 	// 生存確認
 	$proc_count	=	0;
+	$max_count		=	max(1, intval($this->options['alive-period-num'] ) );
 	if (isset($proc_datas ) && is_array($proc_datas ) && count($proc_datas) > 0) {
 		foreach($proc_datas as $data ) {
 			$proc_count++;
 
-			// 5件を超えたら、1時間後に続きを処理する
-			if ($proc_count > 5) {
+			// 設定された件数を超えたら終わる
+			if ($proc_count > $max_count) {
 				$log	.=	'Break.'.PHP_EOL;
-				wp_schedule_single_event(time() + 3600, self::CRON_ALIVE );
 				break;
 			}
 

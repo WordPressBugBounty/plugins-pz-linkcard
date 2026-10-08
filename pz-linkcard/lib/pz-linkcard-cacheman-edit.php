@@ -147,6 +147,20 @@
 		}
 	}
 ?>
+	<div class="pz-page-help">
+		<button type="button" class="pz-page-help-toggle" aria-expanded="false" aria-controls="pz-cache-edit-help-panel" data-no-overlay="1">
+			<?php esc_html_e('Help', 'pz-linkcard' ); ?><span class="dashicons dashicons-arrow-down-alt2"></span>
+		</button>
+		<div id="pz-cache-edit-help-panel" class="pz-page-help-panel" hidden>
+			<h3><?php esc_html_e('Keyboard Shortcuts'); ?></h3>
+			<dl class="pz-man-shortcut-list">
+				<div><dt><kbd>F2</kbd></dt><dd><?php esc_html_e('Edit title', 'pz-linkcard' ); ?></dd></div>
+				<div><dt><kbd>Alt+S</kbd> / <kbd>Ctrl+S</kbd></dt><dd><?php esc_html_e('Update', 'pz-linkcard' ); ?></dd></div>
+				<div><dt><kbd>Esc</kbd></dt><dd><?php esc_html_e('Cancel', 'pz-linkcard' ); ?></dd></div>
+			</dl>
+		</div>
+	</div>
+
 	<button type="submit" name="action" value="update" class="pz-man-cache-default-submit" aria-hidden="true" tabindex="-1" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;padding:0;border:0;"></button>
 
 	<div id="poststuff" class="pz-man-cache-dirty-check pz-man-cache-poststuff">
@@ -208,7 +222,7 @@
 
 			<div id="postbox-container-1" class="postbox-container pz-man-cache-side">
 				<?php
-					$cacheman_reload_button	=	'<button type="submit" name="single-edit" value="'.esc_attr($cacheman_get_value('id' ) ).'" class="pz-man-cache-reload-button" title="'.esc_attr__('Reload', 'pz-linkcard' ).'" aria-label="'.esc_attr__('Reload', 'pz-linkcard' ).'" formnovalidate><span class="dashicons dashicons-update"></span></button>';
+					$cacheman_reload_button	=	'<button type="submit" name="single-edit" value="'.esc_attr($cacheman_get_value('id' ) ).'" class="pz-man-cache-reload-button" title="'.esc_attr__('Reload', 'pz-linkcard' ).'" aria-label="'.esc_attr__('Reload', 'pz-linkcard' ).'" formnovalidate><span class="pz-man-cache-reload-icon" aria-hidden="true">↻</span></button>';
 					echo wp_kses($cacheman_postbox_open(__('Cache Editor', 'pz-linkcard' ), 'pz-man-cache-submitbox', $cacheman_reload_button ), $cacheman_allowed_html );
 				?>
 					<div class="pz-man-cache-submit-meta">
@@ -241,7 +255,7 @@
 					</div>
 				<?php echo wp_kses($cacheman_postbox_close(), $cacheman_allowed_html ); ?>
 
-				<?php echo wp_kses($cacheman_postbox_open(__('Favicon URL', 'pz-linkcard' ), 'pz-man-cache-image-box' ), $cacheman_allowed_html ); ?>
+				<?php echo wp_kses($cacheman_postbox_open(__('Site Icon URL', 'pz-linkcard' ), 'pz-man-cache-image-box' ), $cacheman_allowed_html ); ?>
 					<?php echo wp_kses($cacheman_image_preview('favicon', 'pz-man-cache-siteicon-preview' ), $cacheman_allowed_html ); ?>
 					<?php echo wp_kses($cacheman_clear_image_button('data[favicon]', __('Clear site icon', 'pz-linkcard' ), $cacheman_get_value('favicon' ) !== '' ), $cacheman_allowed_html ); ?>
 					<div class="pz-man-cache-image-url">
@@ -332,5 +346,5 @@
 				<?php echo wp_kses($cacheman_postbox_close(), $cacheman_allowed_html ); ?>
 			</div>
 		</div>
-		<br class="clear" />
+		<br class="clear">
 	</div>

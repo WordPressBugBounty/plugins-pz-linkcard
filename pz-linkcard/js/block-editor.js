@@ -5,7 +5,7 @@
 	if (!wp?.blocks || !wp?.element || !wp?.data || !wp?.blockEditor || !wp?.hooks || !wp?.compose) return;
 
 	const { createBlock, registerBlockType, registerBlockVariation } = wp.blocks;
-	const { createElement: el, useEffect, useState } = wp.element;
+	const { createElement: el, useEffect, useRef, useState } = wp.element;
 	const { useDispatch, useSelect } = wp.data;
 	const { store: blockEditorStore } = wp.blockEditor;
 	const useEditorBlockProps = wp.blockEditor.useBlockProps || ((props) => props);
@@ -17,6 +17,7 @@
 	const blockTitle = blockIcon?.title || "Pz-LinkCard";
 	const urlPlaceholder = blockIcon?.placeholder || "Enter the URL and press Enter";
 	const blockDescription = blockIcon?.description || "Create a Pz-LinkCard shortcode.";
+	const searchResultsLabel = blockIcon?.searchResults || "Search results";
 	const shortcodes = Array.from(
 		new Set(
 			(blockIcon?.shortcodes || [defaultShortcode])
@@ -186,22 +187,95 @@
 		}, []) || [];
 	};
 	const isPzShortcodeBlock = (attributes) => parseShortcodes(attributes?.text).length > 0;
+	const isLikelyUrl = (value) => {
+		const text = String(value || "").trim();
+		if (!/^(https?|file|ftp|data|ogg):\/\//i.test(text)) return false;
+		try {
+			return ["http:", "https:", "file:", "ftp:", "data:", "ogg:"].includes(new URL(text).protocol);
+		} catch (error) {
+			return false;
+		}
+	};
 
 	const PzLinkCardEditor = ({ url, shortcodeName, commitUrl, clientId }) => {
-		const { removeBlock } = useDispatch(blockEditorStore);
+		const { removeBlock, selectBlock } = useDispatch(blockEditorStore);
 		const [tempUrl, setTempUrl] = useState(url || "");
-		const isSelected = useSelect(
-			(select) => select(blockEditorStore).getSelectedBlockClientId() === clientId,
+		const [searchResults, setSearchResults] = useState([]);
+		const [selectedResultIndex, setSelectedResultIndex] = useState(null);
+		const inputRef = useRef(null);
+		const { isSelected, isPreviewMode } = useSelect(
+			(select) => ({
+				isSelected: select(blockEditorStore).getSelectedBlockClientId() === clientId,
+				isPreviewMode: Boolean(select(blockEditorStore).getSettings()?.isPreviewMode),
+			}),
 			[clientId]
 		);
 
 		useEffect(() => {
 			setTempUrl(url || "");
 		}, [url]);
+		useEffect(() => {
+			const keyword = String(tempUrl || "").trim();
+			if (!keyword || isLikelyUrl(keyword) || !blockIcon?.ajaxUrl || !blockIcon?.searchNonce) {
+				setSearchResults([]);
+				return undefined;
+			}
 
+			const controller = new AbortController();
+			const timer = window.setTimeout(() => {
+				const body = new URLSearchParams({
+					action: "pz_lkc_mce_post_search",
+					nonce: blockIcon.searchNonce,
+					keyword,
+				});
+				fetch(blockIcon.ajaxUrl, {
+					method: "POST",
+					headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+					credentials: "same-origin",
+					body: body.toString(),
+					signal: controller.signal,
+				})
+					.then((response) => response.json())
+					.then((result) => {
+						setSearchResults(result?.success && Array.isArray(result.data) ? result.data : []);
+					})
+					.catch((error) => {
+						if (error.name !== "AbortError") setSearchResults([]);
+					});
+			}, 250);
+
+			return () => {
+				window.clearTimeout(timer);
+				controller.abort();
+			};
+		}, [tempUrl]);
+		const showUrlEditor = isSelected || !url;
+		const focusAndSelectUrl = () => {
+			inputRef.current?.focus();
+			inputRef.current?.select();
+		};
+		const wasSelectedRef = useRef(false);
+		useEffect(() => {
+			if (isSelected && !wasSelectedRef.current) {
+				window.setTimeout(focusAndSelectUrl, 0);
+			}
+			wasSelectedRef.current = isSelected;
+		}, [isSelected]);
+		const selectSearchResult = (item) => {
+			setTempUrl(item.url);
+			setSearchResults([]);
+			commitUrl(item.url);
+			window.setTimeout(() => {
+				inputRef.current?.focus();
+				inputRef.current?.select();
+			}, 0);
+		};
 		const blockProps = useEditorBlockProps({
 			className: "pz-linkcard-block-editor",
-			tabIndex: 0,
+			tabIndex: -1,
+			onFocus: (event) => {
+				if (event.target === event.currentTarget) focusAndSelectUrl();
+			},
 			onClick: (event) => {
 				if (event.target.closest("a")) {
 					event.preventDefault();
@@ -219,50 +293,210 @@
 				}
 			},
 			style: {
-				backgroundColor: "rgba(240, 250, 255, 0.2)",
-				border: "1px solid #2277bb",
-				borderRadius: "4px",
+				backgroundColor: showUrlEditor ? "rgba(240, 250, 255, 0.2)" : "transparent",
+				border: showUrlEditor ? "1px solid #2277bb" : "0",
+				borderRadius: showUrlEditor ? "4px" : "0",
 				boxSizing: "border-box",
-				padding: "12px",
+				padding: showUrlEditor ? "12px" : "0",
 			},
 		});
+		if (isPreviewMode && blockIcon?.previewUrl) {
+			return el("img", {
+				...blockProps,
+				className: `${blockProps.className || ""} pz-linkcard-block-inserter-preview`.trim(),
+				src: blockIcon.previewUrl,
+				alt: blockTitle,
+				style: {
+					display: "block",
+					width: "100%",
+					height: "auto",
+					margin: 0,
+					padding: 0,
+					border: 0,
+					background: "transparent",
+				},
+			});
+		}
 
 		return el(
 			"div",
 			blockProps,
-			el(
-				"div",
-				{
-					style: {
-						color: "#111827",
-						fontSize: "13px",
-						fontWeight: "700",
-						lineHeight: "1.4",
-						marginBottom: "6px",
+			showUrlEditor
+				? el(
+						"div",
+						{
+							style: {
+								color: "#111827",
+								fontSize: "13px",
+								fontWeight: "700",
+								lineHeight: "1.4",
+								marginBottom: "6px",
+							},
 					},
-				},
-				blockTitle
-			),
-			el("input", {
-				type: "url",
-				value: tempUrl,
-				placeholder: urlPlaceholder,
-				onChange: (event) => setTempUrl(event.target.value),
-				onKeyDown: (event) => {
-					if (event.key === "Enter") {
-						event.preventDefault();
-						commitUrl(tempUrl);
-					}
-				},
-				onBlur: () => commitUrl(tempUrl),
-				style: {
-					width: "100%",
-					padding: "6px",
-					fontSize: "14px",
-					boxSizing: "border-box",
-					marginBottom: "10px",
-				},
-			}),
+						blockTitle
+				  )
+				: null,
+			showUrlEditor
+				? el(
+						"div",
+						{ className: "pz-block-post-search-combobox" },
+						el("input", {
+							ref: inputRef,
+							type: "text",
+							inputMode: "url",
+							value: tempUrl,
+							placeholder: urlPlaceholder,
+							role: "combobox",
+							"aria-autocomplete": "list",
+							"aria-expanded": searchResults.length > 0,
+							"aria-controls": `pz-block-post-search-results-${clientId}`,
+							onChange: (event) => {
+								setTempUrl(event.target.value);
+								setSelectedResultIndex(null);
+							},
+							onKeyDown: (event) => {
+								if (event.key === "Enter") {
+									event.preventDefault();
+									if (searchResults.length) selectSearchResult(searchResults[0]);
+									else if (isLikelyUrl(tempUrl)) commitUrl(tempUrl.trim());
+								} else if (event.key === "ArrowDown") {
+									if (searchResults.length) {
+										event.preventDefault();
+										event.currentTarget.nextElementSibling?.querySelector("button")?.focus();
+									} else {
+										const nextClientId = wp.data.select(blockEditorStore).getNextBlockClientId?.(clientId);
+										if (nextClientId) {
+											event.preventDefault();
+											selectBlock(nextClientId, 0);
+										}
+									}
+								}
+							},
+							onBlur: () => {
+								if (isLikelyUrl(tempUrl)) commitUrl(tempUrl.trim());
+							},
+						}),
+						searchResults.length
+							? el(
+									"div",
+									{
+										id: `pz-block-post-search-results-${clientId}`,
+										className: "pz-block-post-search-results",
+										role: "listbox",
+										"aria-label": searchResultsLabel,
+									},
+									searchResults.map((item, index) =>
+										el(
+											"button",
+											{
+												type: "button",
+												className: `pz-block-post-search-result${selectedResultIndex === index ? " is-selected" : ""}`,
+												key: `${item.url}-${index}`,
+												title: item.title,
+												onMouseDown: (event) => event.preventDefault(),
+												onMouseEnter: (event) => event.currentTarget.focus(),
+												onMouseMove: (event) => {
+													if (document.activeElement !== event.currentTarget) event.currentTarget.focus();
+												},
+												onFocus: () => setSelectedResultIndex(index),
+												onBlur: (event) => {
+													if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) {
+														setSelectedResultIndex(null);
+													}
+												},
+												onClick: () => selectSearchResult(item),
+												onKeyDown: (event) => {
+													const results = event.currentTarget.parentElement;
+													const buttons = Array.from(results.querySelectorAll("button"));
+													const pageFocus = (direction) => {
+														const viewportTop = results.scrollTop;
+														const viewportBottom = viewportTop + results.clientHeight;
+														const visibleCount = Math.max(1, buttons.filter((button) =>
+															button.offsetTop >= viewportTop && button.offsetTop + button.offsetHeight <= viewportBottom
+														).length);
+														const targetIndex = Math.max(0, Math.min(buttons.length - 1, index + direction * visibleCount));
+														const target = buttons[targetIndex];
+														if (!target) return;
+														target.focus({ preventScroll: true });
+														const targetTop = target.offsetTop;
+														const targetBottom = targetTop + target.offsetHeight;
+														if (targetTop < results.scrollTop) {
+															results.scrollTop = targetTop;
+														} else if (targetBottom > results.scrollTop + results.clientHeight) {
+															results.scrollTop = targetBottom - results.clientHeight;
+														}
+													};
+													if (event.key === "ArrowDown") {
+														event.preventDefault();
+														(buttons[index + 1] || buttons[index]).focus();
+													} else if (event.key === "ArrowUp") {
+														event.preventDefault();
+														if (index === 0) inputRef.current?.focus();
+														else buttons[index - 1].focus();
+													} else if (event.key === "Home") {
+														event.preventDefault();
+														buttons[0]?.focus();
+													} else if (event.key === "End") {
+														event.preventDefault();
+														buttons[buttons.length - 1]?.focus();
+													} else if (event.key === "PageDown") {
+														event.preventDefault();
+														pageFocus(1);
+													} else if (event.key === "PageUp") {
+														event.preventDefault();
+														pageFocus(-1);
+													} else if (event.key === "Escape") {
+														event.preventDefault();
+														event.stopPropagation();
+														inputRef.current?.focus();
+													} else if (event.key === "Enter") {
+														event.preventDefault();
+														selectSearchResult(item);
+													}
+												},
+											},
+											el(
+												"span",
+												{ className: "pz-block-post-search-result-body" },
+												el("span", { className: "pz-block-post-search-result-title" }, item.title),
+												item.published_date || item.modified_date
+													? el(
+															"span",
+															{ className: "pz-block-post-search-result-date" },
+															item.published_date
+																	? el("span", { className: "pz-post-search-date-label" }, blockIcon?.postDate || "Post Date")
+																: null,
+													item.published_date || null,
+													item.modified_date &&
+													String(item.modified_date).trim() !== String(item.published_date || "").trim()
+																? el(
+																		"span",
+																		null,
+																		item.published_date ? "　" : null,
+																		el("span", { className: "pz-post-search-date-label" }, blockIcon?.modifiedDate || "Modified Date"),
+																		item.modified_date
+																  )
+																: null
+													  )
+													: null,
+												item.excerpt
+													? el("span", { className: "pz-block-post-search-result-excerpt" }, item.excerpt)
+													: null
+											),
+											item.thumbnail
+												? el("img", {
+													className: "pz-block-post-search-result-thumbnail",
+													src: item.thumbnail,
+													alt: "",
+													loading: "lazy",
+												})
+												: null
+										)
+									)
+							  )
+							: null
+				  )
+				: null,
 			url && ServerSideRender
 				? el(ServerSideRender, {
 						block: blockName,
@@ -277,6 +511,9 @@
 		title: blockTitle,
 		description: blockDescription,
 		icon,
+		example: {
+			viewportWidth: 480,
+		},
 		attributes: {
 			text: buildShortcodeText("", defaultShortcode),
 		},

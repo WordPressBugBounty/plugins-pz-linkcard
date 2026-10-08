@@ -4,8 +4,8 @@
 	global		$wpdb;
 
 	// DBテーブル存在チェック
-	$exists_table = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $this->db_name ) );
-	if ($exists_table <> $this->db_name ) {
+	$exists_table = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $this->db_card ) );
+	if ($exists_table <> $this->db_card ) {
 		$this->hook_activate();
 	}
 
@@ -31,6 +31,8 @@
 	$orderby		=	isset($_POST['orderby'] )		?	esc_attr(strtolower($_POST['orderby'] ) )	:	'id';
 	$order			=	isset($_POST['order'] )			?	esc_attr(strtolower($_POST['order'] ) )		:	'desc';
 	$scroll_now		=	isset($_POST['scroll_now'] )	?	intval($_POST['scroll_now'] )				:	0;
+	$return_url		=	isset($_POST['return_url'] )	?	esc_url_raw(wp_unslash($_POST['return_url'] ) )	:	'';
+	$return_url		=	$return_url ? wp_validate_redirect($return_url, '' ) : '';
 	$page_now		=	(isset($_POST['page_button'] )	?	intval($_POST['page_button'] )				:	
 						(isset($_POST['page_trans'] )	?	intval($_POST['page_trans'] )				:	
 						(isset($_POST['page_now'] )		?	intval($_POST['page_now'] )					:	0 ) ) );
@@ -97,6 +99,7 @@
 	$html_title		=	'';
 	$html_input		=	'';
 	$html_notice	=	'';
+	$content_file	=	null;
 
 	// リスト表示の有無
 	$show_list		=	true;
@@ -118,7 +121,7 @@
 	$title_icon		=	'<span class="dashicons dashicons-archive" style="vertical-align: bottom; width: 32px; height: 32px; font-size: 32px;"></span>';
 	$title_label	=	__('Pz-LinkCard Manager', 'pz-linkcard' );
 	$help_page		=	self::AUTHOR_URL.'/pz-linkcard-manager';
-	$html_title		=	'<div class="pz-header"><h1><span class="pz-header-title"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
+	$html_title		=	'<div class="pz-header"><h1><span class="pz-header-title"><a class="pz-header-title-link" href="'.esc_url($this->cacheman_url ).'"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span></a><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
 
 	// POSTする値 INPUT要素
 	$temp_param		=
@@ -134,9 +137,10 @@
 			'admin-mode'		=>		$admin_mode,
 			'develop-mode'		=>		$develop_mode,
 			'flg-inhibit'		=>		$inhibit,
+			'return_url'		=>		$return_url,
 		);
 	foreach		($temp_param		as	$temp_name => $temp_value ) {
-		$html_input	.=	'<input type="hidden" name="'.$temp_name.'" value="'.$temp_value.'" title="'.$temp_name.'" size="4" />';
+		$html_input	.=	'<input type="hidden" name="'.esc_attr($temp_name ).'" value="'.esc_attr($temp_value ).'" title="'.esc_attr($temp_name ).'" size="4" />';
 	}
 
 	// モードによって表示させる
@@ -187,12 +191,16 @@
 			break;
 		
 		case	'cancel':					// 編集画面キャンセル
+			if	($return_url ) {
+				echo	'<script>window.location.replace('.wp_json_encode($return_url ).');</script>';
+				$show_list			=	false;
+			}
 			break;
 
 		case	'edit':						// 編集画面
 			$data					=	$this->pz_GetCache(array('id' => $select_id[0] ) );
 			if	(isset($data ) && is_array($data ) ) {
-				require_once ('pz-linkcard-cacheman-edit.php');
+				$content_file		=	'pz-linkcard-cacheman-edit.php';
 			}
 			$show_list				=	false;		// リストを表示しない
 			break;
@@ -214,6 +222,10 @@
 				$success_count++;
 			}
 			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Update Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
+			if	($return_url ) {
+				echo	'<script>window.location.replace('.wp_json_encode($return_url ).');</script>';
+				$show_list			=	false;
+			}
 			break;
 
 		case	'renew':					// 記事内容の再取得
@@ -253,7 +265,6 @@
 				} else {
 					$skip_count++;
 				}
-				$html_notice		.=	'..';
 			}
 			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Thumbnail Image', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
@@ -361,12 +372,12 @@
 			break;
 
 		case	'show-import':			// ファイルのインポートボタンを表示
-			require ('pz-linkcard-file-import-menu.php');
+			$content_file		=	'pz-linkcard-file-import-menu.php';
 			$show_list				=	false;
 			break;
 
 		case	'show-export':			// ファイルのエクスポートボタンを表示
-			require ('pz-linkcard-file-export-menu.php');
+			$content_file		=	'pz-linkcard-file-export-menu.php';
 			$show_list				=	false;
 			break;
 
@@ -378,6 +389,9 @@
 	// 画面描画
 	echo	$html_notice;
 	echo	$html_input;
+	if	($content_file ) {
+		require ($content_file );
+	}
 
 	// キャッシュ一覧
 	if	($show_list ) {

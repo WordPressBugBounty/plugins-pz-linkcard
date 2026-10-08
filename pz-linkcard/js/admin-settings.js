@@ -2,6 +2,11 @@
 
 	const dashboard = document.querySelector(".pz-dashboard");
     if (!dashboard) return;
+    const numericOptions = new Set(
+        Array.isArray(window.pzLinkCardAdmin?.numericOptions)
+            ? window.pzLinkCardAdmin.numericOptions
+            : []
+    );
     let processingOverlayTimer = null;
 	initInfobarPosition();
 
@@ -73,6 +78,7 @@
         initCachemanPaginationKeys();
         initImageBox();
         initScreenOptions();
+        initPageHelp();
         initFileImport();
         initSettingsSectionJump();
         // readonly checkbox guard
@@ -100,6 +106,9 @@
         );
         document.querySelectorAll(".pz-copy-card-to-hover").forEach(el =>
             el.addEventListener("click", copyCardSettingsToHover)
+        );
+        document.querySelectorAll(".pz-copy-link-settings").forEach(el =>
+            el.addEventListener("click", copyLinkSettings)
         );
         initCardEnabledSwitches();
         updateCardRangeFills();
@@ -326,13 +335,31 @@
             clearTimeout(processingOverlayTimer);
             processingOverlayTimer = null;
         }
-        processingOverlayTimer = setTimeout(() => {
+        const show = () => {
             processingOverlayTimer = null;
             overlay.classList.remove("hidden");
             overlay.classList.remove("pz-overlay-proc-active");
             overlay.style.display = "flex";
             overlay.classList.add("pz-overlay-proc-active");
-        }, delay);
+        };
+        if (delay <= 0) {
+            show();
+        } else {
+            processingOverlayTimer = setTimeout(show, delay);
+        }
+    }
+
+    function hideProcessingOverlay() {
+        const overlay = document.querySelector("#pz-overlay-proc");
+        if (processingOverlayTimer) {
+            clearTimeout(processingOverlayTimer);
+            processingOverlayTimer = null;
+        }
+        if (!overlay) return;
+
+        overlay.classList.remove("pz-overlay-proc-active");
+        overlay.classList.add("hidden");
+        overlay.style.display = "none";
     }
 
     function changeWidthUnitKey(e) {
@@ -402,6 +429,7 @@
         e.preventDefault();
         range.value = resetValue;
         range.dispatchEvent(new Event("input", { bubbles: true }));
+        range.dispatchEvent(new Event("change", { bubbles: true }));
     }
 
     function initCardRangeDragCancel() {
@@ -608,6 +636,56 @@
                 updateCardRangeFill(range);
             }
         });
+    }
+
+    async function copyLinkSettings(e) {
+        const fromPrefix = e.currentTarget?.dataset?.pzCopyFrom;
+        const toPrefix = e.currentTarget?.dataset?.pzCopyTo;
+        if (!fromPrefix || !toPrefix) return;
+        const confirmMessage = e.currentTarget?.dataset?.pzConfirm;
+        if (confirmMessage && !window.confirm(confirmMessage)) return;
+
+        showProcessingOverlay(0);
+        await new Promise(resolve => {
+            window.requestAnimationFrame(() => window.requestAnimationFrame(resolve));
+        });
+
+        try {
+            const controls = Array.from(dashboard.querySelectorAll("[name]"));
+            const findNamedControl = name => {
+                const matches = controls.filter(control => control.name === name);
+                return matches.find(control => control.type !== "hidden") || matches[0] || null;
+            };
+            const sourcePattern = new RegExp(`^properties\\[${fromPrefix}-(.+)\\]$`);
+
+            controls.forEach(from => {
+                if (from.type === "hidden") return;
+                const match = from.name.match(sourcePattern);
+                if (!match) return;
+
+                const toName = `properties[${toPrefix}-${match[1]}]`;
+                const to = findNamedControl(toName);
+                if (!to || to.type === "file") return;
+
+                if (to.type === "checkbox" || to.type === "radio") {
+                    to.checked = from.checked;
+                } else {
+                    to.value = from.value;
+                }
+                to.dispatchEvent(new Event("input", { bubbles: true }));
+                to.dispatchEvent(new Event("change", { bubbles: true }));
+
+                const range = dashboard.querySelector(`.pz-card-range[data-target="${toName}"]`);
+                if (range) {
+                    range.value = to.value;
+                    updateCardRangeFill(range);
+                }
+            });
+
+            updateCardRangeFills();
+        } finally {
+            hideProcessingOverlay();
+        }
     }
 
     // Admin setting helper
@@ -921,6 +999,14 @@
         const form = editor?.closest("form");
         if (!editor || !form) return;
 
+        const titleInput = editor.querySelector("#pz-man-cache-title");
+        if (titleInput) {
+            window.requestAnimationFrame(() => {
+                titleInput.focus();
+                titleInput.select();
+            });
+        }
+
         const clickActionButton = action => {
             const button = form.querySelector(`button[name="action"][value="${action}"]`);
             if (button && !button.disabled) button.click();
@@ -929,13 +1015,22 @@
         document.addEventListener("keydown", e => {
             if (e.isComposing || e.repeat) return;
 
+            if (!e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.key === "F2") {
+                e.preventDefault();
+                titleInput?.focus();
+                titleInput?.select();
+                return;
+            }
+
             if (e.key === "Escape" || e.key === "Esc") {
                 e.preventDefault();
                 clickActionButton("cancel");
                 return;
             }
 
-            if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "s") {
+            const isAltSave = e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "s";
+            const isCtrlSave = e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "s";
+            if (isAltSave || isCtrlSave) {
                 e.preventDefault();
                 clickActionButton("update");
             }
@@ -984,12 +1079,12 @@
         const tabNameEl = document.querySelector(".pz-tab-name");
         const tabNow = document.querySelector('input[name="tab-now"]');
         const dashboard = wrapper.closest(".pz-dashboard");
-        const submitFloat = dashboard?.querySelector(".pz-submit-float");
+        const submitFloats = dashboard?.querySelectorAll(".pz-submit-float") || [];
         const tabbarSpacer = document.createElement("div");
         let lastWheelAt = 0;
         let rightButtonDown = false;
         let rightWheelUsed = false;
-        let submitGap = null;
+        const submitGap = 8;
         let invalidNavigationActive = false;
 
         tabbarSpacer.className = "pz-tabbar-spacer";
@@ -1003,15 +1098,6 @@
             const infobarBottom = infobar ? Math.max(0, infobar.getBoundingClientRect().bottom) : 0;
             const viewportTop = window.visualViewport ? Math.max(0, window.visualViewport.offsetTop) : 0;
             return Math.max(adminBarBottom, infobarBottom, viewportTop);
-        };
-
-        const measureSubmitGap = () => {
-            const tabRect = wrapper.getBoundingClientRect();
-            const submitRect = submitFloat?.getBoundingClientRect();
-            if (submitRect && !wrapper.classList.contains("pz-tabbar-fixed")) {
-                const minGap = window.matchMedia("(max-width: 782px)").matches ? 32 : 12;
-                submitGap = Math.max(minGap, Math.round(submitRect.top - tabRect.bottom));
-            }
         };
 
         const syncFixedTabbar = () => {
@@ -1028,22 +1114,19 @@
                 wrapper.style.setProperty("--pz-tabbar-fixed-top", `${fixedTop}px`);
                 wrapper.style.left = `${fixedLeft}px`;
                 wrapper.style.width = `${fixedWidth}px`;
-                if (submitFloat) {
-                    const minGap = window.matchMedia("(max-width: 782px)").matches ? 32 : 12;
-                    if (submitGap === null) submitGap = minGap;
-                    submitGap = Math.max(minGap, submitGap);
-                    submitFloat.style.setProperty("--pz-submit-sticky-top", `${fixedTop + wrapper.offsetHeight + submitGap}px`);
-                }
             } else {
-                measureSubmitGap();
                 wrapper.classList.remove("pz-tabbar-fixed");
                 wrapper.style.top = "";
                 wrapper.style.removeProperty("--pz-tabbar-fixed-top");
                 wrapper.style.left = "";
                 wrapper.style.width = "";
                 tabbarSpacer.style.height = "0";
-                submitFloat?.style.removeProperty("--pz-submit-sticky-top");
             }
+
+            const fixedTabbarBottom = fixedTop + wrapper.offsetHeight;
+            submitFloats.forEach(submitFloat => {
+                submitFloat.style.setProperty("--pz-submit-sticky-top", `${fixedTabbarBottom + submitGap}px`);
+            });
 
             updateButtons();
         };
@@ -1231,14 +1314,193 @@
             return currentIndex >= 0 ? currentIndex : tabs.findIndex(tab => tab.classList.contains("pz-tab-active"));
         };
 
-        const moveTab = (direction, focusTab = false, currentTab = null) => {
+        const moveTab = (direction, focusTab = false, currentTab = null, options = {}) => {
             const tabs = getTabs();
             if (!tabs.length) return;
 
             const currentIndex = getCurrentIndex(tabs, currentTab);
             const baseIndex = currentIndex >= 0 ? currentIndex : 0;
             const nextIndex = (baseIndex + direction + tabs.length) % tabs.length;
-            openTab(tabs[nextIndex], focusTab);
+            openTab(tabs[nextIndex], focusTab, options);
+        };
+
+        let swipeState = null;
+        const swipeMinDistance = 64;
+        const swipeMaxDuration = 800;
+        const swipeDirectionRatio = 1.25;
+        const swipeReverseDistance = 12;
+        const swipeControlSelector = "input, select, textarea, button, a, label, [contenteditable='true'], [role='slider']";
+        const swipeIndicator = document.createElement("div");
+
+        swipeIndicator.className = "pz-swipe-indicator";
+        swipeIndicator.setAttribute("aria-hidden", "true");
+        document.body.appendChild(swipeIndicator);
+
+        const showSwipeIndicator = direction => {
+            swipeIndicator.textContent = direction > 0 ? "＞" : "＜";
+            swipeIndicator.classList.add("pz-swipe-indicator-active");
+        };
+
+        const hideSwipeIndicator = () => {
+            swipeIndicator.classList.remove("pz-swipe-indicator-active");
+        };
+
+        const getSwipeDirection = (touch, state) => {
+            if (!touch || !state || swipeDidScroll(state)) return 0;
+            if (state.qualifiedDirection) return state.qualifiedDirection;
+
+            const deltaX = touch.clientX - state.startX;
+            const deltaY = touch.clientY - state.startY;
+            const duration = Date.now() - state.startedAt;
+            if (duration > swipeMaxDuration || Math.abs(deltaX) < swipeMinDistance) return 0;
+            if (Math.abs(deltaX) < Math.abs(deltaY) * swipeDirectionRatio) return 0;
+            return deltaX < 0 ? 1 : -1;
+        };
+
+        const swipeReversed = (touch, state) => {
+            if (!touch || !state?.qualifiedDirection) return false;
+
+            if (state.qualifiedDirection > 0) {
+                state.qualifiedExtremeX = Math.min(state.qualifiedExtremeX, touch.clientX);
+                return touch.clientX >= state.qualifiedExtremeX + swipeReverseDistance;
+            }
+
+            state.qualifiedExtremeX = Math.max(state.qualifiedExtremeX, touch.clientX);
+            return touch.clientX <= state.qualifiedExtremeX - swipeReverseDistance;
+        };
+
+        const resetSwipeQualification = (touch, state) => {
+            state.startX = touch.clientX;
+            state.startY = touch.clientY;
+            state.startedAt = Date.now();
+            state.qualifiedDirection = 0;
+            state.qualifiedExtremeX = touch.clientX;
+            hideSwipeIndicator();
+        };
+
+        const getTouch = (touches, identifier) => Array.from(touches || []).find(touch => touch.identifier === identifier);
+
+        const getScrollPositions = target => {
+            const positions = [];
+            let element = target instanceof Element ? target : null;
+
+            while (element && dashboard.contains(element)) {
+                positions.push({ element, left: element.scrollLeft, top: element.scrollTop });
+                if (element === dashboard) break;
+                element = element.parentElement;
+            }
+
+            return positions;
+        };
+
+        const swipeDidScroll = state => {
+            if (!state || state.scrolled) return true;
+            if (window.scrollX !== state.windowLeft || window.scrollY !== state.windowTop) return true;
+            return state.scrollPositions.some(position =>
+                position.element.scrollLeft !== position.left || position.element.scrollTop !== position.top
+            );
+        };
+
+        dashboard.addEventListener("touchstart", e => {
+            hideSwipeIndicator();
+            if (e.touches.length !== 1) {
+                swipeState = null;
+                return;
+            }
+
+            const touch = e.touches[0];
+            const page = e.target.closest?.(".pz-page-active");
+            if (!page || e.target.closest?.(swipeControlSelector)) {
+                swipeState = null;
+                return;
+            }
+
+            swipeState = {
+                identifier: touch.identifier,
+                startX: touch.clientX,
+                startY: touch.clientY,
+                startedAt: Date.now(),
+                windowLeft: window.scrollX,
+                windowTop: window.scrollY,
+                scrollPositions: getScrollPositions(e.target),
+                scrolled: false,
+                qualifiedDirection: 0,
+                qualifiedExtremeX: touch.clientX
+            };
+        }, { passive: true });
+
+        dashboard.addEventListener("touchmove", e => {
+            if (!swipeState) return;
+            if (e.touches.length !== 1 || !getTouch(e.touches, swipeState.identifier)) {
+                swipeState = null;
+                hideSwipeIndicator();
+                return;
+            }
+            if (swipeDidScroll(swipeState)) {
+                swipeState.scrolled = true;
+                hideSwipeIndicator();
+                return;
+            }
+
+            const touch = getTouch(e.touches, swipeState.identifier);
+            if (swipeReversed(touch, swipeState)) {
+                resetSwipeQualification(touch, swipeState);
+                return;
+            }
+
+            const direction = getSwipeDirection(touch, swipeState);
+            if (direction) {
+                if (!swipeState.qualifiedDirection) {
+                    swipeState.qualifiedExtremeX = touch.clientX;
+                    navigator.vibrate?.(30);
+                }
+                swipeState.qualifiedDirection = direction;
+                showSwipeIndicator(direction);
+            } else {
+                hideSwipeIndicator();
+            }
+        }, { passive: true });
+
+        dashboard.addEventListener("scroll", () => {
+            if (!swipeState) return;
+            swipeState.scrolled = true;
+            hideSwipeIndicator();
+        }, true);
+        window.addEventListener("scroll", () => {
+            if (!swipeState) return;
+            swipeState.scrolled = true;
+            hideSwipeIndicator();
+        }, { passive: true });
+
+        dashboard.addEventListener("touchend", e => {
+            if (!swipeState) return;
+
+            const state = swipeState;
+            const touch = getTouch(e.changedTouches, state.identifier);
+            swipeState = null;
+            hideSwipeIndicator();
+            if (swipeReversed(touch, state)) return;
+            const direction = getSwipeDirection(touch, state);
+            if (!direction) return;
+
+            if (e.cancelable) e.preventDefault();
+            moveTab(direction, false, null, { restoreFocus: false });
+        }, { passive: false });
+
+        dashboard.addEventListener("touchcancel", () => {
+            swipeState = null;
+            hideSwipeIndicator();
+        }, { passive: true });
+
+        const getPropertyName = control => {
+            const match = /^properties\[([^\]]+)\]$/.exec(control?.name || "");
+            return match ? match[1] : "";
+        };
+
+        const isNumericWheelInput = control => {
+            if (!control?.matches?.("input")) return false;
+            if (control.type === "number" || control.type === "range") return true;
+            return control.type === "text" && numericOptions.has(getPropertyName(control));
         };
 
         const changeWheelControl = (control, delta) => {
@@ -1259,7 +1521,7 @@
 
                 if (nextIndex < 0 || nextIndex >= options.length || nextIndex === currentIndex) return false;
                 control.selectedIndex = nextIndex;
-            } else {
+            } else if (isNumericWheelInput(control)) {
                 const currentValue = Number(control.value);
                 const stepValue = control.step && control.step !== "any" ? Number(control.step) : 1;
                 if (!Number.isFinite(currentValue) || !Number.isFinite(stepValue) || stepValue <= 0) return false;
@@ -1269,6 +1531,8 @@
                 const nextValue = Math.min(max, Math.max(min, currentValue + (delta > 0 ? -stepValue : stepValue)));
                 if (nextValue === currentValue) return false;
                 control.value = String(nextValue);
+            } else {
+                return false;
             }
 
             control.dispatchEvent(new Event("input", { bubbles: true }));
@@ -1312,7 +1576,7 @@
                 return;
             }
 
-            const control = getWheelControl(e.target);
+            const control = getWheelControl(e.target, true);
             if (!changeWheelControl(control, delta)) return;
 
             e.preventDefault();
@@ -1325,7 +1589,7 @@
             if (e.button !== 0) return;
 
             e.preventDefault();
-            openTab(tab, true);
+            openTab(tab, true, { restoreFocus: false });
         });
 
         tabbar.addEventListener("keydown", e => {
@@ -1336,17 +1600,26 @@
             if (e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey) {
                 e.preventDefault();
                 e.stopPropagation();
-                moveTab(e.key === "ArrowRight" ? 1 : -1, false, tab);
+                moveTab(e.key === "ArrowRight" ? 1 : -1, true, tab, { restoreFocus: false });
                 return;
             }
             if (e.altKey || e.metaKey || e.shiftKey) return;
 
             e.preventDefault();
             e.stopPropagation();
-            moveTab(e.key === "ArrowRight" ? 1 : -1, true, tab);
+            moveTab(e.key === "ArrowRight" ? 1 : -1, true, tab, { restoreFocus: false });
         });
 
         document.addEventListener("keydown", e => {
+            if (!e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.isComposing && e.key === "F2") {
+                const activeTab = tabbar.querySelector(".pz-tab-active");
+                if (!activeTab) return;
+
+                e.preventDefault();
+                activeTab.focus();
+                return;
+            }
+
             if (!e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.isComposing) return;
             if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
             if (tabbar.contains(e.target)) return;
@@ -1426,7 +1699,6 @@
         const activeTab = tabbar.querySelector(".pz-tab-active") || getTabs()[0];
         if (tabNameEl && activeTab) tabNameEl.textContent = activeTab.textContent;
         adjustTabVisibility(activeTab);
-        measureSubmitGap();
         syncFixedTabbar();
     }
 
@@ -1671,7 +1943,10 @@
         const root = document.querySelector(".pz-man-screen-options");
         const toggle = document.querySelector("#pz-man-screen-options-toggle");
         const panel = document.querySelector("#pz-man-screen-options-panel");
-        if (!root || !toggle || !panel) return;
+        const helpRoot = document.querySelector(".pz-man-help");
+        const helpToggle = document.querySelector("#pz-man-help-toggle");
+        const helpPanel = document.querySelector("#pz-man-help-panel");
+        if (!root || !toggle || !panel || !helpRoot || !helpToggle || !helpPanel) return;
 
         const columns = {
             id: [".pz-man-head-id", ".pz-man-body-id"],
@@ -1679,7 +1954,7 @@
             charset: [".pz-man-head-charset", ".pz-man-body-charset"],
             domain: [".pz-man-head-domain", ".pz-man-body-domain-cell"],
             sns: [".pz-man-head-sns_twitter", ".pz-man-body-sns"],
-            regist_time: [".pz-man-head-regist_time", ".pz-man-body-resist-time"],
+            regist_time: [".pz-man-head-regist_time", ".pz-man-body-regist-time"],
             update_time: [".pz-man-head-update_time", ".pz-man-body-update-time"],
             sns_time: [".pz-man-head-sns_time", ".pz-man-body-sns-time"],
             alive_time: [".pz-man-head-alive_time", ".pz-man-body-alive-time"],
@@ -1690,14 +1965,47 @@
 
         const state = {};
 
+        let panelOpen = !panel.hidden;
+        let panelHideTimer = null;
+        let helpOpen = !helpPanel.hidden;
+        let helpHideTimer = null;
+
         const setPanelOpen = open => {
-            panel.hidden = !open;
-            toggle.setAttribute("aria-expanded", open ? "true" : "false");
-            const icon = toggle.querySelector(".dashicons");
-            if (icon) {
-                icon.classList.toggle("dashicons-arrow-down-alt2", !open);
-                icon.classList.toggle("dashicons-arrow-up-alt2", open);
+            window.clearTimeout(panelHideTimer);
+            panelOpen = open;
+
+            if (open) {
+                panel.hidden = false;
+                window.requestAnimationFrame(() => {
+                    if (panelOpen) panel.classList.add("is-open");
+                });
+            } else {
+                panel.classList.remove("is-open");
+                panelHideTimer = window.setTimeout(() => {
+                    if (!panelOpen) panel.hidden = true;
+                }, 160);
             }
+
+            toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        };
+
+        const setHelpOpen = open => {
+            window.clearTimeout(helpHideTimer);
+            helpOpen = open;
+
+            if (open) {
+                helpPanel.hidden = false;
+                window.requestAnimationFrame(() => {
+                    if (helpOpen) helpPanel.classList.add("is-open");
+                });
+            } else {
+                helpPanel.classList.remove("is-open");
+                helpHideTimer = window.setTimeout(() => {
+                    if (!helpOpen) helpPanel.hidden = true;
+                }, 160);
+            }
+
+            helpToggle.setAttribute("aria-expanded", open ? "true" : "false");
         };
 
         const applyColumn = (column, visible) => {
@@ -1760,18 +2068,74 @@
 
         toggle.addEventListener("click", e => {
             e.preventDefault();
-            setPanelOpen(panel.hidden);
+            if (!panelOpen) setHelpOpen(false);
+            setPanelOpen(!panelOpen);
+        });
+
+        helpToggle.addEventListener("click", e => {
+            e.preventDefault();
+            if (!helpOpen) setPanelOpen(false);
+            setHelpOpen(!helpOpen);
         });
 
         document.addEventListener("click", e => {
-            if (panel.hidden || root.contains(e.target)) return;
-            setPanelOpen(false);
+            if (panelOpen && !root.contains(e.target)) setPanelOpen(false);
+            if (helpOpen && !helpRoot.contains(e.target)) setHelpOpen(false);
         });
 
         document.addEventListener("keydown", e => {
-            if (e.key !== "Escape" || panel.hidden) return;
-            setPanelOpen(false);
-            toggle.focus();
+            if (e.key !== "Escape") return;
+            if (panelOpen) {
+                setPanelOpen(false);
+                toggle.focus();
+            } else if (helpOpen) {
+                setHelpOpen(false);
+                helpToggle.focus();
+            }
+        });
+    }
+
+    function initPageHelp() {
+        document.querySelectorAll(".pz-page-help").forEach(root => {
+            const toggle = root.querySelector(".pz-page-help-toggle");
+            const panel = root.querySelector(".pz-page-help-panel");
+            if (!toggle || !panel) return;
+
+            let open = !panel.hidden;
+            let hideTimer = null;
+            const setOpen = nextOpen => {
+                window.clearTimeout(hideTimer);
+                open = nextOpen;
+
+                if (open) {
+                    panel.hidden = false;
+                    window.requestAnimationFrame(() => {
+                        if (open) panel.classList.add("is-open");
+                    });
+                } else {
+                    panel.classList.remove("is-open");
+                    hideTimer = window.setTimeout(() => {
+                        if (!open) panel.hidden = true;
+                    }, 160);
+                }
+
+                toggle.setAttribute("aria-expanded", open ? "true" : "false");
+            };
+
+            toggle.addEventListener("click", e => {
+                e.preventDefault();
+                setOpen(!open);
+            });
+
+            document.addEventListener("click", e => {
+                if (open && !root.contains(e.target)) setOpen(false);
+            });
+
+            document.addEventListener("keydown", e => {
+                if (e.key !== "Escape" || !open) return;
+                setOpen(false);
+                toggle.focus();
+            });
         });
     }
 
@@ -1796,10 +2160,10 @@
             }
         };
 
-        const runIdSearch = id => {
-            if (!id) return;
+        const runFieldSearch = (field, value) => {
+            if (!field || !value) return;
 
-            input.value = `ID:${id}`;
+            input.value = `${field}:${value}`;
             input.dispatchEvent(new Event("input", { bubbles: true }));
             input.dispatchEvent(new Event("change", { bubbles: true }));
 
@@ -1807,10 +2171,69 @@
         };
 
         input.addEventListener("keydown", e => {
+            if (e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && !e.isComposing && e.key === ";") {
+                const today = input.dataset.pzToday;
+                if (!today) return;
+
+                e.preventDefault();
+                const start = input.selectionStart ?? input.value.length;
+                const end = input.selectionEnd ?? start;
+                input.setRangeText(today, start, end, "end");
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+                return;
+            }
+
             if (e.key !== "Enter" || e.isComposing) return;
 
             e.preventDefault();
             submitSearch();
+        });
+
+        document.addEventListener("keydown", e => {
+            if (e.isComposing) return;
+
+            const isCtrlF = e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && e.key.toLowerCase() === "f";
+            const isF3 = !e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey && e.key === "F3";
+            if (!isCtrlF && !isF3) return;
+
+            e.preventDefault();
+            if (isF3 && input.value.trim()) {
+                submitSearch();
+                return;
+            }
+            input.focus();
+            input.select();
+        });
+
+        document.addEventListener("keydown", e => {
+            if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || e.key.toLowerCase() !== "q") return;
+
+            e.preventDefault();
+            input.focus();
+            input.select();
+        });
+
+        document.addEventListener("keydown", e => {
+            if (!e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.isComposing || e.key.toLowerCase() !== "a") return;
+            if (e.target?.closest?.("input, textarea, select, [contenteditable='true']")) return;
+
+            const checkboxes = Array.from(document.querySelectorAll('.pz-man-cache-list input[name="select_id[]"]'))
+                .filter(checkbox => !checkbox.disabled);
+            if (!checkboxes.length) return;
+
+            e.preventDefault();
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) return;
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event("input", { bubbles: true }));
+                checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+            const selectAll = document.querySelector("#cb-select-all-1");
+            if (selectAll) {
+                selectAll.checked = true;
+                selectAll.indeterminate = false;
+            }
         });
 
         searchSubmit.addEventListener("click", () => {
@@ -1822,7 +2245,15 @@
             if (!button) return;
 
             e.preventDefault();
-            runIdSearch(button.dataset.pzManSearchId);
+            runFieldSearch("ID", button.dataset.pzManSearchId);
+        });
+
+        document.addEventListener("click", e => {
+            const button = e.target?.closest?.(".pz-man-post-search");
+            if (!button) return;
+
+            e.preventDefault();
+            runFieldSearch("post", button.dataset.pzManSearchPost);
         });
 
         document.addEventListener("click", e => {
