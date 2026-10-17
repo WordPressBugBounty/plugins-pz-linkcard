@@ -19,6 +19,34 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: ..\n"
 
+#: ../lib/pz-linkcard-settings-advanced.php
+msgid "Jmty.jp"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-advanced.php
+msgid "Retrieve Created and Updated Dates"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Used Post ID"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Published Post ID"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Published<br>Post<br>ID"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Post Modified Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Post<br>Modified Date"
+msgstr ""
+
 #: ../lib/pz-linkcard-cacheman-edit.php:84
 msgid "Update"
 msgstr ""
@@ -148,6 +176,35 @@ msgstr ""
 msgid "Click Count"
 msgstr ""
 
+#: ../lib/pz-linkcard-cacheman-click.php
+msgid "Click Log"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-click.php
+msgid "Click Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-click.php
+msgid "IP Hash"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-click.php
+msgid "User-Agent"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-click.php
+msgid "No click logs found."
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-click.php
+#, php-format
+msgid "To collect click logs, enable click count recording <a href=\"%s\">here</a>."
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman.php
+msgid "The specified link card was not found."
+msgstr ""
+
 #: ../lib/pz-linkcard-cacheman-edit.php:222 ../lib/pz-linkcard-cacheman-edit.php:262
 #: ../lib/pz-linkcard-cacheman-list.php:89 ../lib/pz-linkcard-settings-display.php:33
 msgid "Update Date"
@@ -235,6 +292,22 @@ msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:91
 msgid "Alive Check Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Next Share Count Retrieval Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Next Status Check Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Next<br>Share Count<br>Date"
+msgstr ""
+
+#: ../lib/pz-linkcard-cacheman-list.php
+msgid "Next<br>Status<br>Date"
 msgstr ""
 
 #: ../lib/pz-linkcard-cacheman-list.php:94
@@ -485,7 +558,7 @@ msgstr ""
 
 #: ../lib/pz-linkcard-cacheman.php:175 ../lib/pz-linkcard-settings.php:259
 msgid ""
-"You can dismiss this message from <a href=\"./options-general.php?page=pz-linkcard-settings\">the "
+"You can dismiss this message from <a href=\"./options-general.php?page=pz-linkcard-settings&tab=pz-error#pz-error-reset-settings\">the "
 "settings screen</a>."
 msgstr ""
 
@@ -686,6 +759,14 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-admin.php
 msgid "Link-Card"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-admin.php
+msgid "Count Information"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-admin.php
+msgid "Hash"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-admin.php
@@ -923,23 +1004,23 @@ msgid "Link Availability Check"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php
-msgid "1 case"
+msgid "1 card"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php
-msgid "5 cases"
+msgid "5 cards"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php
-msgid "10 cases"
+msgid "10 cards"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php
-msgid "20 cases"
+msgid "20 cards"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings.php
-msgid "50 cases"
+msgid "50 cards"
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-advanced.php:109
@@ -1564,6 +1645,18 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-check.php:110
 msgid "The card management screen displays the total number of clicks to date."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-check.php
+msgid "Record the number of times clicked."
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-check.php
+msgid "Record"
+msgstr ""
+
+#: ../lib/pz-linkcard-settings-check.php
+msgid "Record click details."
 msgstr ""
 
 #: ../lib/pz-linkcard-settings-check.php:114
@@ -3131,4 +3224,200 @@ msgstr ""
 
 #: ../lib/pz-linkcard-settings-card.php:174
 msgid "Are you sure you want to overwrite the internal link settings?"
+msgstr ""
+
+msgid "Retention Period"
+msgstr ""
+
+msgid "1 week"
+msgstr ""
+
+msgid "Permanent (not recommended)"
+msgstr ""
+
+msgid "Detailed click logs older than the retention period are deleted daily after 4:00 AM. The cumulative click count is retained."
+msgstr ""
+
+msgid "Delete expired logs now"
+msgstr ""
+
+msgid "Delete all logs"
+msgstr ""
+
+msgid "Delete all detailed click logs? The cumulative click count will not be reset."
+msgstr ""
+
+msgid "Deleted %s detailed click logs."
+msgstr ""
+
+msgid "Failed to delete detailed click logs."
+msgstr ""
+
+msgid "The click count is cumulative. Detailed logs are retained <a href=\"%s\">permanently</a>."
+msgstr ""
+
+msgid "The click count is cumulative. Detailed logs are retained for <a href=\"%1$s\">%2$s</a>."
+msgstr ""
+
+msgid "Clicks in the last 7 days"
+msgstr ""
+
+msgid "%s clicks"
+msgstr ""
+
+msgid "Day"
+msgstr ""
+
+msgid "Week"
+msgstr ""
+
+msgid "Month"
+msgstr ""
+
+msgid "Year"
+msgstr ""
+
+msgid "Chart period"
+msgstr ""
+
+msgid "Clicks in the last 8 weeks"
+msgstr ""
+
+msgid "Clicks in the last 12 months"
+msgstr ""
+
+msgid "Clicks in the last 5 years"
+msgstr ""
+
+msgid "1 month"
+msgstr ""
+
+msgid "2 months"
+msgstr ""
+
+msgid "3 months"
+msgstr ""
+
+msgid "6 months"
+msgstr ""
+
+msgid "1 year"
+msgstr ""
+
+msgid "2 years"
+msgstr ""
+
+msgid "3 years"
+msgstr ""
+
+msgid "5 years"
+msgstr ""
+
+msgid "2 years (long-term)"
+msgstr ""
+
+msgid "3 years (long-term)"
+msgstr ""
+
+msgid "5 years (long-term)"
+msgstr ""
+
+msgid "Long-term retention increases database usage according to the number of clicks."
+msgstr ""
+
+msgid "Go to previous heading"
+msgstr ""
+
+msgid "Go to next heading"
+msgstr ""
+
+msgid "Save current color"
+msgstr ""
+
+msgid "Reset to offset"
+msgstr ""
+
+msgid "Recent Clicks"
+msgstr ""
+
+msgid "Recent Registrations"
+msgstr ""
+
+msgid "M j, H:i"
+msgstr ""
+
+#, php-format
+msgid "%s card"
+msgstr ""
+
+#, php-format
+msgid "%s cards"
+msgstr ""
+
+msgid "Click count recording"
+msgstr ""
+
+#, php-format
+msgid "Enable %s to display recent clicks."
+msgstr ""
+
+msgid "There is a URL parameter error."
+msgstr ""
+
+msgid "Equal"
+msgstr ""
+
+msgid "Less than"
+msgstr ""
+
+msgid "Less than or equal to"
+msgstr ""
+
+msgid "Greater than"
+msgstr ""
+
+msgid "Greater than or equal to"
+msgstr ""
+
+msgid "Not equal to"
+msgstr ""
+
+msgid "The colon before a comparison operator can be omitted."
+msgstr ""
+
+msgid "Comparison operators"
+msgstr ""
+
+msgid "Return to Dashboard"
+msgstr ""
+
+msgid "Card ID"
+msgstr ""
+
+msgid "View List"
+msgstr ""
+
+msgid "Settings item"
+msgstr ""
+
+msgid "The %s are located on the “Advanced” tab."
+msgstr ""
+
+msgid "[SKIP] URL=%s"
+msgstr ""
+
+msgid "&ensp;&ensp;&ensp;&ensp;It will be skipped because the domain is the same. The next check date and time=%s was set."
+msgstr ""
+
+msgid "[%1$d] URL=%2$s"
+msgstr ""
+
+msgid "&ensp;&ensp;&ensp;&ensp;The next check date and time=%s has passed."
+msgstr ""
+
+msgid "&ensp;&ensp;&ensp;&ensp;HTTP code=%1$d was returned. The next check date and time=%2$s was set."
+msgstr ""
+
+#: ../lib/pz-linkcard-cron-sns.php
+msgid "&ensp;&ensp;&ensp;&ensp;Hatena Bookmark=%1$s was returned. The next check date and time=%2$s was set."
 msgstr ""

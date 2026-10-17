@@ -336,12 +336,11 @@
         closeMenu();
         if (!cardId) return;
 
-        const scrollNow = Math.max(0, Math.round(window.scrollY || document.documentElement.scrollTop || 0));
-        submitToManager({
-            "single-edit": cardId,
-            scroll_now: scrollNow,
-            return_url: window.location.href,
-        });
+		const editUrl = new URL(config.edit_url, window.location.href);
+		editUrl.searchParams.set("action", "edit");
+		editUrl.searchParams.set("cache_id", cardId);
+		editUrl.searchParams.set("return_url", window.location.href);
+		window.location.assign(editUrl.toString());
     }
 
     function openCacheManager() {
@@ -354,6 +353,7 @@
             keyword: cardId,
             page_now: "1",
             filter: "all",
+            return_url: window.location.href,
         });
     }
 
@@ -389,7 +389,9 @@
                 menu.appendChild(makeButton(labels.cacheManager, openCacheManager, "dashicons-excerpt-view"));
             }
             if (config.settings_url) {
-                menu.appendChild(makeLink(labels.cardSettings, config.settings_url, "dashicons-admin-generic"));
+				const settingsUrl = new URL(config.settings_url, window.location.href);
+				settingsUrl.searchParams.set("return_url", window.location.href);
+				menu.appendChild(makeLink(labels.cardSettings, settingsUrl.toString(), "dashicons-admin-generic"));
             }
         }
         menu.appendChild(makeSeparator());

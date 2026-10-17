@@ -5,27 +5,36 @@
 		wp_clear_scheduled_hook(self::CRON_CHECK );
 		$cron_log		=	'* execute: '.self::CRON_CHECK.PHP_EOL.PHP_EOL;
 		$cron_log		.=	$this->schedule_hook_check();
+		$this->pz_SyncCronSchedules();
 		break;
 	case	'run-'.self::CRON_ALIVE:
 		wp_clear_scheduled_hook(self::CRON_ALIVE );
 		$cron_log		=	'* execute: '.self::CRON_ALIVE.PHP_EOL.PHP_EOL;
 		$cron_log		.=	$this->schedule_hook_alive();
+		$this->pz_SyncCronSchedules();
+		break;
+	case	'run-'.self::CRON_CLICK_CLEANUP:
+		wp_clear_scheduled_hook(self::CRON_CLICK_CLEANUP );
+		$cron_log		=	'* execute: '.self::CRON_CLICK_CLEANUP.PHP_EOL.PHP_EOL;
+		$cron_log		.=	$this->schedule_hook_click_cleanup();
 		break;
 	}
 
 	// WP-Cron の実行結果
 	if (isset($cron_log ) ) {
 		$cron_log			=	esc_attr(esc_html($cron_log ) );
+		$cron_log			=	str_replace('&amp;ensp;', '&ensp;', $cron_log );
 		$cron_log			=	str_replace(PHP_EOL, '<br>', $cron_log );
 	}
 
 	// WP-Cronスケジュールを取得
 	$cron_schedule	=	_get_cron_array();
+	$cron_list		=	array();
 	$schedules		=	wp_get_schedules();		// タイミングの定数（604800→週1回 など）
 	foreach			($cron_schedule	as $timestamp	=> $cronhooks ) {
 		foreach		($cronhooks		as $hook		=> $dings ) {
 			foreach	($dings			as $signature	=> $data ) {
-				if	(($hook == self::CRON_ALIVE ) || ($hook == self::CRON_CHECK ) ) {
+				if	(($hook == self::CRON_ALIVE ) || ($hook == self::CRON_CHECK ) || ($hook == self::CRON_CLICK_CLEANUP ) ) {
 					$myjob		=	true;
 					$button		=	'class="pz-button-sure" value="run-'.$hook.'"';
 					$display	=	'class="pz-cron-list-lkc"';
@@ -50,7 +59,10 @@
 			}
 		}
 	}
-	asort($cron_list );
+	usort($cron_list, function($a, $b ) {
+		$time_compare	=	intval($a['key'] ) <=> intval($b['key'] );
+		return	$time_compare !== 0 ? $time_compare : strcmp($a['hook'], $b['hook'] );
+	} );
 
 ?>
 <div class="pz-page pz-page-admin<?php echo $pz_page_active('pz-admin' ); ?>" id="pz-admin">
@@ -78,8 +90,17 @@
 			<td><span class="pz-monospace"><?php echo esc_html($this->db_card ); ?></span></td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e('Version', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('Hash', 'pz-linkcard' ); ?></th>
 			<td><span class="pz-monospace"><?php echo esc_html($prop['db-version'] ); ?></span></td>
+		</tr>
+		<tr>
+			<th scope="row" rowspan="2"><?php esc_html_e('Count Information', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('Table Name', 'pz-linkcard' ); ?></th>
+			<td><span class="pz-monospace"><?php echo esc_html($this->db_click ); ?></span></td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e('Hash', 'pz-linkcard' ); ?></th>
+			<td><span class="pz-monospace"><?php echo esc_html($prop['db-click-version'] ); ?></span></td>
 		</tr>
 		<tr>
 			<th scope="row" colspan="2"><?php esc_html_e('Size of the options', 'pz-linkcard' ); ?></th>
@@ -179,7 +200,7 @@
 				<tr>
 					<th scope="col" class="pz-cron-head-run"><?php esc_html_e('Run', 'pz-linkcard' ); ?></th>
 					<th scope="col" class="pz-cron-head-hook"><?php esc_html_e('Hook', 'pz-linkcard' ); ?></th>
-					<th scope="col" class="pz-cron-head-next-time"><?php echo __('Next Time', 'pz-linkcard' ).__('▼', 'pz-linkcard' ); ?></th>
+					<th scope="col" class="pz-cron-head-next-time"><?php echo __('Next Time', 'pz-linkcard' ).__('🔺', 'pz-linkcard' ); ?></th>
 					<th scope="col" class="pz-cron-head-schedule"><?php esc_html_e('Schedule', 'pz-linkcard' ); ?></th>
 				</tr>
 			</thead>

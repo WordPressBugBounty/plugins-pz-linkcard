@@ -8,16 +8,24 @@
             : []
     );
     let processingOverlayTimer = null;
+	const processingOverlayDelay = 800;
 	initInfobarPosition();
+	initTargetHighlight();
+	initTargetHighlightLinks();
+	initDbClearDelay();
+	const initialOverlay = document.querySelector("#pz-overlay-proc");
+	const keepInitialOverlay = initialOverlay?.classList.contains("pz-overlay-proc-active");
 
-	// 処理中オーバーレイを非表示
-    document.querySelector("#pz-overlay-proc")?.classList.remove("pz-overlay-proc-active");
-    document.querySelector("#pz-overlay-proc")?.style.setProperty("display", "none");
+	// カード管理画面はナビゲーション開始から一定時間を超えた場合だけ表示する
+    if (dashboard.classList.contains("pz-cacheman")) {
+        showProcessingOverlay(Math.max(0, processingOverlayDelay - performance.now()));
+    } else if (!keepInitialOverlay) {
+        hideProcessingOverlay();
+    }
     initSettingsToasts();
 
     window.addEventListener("load", () => {
-        document.querySelector("#pz-overlay-proc")?.classList.remove("pz-overlay-proc-active");
-        document.querySelector("#pz-overlay-proc")?.classList.add("hidden");
+        hideProcessingOverlay();
 
         switchEnabled();
 
@@ -56,8 +64,20 @@
                 }
 
                 if (submitter?.dataset?.noOverlay === "1") return;
-                showProcessingOverlay();
+                const isRunNow = submitter?.name === "action" && String(submitter.value || "").startsWith("run-");
+                showProcessingOverlay(isRunNow ? 0 : processingOverlayDelay);
             });
+        });
+
+        const cacheman = document.querySelector(".pz-cacheman");
+        cacheman?.addEventListener("click", e => {
+            const link = e.target?.closest?.("a[href]");
+            if (!link || link.dataset.noOverlay === "1") return;
+            if (link.matches(".pz-man-thumbnail, .pz-man-image-box-trigger")) return;
+            if (link.target === "_blank" || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+            const href = link.getAttribute("href") || "";
+            if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+            showProcessingOverlay(processingOverlayDelay);
         });
 
         // Admin setting handler
@@ -69,11 +89,12 @@
         document.addEventListener("click", selectImageFromMedia);
         document.addEventListener("click", clearCachemanImage);
         initCharacterCounts();
-        initUnsavedFormWarnings();
         initSettingsSaveShortcut();
         initSettingsScrollMemory();
+        initCachemanScrollMemory();
         initCachemanEditorShortcuts();
         initSettingsTabs();
+        initCachemanUsedPostRefresh();
         initCachemanSearch();
         initCachemanPaginationKeys();
         initImageBox();
@@ -118,8 +139,13 @@
             el.addEventListener("change", switchEnabled)
         );
 
-        document.querySelector("#pz-overlay-proc")?.classList.remove("pz-overlay-proc-active");
-        document.querySelector("#pz-overlay-proc")?.classList.add("hidden");
+        // Start change detection after every control has reached its initial state.
+        initUnsavedFormWarnings();
+
+    });
+
+    window.addEventListener("pageshow", e => {
+        if (e.persisted) hideProcessingOverlay();
     });
 
     // ----------- 関数群 -----------
@@ -129,11 +155,24 @@
 		if (!infobar) return;
 
 		const adminBar = document.querySelector("#wpadminbar");
+		const adminMenu = document.querySelector("#adminmenuwrap");
 		let frame = null;
 		const updatePosition = () => {
 			frame = null;
 			const adminBarBottom = adminBar ? adminBar.getBoundingClientRect().bottom : 0;
 			infobar.style.top = `${Math.max(0, Math.round(adminBarBottom))}px`;
+
+			const infobarBottom = infobar.getBoundingClientRect().bottom;
+			let adminMenuRight = 0;
+			if (adminMenu) {
+				const menuRect = adminMenu.getBoundingClientRect();
+				const menuStyle = window.getComputedStyle(adminMenu);
+				if (menuStyle.display !== "none" && menuStyle.visibility !== "hidden" && menuRect.left <= 0 && menuRect.right > 0) {
+					adminMenuRight = menuRect.right;
+				}
+			}
+			document.body.style.setProperty("--pz-overlay-top", `${Math.max(0, Math.round(infobarBottom))}px`);
+			document.body.style.setProperty("--pz-overlay-left", `${Math.max(0, Math.round(adminMenuRight))}px`);
 		};
 		const scheduleUpdate = () => {
 			if (frame !== null) return;
@@ -146,6 +185,58 @@
 		if (adminBar && "ResizeObserver" in window) {
 			new ResizeObserver(scheduleUpdate).observe(adminBar);
 		}
+		if (adminMenu && "ResizeObserver" in window) {
+			new ResizeObserver(scheduleUpdate).observe(adminMenu);
+		}
+		if ("ResizeObserver" in window) {
+			new ResizeObserver(scheduleUpdate).observe(infobar);
+		}
+	}
+
+	function initTargetHighlight() {
+		activateTargetHighlight(window.location.hash);
+	}
+
+	function initTargetHighlightLinks() {
+		document.addEventListener("click", event => {
+			const link = event.target.closest?.('a[href*="#pz-error-reset-settings"]');
+			if (!link || !link.closest(".pz-lkc-error-mode-notice")) return;
+
+			event.preventDefault();
+			activateTargetHighlight("#pz-error-reset-settings");
+		});
+	}
+
+	function activateTargetHighlight(hash) {
+		const targets = {
+			"#pz-click-log-settings": ["#pz-click-log-settings", "pz-settings-target-highlight"],
+			"#pz-error-reset-settings": ["#pz-error-reset-settings", "pz-settings-error-target-highlight"],
+		};
+		const targetConfig = targets[hash];
+		if (!targetConfig) return;
+
+		const [selector, className] = targetConfig;
+		const target = document.querySelector(selector);
+		if (!target) return;
+		const page = target.closest(".pz-page");
+		if (page && !page.classList.contains("pz-page-active")) {
+			document.querySelectorAll(".pz-page-active").forEach(item => item.classList.remove("pz-page-active"));
+			document.querySelectorAll(".pz-tab-active").forEach(item => item.classList.remove("pz-tab-active"));
+			page.classList.add("pz-page-active");
+			const tab = document.querySelector(`.pz-tab[name="${page.id}"], .pz-tab[href="#${page.id}"]`);
+			tab?.classList.add("pz-tab-active");
+			const tabNow = document.querySelector('input[name="tab-now"]');
+			if (tabNow) tabNow.value = page.id;
+		}
+
+		target.classList.remove(className);
+		void target.offsetWidth;
+		target.classList.add(className);
+		window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+		window.requestAnimationFrame(() => {
+			window.requestAnimationFrame(() => target.scrollIntoView({ block: "start" }));
+		});
+		window.setTimeout(() => target.classList.remove(className), 5000);
 	}
 
     function initFileImport() {
@@ -207,8 +298,8 @@
                 jump.className = "pz-section-jump";
 
                 [
-                    { label: "🔺", title: "前の見出しへ", target: headings[index - 1], disabled: index === 0 },
-                    { label: "🔻", title: "次の見出しへ", target: headings[index + 1], disabled: index === headings.length - 1 },
+                    { label: "🔺", title: pzLinkCardAdmin.previousHeading || "Go to previous heading", target: headings[index - 1], disabled: index === 0 },
+                    { label: "🔻", title: pzLinkCardAdmin.nextHeading || "Go to next heading", target: headings[index + 1], disabled: index === headings.length - 1 },
                 ].forEach(item => {
                     const button = document.createElement("button");
                     button.type = "button";
@@ -251,6 +342,55 @@
         indicator.classList.toggle("pz-indicator-active", window.scrollY > 80);
     }
 
+    function initDbClearDelay() {
+        document.querySelectorAll(".pz-db-clear-enabled").forEach(checkbox => {
+            const button = checkbox.closest("td")?.querySelector(".pz-db-clear");
+            if (!button) return;
+
+            const delayMs = 5000;
+            let timer = null;
+            let startedAt = 0;
+
+            const setProgress = progress => {
+                button.style.setProperty("--pz-db-clear-progress", `${Math.max(0, Math.min(100, progress))}%`);
+            };
+
+            const reset = () => {
+                if (timer) window.cancelAnimationFrame(timer);
+                timer = null;
+                startedAt = 0;
+                button.disabled = true;
+                button.dataset.ready = "0";
+                button.classList.remove("pz-db-clear-ready");
+                setProgress(0);
+            };
+
+            const tick = now => {
+                const progress = ((now - startedAt) / delayMs) * 100;
+                setProgress(progress);
+                if (progress >= 100) {
+                    timer = null;
+                    button.disabled = false;
+                    button.dataset.ready = "1";
+                    button.classList.add("pz-db-clear-ready");
+                    setProgress(100);
+                    return;
+                }
+                timer = window.requestAnimationFrame(tick);
+            };
+
+            checkbox.addEventListener("change", () => {
+                reset();
+                if (checkbox.checked) {
+                    startedAt = performance.now();
+                    timer = window.requestAnimationFrame(tick);
+                }
+            });
+
+            reset();
+        });
+    }
+
     // Admin setting helper
     function switchEnabled() {
         const setDisabled = (selector, disabled, readonly=false, color=null) => {
@@ -281,6 +421,11 @@
         const flgAgentEl = document.querySelector("input[name='properties[flg-agent]'][type=checkbox]");
 		const flgAgent = flgAgentEl ? flgAgentEl.checked : false;
 		setDisabled("input[name='properties[user-agent]']", !flgAgent, !flgAgent );
+
+		// クリック件数を記録しない場合、詳細ログも記録しない
+		const clickCountEl = document.querySelector("input[name='properties[flg-click-count]'][type=checkbox]");
+		const clickLogDisabled = clickCountEl ? !clickCountEl.checked : false;
+		setDisabled("input[name='properties[flg-click-log]'][type=checkbox]", clickLogDisabled, false, clickLogDisabled ? "#ddd" : "#444");
 
 		// 自動変換関連
 		const autoAtagEl = document.querySelector("input[name='properties[auto-atag]'][type=checkbox]");
@@ -921,10 +1066,13 @@
         });
     }
 
-    function serializeFormValues(form) {
+    function serializeFormValues(form, options = {}) {
         const params = new URLSearchParams();
+        const fieldNamePrefix = options.fieldNamePrefix || "";
         Array.from(form.elements).forEach(el => {
             if (!el.name || el.disabled) return;
+            if (fieldNamePrefix && !el.name.startsWith(fieldNamePrefix)) return;
+            if (el.classList.contains("pz-db-clear-enabled")) return;
             if (["button", "submit", "reset"].includes(el.type)) return;
             if (["scroll-now", "scroll_now", "tab-now"].includes(el.name)) return;
             if ((el.type === "checkbox" || el.type === "radio") && !el.checked) return;
@@ -948,11 +1096,12 @@
         const confirmMessage = window.pzLinkCardAdmin?.discardChanges || "Discard changes?";
         const confirmNonUpdateSubmit = options.confirmNonUpdateSubmit || false;
         let isSubmitting = false;
-        let initialState = serializeFormValues(form);
+        let initialState = serializeFormValues(form, options);
         let hasUnsavedChanges = false;
 
-        const updateUnsavedChanges = () => {
-            hasUnsavedChanges = serializeFormValues(form) !== initialState;
+        const updateUnsavedChanges = e => {
+            if (e?.target?.classList?.contains("pz-db-clear-enabled")) return;
+            hasUnsavedChanges = serializeFormValues(form, options) !== initialState;
         };
 
         form.addEventListener("input", updateUnsavedChanges);
@@ -970,7 +1119,7 @@
             }
 
             isSubmitting = true;
-            initialState = serializeFormValues(form);
+            initialState = serializeFormValues(form, options);
             hasUnsavedChanges = false;
         }, true);
 
@@ -979,7 +1128,10 @@
         });
 
         window.addEventListener("beforeunload", e => {
-            if (isSubmitting || !hasUnsavedChanges) return;
+            if (isSubmitting) return;
+
+            hasUnsavedChanges = serializeFormValues(form, options) !== initialState;
+            if (!hasUnsavedChanges) return;
 
             e.preventDefault();
             e.returnValue = confirmMessage;
@@ -991,7 +1143,9 @@
         initUnsavedFormWarning(document.querySelector(".pz-man-cache-dirty-check")?.closest("form"), {
             confirmNonUpdateSubmit: true,
         });
-        initUnsavedFormWarning(document.querySelector(".pz-settings form"));
+        initUnsavedFormWarning(document.querySelector(".pz-settings form"), {
+            fieldNamePrefix: "properties[",
+        });
     }
 
     function initCachemanEditorShortcuts() {
@@ -1067,6 +1221,24 @@
         form.addEventListener("submit", () => {
             scrollNow.value = String(Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0)));
         }, true);
+    }
+
+    function initCachemanScrollMemory() {
+        const cacheman = document.querySelector(".pz-cacheman");
+        const scrollNow = cacheman?.querySelector('input[name="scroll_now"]');
+        const form = scrollNow?.closest("form");
+        const clickLog = cacheman?.querySelector(".pz-man-click-log");
+        if (!cacheman || !form || !scrollNow) return;
+
+        if (!clickLog) {
+            const savedScroll = parseInt(scrollNow.value, 10) || 0;
+            if (savedScroll > 0) {
+                window.requestAnimationFrame(() => window.scrollTo(0, savedScroll));
+            }
+            form.addEventListener("submit", () => {
+                scrollNow.value = String(Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0)));
+            }, true);
+        }
     }
 
     function initSettingsTabs() {
@@ -1954,11 +2126,16 @@
             charset: [".pz-man-head-charset", ".pz-man-body-charset"],
             domain: [".pz-man-head-domain", ".pz-man-body-domain-cell"],
             sns: [".pz-man-head-sns_twitter", ".pz-man-body-sns"],
+			post_id: [".pz-man-head-post_id", ".pz-man-body-post-id-value"],
+			post_date: [".pz-man-head-post_date", ".pz-man-body-post-date"],
+			post_modified: [".pz-man-head-post_modified", ".pz-man-body-post-modified"],
             regist_time: [".pz-man-head-regist_time", ".pz-man-body-regist-time"],
             update_time: [".pz-man-head-update_time", ".pz-man-body-update-time"],
             sns_time: [".pz-man-head-sns_time", ".pz-man-body-sns-time"],
             alive_time: [".pz-man-head-alive_time", ".pz-man-body-alive-time"],
-            post_id: [".pz-man-head-use_post_id1", ".pz-man-body-post-id"],
+            sns_nexttime: [".pz-man-head-sns_nexttime", ".pz-man-body-sns-nexttime"],
+            alive_nexttime: [".pz-man-head-alive_nexttime", ".pz-man-body-alive-nexttime"],
+			use_post_id: [".pz-man-head-use_post_id1", ".pz-man-body-use-post-id"],
             click_count: [".pz-man-head-click_count", ".pz-man-body-click-count"],
             result: [".pz-man-head-update_result", ".pz-man-body-result"],
         };
@@ -2138,6 +2315,56 @@
             });
         });
     }
+
+	function initCachemanUsedPostRefresh() {
+		const button = document.querySelector(".pz-man-cache-post-id-refresh");
+		if (!button) return;
+
+		button.addEventListener("click", async e => {
+			e.preventDefault();
+			if (button.disabled) return;
+			button.classList.remove("is-rotating");
+			void button.offsetWidth;
+			button.classList.add("is-rotating");
+
+			const config = window.pzLinkCardAdmin || {};
+			const body = new URLSearchParams({
+				action: "pz_lkc_find_used_posts",
+				nonce: config.findUsedPostsNonce || "",
+				card_id: button.dataset.cardId || "0"
+			});
+
+			button.disabled = true;
+			try {
+				const response = await fetch(config.ajaxUrl || window.ajaxurl, {
+					method: "POST",
+					credentials: "same-origin",
+					headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+					body: body.toString()
+				});
+				const result = await response.json();
+				if (!response.ok || !result?.success) return;
+
+				const postIds = Array.isArray(result.data?.post_ids) ? result.data.post_ids.slice(0, 6) : [];
+				for (let index = 1; index <= 6; index++) {
+					const input = document.querySelector(`input[name="data[use_post_id${index}]"]`);
+					if (!input) continue;
+					input.value = postIds[index - 1] || "";
+					input.dispatchEvent(new Event("input", { bubbles: true }));
+					input.dispatchEvent(new Event("change", { bubbles: true }));
+				}
+
+				const summary = document.querySelector(".pz-man-cache-post-id-summary-value");
+				if (summary) {
+					summary.textContent = postIds.length ? postIds.join("、") : "-";
+					summary.classList.add("is-refreshed");
+				}
+			} finally {
+				button.disabled = false;
+			}
+		});
+		button.addEventListener("animationend", () => button.classList.remove("is-rotating"));
+	}
 
     function initCachemanSearch() {
         const input = document.querySelector("#post-search-input");

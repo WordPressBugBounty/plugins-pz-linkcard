@@ -19,6 +19,9 @@
 		case	'version':
 		case	'string':
 			$this->options[$key]	=	strval($temp_value );
+			if	($key === 'click-log-retention' && !in_array($this->options[$key], array('1w', '1m', '2m', '3m', '6m', '1y', '2y', '3y', '5y', 'forever' ), true ) ) {
+				$this->options[$key]	=	$definition['default'];
+			}
 			break;
 
 		case	'schedule':

@@ -26,8 +26,12 @@
         $check_host	=	strtolower((string) wp_parse_url($check_url, PHP_URL_HOST ) );
         return	preg_match('/(^|\.)x\.com$/i', $check_host ) === 1;
     };
-    $get_request_args	=	function($check_url, $request_args ) use ($browser_user_agent, $is_amazon_url, $is_twitter_url ) {
-        if	($is_amazon_url($check_url ) || $is_twitter_url($check_url ) ) {
+	$is_jmty_url	=	function($check_url ) {
+		$check_host	=	strtolower((string) wp_parse_url($check_url, PHP_URL_HOST ) );
+		return	preg_match('/(^|\.)jmty\.jp$/i', $check_host ) === 1;
+	};
+    $get_request_args	=	function($check_url, $request_args ) use ($browser_user_agent, $is_amazon_url, $is_twitter_url, $is_jmty_url ) {
+        if	($is_amazon_url($check_url ) || $is_twitter_url($check_url ) || $is_jmty_url($check_url ) ) {
             $request_args['user-agent']	=	$browser_user_agent;
         }
         return	$request_args;
@@ -76,7 +80,7 @@
         }
         return	$this->pz_EncodeURL($location, true );
     };
-    $trace_redirect_url	=	function($start_url ) use ($rget_args, $get_request_args, $get_response_url, $get_location_url, $redirect_limit, $is_robots_allowed, &$robots_blocked_url ) {
+    $trace_redirect_url	=	function($start_url ) use ($rget_args, $get_request_args, $get_response_url, $get_location_url, $redirect_limit, $is_robots_allowed, $headers_only, &$robots_blocked_url ) {
         $current_url	=	$start_url;
         $trace_args		=	$rget_args;
         $trace_args['redirection']	=	0;
@@ -93,7 +97,7 @@
             $head_args['method']	=	'HEAD';
             $response				=	wp_safe_remote_head($current_url, $head_args );
 
-            if	(is_wp_error($response ) ) {
+            if	(is_wp_error($response ) && !$headers_only ) {
                 $get_args							=	$get_request_args($current_url, $trace_args );
                 $get_args['limit_response_size']	=	1;
                 $response							=	wp_safe_remote_get($current_url, $get_args );
@@ -137,16 +141,22 @@
     }
     $is_amazon_access	=	$is_amazon_url($url_access );
     $is_twitter_access	=	$is_twitter_url($url_access );
+	$is_jmty_access		=	$is_jmty_url($url_access );
     $blocked_local_url	=	$this->pz_ShouldBlockLocalAddress($url ) || ($url_redir && $this->pz_ShouldBlockLocalAddress($url_redir ) );
     if	($blocked_local_url ) {
         $rget_data	=	new WP_Error('pz_lkc_local_redirect', 'Local address blocked' );
     } elseif ($robots_blocked_url ) {
         $rget_data	=	new WP_Error('pz_lkc_robots_disallowed', 'Blocked by robots.txt' );
     } else {
-        if	($is_amazon_access || $is_twitter_access ) {
+        if	($is_amazon_access || $is_twitter_access || $is_jmty_access ) {
             $rget_args	=	$get_request_args($url_access, $rget_args );
         }
-        $rget_data	=	wp_safe_remote_get($url_access, $rget_args );	// wp_remote_get実行
+        if	($headers_only ) {
+            $rget_args['method']	=	'HEAD';
+            $rget_data	=	wp_safe_remote_head($url_access, $rget_args );
+        } else {
+            $rget_data	=	wp_safe_remote_get($url_access, $rget_args );	// wp_remote_get実行
+        }
     }
 
     // 初期化
@@ -285,6 +295,33 @@
             }
         }
 
+		// ジモティー専用処理：作成日時・更新日時
+		if	(!empty($this->options['flg-special-jmty'] ) && $is_jmty_access ) {
+			$jmty_body	=	html_entity_decode($http_body, ENT_QUOTES | ENT_HTML5, $this->charset );
+			$jmty_date_pattern	=	'(\d{4})年\s*(\d{1,2})月\s*(\d{1,2})日\s*(\d{1,2}):(\d{2})';
+			$parse_jmty_date	=	function($label ) use ($jmty_body, $jmty_date_pattern ) {
+				if	(!preg_match('/'.preg_quote($label, '/').'(?:\s|<!--.*?-->)*'.$jmty_date_pattern.'/su', $jmty_body, $matches ) ) {
+					return	0;
+				}
+				$date	=	DateTimeImmutable::createFromFormat(
+					'!Y-n-j G:i',
+					sprintf('%04d-%d-%d %d:%02d', intval($matches[1] ), intval($matches[2] ), intval($matches[3] ), intval($matches[4] ), intval($matches[5] ) ),
+					wp_timezone()
+				);
+				return	$date instanceof DateTimeImmutable ? $date->getTimestamp() : 0;
+			};
+			$jmty_created	=	$parse_jmty_date('作成' );
+			$jmty_updated	=	$parse_jmty_date('更新' );
+			if	($jmty_created ) {
+				$data['post_date']	=	$jmty_created;
+			}
+			if	($jmty_updated ) {
+				$data['post_modified']	=	$jmty_updated;
+			} elseif	($jmty_created ) {
+				$data['post_modified']	=	$jmty_created;
+			}
+		}
+
         // Open Graph Protcol
         $og_url			=	$tags['og:url']					??	'';
         $og_type		=	$tags['og:type']				??	'';
@@ -366,7 +403,10 @@
 
     // 呼ばれている記事
     if	(!isset($data['use_post_id1'] ) ) {
-        $data['use_post_id1']	=	get_the_ID();
+		$post_id_t	=	intval(get_the_ID() );
+		if	($post_id_t > 0 ) {
+			$data['use_post_id1']	=	$post_id_t;
+		}
     }
 
     // リダイレクト先URL
@@ -389,9 +429,9 @@
     $data['alive_time']			=	$this->now;														// 生存確認：確認日時
     $data['alive_nexttime']		=	$this->now + WEEK_IN_SECONDS * 4 + rand(0, DAY_IN_SECONDS );	// 生存確認：次回確認日時
     $data['alive_result']		=	$http_code;														// 生存確認：HTTPレスポンス
-    $data['sns_twitter']		=	$data['sns_twitter']	??	-1;					// SNS：Twitter
-    $data['sns_facebook']		=	$data['sns_facebook']	??	-1;					// SNS：facebook
-    $data['sns_hatena']			=	$data['sns_hatena']		??	-1;					// SNS：はてなブックマーク
+    $data['sns_twitter']		=	$data['sns_twitter']	??	null;				// SNS：Twitter
+    $data['sns_facebook']		=	$data['sns_facebook']	??	null;				// SNS：facebook
+    $data['sns_hatena']			=	$data['sns_hatena']		??	null;				// SNS：はてなブックマーク
     $data['sns_time']			=	$data['sns_time']		??	0;					// SNS：最終取得日時
     $data['sns_nexttime']		=	$data['sns_nexttime']	??	0;					// SNS：次回取得日時
     $data['use_post_id1']		=	$data['use_post_id1']	??	null;				// 呼ばれている記事
@@ -405,8 +445,6 @@
     $data['regist_charset']		=	$data['regist_charset']	??	$charset;			// 登録時：文字コード
     $data['regist_time']		=	$data['regist_time']	??	0;					// 登録時：登録日時
     $data['regist_result']		=	$data['regist_result']	??	$http_code;			// 登録時：HTTPレスポンス
-    $data['mod_title']			=	false;											// 更新：登録後からタイトル変更有無
-    $data['mod_excerpt']		=	false;											// 更新：登録後から抜粋文変更有無
     $data['update_time']		=	$this->now;										// 更新：最終更新日
     $data['update_result']		=	$http_code;										// 更新：HTTPレスポンス
     return	$data;

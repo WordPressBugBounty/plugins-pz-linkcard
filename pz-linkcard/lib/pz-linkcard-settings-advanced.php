@@ -129,10 +129,22 @@
 				</p>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e('Jmty.jp', 'pz-linkcard' ); ?></th>
+			<td>
+				<p>
+					<label>
+						<input type="hidden"   name="properties[flg-special-jmty]" value="" />
+						<input type="checkbox" name="properties[flg-special-jmty]" value="1" <?php checked($this->options['flg-special-jmty'] ); ?> />
+						<?php echo esc_html__('Retrieve Created and Updated Dates', 'pz-linkcard' ); ?>
+					</label>
+				</p>
+			</td>
+		</tr>
 	</table>
 	<?php submit_button(); ?>
 
-	<h2><?php echo	__('Schedule', 'pz-linkcard' ).$help_open.'schedule'.$help_close; ?></h2>
+	<h2 id="pz-schedule"><?php echo	__('Schedule', 'pz-linkcard' ).$help_open.'schedule'.$help_close; ?></h2>
 	<table class="form-table pz-schedule-table">
 		<tr>
 			<th rowspan="2"><?php esc_html_e('SNS Count', 'pz-linkcard' ); ?></th>

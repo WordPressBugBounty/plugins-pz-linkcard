@@ -1,6 +1,8 @@
 <?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	require_once __DIR__.'/pz-linkcard-search-query-parser.php';
+	$cacheman_list_allowed_html	=	wp_kses_allowed_html('post' );
+	$cacheman_list_allowed_html['a']['referrerpolicy']	=	true;
 
 	// ドメイン一覧
 	$mydomain			=	null;
@@ -40,6 +42,7 @@
 
 	// 抽出条件
 	$cond				=	(string) $keyword;
+	$filter_unregistered	=	false;
 
 	switch	($filter ) {
 	case	'all':
@@ -54,12 +57,15 @@
 		$cond			.=	' alive_result<>update_result';
 		break;
 	case	'unlink':
-		$cond			.=	' -alive_result:100..399';
+		$cond			.=	' alive_result<>0 -alive_result:100..399';
+		break;
+	case	'unregistered':
+		$filter_unregistered	=	true;
 		break;
 	default:
-		if	($this->options['flg-alive'] && $this->options['flg-alive-count']) {
+		if	($this->options['sns-period'] && $this->options['flg-alive-count']) {
 			$filter		=	'unlink';
-			$cond		.=	' -alive_result:100..399';
+			$cond		.=	' alive_result<>0 -alive_result:100..399';
 		} else {
 			$filter		=	'all';
 		}
@@ -77,33 +83,46 @@
 	$parsed_search		=	$parser->parse($cond );
 	$where				=	$parsed_search['where'];
 	$param				=	$parsed_search['params'];
+	if	($filter_unregistered ) {
+		$where	= $where ? "($where) AND regist_time IS NULL" : 'regist_time IS NULL';
+	}
 
 	// 表示オプション
 	$screen_option_columns	=	array(
 		'id'			=>	array('label' => __('ID', 'pz-linkcard' ) ),
 		'excerpt'		=>	array('label' => __('Excerpt', 'pz-linkcard' ) ),
+		'post_id'		=>	array('label' => __('Post ID', 'pz-linkcard' ) ),
+		'post_date'		=>	array('label' => __('Post Date', 'pz-linkcard' ) ),
+		'post_modified'=>	array('label' => __('Post Modified Date', 'pz-linkcard' ) ),
 		'charset'		=>	array('label' => __('Charset', 'pz-linkcard' ) ),
 		'domain'		=>	array('label' => __('Domain', 'pz-linkcard' ) ),
 		'sns'			=>	array('label' => __('SNS', 'pz-linkcard' ) ),
 		'regist_time'	=>	array('label' => __('Registered Date', 'pz-linkcard' ) ),
 		'update_time'	=>	array('label' => __('Update Date', 'pz-linkcard' ) ),
 		'sns_time'		=>	array('label' => __('SNS Check Date', 'pz-linkcard' ) ),
+		'sns_nexttime'	=>	array('label' => __('Next Share Count Retrieval Date', 'pz-linkcard' ), 'debug_only' => true ),
 		'alive_time'	=>	array('label' => __('Alive Check Date', 'pz-linkcard' ) ),
-		'post_id'		=>	array('label' => __('Post ID', 'pz-linkcard' ) ),
+		'alive_nexttime'=>	array('label' => __('Next Status Check Date', 'pz-linkcard' ), 'debug_only' => true ),
+		'use_post_id'	=>	array('label' => __('Published Post ID', 'pz-linkcard' ) ),
 		'click_count'	=>	array('label' => __('Click Count', 'pz-linkcard' ) ),
 		'result'		=>	array('label' => __('Result code', 'pz-linkcard' ) ),
 	);
 	$screen_option_defaults	=	array(
 		'id'			=>	true,
 		'excerpt'		=>	true,
+		'post_id'		=>	false,
+		'post_date'		=>	false,
+		'post_modified'=>	false,
 		'charset'		=>	false,
 		'domain'		=>	true,
 		'sns'			=>	true,
-		'regist_time'	=>	false,
+		'regist_time'	=>	true,
 		'update_time'	=>	true,
 		'sns_time'		=>	false,
+		'sns_nexttime'	=>	false,
 		'alive_time'	=>	false,
-		'post_id'		=>	true,
+		'alive_nexttime'=>	false,
+		'use_post_id'	=>	true,
 		'click_count'	=>	true,
 		'result'		=>	true,
 	);
@@ -165,7 +184,8 @@
 	$sql			.=	"COUNT( CASE WHEN domain = '" .$this->domain."' THEN 1 END ) AS count_internal, ";
 	$sql			.=	"COUNT( CASE WHEN domain <> '".$this->domain."' THEN 1 END ) AS count_external, ";
 	$sql			.=	"COUNT( CASE WHEN alive_result <> update_result THEN 1 END ) AS count_modify, ";
-	$sql			.=	"COUNT( CASE WHEN ( alive_result < 100 OR alive_result >= 400 ) THEN 1 END ) AS count_unlink ";
+	$sql			.=	"COUNT( CASE WHEN alive_result IS NOT NULL AND alive_result <> 0 AND ( alive_result < 100 OR alive_result >= 400 ) THEN 1 END ) AS count_unlink, ";
+	$sql			.=	"COUNT( CASE WHEN regist_time IS NULL THEN 1 END ) AS count_unregistered ";
 	$sql			.=	"FROM $this->db_card";
 	$result			=	$wpdb->get_row($sql );
 	$count_list['all'	  ]	=	$result->count_all		??	0;
@@ -173,6 +193,7 @@
 	$count_list['external']	=	$result->count_external ??	0;
 	$count_list['modify'  ]	=	$result->count_modify	??	0;
 	$count_list['unlink'  ]	=	$result->count_unlink	??	0;
+	$count_list['unregistered']	=	$result->count_unregistered	??	0;
 
 	// ページネーション
 	$temp_button	=	'&nbsp;<button type="submit" name="page_button" value="%d" class="button tablenav-pages-navspan" %s>%s</button>';
@@ -214,10 +235,11 @@
 			$items	=
 				array(
 					'all'		=>	__('All', 'pz-linkcard' ),
-					'internal'	=>	__('Internal', 'pz-linkcard' ),
 					'external'	=>	__('External', 'pz-linkcard' ),
+					'internal'	=>	__('Internal', 'pz-linkcard' ),
 					'modify'	=>	__('Modify', 'pz-linkcard' ),
 					'unlink'	=>	__('Unlink', 'pz-linkcard' ),
+					'unregistered'	=>	__('Unregistered', 'pz-linkcard' ),
 				);
 			$sep		=	'';
 			foreach	($items as $i_code => $i_name ) {
@@ -244,8 +266,18 @@
 					<legend><?php echo esc_html(__('Columns', 'pz-linkcard' ) ); ?></legend>
 					<?php
 						foreach	($screen_option_columns as $column_key => $column ) {
+							if	(!empty($column['debug_only'] ) && !$debug_mode ) {
+								continue;
+							}
 							$checked		=	$screen_option_is_visible($column_key) ? ' checked="checked"' : '';
-							$default_class	=	!empty($screen_option_defaults[$column_key] ) ? ' class="pz-man-screen-option-default"' : '';
+							$classes		=	array();
+							if	(!empty($screen_option_defaults[$column_key] ) ) {
+								$classes[]	=	'pz-man-screen-option-default';
+							}
+							if	(!empty($column['debug_only'] ) ) {
+								$classes[]	=	'pz-debug-only';
+							}
+							$default_class	=	$classes ? ' class="'.esc_attr(implode(' ', $classes ) ).'"' : '';
 							echo	'<label'.wp_kses_post($default_class ).'><input type="checkbox" class="pz-man-screen-column-toggle" data-pz-man-column="'.esc_attr($column_key ).'"'.$checked.'>'.esc_html($column['label'] ).'</label>';
 						}
 					?>
@@ -283,7 +315,19 @@
 					<div><dt><code>click:&gt;=10</code></dt><dd><?php echo esc_html(__('Click Count', 'pz-linkcard' ) ); ?></dd></div>
 					<div><dt><code>regist:<?php echo esc_html($search_help_date ); ?></code></dt><dd><?php echo esc_html(__('Registered Date', 'pz-linkcard' ) ); ?></dd></div>
 					<div><dt><code>update:<?php echo esc_html($search_help_date ); ?></code></dt><dd><?php echo esc_html(__('Update Date', 'pz-linkcard' ) ); ?></dd></div>
-				<div><dt><code>result:200</code></dt><dd><?php echo esc_html(__('Result Code', 'pz-linkcard' ) ); ?></dd></div>
+					<div><dt><code>result:200</code></dt><dd><?php echo esc_html(__('Result Code', 'pz-linkcard' ) ); ?></dd></div>
+					<div class="pz-man-search-operators">
+						<dt class="screen-reader-text"><?php echo esc_html__('Comparison operators', 'pz-linkcard' ); ?></dt>
+						<dd>
+							<span><code>:</code> <?php echo esc_html__('Equal', 'pz-linkcard' ); ?></span>
+							<span><code>:&lt;</code> <?php echo esc_html__('Less than', 'pz-linkcard' ); ?></span>
+							<span><code>:&lt;=</code> <?php echo esc_html__('Less than or equal to', 'pz-linkcard' ); ?></span>
+							<span><code>:&gt;</code> <?php echo esc_html__('Greater than', 'pz-linkcard' ); ?></span>
+							<span><code>:&gt;=</code> <?php echo esc_html__('Greater than or equal to', 'pz-linkcard' ); ?></span>
+							<span><code>:&lt;&gt;</code> <?php echo esc_html__('Not equal to', 'pz-linkcard' ); ?></span>
+							<small><?php echo esc_html__('The colon before a comparison operator can be omitted.', 'pz-linkcard' ); ?></small>
+						</dd>
+					</div>
 			</dl>
 			<h3 class="pz-man-shortcut-title"><?php echo esc_html(__('Keyboard Shortcuts' ) ); ?></h3>
 			<dl class="pz-man-shortcut-list">
@@ -378,6 +422,24 @@
 	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
+	$item		=	'post_id';
+	$item_name	=	__('Post<br>ID', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class($item );
+	$sort		=	$get_sort_icon($item );
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+
+	$item		=	'post_date';
+	$item_name	=	__('Post Date', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class($item );
+	$sort		=	$get_sort_icon($item );
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+
+	$item		=	'post_modified';
+	$item_name	=	__('Post<br>Modified Date', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class($item );
+	$sort		=	$get_sort_icon($item );
+	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+
 	$item		=	'charset';
 	$item_name	=	__('Charset', 'pz-linkcard' );
 	$add_class	=	$screen_option_hidden_class('charset');
@@ -432,15 +494,31 @@
 	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
+	if	($debug_mode ) {
+		$item		=	'sns_nexttime';
+		$item_name	=	__('Next<br>Share Count<br>Date', 'pz-linkcard' );
+		$add_class	=	$screen_option_hidden_class($item ).' pz-debug-only';
+		$sort		=	$get_sort_icon($item );
+		echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	}
+
 	$item		=	'alive_time';
 	$item_name	=	__('Alive<br>Check<br>Date', 'pz-linkcard' );
 	$add_class	=	$screen_option_hidden_class('alive_time');
 	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
+	if	($debug_mode ) {
+		$item		=	'alive_nexttime';
+		$item_name	=	__('Next<br>Status<br>Date', 'pz-linkcard' );
+		$add_class	=	$screen_option_hidden_class($item ).' pz-debug-only';
+		$sort		=	$get_sort_icon($item );
+		echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
+	}
+
 	$item		=	'use_post_id1';
-	$item_name	=	__('Post<br>ID', 'pz-linkcard' );
-	$add_class	=	$screen_option_hidden_class('post_id');
+	$item_name	=	__('Published<br>Post<br>ID', 'pz-linkcard' );
+	$add_class	=	$screen_option_hidden_class('use_post_id');
 	$sort		=	$get_sort_icon($item);
 	echo	'<th scope="col" class="pz-man-head-'.$item.$add_class.'"><button type="submit" name="header" value="'.$item.'">'.$item_name.$sort.'</button></th>';
 
@@ -489,7 +567,9 @@
 
 					// URLの警告マーク
 					$html_url_error		=	'';
-					if	($data->alive_result < 100 || $data->alive_result >= 400 || $data->update_result < 100 || $data->update_result >= 400 ) {
+					$alive_error	=	!is_null($data->alive_result ) && intval($data->alive_result ) !== 0 && (intval($data->alive_result ) < 100 || intval($data->alive_result ) >= 400 );
+					$update_error	=	!is_null($data->update_result ) && intval($data->update_result ) !== 0 && (intval($data->update_result ) < 100 || intval($data->update_result ) >= 400 );
+					if	($alive_error || $update_error ) {
 						if	($data->no_failure ) {		// エラー無視が有効か
 							$temp_icon	=	__('&#x26a0;&#xfe0f;', 'pz-linkcard' );		// ⚠️
 							$temp_class	=	'pz-man-body-url-error-ignore';				// エラー無視
@@ -509,7 +589,7 @@
 						$temp_target	=	'_self';
 					} else {
 						$temp_href		=	esc_url($url );
-						$temp_rel		=	'external noopener';
+						$temp_rel		=	'external noopener noreferrer';
 						$temp_target	=	'_blank';
 					}
 					$html_url			=	$html_url_error.'<a href="'.$temp_href.'" title="'.$temp_href.'" rel="'.$temp_rel.'" target="'.$temp_target.'" referrerpolicy="no-referrer">'.esc_url($this->pz_DecodeURL($url ) ).'</a>';
@@ -543,8 +623,9 @@
 					// サムネイル
 					$thumbnail_url				=	null;
 					$html_thumbnail				=	null;
+					$post_id					=	0;
 					if	($domain === $this->domain ) {
-						$post_id				=	url_to_postid($data->url );											// 記事IDを取得
+						$post_id				=	intval($data->post_id ?? 0 ) ?: url_to_postid($data->url );			// 内部リンク先の投稿IDを取得
 						$thumbnail_id			=	get_post_thumbnail_id($post_id );									// サムネイルIDを取得
 						if	($thumbnail_id ) {
 							$thumbnail_size		=	$this->options['in-thumbnail-size'] ? $this->options['in-thumbnail-size'] : 'thumbnail' ;
@@ -562,24 +643,26 @@
 						}
 					}
 					if	($thumbnail_url ) {
-						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" rel="noopener" referrerpolicy="no-referrer" class="pz-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-man-thumbnail-img"></div></a>';
+						$html_thumbnail			=	'<a href="'.esc_url($thumbnail_url ).'" target="_blank" rel="external noopener noreferrer" referrerpolicy="no-referrer" class="pz-man-thumbnail"><div><img src="'.esc_url($thumbnail_url ).'" alt="" class="pz-man-thumbnail-img"></div></a>';
 					}
 
-					// 記事ID
-					$html_post_id		=	null;
-					for	($j = 1; $j < 5; $j++ ) {
+					// リンクカードが貼られている投稿ID
+					$post_id_t			=	array();
+					for	($j = 1; $j <= 6; $j++ ) {
 						$use_post_id	=	'use_post_id'.$j;
-						$post_id		=	$data->$use_post_id;
-						if	($post_id > 0 ) {
-							$post_title	=	get_the_title($post_id );
-							$post_url	=	get_permalink($post_id ).'#pz-lkc-'.intval($data_id );
-							$html_post_id	.=	'<span class="pz-man-post-id-line"><button type="button" class="pz-man-inline-menu pz-man-post-search" data-pz-man-search-post="'.intval($post_id ).'" title="post:'.intval($post_id ).'">'.intval($post_id ).'</button><a href="'.esc_url($post_url ).'" target="_blank" rel="noopener" referrerpolicy="no-referrer" class="pz-man-post-open" title="'.esc_attr($post_title ).'" aria-label="'.esc_attr($post_title ).'"><span class="dashicons dashicons-external" aria-hidden="true"></span></a></span><br>';
+						$use_post_id_value	=	intval($data->$use_post_id );
+						if	($use_post_id_value > 0 ) {
+							$post_id_t[]	=	$use_post_id_value;
 						}
+					}
+					$html_post_id		=	null;
+					foreach	($post_id_t as $use_post_id_value ) {
+						$post_title	=	get_the_title($use_post_id_value );
+						$post_url	=	get_permalink($use_post_id_value ).'#pz-lkc-'.intval($data_id );
+						$html_post_id	.=	'<span class="pz-man-post-id-line"><button type="button" class="pz-man-inline-menu pz-man-post-search" data-pz-man-search-post="'.intval($use_post_id_value ).'" title="post:'.intval($use_post_id_value ).'">'.intval($use_post_id_value ).'</button><a href="'.esc_url($post_url ).'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="pz-man-post-open" title="'.esc_attr($post_title ).'" aria-label="'.esc_attr($post_title ).'"><span class="dashicons dashicons-external" aria-hidden="true"></span></a></span><br>';
 					}
 
 					// クリック数
-					$html_click			=	number_format(intval($data->click_count ), 0  );
-
 					// HTTPレスポンス
 					$html_result		=	'<span class="pz-man-body-result-update">'.strHTTPCode($data->update_result, $this->pz_HTTPMessage($data->update_result ) ).'</span>';
 					if	($data->update_result <> $data->alive_result ) {
@@ -593,17 +676,26 @@
 			?>
 			<tr>
 				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo intval($data_id ); ?>" type="checkbox" name="select_id[]" value="<?php echo intval($data_id ); ?>" /><div class="locked-indicator"></div></th>
-				<td class="pz-man-body-id<?php echo esc_attr($screen_option_hidden_class('id') ); ?>"><button type="button" data-pz-man-search-id="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-id-search"><?php echo intval($data_id ); ?></button><?php echo wp_kses_post($html_thumbnail ); ?></td>
+				<td class="pz-man-body-id<?php echo esc_attr($screen_option_hidden_class('id') ); ?>"><button type="button" data-pz-man-search-id="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-id-search"><?php echo intval($data_id ); ?></button><?php echo wp_kses($html_thumbnail, $cacheman_list_allowed_html ); ?></td>
 				<td colspan="2" class="pz-man-body-url-title-cell">
-					<div class="pz-man-body-url"><?php echo wp_kses_post($html_url ); ?></div>
+					<div class="pz-man-body-url"><?php echo wp_kses($html_url, $cacheman_list_allowed_html ); ?></div>
 					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo wp_kses_post($html_title ); ?></span></div>
 					<div id="inline_<?php echo intval($data_id ); ?>" class="pz-man-body-menu row-actions">
-						<button type="submit" name="single-edit"   value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php esc_html_e('Edit','pz-linkcard' ); ?></button> | 
+						<button type="submit" name="single-edit" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php esc_html_e('Edit','pz-linkcard' ); ?></button> |
 						<button type="submit" name="single-renew"  value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>' );"><?php esc_html_e('Renew','pz-linkcard' ); ?></button> | 
 						<button type="submit" name="single-delete" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>' );"><?php esc_html_e('Delete','pz-linkcard' ); ?></button>
 					</div>
 				</td>
 				<td class="pz-man-body-excerpt-cell<?php echo esc_attr($screen_option_hidden_class('excerpt') ); ?>"><div class="pz-man-body-excerpt" title="<?php echo esc_attr($excerpt); ?>"><?php echo wp_kses_post($html_excerpt ); ?></div></td>
+				<td class="pz-man-body-post-id-value<?php echo esc_attr($screen_option_hidden_class('post_id') ); ?>">
+					<?php if ($post_id ) { ?>
+						<a href="<?php echo esc_url(get_permalink($post_id ) ); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo esc_attr(get_the_title($post_id ) ); ?>"><?php echo esc_html((string) $post_id ); ?></a>
+					<?php } else { ?>
+						-
+					<?php } ?>
+				</td>
+				<td class="pz-man-body-post-date<?php echo esc_attr($screen_option_hidden_class('post_date') ); ?>"><?php $dt=intval($data->post_date ?? 0 ); ?><?php if ($dt > 0 ) { ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span><?php } else { echo '-'; } ?></td>
+				<td class="pz-man-body-post-modified<?php echo esc_attr($screen_option_hidden_class('post_modified') ); ?>"><?php $dt=intval($data->post_modified ?? 0 ); ?><?php if ($dt > 0 ) { ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span><?php } else { echo '-'; } ?></td>
 				<td class="pz-man-body-charset<?php echo esc_attr($screen_option_hidden_class('charset') ); ?>"><?php echo esc_html($data->charset ); ?></td>
 				<td class="pz-man-body-domain-cell<?php echo esc_attr($screen_option_hidden_class('domain') ); ?>">
 					<div class="pz-man-body-domain">
@@ -621,9 +713,15 @@
 				<td class="pz-man-body-regist-time<?php echo esc_attr($screen_option_hidden_class('regist_time') ); ?>"><?php $dt=$data->regist_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
 				<td class="pz-man-body-update-time<?php echo esc_attr($screen_option_hidden_class('update_time') ); ?>"><?php $dt=$data->update_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
 				<td class="pz-man-body-sns-time<?php echo esc_attr($screen_option_hidden_class('sns_time') ); ?>"><?php $dt=$data->sns_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
+				<?php if ($debug_mode ) { ?>
+				<td class="pz-man-body-sns-nexttime pz-debug-only<?php echo esc_attr($screen_option_hidden_class('sns_nexttime') ); ?>"><?php $dt=$data->sns_nexttime; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
+				<?php } ?>
 				<td class="pz-man-body-alive-time<?php echo esc_attr($screen_option_hidden_class('alive_time') ); ?>"><?php $dt=$data->alive_time; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
-				<td class="pz-man-body-post-id<?php echo esc_attr($screen_option_hidden_class('post_id') ); ?>"><?php echo wp_kses_post($html_post_id ); ?></td>
-				<td class="pz-man-body-click-count<?php echo esc_attr($screen_option_hidden_class('click_count') ); ?>"><?php echo esc_html($html_click ); ?></td>
+				<?php if ($debug_mode ) { ?>
+				<td class="pz-man-body-alive-nexttime pz-debug-only<?php echo esc_attr($screen_option_hidden_class('alive_nexttime') ); ?>"><?php $dt=$data->alive_nexttime; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
+				<?php } ?>
+				<td class="pz-man-body-use-post-id<?php echo esc_attr($screen_option_hidden_class('use_post_id') ); ?>"><?php echo wp_kses($html_post_id, $cacheman_list_allowed_html ); ?></td>
+				<td class="pz-man-body-click-count<?php echo esc_attr($screen_option_hidden_class('click_count') ); ?>"><button type="submit" name="single-click-log" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php echo esc_html(number_format_i18n(intval($data->click_count ) ) ); ?></button></td>
 				<td class="pz-man-body-result<?php echo esc_attr($screen_option_hidden_class('result') ); ?>"><?php echo wp_kses_post($html_result ); ?></td>
 			</tr>
 			<?php } ?>
@@ -635,6 +733,9 @@
 
 // HTTP結果コード
 function strHTTPCode($result, $message ) {
+	if	(is_null($result ) || $result === '' ) {
+		return	'-';
+	}
 	if	($message ) {
 		$message	=	' title="'.esc_attr($message ).'"';
 	}
@@ -647,10 +748,10 @@ function strHTTPCode($result, $message ) {
 
 // SNSカウントの表示（kilo → k , million → m）
 function sns_counter($count ) {
-	$count		=	intval($count );
-	if	($count < 0) {
+	if	(is_null($count ) ) {
 		return	'-';
 	}
+	$count		=	intval($count );
 	if			($count >= 10000000 ) {
 		return	number_format($count / 1000000 ).'&nbsp;m';
 	} elseif	($count >= 1000 ) {

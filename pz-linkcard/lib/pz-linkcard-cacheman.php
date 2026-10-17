@@ -20,41 +20,60 @@
 	if	(isset($_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 		check_admin_referer('pz-cacheman' );
 	}
-	$action			=	isset($_POST['action'] )		?	esc_attr($_POST['action'] )					:	null;
+	$action			=	isset($_POST['action'] )		?	sanitize_key(wp_unslash($_POST['action'] ) )	:
+						(isset($_GET['action'] )		?	sanitize_key(wp_unslash($_GET['action'] ) )	:	null );
 	$select_id		=	isset($_POST['select_id'] )		?	$_POST['select_id']							:	null;
 	$bulk_action	=	isset($_POST['bulk_action'] )	?	esc_attr($_POST['bulk_action'] )			:	null;
 	$data			=	(isset($_POST['data'] ) && is_array($_POST['data'] ) )		?	$_POST['data']	:	null;
 	$param_refine	=	isset($_POST['refine'] )		?	esc_attr($_POST['refine'] )					:	null;
-	$keyword		=	isset($_POST['keyword'] )		?	esc_attr(stripslashes($_POST['keyword'] ) )	:	null;
+	$keyword		=	isset($_POST['keyword'] ) && is_string($_POST['keyword'] )
+						?	trim(preg_replace('/[\r\n\t ]+/u', ' ', wp_check_invalid_utf8(wp_unslash($_POST['keyword'] ) ) ) )
+						:	null;
 	$filter			=	isset($_POST['filter'] )		?	esc_attr($_POST['filter'] )					:	'all';
 	$header			=	isset($_POST['header'] )		?	esc_attr(strtolower($_POST['header'] ) )	:	null;
-	$orderby		=	isset($_POST['orderby'] )		?	esc_attr(strtolower($_POST['orderby'] ) )	:	'id';
-	$order			=	isset($_POST['order'] )			?	esc_attr(strtolower($_POST['order'] ) )		:	'desc';
+	$orderby		=	isset($_POST['orderby'] )		?	sanitize_key(wp_unslash($_POST['orderby'] ) )	:
+						(isset($_GET['orderby'] )		?	sanitize_key(wp_unslash($_GET['orderby'] ) )	:	'id' );
+	$order			=	isset($_POST['order'] )			?	sanitize_key(wp_unslash($_POST['order'] ) )	:
+						(isset($_GET['order'] )			?	sanitize_key(wp_unslash($_GET['order'] ) )		:	'desc' );
 	$scroll_now		=	isset($_POST['scroll_now'] )	?	intval($_POST['scroll_now'] )				:	0;
-	$return_url		=	isset($_POST['return_url'] )	?	esc_url_raw(wp_unslash($_POST['return_url'] ) )	:	'';
+	$return_url		=	isset($_POST['return_url'] )	?	esc_url_raw(wp_unslash($_POST['return_url'] ) )	:
+						(isset($_GET['return_url'] )	?	esc_url_raw(wp_unslash($_GET['return_url'] ) )	:	'' );
 	$return_url		=	$return_url ? wp_validate_redirect($return_url, '' ) : '';
 	$page_now		=	(isset($_POST['page_button'] )	?	intval($_POST['page_button'] )				:	
 						(isset($_POST['page_trans'] )	?	intval($_POST['page_trans'] )				:	
 						(isset($_POST['page_now'] )		?	intval($_POST['page_now'] )					:	0 ) ) );
 	$param_url		=	isset($_POST['url'] )			?	esc_attr($_POST['url'] )					:	null;
-	$cache_id		=	isset($_POST['cache_id'] )		?	esc_attr($_POST['cache_id'] )				:	null;
+	$cache_id		=	isset($_POST['cache_id'] )		?	absint($_POST['cache_id'] )					:
+						(isset($_GET['cache_id'] )		?	absint($_GET['cache_id'] )					:	null );
 	$confirm		=	isset($_POST['confirm'] )		?	esc_attr($_POST['confirm'] )				:	null;
 	$update_result	=	isset($_POST['update_result'] )	?	esc_attr($_POST['update_result'] )			:	null;
 	$alive_result	=	isset($_POST['alive_result'] )	?	esc_attr($_POST['alive_result'] )			:	null;
 
 	// インラインメニュー
+	$single_click_log	=	isset($_POST['single-click-log'] ) ? absint($_POST['single-click-log'] )		:	null;
 	$single_edit	=	isset($_POST['single-edit'] )	?	esc_attr($_POST['single-edit'] )			:	null;
 	$single_renew	=	isset($_POST['single-renew'] )	?	esc_attr($_POST['single-renew'] )			:	null;
 	$single_delete	=	isset($_POST['single-delete'] )	?	esc_attr($_POST['single-delete'] )			:	null;
-	if			($single_edit ) {
+	if			($single_click_log ) {
+		$action		=	'click-log';
+		$cache_id	=	intval($single_click_log );
+	} elseif	($single_edit ) {
 		$action		=	'edit';
-		$select_id	=	array(intval($single_edit ) );
+		$cache_id	=	intval($single_edit );
+		$select_id	=	array($cache_id );
 	} elseif	($single_renew ) {
 		$action		=	'renew';
 		$select_id	=	array(intval($single_renew ) );
 	} elseif	($single_delete ) {
 		$action		=	'delete';
 		$select_id	=	array(intval($single_delete ) );
+	}
+	if	(isset($_POST['click-period'] ) || isset($_POST['click-page'] ) || isset($_POST['click-range-select'] ) ) {
+		$action		=	'click-log';
+	}
+
+	if	(!isset($_POST['filter'] ) && isset($_GET['filter'] ) ) {
+		$filter	= sanitize_key(wp_unslash($_GET['filter'] ) );
 	}
 
 	// 表示されている項目名がクリックされたら並び順を逆にする
@@ -70,7 +89,8 @@
 	// インラインメニュー（編集・再取得・削除）
 	if		 (isset($_POST['single-edit'] ) ) {
 		$action		=	'edit';
-		$select_id	=	array( intval($_POST['single-edit'] ) );
+		$cache_id	=	intval($_POST['single-edit'] );
+		$select_id	=	array($cache_id );
 	} elseif (isset($_POST['single-renew'] ) ) {
 		$action		=	'renew';
 		$select_id	=	array(intval($_POST['single-renew'] ) );
@@ -121,7 +141,13 @@
 	$title_icon		=	'<span class="dashicons dashicons-archive" style="vertical-align: bottom; width: 32px; height: 32px; font-size: 32px;"></span>';
 	$title_label	=	__('Pz-LinkCard Manager', 'pz-linkcard' );
 	$help_page		=	self::AUTHOR_URL.'/pz-linkcard-manager';
-	$html_title		=	'<div class="pz-header"><h1><span class="pz-header-title"><a class="pz-header-title-link" href="'.esc_url($this->cacheman_url ).'"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span></a><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener help" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
+	$is_dashboard_return	=	$this->pz_IsDashboardWidgetReturnUrl($return_url );
+	$header_back_link	=	'';
+	if	($return_url ) {
+		$back_label	=	$is_dashboard_return ? __('Return to Dashboard', 'pz-linkcard' ) : __('Return to Previous Page', 'pz-linkcard' );
+		$header_back_link	=	'<a class="pz-header-dashboard-back" href="'.esc_url($return_url ).'" title="'.esc_attr($back_label ).'"><span class="dashicons dashicons-exit" aria-hidden="true"></span></a>';
+	}
+	$html_title		=	'<div class="pz-header"><h1>'.$header_back_link.'<span class="pz-header-title"><a class="pz-header-title-link" href="'.esc_url($this->cacheman_url ).'"><span class="pz-header-title-icon">'.$title_icon.'</span><span class="pz-header-title-text">'.$title_label.'</span></a><a class="pz-help-icon" href="'.$help_page.'" rel="external noopener noreferrer help" referrerpolicy="no-referrer" target="_blank"><img src="'.$this->plugin_dir_url.'img/help.png" width="16" height="16" title="'.__('Help', 'pz-linkcard' ).'" alt="help" /></a></span></h1></div>';
 
 	// POSTする値 INPUT要素
 	$temp_param		=
@@ -139,6 +165,9 @@
 			'flg-inhibit'		=>		$inhibit,
 			'return_url'		=>		$return_url,
 		);
+	if	($action === 'click-log' ) {
+		$temp_param['keyword']	=	$keyword;
+	}
 	foreach		($temp_param		as	$temp_name => $temp_value ) {
 		$html_input	.=	'<input type="hidden" name="'.esc_attr($temp_name ).'" value="'.esc_attr($temp_value ).'" title="'.esc_attr($temp_name ).'" size="4" />';
 	}
@@ -152,19 +181,16 @@
 	}
 
 	// 画面描画
-	if	($inhibit ) {
-		echo	'<div id="pz-overlay-proc" style="display: flex;"><div class="pz-loader"></div></div>';
-	} else {
-		echo	'<div id="pz-overlay-proc" style="display: none;"><div class="pz-loader"></div></div>';
-	}
+	echo	'<div id="pz-overlay-proc" style="display: none;"><div class="pz-loader"></div></div>';
 	echo	'<div class="pz-dashboard'.$page_class.' wrap">';
 	echo	$html_style;
 	$infobar_allowed_html	=	wp_kses_allowed_html('post' );
+	$infobar_allowed_html['a']['referrerpolicy']	=	true;
 	$infobar_allowed_html['form']	=	array('method' => true, 'class' => true );
 	$infobar_allowed_html['input']	=	array('type' => true, 'name' => true, 'value' => true );
 	$infobar_allowed_html['button']	=	array('type' => true, 'name' => true, 'value' => true, 'class' => true, 'data-no-overlay' => true );
 	echo	wp_kses($html_plugin, $infobar_allowed_html );
-	echo	wp_kses_post($html_title );
+	echo	wp_kses($html_title, $infobar_allowed_html );
 
 	echo	'<form action="" method="post" enctype="multipart/form-data">';
 	wp_nonce_field('pz-cacheman' );			// nonce
@@ -173,7 +199,7 @@
 	if	($this->options['error-mode'] ) {
 		if	(!$this->options['error-mode-hide'] ) {
 			$error_url		=	$this->options['error-url'];
-			$html_notice	.=	'<div class="notice notice-error is-dismissible pz-lkc-error-mode-notice"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.esc_url($error_url ).'#lkc-error" target="_blank">'.esc_html($error_url ).'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can dismiss this message from <a href="./options-general.php?page=pz-linkcard-settings">the settings screen</a>.', 'pz-linkcard' ).'</p></div>';
+			$html_notice	.=	'<div class="notice notice-error is-dismissible pz-lkc-error-mode-notice"><p><strong>'.self::PLUGIN_NAME.': '.__('Invalid URL parameter in ', 'pz-linkcard' ).'<a href="'.esc_url($error_url ).'#lkc-error" target="_blank" rel="external noopener noreferrer" referrerpolicy="no-referrer">'.esc_html($this->pz_DecodeURL($error_url ) ).'</a></strong><br>'.__('*', 'pz-linkcard' ).' '.__('You can dismiss this message from <a href="./options-general.php?page=pz-linkcard-settings&tab=pz-error#pz-error-reset-settings">the settings screen</a>.', 'pz-linkcard' ).'</p></div>';
 		}
 	}
 
@@ -191,18 +217,34 @@
 			break;
 		
 		case	'cancel':					// 編集画面キャンセル
-			if	($return_url ) {
-				echo	'<script>window.location.replace('.wp_json_encode($return_url ).');</script>';
-				$show_list			=	false;
-			}
+			$redirect_url		=	$return_url ?: $this->cacheman_url;
+			echo	'<script>window.location.replace('.wp_json_encode($redirect_url ).');</script>';
+			$show_list			=	false;
 			break;
 
 		case	'edit':						// 編集画面
-			$data					=	$this->pz_GetCache(array('id' => $select_id[0] ) );
+			$edit_id				=	$cache_id ?: intval($select_id[0] ?? 0 );
+			$data					=	$this->pz_GetCache(array('id' => $edit_id ) );
 			if	(isset($data ) && is_array($data ) ) {
 				$content_file		=	'pz-linkcard-cacheman-edit.php';
 			}
 			$show_list				=	false;		// リストを表示しない
+			break;
+
+		case	'click-log':				// クリックログ一覧
+			if	($cache_id ) {
+				$data				=	$this->pz_GetCache(array('id' => $cache_id ) );
+			}
+			if	(!$cache_id || !empty($data['id'] ) ) {
+				$data				=	$cache_id ? $data : array('id' => 0 );
+				$content_file		=	'pz-linkcard-cacheman-click.php';
+			} else {
+				$html_notice		.=	'<div class="notice notice-error"><p><strong>'.esc_html__('The specified link card was not found.', 'pz-linkcard' ).'</strong></p></div>';
+			}
+			$show_list				=	false;
+			break;
+
+		case	'list':
 			break;
 
 		case	'update':
@@ -215,17 +257,14 @@
 			foreach	($data			as	$key => $value ) {
 				$data[$key]			=	stripslashes($value );
 			}
-			$data['mod_title']		=	($data['title']   <> $data['regist_title'] );
-			$data['mod_excerpt']	=	($data['excerpt'] <> $data['regist_excerpt'] );
 			$data	=	$this->pz_SetCache($data );
 			if	(isset($data ) && is_array($data ) && isset($data['id'] ) ) {
 				$success_count++;
 			}
 			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Update Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
-			if	($return_url ) {
-				echo	'<script>window.location.replace('.wp_json_encode($return_url ).');</script>';
-				$show_list			=	false;
-			}
+			$redirect_url		=	$return_url ?: $this->cacheman_url;
+			echo	'<script>window.location.replace('.wp_json_encode($redirect_url ).');</script>';
+			$show_list			=	false;
 			break;
 
 		case	'renew':					// 記事内容の再取得
@@ -236,11 +275,18 @@
 				break;
 			}
 			foreach	($select_id as $data_id ) {
-				$data		= $this->pz_GetCache(array('id' => $data_id ) );
+				$data		=	$this->pz_GetCache(array('id' => $data_id ) );
 				if	(isset($data ) && is_array($data ) ) {
-					$data			=	$this->pz_GetHTML( array('url' => $data['url'], 'force' => true ) );
-					$data			=	$this->pz_SetCache( $data );
-					$success_count++;
+					$url_info	=	$this->Pz_GetURLInfo($data['url'] );
+					$data		=	!empty($url_info['is_internal'] )
+						?	$this->pz_GetPost($data )
+						:	$this->pz_GetRemote($data );
+					$result		=	is_array($data ) ? $this->pz_SetCache($data ) : null;
+					if	($result ) {
+						$success_count++;
+					} else {
+						$skip_count++;
+					}
 				} else {
 					$skip_count++;
 				}
@@ -327,16 +373,6 @@
 					$data['alive_result']		=	$after['update_result'];
 					$data['alive_time']			=	$this->now;
 					$data['alive_nexttime']		=	$this->now + WEEK_IN_SECONDS * 4;
-					if	($data['title']			==	$after['title'] ) {
-						$data['mod_title']		=	false;
-					} else {
-						$data['mod_title']		=	true;
-					}
-					if	($data['excerpt']		==	$after['excerpt'] ) {
-						$data['mod_excerpt']	=	false;
-					} else {
-						$data['mod_excerpt']	=	true;
-					}
 					$data						=	$this->pz_SetCache($data );
 					if	($data ) {
 						$success_count++;
