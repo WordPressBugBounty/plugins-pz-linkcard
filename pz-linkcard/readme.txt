@@ -4,7 +4,7 @@ Tags: LinkCard, BlogCard, Internal Link, External Link
 Requires at least: 6.0
 Tested up to: 7.1.3
 Requires PHP: 8.0
-Stable tag: 2.6.3
+Stable tag: 2.6.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.amazon.co.jp/gp/registry/wishlist/2KIBQLC1VLA9X
