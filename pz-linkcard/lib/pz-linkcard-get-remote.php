@@ -12,6 +12,7 @@
     $rget_args					=	[];
     $rget_args['user-agent']	=	$this->pz_GetUserAgent();
     $rget_args['sslverify']		=	$this->options['flg-sslverify']		?	true	:	false ;
+	$rget_args['limit_response_size']	=	defined('MB_IN_BYTES' ) ? MB_IN_BYTES : 1048576;
     $redirect_limit				=	$this->options['flg-redir']			?	8		:	0;
     $rget_args['redirection']	=	0;
     $browser_user_agent			=	$this->pz_GetUserAgent('');
@@ -30,8 +31,20 @@
 		$check_host	=	strtolower((string) wp_parse_url($check_url, PHP_URL_HOST ) );
 		return	preg_match('/(^|\.)jmty\.jp$/i', $check_host ) === 1;
 	};
-    $get_request_args	=	function($check_url, $request_args ) use ($browser_user_agent, $is_amazon_url, $is_twitter_url, $is_jmty_url ) {
-        if	($is_amazon_url($check_url ) || $is_twitter_url($check_url ) || $is_jmty_url($check_url ) ) {
+	$is_yahoo_auction_url	=	function($check_url ) {
+		$check_host	=	strtolower((string) wp_parse_url($check_url, PHP_URL_HOST ) );
+		return	preg_match('/(^|\.)auctions\.yahoo\.co\.jp$/i', $check_host ) === 1;
+	};
+	$is_microsoft_url	=	function($check_url ) {
+		$check_host	=	strtolower((string) wp_parse_url($check_url, PHP_URL_HOST ) );
+		return	preg_match('/(^|\.)microsoft\.com$/i', $check_host ) === 1;
+	};
+    $get_request_args	=	function($check_url, $request_args ) use ($browser_user_agent, $is_amazon_url, $is_twitter_url, $is_jmty_url, $is_yahoo_auction_url, $is_microsoft_url ) {
+		if	(!empty($this->options['flg-special-microsoft'] ) && $is_microsoft_url($check_url ) ) {
+			$request_args['user-agent']	=	'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)';
+			return	$request_args;
+		}
+        if	($is_amazon_url($check_url ) || $is_twitter_url($check_url ) || $is_jmty_url($check_url ) || $is_yahoo_auction_url($check_url ) ) {
             $request_args['user-agent']	=	$browser_user_agent;
         }
         return	$request_args;
@@ -93,24 +106,15 @@
             if	($this->pz_ShouldBlockLocalAddress($current_url ) ) {
                 return	$current_url;
             }
-            $head_args				=	$get_request_args($current_url, $trace_args );
-            $head_args['method']	=	'HEAD';
-            $response				=	wp_safe_remote_head($current_url, $head_args );
-
-            if	(is_wp_error($response ) && !$headers_only ) {
-                $get_args							=	$get_request_args($current_url, $trace_args );
-                $get_args['limit_response_size']	=	1;
-                $response							=	wp_safe_remote_get($current_url, $get_args );
-            }
-
-            $response_url	=	$get_response_url($response );
-            if	($response_url && $response_url !== $current_url ) {
-                $current_url	=	$this->pz_EncodeURL($response_url, true );
-                if	($this->pz_ShouldBlockLocalAddress($current_url ) ) {
-                    return	$current_url;
-                }
-                continue;
-            }
+			$probe_args	=	$get_request_args($current_url, $trace_args );
+			if	($headers_only ) {
+				$probe_args['method']	=	'HEAD';
+				$response				=	wp_safe_remote_head($current_url, $probe_args );
+			} else {
+				// Some sites redirect GET requests but not HEAD requests.
+				$probe_args['limit_response_size']	=	1;
+				$response							=	wp_safe_remote_get($current_url, $probe_args );
+			}
 
             $http_code		=	intval(wp_remote_retrieve_response_code($response ) );
             $location_url	=	$get_location_url($response, $current_url );
@@ -121,6 +125,15 @@
                 }
                 continue;
             }
+
+			$response_url	=	$get_response_url($response );
+			if	($response_url && rtrim($response_url, '/' ) !== rtrim($current_url, '/' ) ) {
+				$current_url	=	$this->pz_EncodeURL($response_url, true );
+				if	($this->pz_ShouldBlockLocalAddress($current_url ) ) {
+					return	$current_url;
+				}
+				continue;
+			}
 
             break;
         }
@@ -142,15 +155,14 @@
     $is_amazon_access	=	$is_amazon_url($url_access );
     $is_twitter_access	=	$is_twitter_url($url_access );
 	$is_jmty_access		=	$is_jmty_url($url_access );
+	$is_yahoo_auction_access	=	$is_yahoo_auction_url($url_access );
     $blocked_local_url	=	$this->pz_ShouldBlockLocalAddress($url ) || ($url_redir && $this->pz_ShouldBlockLocalAddress($url_redir ) );
     if	($blocked_local_url ) {
         $rget_data	=	new WP_Error('pz_lkc_local_redirect', 'Local address blocked' );
     } elseif ($robots_blocked_url ) {
         $rget_data	=	new WP_Error('pz_lkc_robots_disallowed', 'Blocked by robots.txt' );
     } else {
-        if	($is_amazon_access || $is_twitter_access || $is_jmty_access ) {
-            $rget_args	=	$get_request_args($url_access, $rget_args );
-        }
+		$rget_args	=	$get_request_args($url_access, $rget_args );
         if	($headers_only ) {
             $rget_args['method']	=	'HEAD';
             $rget_data	=	wp_safe_remote_head($url_access, $rget_args );
@@ -173,6 +185,7 @@
     $error			=	false;
     $amazon_image	=	'';
     $twitter_icon	=	'';
+	$yahoo_auction_title	=	'';
 
     // URL解析（自サイトチェック）
     $url_info		=	$this->Pz_GetURLInfo($url_access );
@@ -322,6 +335,40 @@
 			}
 		}
 
+		// Yahoo! Auctions: retrieve the auction title and listing start time.
+		if	(!empty($this->options['flg-special-yahoo-auc'] ) && $is_yahoo_auction_access ) {
+			$yahoo_auction_body	=	html_entity_decode($http_body, ENT_QUOTES | ENT_HTML5, $this->charset );
+			if	(class_exists('DOMDocument' ) ) {
+				$previous_libxml_errors	=	libxml_use_internal_errors(true );
+				$document	=	new DOMDocument();
+				if	($document->loadHTML($http_body, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET ) ) {
+					$xpath	=	new DOMXPath($document );
+					$headings	=	$xpath->query('(//h1[contains(@class, "gv-u-fontSize16--") and contains(@class, "gv-u-fontWeightBold--")])[1]' );
+					if	($headings && $headings->length > 0 ) {
+						$yahoo_auction_title	=	preg_replace('/\s+/u', ' ', trim($headings->item(0 )->textContent ) );
+					}
+				}
+				libxml_clear_errors();
+				libxml_use_internal_errors($previous_libxml_errors );
+			}
+
+			if	(preg_match('/["\']starttime["\']\s*:\s*(?:["\']([^"\']+)["\']|(\d{10,13}))/i', $yahoo_auction_body, $matches ) ) {
+				$starttime	=	trim($matches[1] !== '' ? $matches[1] : $matches[2] );
+				$starttime	=	str_replace(array('\\/', '\\u002F' ), '/', $starttime );
+				if	(ctype_digit($starttime ) ) {
+					$starttime_timestamp	=	intval($starttime );
+					if	($starttime_timestamp > 9999999999 ) {
+						$starttime_timestamp	=	intval($starttime_timestamp / 1000 );
+					}
+				} else {
+					$starttime_timestamp	=	strtotime($starttime );
+				}
+				if	($starttime_timestamp > 0 ) {
+					$data['post_date']	=	$starttime_timestamp;
+				}
+			}
+		}
+
         // Open Graph Protcol
         $og_url			=	$tags['og:url']					??	'';
         $og_type		=	$tags['og:type']				??	'';
@@ -354,6 +401,9 @@
                 $excerpt		=	$tw_excerpt;
             }
         }
+		if	($yahoo_auction_title ) {
+			$title	=	$yahoo_auction_title;
+		}
         
         // サムネイル画像
         if				(!$thumbnail_url ) {
@@ -440,11 +490,6 @@
     $data['use_post_id4']		=	$data['use_post_id4']	??	null;				// 呼ばれている記事
     $data['use_post_id5']		=	$data['use_post_id5']	??	null;				// 呼ばれている記事
     $data['use_post_id6']		=	$data['use_post_id6']	??	null;				// 呼ばれている記事
-    $data['regist_title']		=	$data['regist_title']	??	$title;				// 登録時：タイトル
-    $data['regist_excerpt']		=	$data['regist_excerpt']	??	$excerpt;			// 登録時：抜粋文
-    $data['regist_charset']		=	$data['regist_charset']	??	$charset;			// 登録時：文字コード
-    $data['regist_time']		=	$data['regist_time']	??	0;					// 登録時：登録日時
-    $data['regist_result']		=	$data['regist_result']	??	$http_code;			// 登録時：HTTPレスポンス
     $data['update_time']		=	$this->now;										// 更新：最終更新日
     $data['update_result']		=	$http_code;										// 更新：HTTPレスポンス
     return	$data;

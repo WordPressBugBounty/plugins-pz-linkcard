@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	Displays links in card format.
-Version:		2.6.3.1
+Version:		2.6.4
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -417,20 +417,32 @@ class class_pz_linkcard {
 			'date-format-man'					=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	'Y\<\b\r\>m/d\<\b\r\>H:i', ],
 			'flg-inhibit'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'flg-preview'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
-			'preview-mode'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
+			'preview-mode'						=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	'icon', ],
+			'preview-restore-mode'				=>	['type'	=>	'string',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-left'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-top'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-width'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-height'					=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-docked-height'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-right-docked-width'		=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'window-left'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'window-top'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'window-width'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'window-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'docked-width'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'docked-height'						=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'last-bottom-docked-height'			=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
+			'right-docked-width'				=>	['type'	=>	'numeric',		'null'	=>	true,	'default'	=>	null, ],
 			'preview-two-cards'					=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
 			'flg-quickmenu'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'flg-amp-url'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
+			'flg-public-only'					=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 
 			'flg-special-amazon'				=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'flg-special-twitter'				=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'flg-special-jmty'					=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
+			'flg-special-yahoo-auc'				=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
+			'flg-special-microsoft'				=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 
 			'alive-period'						=>	['type'	=>	'schedule',		'null'	=>	false,	'default'	=>	'hourly', ],
 			'alive-period-num'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	5, ],
@@ -438,11 +450,11 @@ class class_pz_linkcard {
 			'sns-period-num'					=>	['type'	=>	'numeric',		'null'	=>	false,	'default'	=>	5, ],
 
 			'flg-adminbar'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
-			'flg-initialize'					=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'debug-mode'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
 			'survey-mode'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
 			'admin-mode'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
 			'multi-mode'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
+			'flg-initialize'					=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	1, ],
 			'develop-mode'						=>	['type'	=>	'flag',			'null'	=>	true,	'default'	=>	null, ],
 
 			'css-add-url'						=>	['type'	=>	'url',			'null'	=>	true,	'default'	=>	null, ],
@@ -484,6 +496,8 @@ class class_pz_linkcard {
 	private		const	CRON_ALIVE			=	'pz_linkcard_alive';
 	private		const	CRON_CHECK			=	'pz_linkcard_check';
 	private		const	CRON_CLICK_CLEANUP	=	'pz_linkcard_click_cleanup';
+	private		const	CRON_GET			=	'pz_linkcard_get';
+	private		const	AJAX_GET_ENABLED	=	true;
 	private		const	CACHEMAN_PAGE		=	'pz-linkcard-cacheman';								// Pzカード管理のページ名
 	private		const	CACHEMAN_URL		=	'/tools.php?page=pz-linkcard-cacheman';				// Pzカード管理のURL
 	private		const	SETTINGS_PAGE		=	'pz-linkcard-settings';								// Pzカード設定のページ名
@@ -652,6 +666,7 @@ class class_pz_linkcard {
 		add_action(self::CRON_ALIVE, [$this, 'schedule_hook_alive' ] );
 		add_action(self::CRON_CHECK, [$this, 'schedule_hook_check' ] );
 		add_action(self::CRON_CLICK_CLEANUP, [$this, 'schedule_hook_click_cleanup' ] );
+		add_action(self::CRON_GET, [$this, 'schedule_hook_get' ] );
 
 		// WP-CRONスケジュール登録
 		$this->pz_SyncCronSchedules();
@@ -670,6 +685,7 @@ class class_pz_linkcard {
 
 			// 管理画面用アクション
 			add_action		('init',									[$this, 'action_init' ],						10, 1 );	// プラグイン初期化
+			add_filter		('admin_body_class',						[$this, 'filter_admin_body_class'] );
 			add_action		('upgrader_process_complete',				[$this, 'action_upgrader_process_complete' ],	10, 2 );	// アップデートしたときの処理
 			add_action		('admin_post_pz_export_file',				[$this, 'action_export_file' ],					10, 1 );	// エクスポート処理
 			add_action		('enqueue_block_editor_assets',				[$this, 'action_enqueue_block_editor_assets' ],	10, 1 );	// ブロックエディタ用スクリプト
@@ -682,7 +698,8 @@ class class_pz_linkcard {
 
 			// カード管理画面用Ajaxアクション
 			add_action		('wp_ajax_pz_lkc_save_cacheman_columns',	[$this, 'action_ajax_pz_lkc_save_cacheman_columns'] );
-			add_action		('wp_ajax_pz_lkc_find_used_posts',		[$this, 'action_ajax_pz_lkc_find_used_posts'] );
+			add_action		('wp_ajax_pz_lkc_find_used_posts',			[$this, 'action_ajax_pz_lkc_find_used_posts'] );
+			add_action		('wp_ajax_pz_lkc_cacheman_pending',		[$this, 'action_ajax_pz_lkc_cacheman_pending'] );
 
 			// ビジュアルエディター用Ajaxアクション
 			add_action		('wp_ajax_pz_lkc_mce_post_search',			[$this, 'action_ajax_pz_lkc_mce_post_search'] );
@@ -713,6 +730,10 @@ class class_pz_linkcard {
 		add_action		('wp_ajax_pz_lkc_refresh_thumbnail',		[$this, 'action_ajax_pz_lkc_refresh_thumbnail'] );
 		add_action		('wp_ajax_pz_lkc_click_count', 				[$this, 'action_ajax_pz_lkc_click_count'] );	// ログインユーザー用Ajaxアクション
 		add_action		('wp_ajax_nopriv_pz_lkc_click_count',		[$this, 'action_ajax_pz_lkc_click_count'] );	// 未ログインユーザー用Ajaxアクション
+		if (self::AJAX_GET_ENABLED ) {
+			add_action	('wp_ajax_pz_lkc_ajax_get',			[$this, 'action_ajax_pz_lkc_ajax_get'] );
+			add_action	('wp_ajax_nopriv_pz_lkc_ajax_get',	[$this, 'action_ajax_pz_lkc_ajax_get'] );
+		}
 	}
 
 	// テキストリンクの行とURLのみの行をリンクカードへ置き換える処理（直接HTMLタグにするのでは無くショートコードに変換する。）
@@ -891,7 +912,7 @@ class class_pz_linkcard {
 					$result	=	$this->pz_SaveOptions();
 				}
 			}
-			$tag		=	'<div class="linkcard"><a id="lkc-error" class="lkc-error" style="display:block;scroll-margin-top:33vh;"></a><div class="lkc-internal-wrap"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
+			$tag		=	'<div class="linkcard"><a id="lkc-error" class="lkc-error" style="display:block;scroll-margin-top:33vh;"></a><div class="lkc-internal-wrap lkc-unlink"><div class="lkc-info">'.self::PLUGIN_NAME.'</div><div class="lkc-excerpt">'.__('-', 'pz-linkcard' ).' '.__('Incorrect URL specification.', 'pz-linkcard' ).'<br>'.__('-', 'pz-linkcard' ).' '.__('URL', 'pz-linkcard' ).'='.esc_url($url_org ).'</div></div></div>';
 			return			PHP_EOL.$tag.PHP_EOL;
 		}
 
@@ -928,8 +949,14 @@ class class_pz_linkcard {
 			}
 		}
 
+// ここまでは現在の処理のまま
+
+
+
+
+
 		// 記事内容取得
-		$tag	=	$this->pz_GetHTML($atts );
+		$tag	=	$this->pz_GetLinkCard($atts );
 
 		// // 実行時間
 		// if	($this->options['debug-mode'] ) {
@@ -944,7 +971,86 @@ class class_pz_linkcard {
 		return	$tag;
 	}
 
-	// キャッシュやリンク先からリンクカードのHTMLを生成
+	// キャッシュやリンク先からリンクカードの表示データを作成
+	private function pz_GetLinkCard($atts ) {
+		$url = $atts['url'] ?? null;
+		if (!$url ) {
+			return null;
+		}
+		$url_info = $this->Pz_GetURLInfo($url );
+		if (isset($atts['preview-data'] ) && is_array($atts['preview-data'] ) ) {
+			if (!empty($this->options['flg-public-only'] ) && !empty($url_info['is_internal'] ) && !$this->pz_IsInternalCardPubliclyViewable($url, $atts['preview-data'] ) ) {
+				return null;
+			}
+			return $this->pz_GetHTML($atts );
+		}
+
+		if (!empty($url_info['is_internal'] ) ) {
+			if (!$this->pz_IsInternalCardPubliclyViewable($url ) ) {
+				return null;
+			}
+		}
+		$data = $this->pz_GetCache(array('url' => $url ) );
+		$data = is_array($data ) && !empty($data['url'] ) ? $data : array('url' => $url );
+		if (!empty($url_info['is_internal'] ) && !$this->pz_IsInternalCardPubliclyViewable($url, $data ) ) {
+			return null;
+		}
+		$data_id = !empty($data['id'] ) ? intval($data['id'] ) : 0;
+		$force = isset($atts['force'] ) && $atts['force'] == true;
+
+		if (!empty($url_info['is_internal'] ) ) {
+			if ($this->options['in-get-from'] == 2 ) {
+				if (!$data_id || $force ) {
+					$data = $this->pz_GetPost($data );
+					$saved = $this->pz_SetCache($data );
+					if (is_array($saved ) ) {
+						$data = $saved;
+					}
+				}
+			} else {
+				$data = $this->pz_GetPost($data );
+				if (!$data_id ) {
+					$saved = $this->pz_SetCache($data );
+					if (is_array($saved ) ) {
+						$data = $saved;
+					}
+				}
+			}
+		} elseif (!empty($url_info['is_external'] ) ) {
+			if (!$data_id && !$force ) {
+				$data = $this->pz_SetCache(array(
+					'url'			=> $url,
+					'title'			=> '',
+					'charset'		=> null,
+					'regist_title'	=> null,
+					'regist_excerpt'	=> null,
+					'regist_charset'	=> null,
+					'regist_result'	=> null,
+					'regist_time'	=> null,
+				) );
+				$data = is_array($data ) ? $data : array('url' => $url );
+				$data_id = !empty($data['id'] ) ? intval($data['id'] ) : 0;
+			}
+			if ($force || ($this->options['debug-mode'] == true && $this->options['debug-nocache'] == true ) ) {
+				$remote = $this->pz_GetRemote($data );
+				if (is_array($remote ) && !empty($remote['url'] ) ) {
+					$saved = $this->pz_SetCache($remote );
+					$data = is_array($saved ) ? $saved : $remote;
+				}
+			} elseif (array_key_exists('regist_time', $data ) && (is_null($data['regist_time'] ) || intval($data['regist_time'] ) === 0 ) ) {
+				$atts['title'] = __('Retrieving...', 'pz-linkcard' );
+				$atts['pz-pending'] = true;
+				if (!wp_next_scheduled(self::CRON_GET ) ) {
+					wp_schedule_single_event(time() + 3, self::CRON_GET );
+				}
+			}
+		}
+
+		$atts['pz-card-data'] = $data;
+		return $this->pz_GetHTML($atts );
+	}
+
+	// $attsと収集済みデータからリンクカードのHTMLを生成
 	private	function	pz_GetHTML($atts ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__, '$atts='.print_r($atts, true ) ); }
 
@@ -995,21 +1101,24 @@ class class_pz_linkcard {
 		} elseif	($this->options['class-pc'] ) {
 			$class_id	.=	' '.esc_attr($this->options['class-pc'] );
 		}
+		if (!empty($atts['pz-pending'] ) ) {
+			$class_id .= ' pz-lkc-pending';
+		}
 
 		// キャッシュから取得
 		$is_preview		=	isset($atts['preview-data'] ) && is_array($atts['preview-data'] );
+		$is_prepared	=	isset($atts['pz-card-data'] ) && is_array($atts['pz-card-data'] );
 		$data			=	array('url' => $url );
 		if	($is_preview ) {
 			$data		=	array_merge($data, $atts['preview-data'] );
 			$data_id	=	'preview';
 			$class_id	.=	' pz-preview-linkcard';
+		} elseif ($is_prepared ) {
+			$data		=	array_merge($data, $atts['pz-card-data'] );
+			$data_id	=	$data['id'] ?? '';
+			$url		=	$data['url'] ?? $url;
 		} else {
-			$result		=	$this->pz_GetCache($data );
-			if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
-				$data	=	$result;
-				$data_id	=	$data['id'];
-				$url	=	$data['url'];
-			}
+			return null;
 		}
 
 		// 内部リンクの処理
@@ -1029,7 +1138,7 @@ class class_pz_linkcard {
 			}
 
 			// 記事の取得方法
-			if	($is_preview ) {
+			if	($is_preview || $is_prepared ) {
 				// 設定画面プレビューでは取得・保存を行わず、指定されたサンプルデータを使う。
 			} elseif	($this->options['in-get-from'] == 2 ) {	// 常にカード管理から
 				if	(!$data_id || (isset($atts['force'] ) && $atts['force'] == true ) ) {	// キャッシュに無いとき
@@ -1064,8 +1173,7 @@ class class_pz_linkcard {
 			}
 			$rel			=	' rel="'.$rel.'"';
 
-			// キャッシュが無い、もしくは強制取得
-			if	(!$is_preview && ((!$data_id ) || ($this->options['debug-mode']	==	true  && $this->options['debug-nocache']	==	true ) || (isset($atts['force'] ) && $atts['force'] == true ) ) ) {
+			if	(!$is_preview && !$is_prepared && (($this->options['debug-mode']	==	true  && $this->options['debug-nocache']	==	true ) || (isset($atts['force'] ) && $atts['force'] == true ) ) ) {
 				$result		=	$this->pz_GetRemote($data );			// 記事内容を強制取得
 				if	(isset($result ) && is_array($result ) && isset($result['url'] ) ) {
 					$data	=	$result;
@@ -1115,7 +1223,8 @@ class class_pz_linkcard {
 			$sw_siteicon			=	isset($this->options['in-siteicon'] )		?	esc_attr($this->options['in-siteicon'] )			:	0 ;
 		} else {
 			$wrap_class				=	'lkc-external-wrap';
-			$html_wrap_op			=	'<div class="'.$wrap_class.'">';
+			$html_pending_loader	=	!empty($atts['pz-pending'] ) ? '<span class="pz-lkc-pending-loader" aria-hidden="true"></span>' : '';
+			$html_wrap_op			=	'<div class="'.$wrap_class.'">'.$html_pending_loader;
 			$html_wrap_cl			=	'</div>';
 			$added_text				=	isset($this->options['ex-added-text'] )		?	esc_attr($this->options['ex-added-text'] )		:	null ;
 			$heading_text			=	isset($this->options['ex-heading-text'] )	?	esc_attr($this->options['ex-heading-text'] )	:	null ;
@@ -1242,7 +1351,7 @@ class class_pz_linkcard {
 		}
 
 		// サイトアイコン取得
-		if	($this->options['info-position'] ) {
+		if	($this->options['info-position'] || $is_preview ) {
 			if	($sw_siteicon == 1 || $sw_siteicon == 13 ) {							// 直接取得
 				if	($is_internal ) {
 					$siteicon_url	=	get_site_icon_url(16 );						// 自サイトのサイトアイコン
@@ -1274,6 +1383,10 @@ class class_pz_linkcard {
 		}
 
 		// リンク先URL
+		$click_card_id		= absint($data_id );
+		$click_post_id		= absint(get_the_ID() );
+		$click_token			= $click_card_id ? $this->pz_GetClickToken($click_card_id, $click_post_id ) : '';
+		$html_click_data		= ' data-lkc-id="'.esc_attr($data_id ).'" data-post-id="'.esc_attr($click_post_id ).'" data-click-token="'.esc_attr($click_token ).'"';
 		if	(!$no_failure && $this->options['flg-unlink'] && in_array(intval($alive_result ), array(403, 404, 410 ), true ) ) {
 			// Not Found の時は見え消ししてリンクしない
 			$html_wrap_op	=	'<div class="'.$wrap_class.' lkc-unlink">';
@@ -1285,7 +1398,7 @@ class class_pz_linkcard {
 			$html_st_cl		=	'</strike>';
 		} elseif	($this->options['flg-linkall'] ) {
 			// カード全体をリンク（どこをクリックしても良いのが分かり易い）
-			$html_a_op_all	=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'" data-lkc-id="'.esc_attr($data_id ).'" data-post-id="'.esc_attr(get_the_ID() ).'"'.$target.$rel.'>';
+			$html_a_op_all	=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'"'.$html_click_data.$target.$rel.'>';
 			$html_a_cl_all	=	'</a>';
 			$html_a_op		=	null;
 			$html_a_cl		=	null;
@@ -1295,7 +1408,7 @@ class class_pz_linkcard {
 			// タイトルとかURLとかを個別でリンク（タイトルや抜粋文などの文字を範囲指定をしてコピー等がし易い）
 			$html_a_op_all	=	null;
 			$html_a_cl_all	=	null;
-			$html_a_op		=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'" data-lkc-id="'.esc_attr($data_id ).'" data-post-id="'.esc_attr(get_the_ID() ).'"'.$target.$rel.'>';
+			$html_a_op		=	'<a class="lkc-link no_icon" href="'.esc_url($url ).'"'.$html_click_data.$target.$rel.'>';
 			$html_a_cl		=	'</a>';
 			$html_st_op		=	null;
 			$html_st_cl		=	null;
@@ -1401,6 +1514,10 @@ class class_pz_linkcard {
 		}
 
 		// 見出し情報
+		if (($this->options['special-format'] ?? null) === 'browser' ) {
+			$html_url1 = '<div class="lkc-url" title="'.esc_attr($url ).'">'.$html_a_op.$html_st_op.$disp_url.$html_st_cl.$html_a_cl.'</div>';
+			$html_url2 = null;
+		}
 		if (($this->options['special-format'] ?? null) === 'JIN' && ($heading_text === null || $heading_text === '')) {
 			$heading_text = $is_internal ? __('You may also like', 'pz-linkcard' ) : __('Referenced', 'pz-linkcard' );
 		}
@@ -1461,9 +1578,12 @@ class class_pz_linkcard {
 			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 			break;
 		default:
-			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
+			$html_tag	=	$html_wrap_op.$html_heading.$html_a_op_all.'<div class="lkc-card">'.($is_preview ? $html_info : '').'<div class="lkc-content"'.($is_preview ? ' data-pz-preview-content' : '').'>'.$html_a_op.$html_thumbnail.$html_title.$html_a_cl.$html_sns_title.$html_url1.$html_date.$html_excerpt.$html_moretag.'</div>'.'<div class="clear">'.'</div>'.'</div>'.$html_a_cl_all.$html_wrap_cl;
 		}
 		$enclose_tag	=	isset($this->options['enclose-tag'] ) ? strtolower($this->options['enclose-tag'] ) : (!empty($this->options['blockquote'] ) ? 'blockquote' : 'div');
+		if (intval($this->options['info-position'] ?? 0 ) === 3 && $html_info && strpos($html_tag, 'lkc-info' ) === false ) {
+			$html_tag = str_replace($html_title, $html_info.$html_title, $html_tag);
+		}
 		if	(!in_array($enclose_tag, array('div', 'blockquote', 'figure', 'article', 'section', 'nav', 'aside' ), true ) ) {
 			$enclose_tag	=	'div';
 		}
@@ -1472,7 +1592,7 @@ class class_pz_linkcard {
 		$html_data_id			=	'';
 		static $html_anchor_ids	=	array();
 		if	(!$is_preview && !empty($data_id ) ) {
-			$html_data_id		=	' data-lkc-id="'.esc_attr($data_id ).'"';
+			$html_data_id		=	$html_click_data;
 			if	(empty($html_anchor_ids[$data_id] ) ) {
 				$html_data_id		=	' id="pz-lkc-'.esc_attr($data_id ).'"'.$html_data_id;
 				$html_anchor_ids[$data_id]	=	true;
@@ -1481,12 +1601,17 @@ class class_pz_linkcard {
 				$html_quickmenu_icon	=	'<span class="pz-lkc-quickmenu-indicator dashicons dashicons-ellipsis" aria-hidden="true"></span>';
 			}
 		}
-		$html_tag		=	'<'.$enclose_tag.' class="'.esc_attr($class_id ).'"'.$html_data_id.($is_preview && !empty($atts['preview-card'] ) ? ' data-pz-preview-card="'.esc_attr($atts['preview-card'] ).'"' : '').'>'.$html_tag.$html_quickmenu_icon.'</'.$enclose_tag.'>';
+		$html_tag		=	'<'.$enclose_tag.' class="'.esc_attr($class_id ).'"'.$html_data_id.(!empty($atts['pz-pending'] ) ? ' data-pz-lkc-pending="1"' : '').($is_preview && !empty($atts['preview-card'] ) ? ' data-pz-preview-card="'.esc_attr($atts['preview-card'] ).'"' : '').'>'.$html_tag.$html_quickmenu_icon.'</'.$enclose_tag.'>';
 
 		return	$html_tag;
 	}
 
 	// URLのエンコード（DB格納用のURL作成）
+	private	function	pz_GetClickToken($card_id, $post_id ) {
+		$payload	= absint($card_id ).'|'.absint($post_id );
+		return	hash_hmac('sha256', $payload, wp_salt('auth') );
+	}
+
 	private	function	pz_EncodeURL($url = null, $sanitize = false ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__, '$url='.$url ); }
 
@@ -1883,6 +2008,8 @@ class class_pz_linkcard {
 		if	(!isset($data['url'] ) || !$data['url'] ) {
 			return	null;
 		}
+		$is_pending	=	array_key_exists('regist_time', $data ) && (is_null($data['regist_time'] ) || intval($data['regist_time'] ) === 0 )
+			&& array_key_exists('charset', $data ) && is_null($data['charset'] );
 
 		// リンク先URL
 		$url					=	$this->pz_EncodeURL($data['url'] ,true );
@@ -1911,6 +2038,7 @@ class class_pz_linkcard {
 		$data['excerpt']			=	isset($data['excerpt'] )		? $data['excerpt']			: null;			// リンク先：抜粋文
 		$data['thumbnail']			=	isset($data['thumbnail'] )		? $data['thumbnail']		: null;			// リンク先：サムネイルURL
 		$data['favicon']			=	isset($data['favicon'] )		? $data['favicon']			: null;			// リンク先：サイトアイコンURL
+		$has_charset				=	array_key_exists('charset', $data ) && !is_null($data['charset'] );
 		$data['charset']			=	isset($data['charset'] )		? $data['charset']			: 'Unknown';	// リンク先：文字コード
 		foreach	(array('regist_result', 'update_result', 'alive_result' ) as $result_key ) {
 			if	(!array_key_exists($result_key, $data ) || $data[$result_key] === '' || is_null($data[$result_key] ) || intval($data[$result_key] ) < 0 ) {
@@ -1922,19 +2050,22 @@ class class_pz_linkcard {
 		$data['no_failure']			=	isset($data['no_failure'] )		? $data['no_failure']		: 0 ;			// 結果コードがエラーでも成功と見なす
 
 		// 登録時情報
-		if	(!isset($data['regist_time'] ) || !$data['regist_time'] ) {
-			$data['regist_title']	=	$data['title'];																// 登録時：タイトル
-			$data['regist_excerpt']	=	$data['excerpt'];															// 登録時：抜粋文
-			$data['regist_charset']	=	$data['charset'];															// 登録時：文字コード
-			$data['regist_result']	=	$data['update_result'];														// 登録時：結果コード
+		if ((!isset($data['regist_time'] ) || intval($data['regist_time'] ) === 0 ) && $has_charset ) {
+			$data['regist_title']	=	$data['title'];
+			$data['regist_excerpt']	=	$data['excerpt'];
+			$data['regist_charset']	=	$data['charset'];
+			$data['regist_result']	=	$data['update_result'];
 			$data['regist_time']	=	$this->now;
 		}
-
 		// 日本語項目のエンティティ文字を出コード
 		$data['title']				=	html_entity_decode($data['title'] );										// リンク先：タイトル
 		$data['excerpt']			=	html_entity_decode($data['excerpt'] );										// リンク先：抜粋文
-		$data['regist_title']		=	html_entity_decode($data['regist_title'] );									// 登録時：タイトル
-		$data['regist_excerpt']		=	html_entity_decode($data['regist_excerpt'] );								// 登録時：抜粋文
+		if (isset($data['regist_title'] ) ) {
+			$data['regist_title']	=	html_entity_decode($data['regist_title'] );									// 登録時：タイトル
+		}
+		if (isset($data['regist_excerpt'] ) ) {
+			$data['regist_excerpt']	=	html_entity_decode($data['regist_excerpt'] );								// 登録時：抜粋文
+		}
 
 		// 生存確認
 		if	(!isset($data['alive_time'] ) || !$data['alive_time'] ) {
@@ -1962,10 +2093,12 @@ class class_pz_linkcard {
 				$use_post_ids[]	=	intval($data[$use_post_key] );
 			}
 		}
-		$post_id_t	=	$wpdb->get_col($wpdb->prepare(
-			"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post' AND post_content LIKE %s ORDER BY ID ASC",
-			'%'.$wpdb->esc_like($data['url'] ).'%'
-		) );
+		$post_id_t	=	$is_pending
+			? array()
+			: $wpdb->get_col($wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'post' AND post_content LIKE %s ORDER BY ID ASC",
+				'%'.$wpdb->esc_like($data['url'] ).'%'
+			) );
 		$use_post_ids	=	array_values(array_unique(array_filter(array_map('intval', array_merge($use_post_ids, $post_id_t ) ) ) ) );
 		for	($use_post_index = 1; $use_post_index <= 6; $use_post_index++ ) {
 			$data['use_post_id'.$use_post_index]	=	$use_post_ids[$use_post_index - 1] ?? null;
@@ -1975,7 +2108,7 @@ class class_pz_linkcard {
 		$data['update_time']		=	$this->now;
 
 		// DB更新キー取得
-		if	(!isset($data['id'] ) || !$data['id']) {
+		if	(!$is_pending && (!isset($data['id'] ) || !$data['id']) ) {
 			$now	=	$this->pz_GetCache(array('url' => $data['url'] ) );
 			if	(isset($now['id'] ) ) {
 				$data['id']	=	$now['id'];
@@ -2016,6 +2149,11 @@ class class_pz_linkcard {
 		} else {
 			$insert_attempted	=	true;
 			$result	=	$wpdb->insert($this->db_card, $data );
+			if ($is_pending && $result !== false && $wpdb->insert_id ) {
+				$data['id']	=	intval($wpdb->insert_id );
+				$this->request_cache	=	array();
+				return $data;
+			}
 		}
 
 		// DB更新失敗の場合、挿入
@@ -2065,7 +2203,6 @@ class class_pz_linkcard {
 			$card_id	=	intval($data['id'] );
 			$result		=	$wpdb->delete($this->db_card, array('id' => $card_id ), array('%d' ) );
 			if	($result ) {
-				$wpdb->delete($this->db_click, array('card_id' => $card_id ), array('%d' ) );
 				return	true;
 			}
 		}
@@ -2074,9 +2211,6 @@ class class_pz_linkcard {
 			$card_id	=	intval($wpdb->get_var($wpdb->prepare("SELECT id FROM $this->db_card WHERE url = %s LIMIT 1", $url ) ) );
 			$result		=	$wpdb->delete($this->db_card, array('url' => $url ), array('%s' ) );
 			if	($result ) {
-				if	($card_id ) {
-					$wpdb->delete($this->db_click, array('card_id' => $card_id ), array('%d' ) );
-				}
 				return	true;
 			}
 		}
@@ -2084,7 +2218,7 @@ class class_pz_linkcard {
 	}
 
 	// 内部リンク・記事情報取得
-	private	function	pz_GetPost($data ) {
+	private	function	pz_GetPost($data, $allow_non_public = false ) {
 		if	($this->options['survey-mode'] ) { $this->pz_OutputLog(__FUNCTION__, '$data='.print_r($data, true ) ); }
 
 		// 初期化
@@ -2117,9 +2251,21 @@ class class_pz_linkcard {
 		$link_post_id			=	url_to_postid($url );					// リンク先の記事IDを取得
 		// 記事IDが取得できた場合
 		if	($link_post_id ) {
+			$post				=	get_post($link_post_id );				// 記事情報
+			if	(!$post || ((!$allow_non_public || !empty($this->options['flg-public-only'] ) ) && !$this->pz_IsPostPubliclyViewable($post ) ) ) {
+				$data['title']			=	'';
+				$data['excerpt']		=	'';
+				$data['thumbnail']		=	'';
+				$data['favicon']		=	'';
+				$data['post_id']		=	0;
+				$data['post_date']		=	0;
+				$data['post_modified']	=	0;
+				$data['update_result']	=	403;
+				$data['alive_result']	=	403;
+				return	$data;
+			}
 			// 記事IDが取得できた場合
 			$update_result		=	200;									// 外部取得と同じコードをセット
-			$post				=	get_post($link_post_id );				// 記事情報
 			$title				=	$post->post_title;						// 記事タイトル
 			$excerpt			=	$post->post_content;					// 記事内容から抜粋
 
@@ -2267,6 +2413,30 @@ class class_pz_linkcard {
 		$data['post_date']			=	$post_date ?? '';
 		$data['post_modified']		=	$post_modified ?? '';
 		return	$data;
+	}
+
+	private	function	pz_IsPostPubliclyViewable($post ) {
+		if	(!empty($post->post_password ) ) {
+			return	false;
+		}
+		if	(function_exists('is_post_publicly_viewable' ) ) {
+			return	is_post_publicly_viewable($post );
+		}
+		$post_type		=	get_post_type_object($post->post_type ?? '' );
+		$post_status	=	get_post_status_object($post->post_status ?? '' );
+		return	$post_type && !empty($post_type->publicly_queryable ) && $post_status && !empty($post_status->public );
+	}
+
+	private	function	pz_IsInternalCardPubliclyViewable($url, $data = array() ) {
+		$post_id	=	url_to_postid($url );
+		if	(!$post_id && !empty($data['post_id'] ) ) {
+			$post_id	=	absint($data['post_id'] );
+		}
+		if	(!$post_id ) {
+			return	true;
+		}
+		$post	=	get_post($post_id );
+		return	$post && $this->pz_IsPostPubliclyViewable($post );
 	}
 
 	// 外部リンク・記事情報取得
@@ -2766,7 +2936,7 @@ class class_pz_linkcard {
 		$takeover			=	array('saved-date', 'db-version', 'db-click-version' );
 		if	(!empty($this->options['initialize-exception'] ) ) {
 			// 初期化例外が有効の時に引き継ぐ設定値
-			array_push($takeover, 'initialize-exception', 'admin-mode', 'debug-mode' );
+			array_push($takeover, 'initialize-exception', 'debug-mode', 'survey-mode', 'admin-mode' );
 		}
 
 		// 引き継ぐ設定値を一時保存
@@ -2892,6 +3062,7 @@ class class_pz_linkcard {
 		wp_clear_scheduled_hook(self::CRON_ALIVE );		// WP-CRONスケジュール停止（リンク先存在チェック）
 		wp_clear_scheduled_hook(self::CRON_CHECK );		// WP-CRONスケジュール停止（SNSカウント取得）
 		wp_clear_scheduled_hook(self::CRON_CLICK_CLEANUP );	// WP-CRONスケジュール停止（クリックログ整理）
+		wp_clear_scheduled_hook(self::CRON_GET );
 	}
 
 	// プラグインの初期化
@@ -2993,7 +3164,7 @@ class class_pz_linkcard {
 					COUNT(CASE WHEN domain <> %s THEN 1 END) AS count_external,
 					COUNT(CASE WHEN alive_result <> update_result THEN 1 END) AS count_modify,
 					COUNT(CASE WHEN alive_result IS NOT NULL AND alive_result <> 0 AND (alive_result < 100 OR alive_result >= 400) THEN 1 END) AS count_unlink,
-					COUNT(CASE WHEN regist_time IS NULL THEN 1 END) AS count_unregistered
+					COUNT(CASE WHEN regist_time IS NULL OR regist_time = 0 THEN 1 END) AS count_unregistered
 				FROM $this->db_card",
 				$this->domain,
 				$this->domain
@@ -3019,7 +3190,7 @@ class class_pz_linkcard {
 				$recent_clicks	= $wpdb->get_results(
 					"SELECT click.click_time, card.id AS card_id, card.title, card.url
 					FROM $this->db_click AS click
-					INNER JOIN $this->db_card AS card ON card.id = click.card_id
+					 LEFT JOIN $this->db_card AS card ON BINARY card.url_key = BINARY click.url_key
 					ORDER BY click.click_time DESC, click.click_id DESC
 					LIMIT 5"
 				);
@@ -3045,7 +3216,8 @@ class class_pz_linkcard {
 		?>
 		<style>
 			#pz_linkcard_dashboard_widget { scroll-margin-top: 46px; }
-			#pz_linkcard_dashboard_widget .inside { margin-top: 0; container-type: inline-size; }
+			#pz_linkcard_dashboard_widget .postbox-header h2 { color: transparent; width: 150px; min-height: 0; background: url('<?php echo esc_url($this->plugin_dir_url.'img/pz-linkcard_logo.svg' ); ?>') 12px center / 130px auto no-repeat; }
+			#pz_linkcard_dashboard_widget .inside { position: relative; margin-top: 0; container-type: inline-size; }
 			.pz-dashboard-widget-version { margin: 0 0 10px; }
 			.pz-dashboard-widget-error { display: block; margin: 0 0 10px; padding: 9px 12px; background: #ff6868; color: #fff; font-weight: 600; text-decoration: none; }
 			.pz-dashboard-widget-error:hover,
@@ -3095,7 +3267,7 @@ class class_pz_linkcard {
 			<?php foreach	($labels as $key => $label ) {
 				$manager_url	= add_query_arg(array('filter' => $key, 'return_url' => $dashboard_return_url ), $this->cacheman_url );
 			?>
-				<dt><span class="dashicons dashicons-<?php echo esc_attr($label_icons[$key] ); ?>" aria-hidden="true"></span><span class="pz-dashboard-widget-count-label"><?php echo esc_html($label ); ?></span></dt><dd><a href="<?php echo esc_url($manager_url ); ?>"><?php echo esc_html(sprintf(_n('%s card', '%s cards', $count_list[$key], 'pz-linkcard' ), number_format_i18n($count_list[$key] ) ) ); ?></a></dd>
+				<dt><span class="dashicons dashicons-<?php echo esc_attr($label_icons[$key] ); ?>" aria-hidden="true"></span><span class="pz-dashboard-widget-count-label"><?php echo esc_html($label ); ?></span></dt><dd><a href="<?php echo esc_url($manager_url ); ?>"><?php echo esc_html(sprintf('%s件', number_format_i18n($count_list[$key] ) ) ); ?></a></dd>
 			<?php } ?>
 		</dl>
 		<div class="pz-dashboard-widget-recent pz-dashboard-widget-registrations">
@@ -3113,7 +3285,7 @@ class class_pz_linkcard {
 							'return_url'	=> $dashboard_return_url,
 						), $this->cacheman_url );
 					?>
-						<li><time datetime="<?php echo esc_attr(date('c', intval($registration->regist_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($registration->regist_time ) ) ); ?></time><a href="<?php echo esc_url($edit_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-edit" aria-hidden="true"></span></a></li>
+						<li><time datetime="<?php echo esc_attr(date('c', intval($registration->regist_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($registration->regist_time ) ) ); ?></time><a href="<?php echo esc_url($edit_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-welcome-write-blog" aria-hidden="true"></span></a></li>
 					<?php } ?>
 				</ul>
 			<?php } else { ?>
@@ -3128,7 +3300,8 @@ class class_pz_linkcard {
 				<?php } ?>
 			</div>
 			<?php if	(empty($this->options['flg-click-log'] ) ) {
-				$click_settings_url	= add_query_arg(array('tab' => 'pz-check', 'return_url' => $dashboard_return_url ), $this->settings_url ).'#pz-click-log-settings';
+				$settings_return_url = preg_replace('/#.*$/', '', $dashboard_return_url);
+				$click_settings_url	= add_query_arg(array('tab' => 'pz-check', 'return_url' => $settings_return_url ), $this->settings_url ).'#pz-click-log-settings';
 				$click_settings_link	= '<a href="'.esc_url($click_settings_url ).'">'.esc_html__('Click count recording', 'pz-linkcard' ).'</a>';
 			?>
 				<p class="pz-dashboard-widget-notice"><?php echo wp_kses_post(sprintf(__('Enable %s to display recent clicks.', 'pz-linkcard' ), $click_settings_link ) ); ?></p>
@@ -3142,7 +3315,7 @@ class class_pz_linkcard {
 							'return_url'	=> $dashboard_return_url,
 						), $this->cacheman_url );
 					?>
-						<li><time datetime="<?php echo esc_attr(date('c', intval($click->click_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($click->click_time ) ) ); ?></time><a href="<?php echo esc_url($click_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-analytics" aria-hidden="true"></span></a></li>
+						<li><time datetime="<?php echo esc_attr(date('c', intval($click->click_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($click->click_time ) ) ); ?></time><a href="<?php echo esc_url($click_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span></a></li>
 					<?php } ?>
 				</ul>
 			<?php } else { ?>
@@ -3298,9 +3471,12 @@ class class_pz_linkcard {
 		wp_enqueue_script	(self::PLUGIN_SLUG.'-admin-js',		PZLKC_URL_ADMIN_JS,			array(),			$admin_js_version, true );
 		wp_localize_script	(self::PLUGIN_SLUG.'-admin-js',		'pzLinkCardAdmin', array(
 			'ajaxUrl'		=>	admin_url('admin-ajax.php' ),
+			'settingsUrl'	=>	$this->settings_url,
+			'cachemanUrl'	=>	$this->cacheman_url,
 			'noticeNonce'	=>	wp_create_nonce('pz_lkc_clear_error_mode' ),
 			'cachemanColumnsNonce'	=>	wp_create_nonce('pz_lkc_cacheman_columns' ),
 			'findUsedPostsNonce'	=>	wp_create_nonce('pz_lkc_find_used_posts' ),
+			'cachemanPendingNonce'	=>	wp_create_nonce('pz_lkc_cacheman_pending' ),
 			'numericOptions'	=>	$numeric_options,
 			'mediaTitle'	=>	__('Select Image', 'pz-linkcard' ),
 			'mediaButton'	=>	__('Use this image', 'pz-linkcard' ),
@@ -3309,6 +3485,19 @@ class class_pz_linkcard {
 			'nextHeading'	=>	__('Go to next heading', 'pz-linkcard' ),
 		) );
 		wp_enqueue_style	(self::PLUGIN_SLUG.'-admin-css',	PZLKC_URL_ADMIN_CSS,			array(),			$admin_css_version );
+		$preview_mode	=	$this->pz_GetRequestOption('preview-mode', $this->options['preview-mode'] ?? '' );
+		$preview_enabled	=	$this->pz_GetRequestOption('flg-preview', $this->options['flg-preview'] ?? null );
+		if	($hook === 'settings_page_'.self::SETTINGS_PAGE
+			&& $preview_mode === 'right'
+			&& !empty($preview_enabled ) ) {
+			$preview_width	=	$this->pz_GetRequestOption('right-docked-width', $this->pz_GetRequestOption('preview-right-docked-width', $this->options['right-docked-width'] ?? $this->options['preview-right-docked-width'] ?? 240 ) );
+			$preview_width	=	is_numeric($preview_width ) ? absint($preview_width ) : 240;
+			$preview_width	=	max(180, $preview_width );
+			wp_add_inline_style(
+				self::PLUGIN_SLUG.'-admin-css',
+				':root{--pz-settings-preview-right-docked-width:'.$preview_width.'px;}'
+			);
+		}
 
 		if	($hook === 'tools_page_'.self::CACHEMAN_PAGE || $hook === 'settings_page_'.self::SETTINGS_PAGE ) {
 			wp_enqueue_media();
@@ -3351,6 +3540,17 @@ class class_pz_linkcard {
 			) );
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-color-picker',	PZLKC_URL_COLOR_PICKER_CSS,	array(),	PZLKC_PLUGIN_VERSION );
 		}
+	}
+
+	public	function	filter_admin_body_class($classes ) {
+		$preview_mode	=	$this->pz_GetRequestOption('preview-mode', $this->options['preview-mode'] ?? '' );
+		$preview_enabled	=	$this->pz_GetRequestOption('flg-preview', $this->options['flg-preview'] ?? null );
+		if	($this->now_page === 1
+			&& $preview_mode === 'right'
+			&& !empty($preview_enabled ) ) {
+			$classes	.=	' pz-settings-preview-right-docked-active';
+		}
+		return	$classes;
 	}
 
 	// Pz-LinkCard挿入ダイアログを表示する投稿編集画面か
@@ -3505,11 +3705,13 @@ class class_pz_linkcard {
 	// ブロックエディタ内プレビュー用カードスタイル
 	private	function	enqueue_block_card_styles() {
 		$css_version	=	PZLKC_PLUGIN_VERSION.'.'.$this->options['css-count'];
+		$pending_loader_css	= '.pz-lkc-pending .lkc-external-wrap{position:relative}.pz-lkc-pending-loader{position:absolute;z-index:10;top:50%;left:50%;display:flex;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:4px;background:rgba(0,0,0,.45);align-items:center;justify-content:center;pointer-events:none}.pz-lkc-pending-loader::after{content:"";width:50px;aspect-ratio:1;border-radius:50%;background:radial-gradient(farthest-side,#fff 94%,#0000) top/8px 8px no-repeat,conic-gradient(#0000 30%,#fff);mask:radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);animation:pz-lkc-pending-loader-spin 1s infinite linear}@keyframes pz-lkc-pending-loader-spin{100%{transform:rotate(1turn)}}';
 		if	($this->options['flg-compress'] ) {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css',	PZLKC_URL_STYLE.'style.min.css',	array(),	$css_version );
 		} else {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css',	PZLKC_URL_STYLE.'style.css',		array(),	$css_version );
 		}
+		wp_add_inline_style(self::PLUGIN_SLUG.'-block-card-css', $pending_loader_css );
 		if	($this->options['css-add-url'] ) {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-block-card-css-add',	$this->options['css-add-url'],	array(),	$css_version );
 		}
@@ -3537,11 +3739,28 @@ class class_pz_linkcard {
 		} else {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-css',			PZLKC_URL_STYLE.'style.css',			array(),	$css_version );
 		}
-		wp_add_inline_style(self::PLUGIN_SLUG.'-css', '.linkcard[id^="pz-lkc-"]{scroll-margin-top:96px}.linkcard[id^="pz-lkc-"]:target{animation:pz-lkc-target-highlight 5s steps(1,end)}.lkc-error:target+.lkc-internal-wrap{animation:pz-lkc-error-highlight 5s steps(1,end)}body:has(.lkc-error:target) .lkc-error+.lkc-internal-wrap{animation:pz-lkc-error-highlight 5s steps(1,end)}@keyframes pz-lkc-target-highlight{0%,20%,40%,60%,80%{outline:4px solid rgba(0,140,255,.95);outline-offset:4px}10%,30%,50%,70%,90%,100%{outline:4px solid rgba(0,140,255,0);outline-offset:8px}}@keyframes pz-lkc-error-highlight{0%,20%,40%,60%,80%{outline:4px solid rgba(214,54,56,.9);outline-offset:4px}10%,30%,50%,70%,90%,100%{outline:4px solid rgba(214,54,56,0);outline-offset:8px}}' );
+		wp_add_inline_style(self::PLUGIN_SLUG.'-css', '.linkcard[id^="pz-lkc-"]{scroll-margin-top:96px}.linkcard[id^="pz-lkc-"]:target{animation:pz-lkc-target-highlight 5s steps(1,end)}.lkc-error:target+.lkc-internal-wrap{animation:pz-lkc-error-highlight 5s steps(1,end)}body:has(.lkc-error:target) .lkc-error+.lkc-internal-wrap{animation:pz-lkc-error-highlight 5s steps(1,end)}.pz-lkc-pending .lkc-external-wrap{position:relative}.pz-lkc-pending-loader{position:absolute;z-index:10;top:50%;left:50%;display:flex;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:4px;background:rgba(0,0,0,.45);align-items:center;justify-content:center;pointer-events:none}.pz-lkc-pending-loader::after{content:"";width:50px;aspect-ratio:1;border-radius:50%;background:radial-gradient(farthest-side,#fff 94%,#0000) top/8px 8px no-repeat,conic-gradient(#0000 30%,#fff);mask:radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 8px),#000 0);animation:pz-lkc-pending-loader-spin 1s infinite linear}@keyframes pz-lkc-target-highlight{0%,20%,40%,60%,80%{outline:4px solid rgba(0,140,255,.95);outline-offset:4px}10%,30%,50%,70%,90%,100%{outline:4px solid rgba(0,140,255,0);outline-offset:8px}}@keyframes pz-lkc-error-highlight{0%,20%,40%,60%,80%{outline:4px solid rgba(214,54,56,.9);outline-offset:4px}10%,30%,50%,70%,90%,100%{outline:4px solid rgba(214,54,56,0);outline-offset:8px}}@keyframes pz-lkc-pending-loader-spin{100%{transform:rotate(1turn)}}' );
 		if	($this->options['css-add-url'] ) {
 			wp_enqueue_style	(self::PLUGIN_SLUG.'-css-add',		$this->options['css-add-url'],			array(),	$css_version );
 		}
 		$this->enqueue_excerpt_fit_script();
+		if (self::AJAX_GET_ENABLED ) {
+			$ajax_get_script = self::PLUGIN_SLUG.'-ajax-get';
+			$ajax_get_path = $this->plugin_dir_path.'js/pz-linkcard-ajax-get.js';
+			wp_enqueue_script(
+				$ajax_get_script,
+				$this->plugin_dir_url.'js/pz-linkcard-ajax-get.js',
+				array(),
+				PZLKC_PLUGIN_VERSION.'.'.(file_exists($ajax_get_path ) ? filemtime($ajax_get_path ) : '0' ),
+				true
+			);
+			wp_localize_script($ajax_get_script, 'pzLinkCardAjaxGet', array(
+				'ajaxUrl'	=> admin_url('admin-ajax.php' ),
+				'nonce'		=> wp_create_nonce('pz_lkc_ajax_get' ),
+				'interval'	=> 3000,
+				'maxTries'	=> 40,
+			) );
+		}
 		if	(!empty($this->options['flg-quickmenu'] ) && is_user_logged_in() && current_user_can('manage_options' ) ) {
 			$quickmenu_script	=	self::PLUGIN_SLUG.'-quickmenu';
 			$quickmenu_path		=	$this->plugin_dir_path.'js/pz-linkcard-quickmenu.js';
@@ -3581,11 +3800,12 @@ class class_pz_linkcard {
 		}
 		// クリック回数
 		if	($this->options['flg-click-count'] ) {
+			$click_script_path = $this->plugin_dir_path.'js/click-counter.js';
 			wp_enqueue_script	(
 				'pz-lkc-click',	
 				plugin_dir_url(__FILE__) . 'js/click-counter.js',	
 				[],		
-				PZLKC_PLUGIN_VERSION,
+				PZLKC_PLUGIN_VERSION.'.'.(file_exists($click_script_path ) ? filemtime($click_script_path ) : '0' ),
 				true );
 			wp_localize_script	('pz-lkc-click',	'pz_lkc_ajax', [
 				'ajax_url'		=>	admin_url('admin-ajax.php' ),
@@ -3887,6 +4107,36 @@ class class_pz_linkcard {
 		wp_send_json_success(array('post_ids' => array_values(array_map('intval', $post_ids ) ) ) );
 	}
 
+	public	function	action_ajax_pz_lkc_cacheman_pending() {
+		if	(!current_user_can('manage_options' ) ) {
+			wp_send_json_error(__('You do not have permission to update LinkCard data.', 'pz-linkcard' ), 403 );
+		}
+		if	(!check_ajax_referer('pz_lkc_cacheman_pending', 'nonce', false ) ) {
+			wp_send_json_error(__('Invalid request.', 'pz-linkcard' ), 403 );
+		}
+
+		$card_ids	= isset($_POST['card_ids'] ) && is_array($_POST['card_ids'] )
+			? array_values(array_unique(array_filter(array_map('absint', wp_unslash($_POST['card_ids'] ) ) ) ) )
+			: array();
+		$ready_ids	= array();
+		$ready_cards	= array();
+		foreach	($card_ids as $card_id ) {
+			$data = $this->pz_GetCache(array('id' => $card_id ) );
+			if	(is_array($data ) && isset($data['regist_time'] ) && intval($data['regist_time'] ) > 0 ) {
+				$ready_ids[] = $card_id;
+				$ready_cards[] = array(
+					'id'	=> $card_id,
+					'title'	=> wp_strip_all_tags(stripslashes((string) ($data['title'] ?? '' ) ) ),
+				);
+			}
+		}
+
+		wp_send_json_success(array(
+			'ready_ids'	=> $ready_ids,
+			'ready_cards'	=> $ready_cards,
+		) );
+	}
+
 	private	function	pz_GetCachemanColumnKeys() {
 		return	array('id', 'excerpt', 'charset', 'domain', 'sns', 'post_id', 'post_date', 'post_modified', 'regist_time', 'update_time', 'sns_time', 'alive_time', 'sns_nexttime', 'alive_nexttime', 'use_post_id', 'click_count', 'result' );
 	}
@@ -3913,7 +4163,7 @@ class class_pz_linkcard {
 			wp_send_json_error(__('Not selected', 'pz-linkcard' ), 404 );
 		}
 
-		$html	=	$this->pz_GetHTML(array('url' => $data['url'], 'force' => true ) );
+		$html	=	$this->pz_GetLinkCard(array('url' => $data['url'], 'force' => true ) );
 		if	(!$html ) {
 			wp_send_json_error(__('Failed to retrieve the post content.', 'pz-linkcard' ), 500 );
 		}
@@ -3945,7 +4195,7 @@ class class_pz_linkcard {
 			$this->pz_GetImage($data['thumbnail'], true );
 		}
 
-		$html	=	$this->pz_GetHTML(array('url' => $data['url'] ) );
+		$html	=	$this->pz_GetLinkCard(array('url' => $data['url'] ) );
 		if	(!$html ) {
 			wp_send_json_error(__('Failed to retrieve the post content.', 'pz-linkcard' ), 500 );
 		}
@@ -4016,7 +4266,42 @@ class class_pz_linkcard {
 			wp_send_json_error(__('Invalid request.', 'pz-linkcard' ), 400 );
 		}
 		$atts	= shortcode_parse_atts($matches[2] );
-		$html	= $this->shortcode(is_array($atts ) ? $atts : array(), null, $matches[1] );
+		$atts	= is_array($atts ) ? $atts : array();
+		$url	= $atts['url'] ?? $atts['href'] ?? $atts['uri'] ?? $atts['ur1'] ?? '';
+		if	(is_string($url ) && preg_match('/(https?:\/\/[^\s<>]+)/sui', $url, $url_match ) ) {
+			$url	= $url_match[1];
+		}
+		if	(is_string($url ) && $url && $this->options['flg-relative-url'] && !mb_strpos($url, '://' ) ) {
+			$url	= $this->pz_RelToURL(esc_url(home_url() ), $url );
+		}
+		if	(is_string($url ) && $url ) {
+			$url	= $this->pz_EncodeURL($url, true );
+		}
+		$url_info	= $url ? $this->Pz_GetURLInfo($url ) : null;
+		if	(!empty($url_info['is_internal'] ) ) {
+			$post_id	= url_to_postid($url );
+			$post		= $post_id ? get_post($post_id ) : null;
+			if	($post_id && (!$post || !$this->pz_IsPostPubliclyViewable($post ) ) ) {
+				if	(!empty($this->options['flg-public-only'] ) ) {
+					wp_send_json_error(__('Only publicly viewable posts can be previewed with the current setting.', 'pz-linkcard' ), 403 );
+				}
+				if	(!$post ) {
+					wp_send_json_error(__('Post not found.', 'pz-linkcard' ), 404 );
+				}
+				if	(post_password_required($post ) ) {
+					wp_send_json_error(__('You do not have permission to preview this post.', 'pz-linkcard' ), 403 );
+				}
+				if	(!current_user_can('read_post', $post_id ) ) {
+					wp_send_json_error(__('You do not have permission to preview this post.', 'pz-linkcard' ), 403 );
+				}
+				$preview_data	= $this->pz_GetPost(array('url' => $url ), true );
+				if	(!is_array($preview_data ) ) {
+					wp_send_json_error(__('Failed to retrieve the post content.', 'pz-linkcard' ), 500 );
+				}
+				$atts['preview-data']	= $preview_data;
+			}
+		}
+		$html	= $this->shortcode($atts, null, $matches[1] );
 		if	(!$html ) {
 			wp_send_json_error(__('Failed to retrieve the post content.', 'pz-linkcard' ), 500 );
 		}
@@ -4034,8 +4319,14 @@ class class_pz_linkcard {
 		// 入力チェック
 		$lkc_id	=	isset($_POST['lkc_id'])	?	intval($_POST['lkc_id'] )		:	'';
 		$post_id	=	isset($_POST['post_id'])	?	absint($_POST['post_id'] )		:	0;
+		$click_token	=	isset($_POST['click_token'] ) ? sanitize_text_field(wp_unslash($_POST['click_token'] ) ) : '';
 		if	(empty($lkc_id)) {
 			wp_send_json_error('unknown Data ID.');
+			return;
+		}
+		$expected_click_token	=	$this->pz_GetClickToken($lkc_id, $post_id );
+		if	($click_token === '' || !hash_equals($expected_click_token, $click_token ) ) {
+			wp_send_json_error('invalid click token', 403 );
 			return;
 		}
 
@@ -4051,30 +4342,27 @@ class class_pz_linkcard {
 		$user_agent	=	function_exists('mb_substr' ) ? mb_substr($user_agent, 0, 1024 ) : substr($user_agent, 0, 1024 );
 		$click_log_enabled	=	!empty($this->options['flg-click-count'] ) && !empty($this->options['flg-click-log'] );
 
-		// 同じカード・記事・IPハッシュ・ユーザーエージェントの30分以内のクリックは重複とする
+		// 同じカード・記事・IPハッシュの30秒以内のクリックは重複とする
 		if	($click_log_enabled ) {
 			$wpdb->query('START TRANSACTION' );
-			$card_exists	=	$wpdb->get_var($wpdb->prepare("SELECT id FROM $this->db_card WHERE id = %d FOR UPDATE", $lkc_id ) );
-			if	(!$card_exists ) {
+			$url_key	= (string) $wpdb->get_var($wpdb->prepare("SELECT url_key FROM $this->db_card WHERE id = %d FOR UPDATE", $lkc_id ) );
+			if	(!$url_key ) {
 				$wpdb->query('ROLLBACK' );
 				wp_send_json_error('DB update failed');
 				return;
 			}
 			$duplicate_click_id	=	$wpdb->get_var($wpdb->prepare(
 				"SELECT click_id FROM $this->db_click
-				WHERE card_id = %d
+				WHERE url_key = %s
 					AND click_time >= %d
 					AND COALESCE(post_id, 0) = %d
 					AND COALESCE(ip_hash, '') = %s
-					AND COALESCE(user_agent, '') = %s
 				ORDER BY click_time DESC
 				LIMIT 1 FOR UPDATE",
-				$lkc_id,
-//				$click_time - (30 * MINUTE_IN_SECONDS ),
-				$click_time - (0 * MINUTE_IN_SECONDS ), // [DEBUG] 30分制限を無効化して、同じカードの連続クリックをカウントする
+				$url_key,
+				$click_time - 30,
 				$post_id,
-				$ip_hash,
-				$user_agent
+				$ip_hash
 			) );
 			if	($duplicate_click_id ) {
 				$wpdb->query('COMMIT' );
@@ -4089,12 +4377,12 @@ class class_pz_linkcard {
 				$this->db_click,
 				array(
 					'click_time'	=>	$click_time,
-					'card_id'		=>	$lkc_id,
+					'url_key'		=>	$url_key,
 					'post_id'		=>	$post_id ?: null,
 					'ip_hash'		=>	$ip_hash ?: null,
 					'user_agent'	=>	$user_agent ?: null,
 				),
-				array('%d', '%d', '%d', '%s', '%s' )
+				array('%d', '%s', '%d', '%s', '%s' )
 			);
 			if	($logged === false ) {
 				$wpdb->query('ROLLBACK' );
@@ -4197,8 +4485,8 @@ class class_pz_linkcard {
 			$result['expired']	= $deleted === false ? 0 : intval($deleted );
 		}
 
-		$deleted	= $wpdb->query("DELETE FROM $this->db_click WHERE NOT EXISTS (SELECT 1 FROM $this->db_card WHERE $this->db_card.id = $this->db_click.card_id) LIMIT 5000" );
-		$result['orphaned']	= $deleted === false ? 0 : intval($deleted );
+		// カード削除後もクリックログは保持する
+		$result['orphaned']	= 0;
 		return	$result;
 	}
 
@@ -4307,6 +4595,14 @@ class class_pz_linkcard {
 		$result	= $this->pz_DeleteExpiredClickLogs();
 		$this->pz_ScheduleClickLogCleanup();
 		return	'Expired click logs: '.$result['expired'].PHP_EOL.'Orphaned click logs: '.$result['orphaned'].PHP_EOL;
+	}
+
+	public function schedule_hook_get() {
+		require('lib/pz-linkcard-cron-get.php' );
+	}
+
+	public function action_ajax_pz_lkc_ajax_get() {
+		require('lib/pz-linkcard-ajax-get.php' );
 	}
 
 	// デバグ用の文字列表示

@@ -28,6 +28,9 @@
             previewClosed = false;
             window.clearTimeout(previewFadeTimer);
             win.style.display = "";
+            if (previewDocked) {
+                win.classList.add("pz-settings-preview-ready");
+            }
             window.requestAnimationFrame(() => {
                 win.classList.add("pz-settings-preview-ready");
                 schedulePreviewFit();
@@ -69,7 +72,10 @@
             setDockedScrollSpace(0);
             setRightDockedScrollSpace(0);
             win.classList.remove("pz-settings-preview-ready", "pz-settings-preview-docked", "pz-settings-preview-docked-right");
-            win.style.display = "none";
+            window.clearTimeout(previewFadeTimer);
+            previewFadeTimer = window.setTimeout(() => {
+                if (!win.classList.contains("pz-settings-preview-ready")) win.style.display = "none";
+            }, 500);
             showRestoreButton();
         };
 
@@ -125,7 +131,7 @@
 
         const minPreviewWidth = 240;
         const minPreviewHeight = 100;
-        const rightDockedMinWidth = 24;
+        const rightDockedMinWidth = 180;
         const dockedMinHeightFallback = 28;
         let previewDocked = false;
         let previewDockSide = null;
@@ -148,15 +154,23 @@
             const raw = state && Object.prototype.hasOwnProperty.call(state, name) ? state[name] : readStateInput(name);
             return raw === true || raw === 1 || raw === "1" || raw === "true";
         };
+        const readRightDockedWidth = state => {
+            const storedMode = state?.["preview-mode"];
+            const restoreMode = state?.["preview-restore-mode"];
+            const legacyWidth = storedMode === "right" || (storedMode === "icon" && restoreMode === "right")
+                ? readStateNumber(state, "preview-right-docked-width")
+                : null;
+            return readStateNumber(state, "right-docked-width") ?? legacyWidth ?? minPreviewWidth;
+        };
         const readStoredState = () => {
-            try {
-                const stored = window.localStorage?.getItem(storageKey);
-                if (!stored) return null;
-                const parsed = JSON.parse(stored);
-                return parsed && typeof parsed === "object" ? parsed : null;
-            } catch (err) {
-                return null;
-            }
+            const state = {};
+            form?.querySelectorAll("[data-pz-preview-state]").forEach(input => {
+                if (input.value !== "") state[input.dataset.pzPreviewState] = input.value;
+            });
+            return state;
+        };
+        const persistStoredState = state => {
+            Object.entries(state).forEach(([name, value]) => setStateInput(name, value));
         };
         const applyTwoCards = enabled => {
             const active = !!enabled;
@@ -255,19 +269,24 @@
                 "preview-top": Math.round(rect.top),
                 "preview-width": Math.round(rect.width),
                 "preview-height": Math.round(rect.height),
-                ...(savedBottomDockedHeight !== null ? { "preview-docked-height": Math.round(savedBottomDockedHeight) } : {}),
-                ...(savedBottomDockedHeight !== null ? { "last-bottom-docked-height": Math.round(savedBottomDockedHeight) } : {}),
-                "preview-right-docked-width": Math.round(previewDockSide === "right" ? rect.width : (readStateNumber(null, "preview-right-docked-width") || rect.width)),
+                "preview-docked-height": Math.round(savedBottomDockedHeight || minPreviewHeight),
+                "last-bottom-docked-height": Math.round(savedBottomDockedHeight || minPreviewHeight),
+                "preview-right-docked-width": Math.round(previewDockSide === "right"
+                    ? rect.width
+                    : (readStateNumber(storedState, "right-docked-width")
+                        ?? readStateNumber(storedState, "preview-right-docked-width")
+                        ?? readStateNumber(null, "preview-right-docked-width")
+                        ?? minPreviewWidth)),
                 "preview-two-cards": twoCardsCheckbox?.checked ? 1 : 0,
             };
             if (previewDockSide === "right") {
                 state["right-docked-width"] = Math.round(rect.width);
+            } else if (previewDockSide === "bottom") {
+                state["docked-height"] = Math.round(rect.height);
+                state["docked-width"] = Math.round(rect.width);
             } else if (previewDocked) {
                 Object.assign(state, {
-                    "docked-left": Math.round(rect.left),
-                    "docked-top": Math.round(rect.top),
                     "docked-width": Math.round(rect.width),
-                    "docked-height": Math.round(rect.height),
                 });
             } else {
                 Object.assign(state, {
@@ -277,12 +296,7 @@
                     "window-height": Math.round(rect.height),
                 });
             }
-            Object.entries(state).forEach(([name, value]) => setStateInput(name, value));
-            try {
-                window.localStorage?.setItem(storageKey, JSON.stringify(state));
-            } catch (err) {
-                // Ignore storage failures such as private browsing quota errors.
-            }
+            persistStoredState(state);
             return state;
         };
         const saveIconState = () => {
@@ -302,9 +316,12 @@
                 "preview-top": Math.round(rect.top),
                 "preview-width": Math.round(rect.width),
                 "preview-height": Math.round(rect.height),
-                ...(savedBottomDockedHeight !== null ? { "preview-docked-height": Math.round(savedBottomDockedHeight) } : {}),
-                ...(savedBottomDockedHeight !== null ? { "last-bottom-docked-height": Math.round(savedBottomDockedHeight) } : {}),
-                "preview-right-docked-width": Math.round(previewDockSide === "right" ? rect.width : (readStateNumber(null, "preview-right-docked-width") || rect.width)),
+                "preview-right-docked-width": Math.round(previewDockSide === "right"
+                    ? rect.width
+                    : (readStateNumber(storedState, "right-docked-width")
+                        ?? readStateNumber(storedState, "preview-right-docked-width")
+                        ?? readStateNumber(null, "preview-right-docked-width")
+                        ?? minPreviewWidth)),
                 "preview-two-cards": twoCardsCheckbox?.checked ? 1 : 0,
                 "window-left": readStateNumber(storedState, "window-left"),
                 "window-top": readStateNumber(storedState, "window-top"),
@@ -316,12 +333,7 @@
                 "docked-height": readStateNumber(storedState, "docked-height"),
                 "right-docked-width": readStateNumber(storedState, "right-docked-width"),
             };
-            setStateInput("preview-mode", "icon");
-            try {
-                window.localStorage?.setItem(storageKey, JSON.stringify(state));
-            } catch (err) {
-                // Ignore storage failures such as private browsing quota errors.
-            }
+            persistStoredState(state);
         };
         let previewFitFrame = null;
         const updatePreviewFit = () => {
@@ -332,7 +344,9 @@
             if (!twoCardsControl) return;
             twoCardsControl.classList.remove("pz-settings-preview-two-cards-control-hidden");
             const controlRect = twoCardsControl.getBoundingClientRect();
-            const controlFitsWidth = rect.width >= 32 + Math.ceil(controlRect.width) + 8;
+            const controlFitsWidth = previewDockSide === "right"
+                ? rect.width >= rightDockedMinWidth
+                : rect.width >= 32 + Math.ceil(controlRect.width) + 8;
             const controlFitsHeight = rect.height >= handleHeight + Math.ceil(controlRect.height) + 12;
             twoCardsControl.classList.toggle(
                 "pz-settings-preview-two-cards-control-hidden",
@@ -347,19 +361,7 @@
             });
         };
         const persistPreviewState = async () => {
-            if (typeof pzLinkCardPreview === "undefined" || !pzLinkCardPreview.ajaxUrl) return;
-            const state = syncPreviewState();
-            if (!state) return;
-
-            const fd = new FormData();
-            fd.append("action", pzLinkCardPreview.stateAction || "pz_lkc_preview_state");
-            fd.append("nonce", pzLinkCardPreview.stateNonce || "");
-            Object.entries(state).forEach(([name, value]) => fd.append(name, value));
-            try {
-                await fetch(pzLinkCardPreview.ajaxUrl, { method: "POST", body: fd });
-            } catch (err) {
-                console.warn("Pz-LinkCard preview state failed:", err);
-            }
+            return;
         };
         const setDockedScrollSpace = (height = 0) => {
             const active = previewDockSide === "bottom" && height > 0;
@@ -496,7 +498,7 @@
             floatingPreviewRect = getWindowRect();
             syncPreviewState();
         };
-        const applyDockedRect = height => {
+        const applyDockedRect = (height, width = null) => {
             const bounds = getViewportBounds();
             const dockLeft = getDockLeft();
             const dockedMinHeight = getDockedMinHeight();
@@ -513,7 +515,8 @@
             win.style.top = `${Math.round(window.innerHeight - nextHeight)}px`;
             win.style.right = "auto";
             win.style.bottom = "auto";
-            win.style.width = `${Math.round(Math.max(minPreviewWidth, getViewportClientRight() - dockLeft))}px`;
+            const dockedWidth = Math.min(getViewportClientRight() - dockLeft, Math.max(minPreviewWidth, width || getViewportClientRight() - dockLeft));
+            win.style.width = `${Math.round(dockedWidth)}px`;
             win.style.height = `${Math.round(nextHeight)}px`;
             win.style.maxHeight = "none";
             setDockedScrollSpace(nextHeight);
@@ -521,8 +524,10 @@
         };
         const applyRightDockedRect = width => {
             const bounds = getViewportBounds();
-            const maxWidth = Math.max(rightDockedMinWidth, getViewportClientRight() - bounds.minLeft);
-            const nextWidth = Math.min(maxWidth, Math.max(rightDockedMinWidth, width || getWindowRect().width));
+            const availableWidth = Math.max(1, getViewportClientRight() - bounds.minLeft);
+            const minWidth = Math.min(rightDockedMinWidth, availableWidth);
+            const maxWidth = Math.max(minWidth, availableWidth);
+            const nextWidth = Math.min(maxWidth, Math.max(minWidth, width || getWindowRect().width));
 
             previewDocked = true;
             previewDockSide = "right";
@@ -543,23 +548,17 @@
             win.classList.add("pz-settings-preview-animating");
             window.setTimeout(() => {
                 win.classList.remove("pz-settings-preview-animating");
-            }, 150);
+            }, 100);
         };
         const normalizeBottomDockedHeight = (height, stored = {}) => {
             const bounds = getViewportBounds();
             const minHeight = getDockedMinHeight();
             const maxHeight = Math.max(minHeight, window.innerHeight - bounds.minTop);
             let nextHeight = Number.isFinite(height) ? height : minPreviewHeight;
-            if (nextHeight >= maxHeight * 0.8) {
-                const windowHeight = readStateNumber(stored, "window-height")
-                    ?? floatingPreviewRect?.height;
-                nextHeight = windowHeight !== null && windowHeight < maxHeight * 0.8
-                    ? windowHeight
-                    : Math.max(minHeight, Math.round(maxHeight * 0.4));
-            }
-            return nextHeight;
+            return Math.min(maxHeight, Math.max(minHeight, nextHeight));
         };
         const switchPreviewMode = targetMode => {
+            animatePreviewWindow();
             if (previewDockSide === "bottom") {
                 lastBottomDockedHeight = Math.round(getWindowRect().height);
             }
@@ -574,23 +573,17 @@
                     width: readStateNumber(stored, "window-width"),
                     height: readStateNumber(stored, "window-height"),
                 };
-                const hasWindowRect = Object.values(windowRect).every(value => value !== null);
+                const hasWindowRect = !!windowRect && Object.values(windowRect).every(value => value !== null);
                 applyFloatingRect(hasWindowRect ? windowRect : floatingPreviewRect);
             } else if (targetMode === "bottom") {
-                let dockedHeight = lastBottomDockedHeight
-                    ?? readStateNumber(null, "preview-docked-height")
-                    ?? readStateNumber(stored, "preview-docked-height")
+                const dockedHeight = readStateNumber(stored, "docked-height")
                     ?? readStateNumber(stored, "last-bottom-docked-height")
-                    ?? readStateNumber(stored, "docked-height")
-                    ?? floatingPreviewRect?.height
+                    ?? readStateNumber(stored, "preview-docked-height")
                     ?? minPreviewHeight;
-                dockedHeight = normalizeBottomDockedHeight(dockedHeight, stored);
-                applyDockedRect(dockedHeight);
+                const dockedWidth = readStateNumber(stored, "docked-width");
+                applyDockedRect(dockedHeight, dockedWidth);
             } else if (targetMode === "right") {
-                const dockedWidth = readStateNumber(stored, "right-docked-width")
-                    ?? readStateNumber(stored, "preview-right-docked-width")
-                    ?? floatingPreviewRect?.width
-                    ?? minPreviewWidth;
+                const dockedWidth = readRightDockedWidth(stored);
                 applyRightDockedRect(dockedWidth);
             }
             persistPreviewState();
@@ -612,15 +605,7 @@
                 hideRestoreButton();
                 previewClosed = false;
                 win.style.display = "";
-                const stored = readStoredState() || {};
-                const windowRect = {
-                    left: readStateNumber(stored, "window-left"),
-                    top: readStateNumber(stored, "window-top"),
-                    width: readStateNumber(stored, "window-width"),
-                    height: readStateNumber(stored, "window-height"),
-                };
-                const hasWindowRect = Object.values(windowRect).every(value => value !== null);
-                applyFloatingRect(hasWindowRect ? windowRect : floatingPreviewRect);
+                restorePreviewState();
                 showPreviewWindow();
                 persistPreviewState();
                 return;
@@ -668,18 +653,15 @@
             }
 
             if (mode === "docked") {
-                let dockedHeight = readStateNumber(stored, "last-bottom-docked-height")
+                const dockedHeight = readStateNumber(stored, "docked-height")
+                    ?? readStateNumber(stored, "last-bottom-docked-height")
                     ?? readStateNumber(stored, "preview-docked-height")
-                    ?? readStateNumber(stored, "docked-height")
-                    ?? readStateNumber(stored, "preview-height");
-                dockedHeight = normalizeBottomDockedHeight(dockedHeight, stored);
-                applyDockedRect(dockedHeight);
+                    ?? minPreviewHeight;
+                applyDockedRect(dockedHeight, readStateNumber(stored, "docked-width"));
                 return;
             }
             if (mode === "right") {
-                const dockedWidth = readStateNumber(stored, "right-docked-width")
-                    ?? readStateNumber(stored, "preview-right-docked-width")
-                    ?? readStateNumber(stored, "preview-width");
+                const dockedWidth = readRightDockedWidth(stored);
                 applyRightDockedRect(dockedWidth);
                 return;
             }
@@ -723,7 +705,7 @@
                 const dockedHeight = readStateNumber(stored, "docked-height")
                     ?? readStateNumber(stored, "preview-docked-height")
                     ?? rect.height;
-                applyDockedRect(dockedHeight);
+                applyDockedRect(dockedHeight, readStateNumber(stored, "docked-width"));
             }
             persistPreviewState();
             return true;
@@ -971,7 +953,6 @@
             if (previewDockSide === "bottom") {
                 dockPreviewRight();
             } else if (previewDockSide === "right") {
-                switchPreviewMode("window");
                 switchPreviewMode("bottom");
             } else {
                 toggleDockedPreview();
@@ -1036,12 +1017,17 @@
             showIconPreview();
         }
         schedulePreviewFit();
-        initSettingsPreviewLiveStyles(win);
+        initSettingsPreviewLiveStyles(win, syncPreviewState);
     }
 
-    function initSettingsPreviewLiveStyles(win) {
+    function initSettingsPreviewLiveStyles(win, syncPreviewState) {
         const form = document.querySelector(".pz-settings form");
         if (!form) return;
+
+        // Save the exact preview geometry before the settings form navigates/reloads.
+        form.addEventListener("submit", () => {
+            syncPreviewState();
+        }, true);
 
         const labels = (typeof pzLinkCardPreview !== "undefined" && pzLinkCardPreview.labels) || {};
         let previewCssTimer = null;
@@ -1132,6 +1118,8 @@
 
         const findControl = name => {
             const controls = Array.from(form.querySelectorAll(`[name="properties[${name}]"]`));
+            const visibleControls = controls.filter(el => el.type !== "hidden" && !isControlDisabled(el) && (el.getClientRects?.().length || el.offsetParent !== null));
+            if (visibleControls.length) return visibleControls[0];
             return controls.find(el => el.type !== "hidden" && !isControlDisabled(el)) ||
                 controls.find(el => el.type !== "hidden") ||
                 controls[0] ||
@@ -1162,8 +1150,9 @@
         };
         const applyDisplay = (node, show) => {
             if (!node) return;
-            if (show) {
-                node.style.removeProperty("display");
+                if (show) {
+                const displayValue = node.matches(".lkc-info") ? "flex" : (node.matches(".lkc-sns-tw, .lkc-sns-x, .lkc-sns-fb, .lkc-sns-hb, .lkc-sns-gp") ? "inline" : "block");
+                node.style.setProperty("display", displayValue, "important");
             } else {
                 node.style.setProperty("display", "none", "important");
             }
@@ -1294,9 +1283,47 @@
             node.style.setProperty("box-shadow", shadow, hover ? "important" : "");
             return true;
         };
-        const restoreConfiguredBoxShadow = (node, prefix) => {
-            node.style.removeProperty("box-shadow");
-            applyConfiguredBoxShadow(node, prefix);
+        const applyConfiguredLinkBoxHover = (node, prefix) => {
+            if (!node) return;
+			const specialFormat = value("special-format");
+			const isFloatingLinkBox = ["Floating", "Floating2", "fbd"].includes(specialFormat);
+			const isAccentLinkBox = specialFormat === "accent";
+
+            if (checked(`${prefix}-hover-transform-enabled`)) {
+                const transformX = intValue(`${prefix}-hover-transform-x`, 0);
+                const transformY = intValue(`${prefix}-hover-transform-y`, 0);
+                const transformRotate = intValue(`${prefix}-hover-transform-rotate`, 0);
+                const transformScale = intValue(`${prefix}-hover-transform-scale`, 100);
+                node.style.setProperty("transform", `translate(${transformX}px, ${transformY}px) rotate(${transformRotate}deg) scale(${transformScale / 100})`, "important");
+                node.style.setProperty("opacity", String(Math.max(0, Math.min(100, intValue(`${prefix}-hover-opacity`, 100))) / 100), "important");
+            }
+            if (checked(`${prefix}-hover-bg-enabled`) && !isAccentLinkBox) {
+                const bgColor = value(`${prefix}-hover-bg-color`);
+                const bgImage = cssBackgroundImage(`${prefix}-hover-bg-image`);
+                if (bgColor) node.style.setProperty("background-color", bgColor, "important");
+                if (bgImage) node.style.setProperty("background-image", bgImage, "important");
+            }
+            if (checked(`${prefix}-hover-border-enabled`) && !isFloatingLinkBox) {
+                const borderColor = value(`${prefix}-hover-border-color`);
+                const borderStyle = value(`${prefix}-hover-border-style`) || "solid";
+                const borderWidth = intValue(`${prefix}-hover-border-width`, 1);
+                const borderRadius = intValue(`${prefix}-hover-border-radius`, 0);
+                node.style.setProperty("border", `${borderColor ? `${borderColor} ` : ""}${borderStyle} ${borderWidth}px`, "important");
+                node.style.setProperty("border-radius", `${borderRadius}px`, "important");
+            }
+			if (isFloatingLinkBox) {
+				node.style.setProperty("border", "none", "important");
+				node.style.setProperty("border-radius", `${intValue(`${prefix}-border-radius`, 0)}px`, "important");
+			}
+			if (isAccentLinkBox) {
+				node.style.setProperty("background-color", "#ffffff", "important");
+			}
+            applyConfiguredBoxShadow(node, prefix, true);
+
+            const transition = parseFloat(value(`${prefix}-hover-transition`));
+            if (Number.isFinite(transition) && transition > 0) {
+                node.style.setProperty("transition", `all ${transition}s ease`, "important");
+            }
         };
         const applySimpleLinkBox = (node, prefix, hover = false) => {
             if (!node) return;
@@ -1330,6 +1357,16 @@
                 ex: { background: "#bcddff", outline: "#aabbee" },
                 in: { background: "#f8d0d0", outline: "#e8a8a8" },
             },
+			sFR: {
+				ex: {
+					get background() { return value("ex-bg-color") || "transparent"; },
+					get outline() { return value("ex-border-color") || "transparent"; },
+				},
+				in: {
+					get background() { return value("in-bg-color") || "transparent"; },
+					get outline() { return value("in-border-color") || "transparent"; },
+				},
+			},
             sGY: {
                 ex: { background: "#acefdd", outline: "#8abecb" },
                 in: { background: "#ffde51", outline: "#fbca4d" },
@@ -1363,13 +1400,7 @@
             node.style.setProperty("background", preset.background, "important");
             node.style.setProperty("border", "2px dashed rgba(255,255,255,0.5)", "important");
 
-            if (checked(`${prefix}-shadow-enabled`)) {
-                const shadowColor = value(`${prefix}-shadow-color`) || "rgba(0,0,0,0.3)";
-                const shadowInset = checked(`${prefix}-shadow-inset`) ? "inset " : "";
-                node.style.boxShadow = `${shadowInset}${intValue(`${prefix}-shadow-x`, 8)}px ${intValue(`${prefix}-shadow-y`, 8)}px ${intValue(`${prefix}-shadow-blur`, 8)}px ${intValue(`${prefix}-shadow-spread`, 0)}px ${shadowColor}`;
-            } else {
-                node.style.boxShadow = `0 0 0 5px ${preset.outline}, 3px 3px 6px 4px rgba(0,0,0,0.6)`;
-            }
+            node.style.boxShadow = `0 0 0 5px ${preset.outline}, 3px 3px 6px 4px rgba(0,0,0,0.6)`;
 
             if (hover) {
                 if (checked(`${prefix}-hover-bg-enabled`)) {
@@ -1453,9 +1484,11 @@
             const isLinkBox = prefix === "ex" || prefix === "in";
             const specialFormat = value("special-format");
             const isSimpleLinkBox = specialFormat === "smp" && isLinkBox;
+			const isFloatingLinkBox = isLinkBox && ["Floating", "Floating2", "fbd"].includes(specialFormat);
+			const isAccentLinkBox = isLinkBox && specialFormat === "accent";
             const stitchPreset = isLinkBox ? stitchPresets[specialFormat]?.[prefix] : null;
             const ingressPreset = isLinkBox ? ingressPresets[specialFormat]?.[prefix] : null;
-            const ignoreLinkBackground = isLinkBox && (specialFormat === "JIN" || isSimpleLinkBox || stitchPreset);
+            const ignoreLinkBackground = isLinkBox && (specialFormat === "JIN" || isAccentLinkBox || isSimpleLinkBox || stitchPreset);
             if (!ignoreLinkBackground) {
                 const bgColor = value(`${prefix}-bg-color`);
                 const bgImage = cssBackgroundImage(`${prefix}-bg-image`);
@@ -1477,16 +1510,30 @@
                 if (borderRadius > 0) {
                     node.style.borderRadius = `${borderRadius}px`;
                 }
+            } else {
+                node.style.setProperty("border", "none", "important");
+                node.style.borderRadius = "";
             }
-            applyConfiguredBoxShadow(node, prefix);
-            if (isLinkBox && !stitchPreset && !ingressPreset) {
-                if (node.matches(":hover")) applyConfiguredBoxShadow(node, prefix, true);
+			if (isFloatingLinkBox) {
+				node.style.setProperty("border", "none", "important");
+				node.style.borderRadius = `${intValue(`${prefix}-border-radius`, 0)}px`;
+			}
+			if (isAccentLinkBox) {
+				node.style.setProperty("background-color", "#ffffff", "important");
+			}
+            if (isSimpleLinkBox) {
+                node.style.setProperty("box-shadow", "none", "important");
+            } else {
+                applyConfiguredBoxShadow(node, prefix);
+            }
+            if (isLinkBox && !isSimpleLinkBox && !stitchPreset && !ingressPreset) {
+                if (node.matches(":hover")) applyConfiguredLinkBoxHover(node, prefix);
                 if (!node.dataset.pzPreviewBoxShadowHoverBound) {
                     node.addEventListener("pointerenter", () => {
-                        applyConfiguredBoxShadow(node, prefix, true);
+                        applyConfiguredLinkBoxHover(node, prefix);
                     });
                     node.addEventListener("pointerleave", () => {
-                        restoreConfiguredBoxShadow(node, prefix);
+                        applyPartBox(card, selector, prefix);
                     });
                     node.dataset.pzPreviewBoxShadowHoverBound = "1";
                 }
@@ -1546,6 +1593,8 @@
                     cardBody.style.setProperty("margin", "24px 20px 20px 20px", "important");
                 }
                 if (heading && heading.textContent.trim() !== "") {
+                    heading.style.setProperty("display", "inline-flex", "important");
+                    heading.style.alignItems = "center";
                     heading.style.setProperty("padding", "0 10px", "important");
                     heading.style.position = "absolute";
                     heading.style.top = "-15px";
@@ -1592,6 +1641,66 @@
             if (specialFormat === "JIN") {
                 applyHeadlinePreset();
             }
+            if (["fancy", "glass", "metal", "mac", "browser", "ref", "ct1", "ct2", "ct3", "ct4", "tac", "Floating", "Floating2", "fbd"].includes(specialFormat)) {
+                win.querySelectorAll("[data-pz-preview-heading]").forEach(heading => {
+                    heading.style.zIndex = ["glass", "metal"].includes(specialFormat)
+                        ? "6"
+                        : (["ref", "ct1", "ct2", "ct3", "ct4", "tac"].includes(specialFormat) ? "3" : "2");
+                });
+            }
+            if (specialFormat === "browser") {
+                win.querySelectorAll("[data-pz-preview-card]").forEach(card => {
+                    const cardBody = card.querySelector(".lkc-card");
+                    const info = card.querySelector("[data-pz-preview-info], .lkc-info");
+                    const content = card.querySelector("[data-pz-preview-content], .lkc-content");
+                    const domain = card.querySelector(".lkc-domain");
+                    if (cardBody) {
+                        cardBody.style.position = "relative";
+                        cardBody.style.overflow = "hidden";
+                        cardBody.style.background = "#eef1f5";
+                    }
+                    if (info) {
+                        info.style.setProperty("display", "flex", "important");
+                        info.style.position = "relative";
+                        info.style.width = "min(220px, calc(100% - 28px))";
+                        info.style.minHeight = "30px";
+                        info.style.margin = "-2px 0 0 4px";
+                        info.style.padding = "5px 30px 5px 10px";
+                        info.style.alignItems = "center";
+                        info.style.gap = "6px";
+                        info.style.borderRadius = "8px 8px 0 0";
+                        info.style.background = "#fff";
+                        info.style.boxSizing = "border-box";
+                    }
+                    if (content) {
+                        content.style.position = "relative";
+                        content.style.margin = "0 -8px -8px";
+                        content.style.padding = "42px 8px 8px";
+                        content.style.background = "#fff";
+                    }
+                    const contentUrl = content?.querySelector(".lkc-url");
+                    if (contentUrl) {
+                        contentUrl.style.position = "absolute";
+                        contentUrl.style.zIndex = "1";
+                        contentUrl.style.top = "8px";
+                        contentUrl.style.right = "22px";
+                        contentUrl.style.left = "92px";
+                        contentUrl.style.margin = "0";
+                        contentUrl.style.padding = "0";
+                        contentUrl.style.background = "transparent";
+                        contentUrl.style.setProperty("color", "#3c4043", "important");
+                        contentUrl.style.fontSize = "11px";
+                        contentUrl.style.lineHeight = "18px";
+                    }
+                    if (domain) {
+                        domain.style.padding = "0";
+                        domain.style.background = "transparent";
+                        domain.style.border = "0";
+                        domain.style.setProperty("color", "#3c4043", "important");
+                    }
+                    card.querySelectorAll(".lkc-share").forEach(node => node.style.setProperty("display", "none", "important"));
+                });
+            }
             const ingressPreset = ingressPresets[specialFormat];
             if (ingressPreset) {
                 applyIngressPreset(ingressPreset);
@@ -1600,7 +1709,9 @@
         };
         const updatePreview = () => {
             const thumbnailPosition = value("thumbnail-position");
-            const infoPosition = value("info-position");
+            const infoControl = Array.from(form.querySelectorAll('select[name="properties[info-position]"]')).find(el => el.getClientRects?.().length || el.offsetParent !== null);
+            const infoPosition = String(infoControl ? infoControl.value : value("info-position") ?? "").trim();
+            const showInfo = !["", "0", "none", "なし"].includes(infoPosition.toLowerCase());
             const displayUrl = value("display-url");
             const displayDate = value("display-date");
             const width = value("width");
@@ -1617,7 +1728,7 @@
                 const wrap = card.querySelector(".lkc-external-wrap, .lkc-internal-wrap");
                 const cardBody = card.querySelector(".lkc-card");
                 const content = card.querySelector("[data-pz-preview-content]");
-                const info = card.querySelector("[data-pz-preview-info]");
+                const info = card.querySelector("[data-pz-preview-info], .lkc-info");
                 const title = card.querySelector(".lkc-title");
                 const heading = card.querySelector("[data-pz-preview-heading]");
                 const more = card.querySelector("[data-pz-preview-more]");
@@ -1630,17 +1741,24 @@
 
                 resetCardOrder(card);
                 resetStyle(card, ["marginTop", "marginBottom", "paddingLeft", "paddingRight"]);
-                resetStyle(wrap, ["maxWidth", "width", "height", "margin", "transform", "background", "backgroundColor", "backgroundImage", "border", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "opacity", "transition"]);
-                resetStyle(cardBody, ["marginTop", "marginBottom", "marginLeft", "marginRight", "padding", "border", "background", "backgroundColor", "boxShadow"]);
-                resetStyle(content, ["height", "margin", "padding", "boxShadow", "background", "backgroundColor", "borderTop", "borderBottom"]);
-                resetStyle(info, ["color", "background", "backgroundColor"]);
+                resetStyle(wrap, ["display", "position", "maxWidth", "width", "height", "margin", "padding", "transform", "background", "backgroundColor", "backgroundImage", "backgroundBlendMode", "backdropFilter", "webkitBackdropFilter", "border", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "opacity", "overflow", "transition"]);
+                resetStyle(cardBody, ["position", "overflow", "marginTop", "marginBottom", "marginLeft", "marginRight", "padding", "border", "background", "backgroundColor", "boxShadow", "transform"]);
+                resetStyle(content, ["position", "height", "margin", "padding", "boxShadow", "background", "backgroundColor", "borderTop", "borderBottom", "borderRadius"]);
+                resetStyle(info, ["display", "position", "width", "minHeight", "margin", "padding", "color", "background", "backgroundColor", "alignItems", "gap", "borderRadius", "boxSizing"]);
                 resetStyle(thumbnail, ["display", "float", "width", "margin", "transform", "background", "backgroundColor", "backgroundImage", "border", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "opacity", "transition"]);
-                resetStyle(thumbnailImg, ["width", "height"]);
+                resetStyle(thumbnailImg, ["width", "height", "borderRadius"]);
+                resetStyle(url, ["position", "zIndex", "top", "right", "left", "margin"]);
+				const thumbnailBorderRadius = intValue(`${prefix}-thumbnail-border-radius`, 0);
+				if (thumbnail) thumbnail.style.borderRadius = `${thumbnailBorderRadius}px`;
+				if (thumbnailImg) thumbnailImg.style.borderRadius = `${thumbnailBorderRadius}px`;
 
                 card.style.marginTop = cssSize("margin-top") || "";
                 card.style.marginBottom = cssSize("margin-bottom") || "";
                 card.style.paddingLeft = cssSize("margin-left") || "";
                 card.style.paddingRight = cssSize("margin-right") || "";
+					card.querySelectorAll(".lkc-info, .lkc-title, .lkc-url, .lkc-url-info, .lkc-date, .lkc-excerpt").forEach(node => {
+						node.style.removeProperty("text-shadow");
+					});
 
                 if (wrap) {
                     if (width) {
@@ -1652,11 +1770,88 @@
                     }
                     wrap.style.margin = checked("centering") ? "0 auto" : "0";
                     applyPartBox(card, ".lkc-external-wrap, .lkc-internal-wrap", prefix);
+					card.querySelectorAll(".lkc-siteicon, .lkc-share").forEach(node => { node.style.removeProperty("display"); });
+					if (info) { info.style.removeProperty("text-align"); }
+					card.querySelectorAll(".lkc-domain").forEach(node => { node.style.removeProperty("color"); });
+					card.querySelectorAll(".lkc-domain").forEach(node => {
+						node.style.removeProperty("margin-left");
+						node.style.removeProperty("margin-right");
+						node.style.removeProperty("text-align");
+						node.style.removeProperty("padding");
+						node.style.removeProperty("background");
+						node.style.removeProperty("border");
+					});
+
+                    if (specialFormat === "mac") {
+						if (info) info.style.setProperty("text-align", "center", "important");
+						card.querySelectorAll(".lkc-siteicon, .lkc-share").forEach(node => { node.style.setProperty("display", "none", "important"); });
+						card.querySelectorAll(".lkc-domain").forEach(node => { node.style.setProperty("color", "#000", "important"); });
+                    } else if (specialFormat === "metal") {
+                        wrap.style.backgroundImage = "linear-gradient(165deg, #f1f3f5 0%, #b7bec5 45%, #e7eaed 52%, #9aa3ac 100%)";
+                        wrap.style.backgroundBlendMode = "multiply";
+                        wrap.style.boxShadow = "0 2px 5px rgba(0,0,0,.25)";
+                    } else if (specialFormat === "glass") {
+                        const glassColor = value(`${prefix}-bg-color`) || "#ffffff";
+                        const glassHex = glassColor.replace("#", "");
+                        const glassRgb = glassHex.length === 3 ? glassHex.split("").map(ch => parseInt(ch + ch, 16)) : [parseInt(glassHex.slice(0, 2), 16), parseInt(glassHex.slice(2, 4), 16), parseInt(glassHex.slice(4, 6), 16)];
+                        wrap.style.backgroundColor = `rgba(${glassRgb.join(",")},.5)`;
+                        [cardBody, content, info].forEach(node => {
+                            if (!node) return;
+                            node.style.setProperty("background-color", "transparent", "important");
+                            node.style.setProperty("background-image", "none", "important");
+                        });
+                        wrap.style.backgroundImage = "radial-gradient(circle at 18% 12%, rgba(255,255,255,.5), transparent 34%), radial-gradient(circle at 82% 88%, rgba(176,215,255,.22), transparent 42%), linear-gradient(135deg, rgba(255,255,255,.38), rgba(220,235,255,.14))";
+                        wrap.style.backdropFilter = "blur(2px) saturate(125%)";
+                        wrap.style.webkitBackdropFilter = "blur(2px) saturate(125%)";
+                        wrap.style.boxShadow = "0 8px 24px rgba(31,56,85,.18)";
+                        card.querySelectorAll(".lkc-info, .lkc-title, .lkc-url, .lkc-url-info, .lkc-date, .lkc-excerpt").forEach(node => {
+                            node.style.setProperty("text-shadow", "4px 4px 5px #00000088", "important");
+                        });
+                    } else if (specialFormat === "ppc" || specialFormat === "tac") {
+                        wrap.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.8)";
+                    } else if (specialFormat === "accent") {
+                        if (wrap) wrap.style.position = "relative";
+                        if (wrap) wrap.style.setProperty("background-color", "#ffffff", "important");
+                        if (cardBody) {
+                            cardBody.style.setProperty("padding-left", "24px", "important");
+                            cardBody.style.setProperty("background-color", "transparent", "important");
+                        }
+                    } else if (["Floating", "Floating2", "fbd"].includes(specialFormat)) {
+                        if (wrap) {
+                            wrap.style.position = "relative";
+                            wrap.style.display = "flow-root";
+                            wrap.style.margin = "12px";
+                            wrap.style.padding = "12px";
+                            wrap.style.border = "none";
+                            wrap.style.borderRadius = `${intValue(`${prefix}-border-radius`, 0)}px`;
+                            wrap.style.boxShadow = "none";
+                            wrap.style.overflow = "visible";
+                            wrap.querySelector(".pz-preview-floating-frame")?.remove();
+                        }
+                        if (cardBody) {
+                            cardBody.style.margin = "0";
+                            cardBody.style.padding = "0";
+                            cardBody.style.boxShadow = "none";
+                            cardBody.style.position = "relative";
+                            cardBody.style.zIndex = "1";
+							if (specialFormat === "Floating2") {
+								cardBody.style.transform = "translate(-12px, -12px)";
+							}
+                        }
+                        if (content) {
+                            content.style.position = "relative";
+                            content.style.zIndex = "1";
+                        }
+                        if (info) {
+                            info.style.borderRadius = "10px";
+                        }
+                    }
                 }
 
                 if (cardBody) {
                     if (specialFormat === "cmp") {
                         cardBody.style.margin = "0";
+                        cardBody.style.padding = "0";
                     } else {
                         cardBody.style.marginTop = cssSize("card-top") || "8px";
                         cardBody.style.marginBottom = cssSize("card-bottom") || "8px";
@@ -1665,7 +1860,41 @@
                     }
                 }
 
-                if (!usePresetLayout && thumbnail && thumbnailImg) {
+                if (specialFormat === "cmp") {
+					if (wrap) {
+						wrap.style.margin = "0";
+						wrap.style.overflow = "hidden";
+					}
+                    if (content) {
+                        content.style.height = "100px";
+                        content.style.margin = "0";
+                        content.style.padding = "0";
+                    }
+					if (info) info.style.setProperty("display", "none", "important");
+                    if (thumbnail) {
+						const compactBorderRadius = intValue(`${prefix}-border-radius`, 0);
+                        thumbnail.style.display = "block";
+                        thumbnail.style.float = "left";
+                        thumbnail.style.width = "100px";
+                        thumbnail.style.height = "108px";
+                        thumbnail.style.margin = "-2px 8px 0 -1px";
+						thumbnail.style.borderRadius = `${compactBorderRadius}px ${thumbnailBorderRadius}px ${thumbnailBorderRadius}px ${compactBorderRadius}px`;
+						if (thumbnailImg) {
+							thumbnailImg.style.borderRadius = `${compactBorderRadius}px ${thumbnailBorderRadius}px ${thumbnailBorderRadius}px ${compactBorderRadius}px`;
+						}
+                    }
+                    if (thumbnailImg) {
+                        const compactBorderColor = value(`${prefix}-border-color`) || "#999";
+                        const compactBorderWidth = intValue(`${prefix}-border-width`, 1);
+                        thumbnailImg.style.boxSizing = "border-box";
+                        thumbnailImg.style.borderRight = `${compactBorderWidth}px solid ${compactBorderColor}`;
+                    }
+                    if (title) title.style.margin = "0 0 0 108px";
+                    if (url) url.style.margin = "0 0 0 108px";
+                    if (excerpt) excerpt.style.margin = "0 0 0 108px";
+                }
+
+                if (specialFormat !== "cmp" && !usePresetLayout && thumbnail && thumbnailImg) {
                     applyDisplay(thumbnail, thumbnailPosition !== "0");
                     if (thumbnailPosition === "1") {
                         thumbnail.style.float = "right";
@@ -1687,7 +1916,7 @@
                     }
                 }
 
-                if (content && !usePresetLayout) {
+                if (specialFormat !== "cmp" && content && !usePresetLayout) {
                     const totalHeight = thumbnailPosition === "3" ? contentHeight + thumbnailHeight : contentHeight;
                     if (totalHeight > 0) content.style.height = `${totalHeight}px`;
                     if (checked("content-inset")) {
@@ -1702,18 +1931,33 @@
                     }
                 }
 
-                applyDisplay(info, infoPosition !== "");
+                if (specialFormat !== "cmp") applyDisplay(info, showInfo);
+				if (specialFormat === "mac") {
+					card.querySelectorAll(".lkc-share, .lkc-siteicon").forEach(node => node.style.setProperty("display", "none", "important"));
+					if (info) info.style.setProperty("text-align", "center", "important");
+					card.querySelectorAll(".lkc-domain").forEach(node => {
+						node.style.setProperty("margin-left", "auto", "important");
+						node.style.setProperty("margin-right", "auto", "important");
+						node.style.setProperty("text-align", "center", "important");
+					});
+				}
+                info?.querySelectorAll?.(".lkc-siteicon").forEach(icon => {
+                    icon.style.flexShrink = "0";
+                    icon.style.flexGrow = "0";
+                });
                 if (info && content && title && cardBody) {
-                    if (infoPosition === "2") {
+					if (infoPosition === "1") {
+						cardBody.insertBefore(info, content);
+					} else if (infoPosition === "2") {
                         cardBody.appendChild(info);
                     } else if (infoPosition === "3") {
                         content.insertBefore(info, title);
                     }
                 }
-
                 const showDate = prefix !== "ex" && displayDate !== "";
                 const urlText = previewUrlText(card, prefix);
-                if (!showDate && displayUrl === "1" && content && !url) {
+                const showBrowserUrl = specialFormat === "browser";
+                if ((showBrowserUrl || (!showDate && displayUrl === "1")) && content && !url) {
                     url = document.createElement("div");
                     url.className = "lkc-url";
                     url.title = urlText;
@@ -1743,12 +1987,13 @@
                     }
                 }
                 applyDisplay(date, showDate);
-                applyDisplay(url, displayUrl === "1" && !showDate);
-                applyDisplay(infoUrl, displayUrl === "2" && !showDate);
+                applyDisplay(url, showBrowserUrl || (displayUrl === "1" && !showDate));
+                applyDisplay(infoUrl, !showBrowserUrl && displayUrl === "2" && !showDate);
                 syncShare(card, content, info, title, infoUrl);
                 applyDisplay(excerpt, checked("display-excerpt"));
 
                 if (heading) {
+                    resetStyle(heading, ["alignItems", "position", "top", "left", "height", "padding", "zIndex"]);
                     let headingText = value(`${prefix}-heading-text`);
                     if (value("special-format") === "JIN" && headingText === "") {
                         if (prefix === "ex") headingText = labels.referenced || "Referenced";
@@ -1789,6 +2034,9 @@
                     added.textContent = addedText;
                     applyDisplay(added, true);
                 }
+				if (specialFormat === "mac") {
+					card.querySelectorAll(".lkc-share, .lkc-siteicon").forEach(node => node.style.setProperty("display", "none", "important"));
+				}
                 } catch (err) {
                     console.warn("Pz-LinkCard preview card failed:", card.dataset.pzPreviewCard || "", err);
                 }
@@ -1816,6 +2064,13 @@
                 }
             });
             applySpecialFormat();
+            let infoVisibilityStyle = win.querySelector("#pz-preview-info-visibility");
+            if (!infoVisibilityStyle) {
+                infoVisibilityStyle = win.ownerDocument.createElement("style");
+                infoVisibilityStyle.id = "pz-preview-info-visibility";
+                win.appendChild(infoVisibilityStyle);
+            }
+            infoVisibilityStyle.textContent = showInfo ? ".lkc-info { display: flex !important; }" : ".lkc-info { display: none !important; }";
         };
 
         const syncPreview = () => {

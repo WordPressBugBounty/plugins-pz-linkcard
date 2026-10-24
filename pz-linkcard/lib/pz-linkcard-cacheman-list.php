@@ -84,7 +84,7 @@
 	$where				=	$parsed_search['where'];
 	$param				=	$parsed_search['params'];
 	if	($filter_unregistered ) {
-		$where	= $where ? "($where) AND regist_time IS NULL" : 'regist_time IS NULL';
+	$where	= $where ? "($where) AND (regist_time IS NULL OR regist_time = 0)" : '(regist_time IS NULL OR regist_time = 0)';
 	}
 
 	// 表示オプション
@@ -185,7 +185,7 @@
 	$sql			.=	"COUNT( CASE WHEN domain <> '".$this->domain."' THEN 1 END ) AS count_external, ";
 	$sql			.=	"COUNT( CASE WHEN alive_result <> update_result THEN 1 END ) AS count_modify, ";
 	$sql			.=	"COUNT( CASE WHEN alive_result IS NOT NULL AND alive_result <> 0 AND ( alive_result < 100 OR alive_result >= 400 ) THEN 1 END ) AS count_unlink, ";
-	$sql			.=	"COUNT( CASE WHEN regist_time IS NULL THEN 1 END ) AS count_unregistered ";
+	$sql			.=	"COUNT( CASE WHEN regist_time IS NULL OR regist_time = 0 THEN 1 END ) AS count_unregistered ";
 	$sql			.=	"FROM $this->db_card";
 	$result			=	$wpdb->get_row($sql );
 	$count_list['all'	  ]	=	$result->count_all		??	0;
@@ -258,8 +258,8 @@
 	?>
 	<div class="pz-man-screen-tabs">
 		<div class="pz-man-screen-options">
-			<button type="button" id="pz-man-screen-options-toggle" class="pz-man-screen-options-toggle" aria-expanded="false" aria-controls="pz-man-screen-options-panel" data-no-overlay="1">
-				<?php echo esc_html(__('Screen Options', 'pz-linkcard' ) ); ?><span class="dashicons dashicons-arrow-down-alt2"></span>
+			<button type="button" id="pz-man-screen-options-toggle" class="pz-man-screen-options-toggle" title="<?php echo esc_attr(__('Screen Options', 'pz-linkcard' ) ); ?>" aria-expanded="false" aria-controls="pz-man-screen-options-panel" data-no-overlay="1">
+				<span class="pz-screen-toggle-label-wide"><?php echo esc_html(__('Screen Options', 'pz-linkcard' ) ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-forms" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down-alt2"></span>
 			</button>
 			<div id="pz-man-screen-options-panel" class="pz-man-screen-options-panel" hidden>
 				<fieldset>
@@ -273,6 +273,8 @@
 							$classes		=	array();
 							if	(!empty($screen_option_defaults[$column_key] ) ) {
 								$classes[]	=	'pz-man-screen-option-default';
+							} else {
+								$classes[]	=	'pz-man-screen-option-default-hidden';
 							}
 							if	(!empty($column['debug_only'] ) ) {
 								$classes[]	=	'pz-debug-only';
@@ -298,8 +300,8 @@
 			</div>
 		</div>
 		<div class="pz-man-help">
-			<button type="button" id="pz-man-help-toggle" class="pz-man-help-toggle" aria-expanded="false" aria-controls="pz-man-help-panel" data-no-overlay="1">
-				<?php echo esc_html($help_label ); ?><span class="dashicons dashicons-arrow-down-alt2"></span>
+			<button type="button" id="pz-man-help-toggle" class="pz-man-help-toggle" title="<?php echo esc_attr($help_label.' F1'); ?>" aria-expanded="false" aria-controls="pz-man-help-panel" data-no-overlay="1">
+				<span class="pz-screen-toggle-label-wide"><?php echo esc_html($help_label ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-editor-help" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down-alt2"></span>
 			</button>
 			<div id="pz-man-help-panel" class="pz-man-help-panel" hidden>
 				<h3><?php echo esc_html($search_help_label ); ?></h3>
@@ -331,11 +333,14 @@
 			</dl>
 			<h3 class="pz-man-shortcut-title"><?php echo esc_html(__('Keyboard Shortcuts' ) ); ?></h3>
 			<dl class="pz-man-shortcut-list">
-				<div><dt><kbd>Ctrl+F</kbd> / <kbd>Alt+Q</kbd></dt><dd><?php echo esc_html(__('Search', 'pz-linkcard' ) ); ?></dd></div>
+				<div><dt><kbd>F1</kbd></dt><dd><?php echo esc_html__('Show Help', 'pz-linkcard' ); ?></dd></div>
+				<div><dt><kbd>F2</kbd></dt><dd><?php echo esc_html__('Show Screen Options', 'pz-linkcard' ); ?></dd></div>
 				<div><dt><kbd>F3</kbd></dt><dd><?php echo esc_html(__('Search cards', 'pz-linkcard' ) ); ?></dd></div>
-				<div><dt><kbd>Ctrl+A</kbd></dt><dd><?php echo esc_html(__('Select All' ) ); ?></dd></div>
-				<div><dt><kbd>Ctrl+;</kbd></dt><dd><?php echo esc_html(__('Today' ).' (yyyy-mm-dd)' ); ?></dd></div>
-				<div><dt><kbd>Ctrl+←</kbd> / <kbd>Ctrl+→</kbd></dt><dd><?php echo esc_html(__('Previous page' ).' / '.__('Next page' ) ); ?></dd></div>
+				<div><dt><kbd>F4</kbd></dt><dd><?php echo esc_html__('Switch between Card Manager and Settings', 'pz-linkcard' ); ?></dd></div>
+				<div><dt><kbd>Ctrl</kbd>+<kbd>A</kbd></dt><dd><?php echo esc_html(__('Select All' ) ); ?></dd></div>
+				<div><dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Alt</kbd>+<kbd>Q</kbd></dt><dd><?php echo esc_html(__('Search', 'pz-linkcard' ) ); ?></dd></div>
+				<div><dt><kbd>Ctrl</kbd>+<kbd>;</kbd></dt><dd><?php echo esc_html(__('Today' ).' (yyyy-mm-dd)' ); ?></dd></div>
+				<div><dt><kbd>Ctrl</kbd>+<kbd>←</kbd> / <kbd>Ctrl</kbd>+<kbd>→</kbd></dt><dd><?php echo esc_html(__('Previous page' ).' / '.__('Next page' ) ); ?></dd></div>
 			</dl>
 		</div>
 		</div>
@@ -346,7 +351,7 @@
 			<label>
 				<span class="dashicons dashicons-search" style="vertical-align: text-bottom;"></span>
 				<input  type="search"  id="post-search-input" name="keyword" value="<?php echo esc_attr($keyword ); ?>" placeholder="<?php esc_attr_e('Search', 'pz-linkcard' ); ?>" data-pz-today="<?php echo esc_attr($search_help_date ); ?>" />
-				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action"><?php esc_html_e('Search cards', 'pz-linkcard' ); ?></button>
+				<button type="submit"  id="search-submit"     name="action"  value="search" class="button action" title="<?php echo esc_attr(__('Search cards', 'pz-linkcard' ).' F3'); ?>"><?php esc_html_e('Search cards', 'pz-linkcard' ); ?></button>
 			</label>
 		</p>
 	</div>
@@ -386,6 +391,7 @@
 		<br class="clear">
 	</div>
 
+	<div class="pz-man-cache-table-scroll" role="region" aria-label="<?php echo esc_attr__('Manager', 'pz-linkcard' ); ?>" tabindex="0">
 	<table class="pz-man-cache-list widefat striped">
 		<thead>
 			<tr>
@@ -553,6 +559,7 @@
 
 					// データID
 					$data_id	=	$data->id;
+					$is_pending	=	is_null($data->regist_time ) || intval($data->regist_time ) === 0;
 
 					// URL
 					$url		=	$data->url;
@@ -599,6 +606,10 @@
 					$html_title			=	mb_strimwidth($title, 0, 200 , '...' );		// 200文字にする
 					if	($data->title	<>	$data->regist_title ) {
 						$html_title		=	'<b>'.$html_title.'</b>';
+					}
+					if	($is_pending ) {
+						$title			=	__('Retrieving...', 'pz-linkcard' );
+						$html_title		=	esc_html($title ).'<span class="pz-man-pending-loader" aria-hidden="true"></span>';
 					}
 
 					// 抜粋文
@@ -648,7 +659,7 @@
 
 					// リンクカードが貼られている投稿ID
 					$post_id_t			=	array();
-					for	($j = 1; $j <= 6; $j++ ) {
+					for	($j = 1; $j <= 4; $j++ ) {
 						$use_post_id	=	'use_post_id'.$j;
 						$use_post_id_value	=	intval($data->$use_post_id );
 						if	($use_post_id_value > 0 ) {
@@ -659,7 +670,7 @@
 					foreach	($post_id_t as $use_post_id_value ) {
 						$post_title	=	get_the_title($use_post_id_value );
 						$post_url	=	get_permalink($use_post_id_value ).'#pz-lkc-'.intval($data_id );
-						$html_post_id	.=	'<span class="pz-man-post-id-line"><button type="button" class="pz-man-inline-menu pz-man-post-search" data-pz-man-search-post="'.intval($use_post_id_value ).'" title="post:'.intval($use_post_id_value ).'">'.intval($use_post_id_value ).'</button><a href="'.esc_url($post_url ).'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="pz-man-post-open" title="'.esc_attr($post_title ).'" aria-label="'.esc_attr($post_title ).'"><span class="dashicons dashicons-external" aria-hidden="true"></span></a></span><br>';
+						$html_post_id	.=	'<span class="pz-man-post-id-line"><button type="button" class="pz-man-inline-menu pz-man-post-search" data-pz-man-search-post="'.intval($use_post_id_value ).'" title="post:'.intval($use_post_id_value ).'"><span>'.intval($use_post_id_value ).'</span><span class="dashicons dashicons-filter" aria-hidden="true"></span></button><a href="'.esc_url($post_url ).'" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="pz-man-post-open" title="'.esc_attr($post_title ).'" aria-label="'.esc_attr($post_title ).'"><span class="dashicons dashicons-external" aria-hidden="true"></span></a></span><br>';
 					}
 
 					// クリック数
@@ -674,9 +685,9 @@
 
 					// HTML 明細行
 			?>
-			<tr>
+			<tr<?php if ($is_pending ) { ?> data-pz-pending-id="<?php echo intval($data_id ); ?>"<?php } ?>>
 				<th scope="row" class="pz-man-body-check check-column"><input id="cb-select-<?php echo intval($data_id ); ?>" type="checkbox" name="select_id[]" value="<?php echo intval($data_id ); ?>" /><div class="locked-indicator"></div></th>
-				<td class="pz-man-body-id<?php echo esc_attr($screen_option_hidden_class('id') ); ?>"><button type="button" data-pz-man-search-id="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-id-search"><?php echo intval($data_id ); ?></button><?php echo wp_kses($html_thumbnail, $cacheman_list_allowed_html ); ?></td>
+				<td class="pz-man-body-id<?php echo esc_attr($screen_option_hidden_class('id') ); ?>"><button type="button" data-pz-man-search-id="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-id-search" title="<?php echo esc_attr('id:'.intval($data_id ) ); ?>"><span><?php echo intval($data_id ); ?></span><span class="dashicons dashicons-filter" aria-hidden="true"></span></button><?php echo wp_kses($html_thumbnail, $cacheman_list_allowed_html ); ?></td>
 				<td colspan="2" class="pz-man-body-url-title-cell">
 					<div class="pz-man-body-url"><?php echo wp_kses($html_url, $cacheman_list_allowed_html ); ?></div>
 					<div class="pz-man-body-title"><span title="<?php echo esc_attr($title ); ?>"><?php echo wp_kses_post($html_title ); ?></span></div>
@@ -721,12 +732,13 @@
 				<td class="pz-man-body-alive-nexttime pz-debug-only<?php echo esc_attr($screen_option_hidden_class('alive_nexttime') ); ?>"><?php $dt=$data->alive_nexttime; ?><span title="<?php echo esc_attr(date(PZLKC_DATETIME_FORMAT, $dt ) ); ?>"><?php echo wp_kses($this->pz_Date($this->options['date-format-man'], $dt ), $date_allowed_html ); ?></span></td>
 				<?php } ?>
 				<td class="pz-man-body-use-post-id<?php echo esc_attr($screen_option_hidden_class('use_post_id') ); ?>"><?php echo wp_kses($html_post_id, $cacheman_list_allowed_html ); ?></td>
-				<td class="pz-man-body-click-count<?php echo esc_attr($screen_option_hidden_class('click_count') ); ?>"><button type="submit" name="single-click-log" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu"><?php echo esc_html(number_format_i18n(intval($data->click_count ) ) ); ?></button></td>
+				<td class="pz-man-body-click-count<?php echo esc_attr($screen_option_hidden_class('click_count') ); ?>"><button type="submit" name="single-click-log" value="<?php echo intval($data_id ); ?>" class="pz-man-inline-menu pz-man-click-log-button" title="<?php echo esc_attr__('History', 'pz-linkcard' ); ?>"><span><?php echo esc_html(number_format_i18n(intval($data->click_count ) ) ); ?></span><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span></button></td>
 				<td class="pz-man-body-result<?php echo esc_attr($screen_option_hidden_class('result') ); ?>"><?php echo wp_kses_post($html_result ); ?></td>
 			</tr>
 			<?php } ?>
 		</tbody>
 	</table>
+	</div>
 	<?php /* ページネーション */ echo wp_kses($paging_bottom, $paging_allowed_html ); ?></div>
 <?php
 // 関数

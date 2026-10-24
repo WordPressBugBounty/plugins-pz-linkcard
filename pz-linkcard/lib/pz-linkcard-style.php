@@ -16,6 +16,10 @@
 		// テンプレートファイルを読み込む
 		$file_text	=	file_get_contents(PZLKC_FILE_TEMPLATE );
 		if ($file_text ) {
+			if (in_array($prop['special-format'], array('ref', 'ct1', 'ct2', 'ct3', 'ct4', 'tac' ), true ) ) {
+				$heading_front_css = '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 3; }';
+				$file_text = str_replace('/*CSS-ADD*/', $heading_front_css.'/*CSS-ADD*/', $file_text );
+			}
 			// 特殊フォーマットごとの固定スタイル
 			switch ($prop['special-format'] ) {
 			case 'LkC': // Pz-LkC Default
@@ -31,16 +35,66 @@
 				$file_text	=	str_replace('/*EX-BG-COLOR*/',			'', $file_text );
 				$file_text	=	str_replace('/*EX-BG-IMAGE*/',			'', $file_text );
 				$file_text	=	str_replace('/*EX-BORDER*/',			'border: none;', $file_text );
+				$file_text	=	str_replace('/*EX-SHADOW*/',			'box-shadow: none;', $file_text );
 				$file_text	=	str_replace('/*IN-BG-IMAGE*/',			'', $file_text );
 				$file_text	=	str_replace('/*IN-BG-COLOR*/',			'', $file_text );
 				$file_text	=	str_replace('/*IN-BORDER*/',			'border: none;', $file_text );
+				$file_text	=	str_replace('/*IN-SHADOW*/',			'box-shadow: none;', $file_text );
 				$file_text	=	str_replace('/*NONE-INFO*/',			'display: none !important;', $file_text );
 				$file_text	=	str_replace('/*NONE-EXCERPT*/',			'display: none !important;', $file_text );
 				break;
+			case 'floating':
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { position: relative; display: flow-root; margin: 12px; padding: 12px; border: none; box-shadow: none; overflow: visible; }';
+				$css .= '.lkc-external-wrap::before, .lkc-internal-wrap::before { content: ""; position: absolute; inset: -12px 12px 12px -12px; pointer-events: none; z-index: 0; }';
+				foreach (array('ex', 'in') as $t) {
+					$border_enabled = !empty($prop[$t.'-border-enabled']);
+					$border_color = $prop[$t.'-border-color'] ?? '';
+					$border_style = $prop[$t.'-border-style'] ?? 'solid';
+					$border_width = intval($prop[$t.'-border-width'] ?? 0);
+					$border_radius = intval($prop[$t.'-border-radius'] ?? 0);
+					$border = $border_enabled && $border_style
+						? 'border: '.$border_width.'px '.$border_style.' '.$border_color.';'
+						: 'border: none;';
+					$css .= '.lkc-'.$t.'ternal-wrap, .lkc-'.$t.'ternal-wrap::before { border-radius: '.$border_radius.'px; }';
+					$css .= '.lkc-'.$t.'ternal-wrap::before { '.$border.' }';
+				}
+				$css .= '.lkc-external-wrap > *, .lkc-internal-wrap > * { position: relative; z-index: 1; }';
+				$css .= '.lkc-external-wrap .lkc-card, .lkc-internal-wrap .lkc-card { margin: 0; padding: 0; }';
+				$css .= '.lkc-info { border-radius: 10px; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'floating2':
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { position: relative; display: flow-root; margin: 12px; padding: 12px; border: none; box-shadow: none; overflow: visible; }';
+				$css .= '.lkc-external-wrap::before, .lkc-internal-wrap::before { content: ""; position: absolute; inset: -12px 12px 12px -12px; pointer-events: none; z-index: 0; }';
+				foreach (array('ex', 'in') as $t) {
+					$border_enabled = !empty($prop[$t.'-border-enabled']);
+					$border_color = $prop[$t.'-border-color'] ?? '';
+					$border_style = $prop[$t.'-border-style'] ?? 'solid';
+					$border_width = intval($prop[$t.'-border-width'] ?? 0);
+					$border_radius = intval($prop[$t.'-border-radius'] ?? 0);
+					$border = $border_enabled && $border_style
+						? 'border: '.$border_width.'px '.$border_style.' '.$border_color.';'
+						: 'border: none;';
+					$css .= '.lkc-'.$t.'ternal-wrap, .lkc-'.$t.'ternal-wrap::before { border-radius: '.$border_radius.'px; }';
+					$css .= '.lkc-'.$t.'ternal-wrap::before { '.$border.' }';
+				}
+				$css .= '.lkc-external-wrap > *, .lkc-internal-wrap > * { position: relative; z-index: 1; }';
+				$css .= '.lkc-external-wrap .lkc-card, .lkc-internal-wrap .lkc-card { margin: 0; padding: 0; transform: translate(-12px, -12px); }';
+				$css .= '.lkc-info { border-radius: 10px; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'accent': // プリセット：アクセント
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',			'background-color: #ffffff;', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',			'background-color: #ffffff;', $file_text );
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { position: relative; }';
+				$css .= '.lkc-external-wrap::before, .lkc-internal-wrap::before { content: ""; position: absolute; z-index: 3; left: 8px; top: 8px; bottom: 8px; width: 16px; pointer-events: none; }';
+				$css .= '.lkc-external-wrap::before { background-color: '.$prop['ex-bg-color'].'; } .lkc-internal-wrap::before { background-color: '.$prop['in-bg-color'].'; }';
+				$css .= '.lkc-external-wrap:hover, .lkc-internal-wrap:hover { background-color: #ffffff !important; }';
+				$css .= '.lkc-card { padding-left: 24px; }';
+				$file_text	= str_replace('/*OPTION*/', $css, $file_text );
+				break;
 			case 'cmp': // プリセット: コンパクト
-				$file_text	=	str_replace('/*EX-BORDER*/',			'border: 1px solid rgba(0,0,0,0.1);', $file_text );
-				$file_text	=	str_replace('/*IN-BORDER*/',			'border: 1px solid rgba(0,0,0,0.1);', $file_text );
-				$file_text	=	str_replace('/*CONTENT-HEIGHT*/',		'height: 108px;', $file_text );
+				$file_text	=	str_replace('/*CONTENT-HEIGHT*/',		'height: 100px;', $file_text );
 				$file_text	=	str_replace('/*WRAP-MARGIN*/',			'margin: 0;', $file_text );
 				$file_text	=	str_replace('/*PADDING*/',				'padding: 0;', $file_text );
 				$file_text	=	str_replace('/*CARD-TOP*/',				'margin: 0;', $file_text );
@@ -58,10 +112,14 @@
 				$file_text	=	str_replace('/*THUMBNAIL-IMG-WIDTH*/',	'width: 100px;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-IMG-HEIGHT*/',	'height: 108px;', $file_text );
 				$file_text	=	str_replace('/*THUMBNAIL-POSITION*/',	'float: left;', $file_text );
-				$file_text	=	str_replace('/*THUMBNAIL-MARGIN*/',		'margin: 0 8px 0 0;', $file_text );
-				$file_text	=	str_replace('/*THUMBNAIL-RADIUS*/',		'border-radius: 16px 0 0 16px;', $file_text );
+				$file_text	=	str_replace('/*THUMBNAIL-MARGIN*/',		'margin: -2px 8px 0 -1px;', $file_text );
+				$file_text	=	str_replace('/*THUMBNAIL-RADIUS*/',		'', $file_text );
 				$file_text	=	str_replace('/*POSITION-INFO*/',		'position: absolute; top: 8px; left: 108px;', $file_text );
 				$file_text	=	str_replace('/*NONE-INFO*/',			'display: none !important;', $file_text );
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { overflow: hidden; }';
+				$css .= '.lkc-external-wrap .lkc-thumbnail, .lkc-external-wrap .lkc-thumbnail-img { border-radius: '.intval($prop['ex-border-radius'] ?? 0).'px '.intval($prop['ex-thumbnail-border-radius'] ?? 0).'px '.intval($prop['ex-thumbnail-border-radius'] ?? 0).'px '.intval($prop['ex-border-radius'] ?? 0).'px; }';
+				$css .= '.lkc-internal-wrap .lkc-thumbnail, .lkc-internal-wrap .lkc-thumbnail-img { border-radius: '.intval($prop['in-border-radius'] ?? 0).'px '.intval($prop['in-thumbnail-border-radius'] ?? 0).'px '.intval($prop['in-thumbnail-border-radius'] ?? 0).'px '.intval($prop['in-border-radius'] ?? 0).'px; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
 				break;
 			case 'JIN': // プリセット: JIN風
 				$file_text	=	str_replace('/*MARGIN-TOP*/',			'margin: 24px auto 30px auto;', $file_text );
@@ -80,7 +138,7 @@
 				$file_text	=	str_replace('/*OPTION*/',				'.linkcard p { display: none; }', $file_text );
 				foreach		(array('ex', 'in' )	as	$t ) {
 					$T		=	strtoupper($t );
-					$file_text		=	str_replace('/*'.$T.'-HEADING*/',		'padding: 0 16px !important; position: absolute; top: -15px; left: 20px; padding: 0 10px; height: 20px; '.txt_color('background-color: ', $prop['in-border-color'] ).';', $file_text );
+					$file_text		=	str_replace('/*'.$T.'-HEADING*/',		'display: inline-flex !important; align-items: center; padding: 0 16px !important; position: absolute; top: -15px; left: 20px; padding: 0 10px; height: 20px; '.txt_color('background-color: ', $prop['in-border-color'] ).';', $file_text );
 					$value_border	=	'border: solid '.($prop[$t.'-border-color'] ?? '').' 4px;';
 					$file_text		=	str_replace('/*'.$T.'-BORDER*/',			$value_border, $file_text );
 					$file_text		=	str_replace('/*'.$T.'-HEADING-BASE-BORDER*/',	$value_border, $file_text );
@@ -118,11 +176,12 @@
 				$file_text	=	str_replace('/*OPTION*/',			$css, $file_text );
 				break;
 			case 'ref': // プリセット: 反射
-				$css	=	'.lkc-external-wrap               , .lkc-internal-wrap { overflow: hidden; }';
-				$css	.=	'.lkc-external-wrap:hover::before , .lkc-internal-wrap:hover::before { margin-left: 300% ; }';
-				$css	.=	'.lkc-external-wrap::before       , .lkc-internal-wrap::before       { content: ""; display: block; width: 500px; height: 120px; position: absolute; top: -10px; left: -500px; transform: rotate(-45deg); transition: all .3s ease-in-out; }';
-				$css	.=	'.lkc-external-wrap::before { '.txt_color('background-color: ',  $prop['ex-border-color'] ).' }';
-				$css	.=	'.lkc-internal-wrap::before { '.txt_color('background-color: ',  $prop['in-border-color'] ).' }';
+				$css	=	'.lkc-external-wrap, .lkc-internal-wrap { overflow: visible; }';
+				$css	.=	'.lkc-card { position: relative; overflow: hidden; }';
+				$css	.=	'.lkc-external-wrap:hover .lkc-card::before, .lkc-internal-wrap:hover .lkc-card::before { margin-left: 300%; }';
+				$css	.=	'.lkc-external-wrap .lkc-card::before, .lkc-internal-wrap .lkc-card::before { content: ""; display: block; width: 500px; height: 120px; position: absolute; top: -10px; left: -500px; transform: rotate(-45deg); transition: all .3s ease-in-out; }';
+				$css	.=	'.lkc-external-wrap .lkc-card::before { '.txt_color('background-color: ',  $prop['ex-border-color'] ).' }';
+				$css	.=	'.lkc-internal-wrap .lkc-card::before { '.txt_color('background-color: ',  $prop['in-border-color'] ).' }';
 				$file_text	=	str_replace('/*OPTION*/', $css, $file_text );
 				break;
 			case 'wxp': // Windows XP
@@ -135,7 +194,7 @@
 				$css	.=	'.lkc-unlink *	{ color: #888; }';
 				$css	.=	'.lkc-card		{ margin: 16px; padding: 0; border: 3px #1f61e3 solid; border-radius: 5px; background: #eeecdf; }';
 				$css	.=	'.lkc-info		{ margin: 0; padding: 4px; background: linear-gradient(to bottom, #2790ff, #1f61e3); background: -webkit-linear-gradient(top, #2790ff, #1f61e3); font-weight: bold; font-size: 11px; line-height: 16px; }';
-				$css	.=	'.lkc-info *	{ color: #fff !important; }';
+				$css	.=	'.lkc-domain	{ color: #fff !important; }';
 				$css	.=	'.lkc-thumbnail	{ margin: 0 8px !important; }';
 				$css	.=	'.lkc-title		{ padding: 0; }';
 				$css	.=	'.lkc-url		{ padding: 4px; cursor: pointer; }';
@@ -151,12 +210,83 @@
 				$css	.=	'.lkc-unlink *	{ color: #888; }';
 				$css	.=	'.lkc-card		{ margin: 16px; padding: 4px; border: 3px #c0c7c8 solid; background: #e0e0e0; border: 1px #87888f solid; }';
 				$css	.=	'.lkc-info		{ margin: 0; padding: 4px; border: 1px #87888f solid; background: #0000a8; font-weight: bold; font-size: 11px; line-height: 16px; }';
-				$css	.=	'.lkc-info *	{ color: #fff !important; font-weight: normal; }';
+				$css	.=	'.lkc-domain	{ color: #fff !important; font-weight: normal; }';
 				$css	.=	'.lkc-thumbnail	{ margin: 0 4px !important; }';
 				$css	.=	'.lkc-title		{ padding: 0; }';
 				$css	.=	'.lkc-url		{ padding: 4px; cursor: pointer; }';
 				$css	.=	'.lkc-excerpt	{ padding: 4px; }';
 				$file_text	=	str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'mac': // Mac OS
+				$file_text = str_replace('/*EX-BORDER*/', 'border: none;', $file_text );
+				$file_text = str_replace('/*IN-BORDER*/', 'border: none;', $file_text );
+				$file_text = str_replace('/*CONTENT-MARGIN*/', 'margin: 8px 0;', $file_text );
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { display: flow-root; }';
+				$css .= '.lkc-card { margin: 12px; padding: 8px; border: 1px solid #b8c0cc; border-radius: 10px; background: linear-gradient(#f8fafc, #e8edf3); box-shadow: 0 3px 10px rgba(0,0,0,.22); }';
+				$css .= '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 2; }';
+				$css .= '.lkc-info { position: relative; margin: -8px -8px 8px; padding: 5px 8px 5px 44px; border-radius: 9px 9px 0 0; background: linear-gradient(#eaf3ff, #c9dcf5); color: #1d3557; font-size: 11px; line-height: 16px; }';
+				$css .= '.lkc-info::before { content: ""; position: absolute; left: 10px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; box-shadow: 13px 0 #febc2e, 26px 0 #28c840; }';
+				$css .= '.lkc-info { text-align: center; } .lkc-domain { color: #000 !important; margin-left: auto; margin-right: auto; text-align: center; } .lkc-siteicon, .lkc-share { display: none !important; } .lkc-title { color: #111827; font-weight: 600; } .lkc-url, .lkc-url-info { color: #1769aa; } .lkc-thumbnail { margin: 0 8px !important; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'glass': // Glass
+				$glass_ex_bg = sanitize_hex_color($prop['ex-bg-color'] ?? '') ?: '#dbeeff';
+				$glass_in_bg = sanitize_hex_color($prop['in-bg-color'] ?? '') ?: '#fff4d9';
+				$glass_rgba = function($hex ) {
+					$hex = ltrim($hex, '#');
+					if (strlen($hex) === 3 ) $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+					return 'rgba('.hexdec(substr($hex, 0, 2 )).','.hexdec(substr($hex, 2, 2 )).','.hexdec(substr($hex, 4, 2 )).',.5)';
+				};
+				$css = '.lkc-external-wrap { background-color: '.$glass_rgba($glass_ex_bg ).'; } .lkc-internal-wrap { background-color: '.$glass_rgba($glass_in_bg ).'; }';
+				$css .= '.lkc-external-wrap, .lkc-internal-wrap { position: relative; overflow: visible; background-image: radial-gradient(circle at 18% 12%, rgba(255,255,255,.5), transparent 34%), radial-gradient(circle at 82% 88%, rgba(176,215,255,.22), transparent 42%), linear-gradient(135deg, rgba(255,255,255,.38), rgba(220,235,255,.14)); background-size: 100% 100%; box-shadow: 0 8px 24px rgba(31,56,85,.18), inset 0 1px rgba(255,255,255,.62); backdrop-filter: blur(2px) saturate(125%); -webkit-backdrop-filter: blur(2px) saturate(125%); }';
+				$css .= '.lkc-card { position: relative; overflow: hidden; } .lkc-card, .lkc-content, .lkc-info { background-color: transparent !important; background-image: none !important; }';
+				$css .= '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 6; }';
+				$css .= '.lkc-external-wrap .lkc-card::after, .lkc-internal-wrap .lkc-card::after { content: ""; position: absolute; z-index: 5; top: -30%; left: -70%; width: 36%; height: 160%; transform: rotate(20deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.72), transparent); opacity: 0; pointer-events: none; transition: left .55s ease, opacity .2s ease; }';
+				$css .= '.lkc-external-wrap:hover .lkc-card::after, .lkc-internal-wrap:hover .lkc-card::after { left: 135%; opacity: 1; }';
+				$css .= '.lkc-title { text-shadow: 0 1px rgba(255,255,255,.7); }';
+				$css .= '.lkc-info, .lkc-title, .lkc-url, .lkc-url-info, .lkc-date, .lkc-excerpt { text-shadow: 4px 4px 5px #00000088 !important; }';
+				$css .= '.lkc-info { background: rgba(255,255,255,.28); }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'fancy': // Fancy
+				$file_text = str_replace('/*CONTENT-MARGIN*/', 'margin: 8px 0;', $file_text );
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { display: flow-root; }';
+				$css .= '.lkc-card { margin: 12px; padding: 8px; border: 1px solid rgba(255,255,255,.65); background: linear-gradient(135deg, rgba(255,255,255,.62), rgba(220,235,255,.28)); box-shadow: 0 8px 24px rgba(31,56,85,.25), inset 0 1px rgba(255,255,255,.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }';
+				$css .= '.lkc-external-wrap, .lkc-external-wrap .lkc-card { border-radius: '.intval($prop['ex-border-radius'] ?? 0 ).'px; }';
+				$css .= '.lkc-internal-wrap, .lkc-internal-wrap .lkc-card { border-radius: '.intval($prop['in-border-radius'] ?? 0 ).'px; }';
+				$css .= '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 2; }';
+				$css .= '.lkc-info { margin: -8px -8px 8px; padding: 5px 8px; border-radius: 13px 13px 0 0; background: rgba(255,255,255,.35); }';
+				$css .= '.lkc-thumbnail { margin: 0 8px !important; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'metal': // Metal
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { display: flow-root; }';
+				$ex_bg = sanitize_hex_color($prop['ex-bg-color'] ?? '') ?: '#dbe3ea';
+				$in_bg = sanitize_hex_color($prop['in-bg-color'] ?? '') ?: '#dbe3ea';
+				$metal_gradient = 'linear-gradient(165deg, #f1f3f5 0%, #b7bec5 45%, #e7eaed 52%, #9aa3ac 100%)';
+				$css .= '.lkc-external-wrap { background-color: '.$ex_bg.'; background-image: '.$metal_gradient.'; background-blend-mode: multiply; }';
+				$css .= '.lkc-internal-wrap { background-color: '.$in_bg.'; background-image: '.$metal_gradient.'; background-blend-mode: multiply; }';
+				$css .= '.lkc-external-wrap, .lkc-internal-wrap { position: relative; overflow: visible; }';
+				$css .= '.lkc-card { position: relative; overflow: hidden; }';
+				$css .= '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 6; }';
+				$css .= '.lkc-external-wrap .lkc-card::after, .lkc-internal-wrap .lkc-card::after { content: ""; position: absolute; z-index: 5; top: -30%; left: -70%; width: 32%; height: 160%; transform: rotate(20deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent); opacity: 0; pointer-events: none; transition: left .55s ease, opacity .2s ease; }';
+				$css .= '.lkc-external-wrap:hover .lkc-card::after, .lkc-internal-wrap:hover .lkc-card::after { left: 135%; opacity: 1; }';
+				$css .= '.lkc-title { color: #111820; font-weight: 700; text-shadow: 0 1px rgba(255,255,255,.7); } .lkc-url, .lkc-url-info { color: #164f7a; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
+				break;
+			case 'browser': // Browser
+				$css = '.lkc-external-wrap, .lkc-internal-wrap { display: flow-root; }';
+				$css .= '.lkc-external-wrap .lkc-heading, .lkc-internal-wrap .lkc-heading { z-index: 2; }';
+				$css .= '.lkc-card { position: relative; margin: 12px; padding: 8px; overflow: hidden; border: 1px solid #c7cdd4; border-radius: 10px; background: #eef1f5; box-shadow: 0 4px 12px rgba(60,64,67,.28); }';
+				$css .= '.lkc-info { position: relative; display: flex !important; width: min(220px, calc(100% - 28px)); min-height: 30px; margin: -2px 0 0 4px; padding: 5px 30px 5px 10px; align-items: center; gap: 6px; border-radius: 8px 8px 0 0; background: #fff; color: #3c4043; box-sizing: border-box; }';
+				$css .= '.lkc-info::after { content: "×"; position: absolute; top: 50%; right: 9px; color: #5f6368; font-size: 14px; line-height: 1; transform: translateY(-50%); }';
+				$css .= '.lkc-content { position: relative; margin: 0 -8px -8px; padding: 42px 8px 8px; background: #fff; }';
+				$css .= '.lkc-content::before { content: "←   →   ↻"; position: absolute; top: 0; right: 0; left: 0; height: 34px; padding: 8px 12px; border-top: 1px solid #d5d9dd; border-bottom: 1px solid #d5d9dd; background: #f8f9fa; color: #5f6368; font-size: 14px; line-height: 17px; letter-spacing: 2px; box-sizing: border-box; }';
+				$css .= '.lkc-content::after { content: "●"; position: absolute; top: 5px; right: 12px; left: 68px; height: 24px; padding: 4px 10px; overflow: hidden; border: 1px solid #dfe1e5; border-radius: 14px; background: #fff; color: #5f6368; font-size: 9px; line-height: 14px; box-sizing: border-box; pointer-events: none; }';
+				$css .= '.lkc-content .lkc-url { position: absolute; z-index: 1; top: 8px; right: 22px; left: 92px; margin: 0; padding: 0; overflow: hidden; background: transparent; color: #3c4043; font-size: 11px; line-height: 18px; text-overflow: ellipsis; white-space: nowrap; }';
+				$css .= '.lkc-domain { flex: 1 1 auto; min-width: 0; padding: 0; overflow: hidden; color: #3c4043 !important; text-overflow: ellipsis; white-space: nowrap; }';
+				$css .= '.lkc-share { display: none !important; } .lkc-siteicon { flex: 0 0 auto; }';
+				$file_text = str_replace('/*OPTION*/', $css, $file_text );
 				break;
 			case 'ct1': // プリセット: セロファンテープ中央
 				$file_text	=	str_replace('/*WRAP-BEFORE*/',		'content: ""; display: block; position: absolute; left:   40%; top: -16px; width: 95px; height: 25px; z-index: 2; background-color: rgba(243,245,228,0.5); border: 2px solid rgba(255,255,255,0.5); -webkit-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -moz-box-shadow: 1px 1px 4px rgba(200,200,180,0.8); box-shadow: 1px 1px 4px rgba(200,200,180,0.8); -webkit-transform: rotate(3deg); -moz-transform: rotate(3deg); -o-transform: rotate(3deg);', $file_text );
@@ -203,6 +333,12 @@
 				$file_text	=	str_replace('/*IN-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
 				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background: #acefdd; box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #8abecb, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
 				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background: #ffde51; box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px #fbca4d, 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				break;
+			case 'stitch-free': // プリセット: 縫い目 フリー
+				$file_text	=	str_replace('/*EX-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
+				$file_text	=	str_replace('/*IN-BORDER*/',		'border: 2px dashed rgba(255,255,255,0.5);', $file_text );
+				$file_text	=	str_replace('/*EX-BG-COLOR*/',		'background: '.($prop['ex-bg-color'] ?? '').'; box-shadow: 0 0 0 5px '.($prop['ex-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px '.($prop['ex-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px '.($prop['ex-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
+				$file_text	=	str_replace('/*IN-BG-COLOR*/',		'background: '.($prop['in-bg-color'] ?? '').'; box-shadow: 0 0 0 5px '.($prop['in-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6); -moz-box-shadow: 0 0 0 5px '.($prop['in-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6); -webkit-box-shadow: 0 0 0 5px '.($prop['in-border-color'] ?? '').', 3px 3px 6px 4px rgba(0,0,0,0.6);', $file_text );
 				break;
 			case 'pin': // プリセット: 押しピン
 				$file_text	=	str_replace('/*WRAP-AFTER*/',		'content: ""; display: block; position: absolute; background-image: url("'.$this->plugin_dir_url.'img/pin.png"); background-repeat: no-repeat; background-position: center; left: 47%; top: -16px; width: 40px; height: 40px; z-index: 1; pointer-events: none;', $file_text );
@@ -775,6 +911,11 @@
 				}
 				$replace_part_style($t.'-more',		$T.'-MORE' );
 				$replace_part_style($t.'-thumbnail',	$T.'-THUMBNAIL' );
+				if (($prop['special-format'] ?? '') !== 'cmp') {
+					$thumbnail_radius = intval($prop[$t.'-thumbnail-border-radius'] ?? 0);
+					$thumbnail_radius_css = '.lkc-'.$t.'ternal-wrap .lkc-thumbnail, .lkc-'.$t.'ternal-wrap .lkc-thumbnail-img { border-radius: '.$thumbnail_radius.'px; }';
+					$file_text = str_replace('/*CSS-ADD*/', $thumbnail_radius_css.'/*CSS-ADD*/', $file_text );
+				}
 				if	(!empty($prop[$t.'-thumbnail-transform-enabled'] ) || !empty($prop[$t.'-thumbnail-shadow-enabled'] ) ) {
 					$file_text	=	str_replace('/*'.$T.'-THUMBNAIL-OVERFLOW*/',	'overflow: visible;', $file_text );
 				}

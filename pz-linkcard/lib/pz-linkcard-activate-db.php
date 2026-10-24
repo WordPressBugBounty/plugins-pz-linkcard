@@ -5,6 +5,16 @@
 	$wpdb->hide_errors();
 	require_once(ABSPATH.'wp-admin/includes/upgrade.php' );
 
+	// 新バージョンのカードテーブル名を、旧バージョンへ戻す際に復元する
+	$future_card_table = $wpdb->prefix.'pz_linkcard_card';
+	$old_card_exists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $this->db_card)) === $this->db_card);
+	$future_card_exists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $future_card_table)) === $future_card_table);
+	if (!$old_card_exists && $future_card_exists) {
+		$old_card_sql = str_replace('`', '``', $this->db_card);
+		$future_card_sql = str_replace('`', '``', $future_card_table);
+		$wpdb->query("RENAME TABLE `$future_card_sql` TO `$old_card_sql`");
+	}
+
 	// CREATE TABLE
 	$sql	=	"CREATE TABLE $this->db_card (
 				id				BIGINT			UNSIGNED	NOT NULL	AUTO_INCREMENT,
@@ -42,7 +52,7 @@
 				regist_excerpt	VARCHAR(500)							DEFAULT NULL,
 				regist_charset	VARCHAR(30)								DEFAULT NULL,
 				regist_result 	INT										DEFAULT NULL,
-				regist_time		BIGINT			UNSIGNED				DEFAULT 0,
+				regist_time		BIGINT			UNSIGNED				DEFAULT NULL,
 				update_result	INT										DEFAULT NULL,
 				update_time		BIGINT			UNSIGNED				DEFAULT 0,
 				PRIMARY KEY		(id),
@@ -93,7 +103,11 @@
 			$keep_id	=	$kept_ids[$url];
 			$delete_id	=	intval($data->id );
 			if	($db_click_exists ) {
-				$wpdb->update($this->db_click, array('card_id' => $keep_id ), array('card_id' => $delete_id ), array('%d' ), array('%d' ) );
+				$keep_key = (string) $wpdb->get_var($wpdb->prepare("SELECT url_key FROM $this->db_card WHERE id = %d", $keep_id));
+				$delete_key = (string) $wpdb->get_var($wpdb->prepare("SELECT url_key FROM $this->db_card WHERE id = %d", $delete_id));
+				if ($keep_key && $delete_key) {
+					$wpdb->update($this->db_click, array('url_key' => $keep_key), array('url_key' => $delete_key), array('%s'), array('%s'));
+				}
 			}
 			if	(intval($data->click_count ) !== 0 ) {
 				$wpdb->query($wpdb->prepare("UPDATE $this->db_card SET click_count = click_count + %d WHERE id = %d", intval($data->click_count ), $keep_id ) );
@@ -104,6 +118,12 @@
 
 	// DBテーブル作成・更新
 	$result		=	dbDelta($sql, true );
+
+	// 旧定義の NOT NULL DEFAULT 0 を外し、取得待ちをNULLで保存できるようにする
+	$regist_time_column = $wpdb->get_row("SHOW COLUMNS FROM $this->db_card LIKE 'regist_time'", ARRAY_A );
+	if (isset($regist_time_column['Null'] ) && strtoupper($regist_time_column['Null'] ) !== 'YES' ) {
+		$wpdb->query("ALTER TABLE $this->db_card MODIFY regist_time BIGINT UNSIGNED NULL DEFAULT NULL" );
+	}
 
 	// 旧仕様で未取得を表していた負数をNULLへ統一
 	$wpdb->query(
