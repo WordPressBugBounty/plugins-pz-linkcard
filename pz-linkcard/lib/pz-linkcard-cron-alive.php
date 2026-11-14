@@ -25,59 +25,47 @@
 
 	// 生存確認
 	$proc_count	=	0;
-	$previous_domain	=	null;
+	$retry_at = null;
 	if (isset($proc_datas ) && is_array($proc_datas ) && count($proc_datas) > 0) {
 		foreach($proc_datas as $data ) {
-			$current_domain	=	(string) $data->domain;
-			if	($previous_domain === $current_domain ) {
+			$next_access = $this->pz_ClaimCronSiteAccess($data->url, $data->domain ?? '');
+			if ($next_access > 0) {
+				$retry_at = $retry_at === null ? $next_access : min($retry_at, $next_access);
 				$wpdb->update(
 					$this->db_card,
-					array('alive_nexttime' => $this->now ),
+					array('alive_nexttime' => $next_access ),
 					array('id' => intval($data->id ) ),
 					array('%d' ),
 					array('%d' )
 				);
 				$message	=	sprintf(__('[SKIP] URL=%s', 'pz-linkcard' ), $data->url ).PHP_EOL;
-				$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;The next check date and time=%s has passed.', 'pz-linkcard' ), date('Y-m-d H:i', intval($data->alive_nexttime ) ) ).PHP_EOL;
-				$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;It will be skipped because the domain is the same. The next check date and time=%s was set.', 'pz-linkcard' ), date('Y-m-d H:i', intval($this->now ) ) );
+				$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;The scheduled check time (%s) has passed.', 'pz-linkcard' ), date('Y-m-d H:i', intval($data->alive_nexttime ) ) ).PHP_EOL;
+				$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;Skipping this URL because its domain is the same as the previous one. The next check is scheduled for %s.', 'pz-linkcard' ), date('Y-m-d H:i', $next_access ) );
 				$log		.=	$message.PHP_EOL;
-				if	($this->options['survey-mode'] ) {
-					$this->pz_OutputLOG(__FUNCTION__, $message );
-				}
 				continue;
 			}
-			$previous_domain	=	$current_domain;
 			$proc_count++;
 			$message	=	sprintf(__('[%1$d] URL=%2$s', 'pz-linkcard' ), $proc_count, $data->url ).PHP_EOL;
-			$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;The next check date and time=%s has passed.', 'pz-linkcard' ), date('Y-m-d H:i', intval($data->alive_nexttime ) ) );
+			$message	.=	sprintf(__('&ensp;&ensp;&ensp;&ensp;The scheduled check time (%s) has passed.', 'pz-linkcard' ), date('Y-m-d H:i', intval($data->alive_nexttime ) ) );
 			$log		.=	$message.PHP_EOL;
-			if	($this->options['survey-mode'] ) {
-				$this->pz_OutputLOG(__FUNCTION__, $message );
-			}
 
 			// リンク先を取得
 			if (isset($data ) && isset($data->id ) ) {
 				$before	=	$this->pz_GetCache(array('id' => intval($data->id ) ) );
-				$after	=	$this->pz_GetRemote($before, true );
-				$after_result	=	isset($after['alive_result'] ) ? intval($after['alive_result'] ) : 0;
-				switch	(true ) {
-				case	($after_result >= 200 && $after_result < 300 ):
-					$next_check_days	=	168;
-					break;
-				case	($after_result >= 300 && $after_result < 400 ):
-					$next_check_days	=	56;
-					break;
-				case	($after_result >= 400 && $after_result < 500 ):
-					$next_check_days	=	28;
-					break;
-				case	($after_result >= 500 && $after_result < 600 ):
-					$next_check_days	=	3;
-					break;
-				default:
-					$next_check_days	=	84;
-					break;
+				$url_info = $this->pz_GetURLInfo($before['url']);
+				if (!empty($url_info['is_internal'])) {
+					$recorded_post_id = intval($before['post_id'] ?? 0);
+					$recorded_post = $recorded_post_id > 0 ? get_post($recorded_post_id) : null;
+					if ($recorded_post_id > 0 && (!$recorded_post || $recorded_post->post_status === 'trash')) {
+						$after = array('alive_result' => 404);
+					} else {
+						$after = $this->pz_GetPost($before);
+					}
+				} else {
+					$after = $this->pz_GetRemote($before, true);
 				}
-				$before['alive_nexttime']	=	$this->now + DAY_IN_SECONDS * $next_check_days;
+				$after_result	=	isset($after['alive_result'] ) ? intval($after['alive_result'] ) : 0;
+				$before['alive_nexttime'] = (!empty($url_info['is_internal']) ? null : ($after['alive_nexttime'] ?? null)) ?? $this->pz_GetNextAliveTime($after_result, $this->now);
 				$before['alive_result']		=	$after['alive_result'];
 				$before['alive_time']		=	$this->now;
 
@@ -90,15 +78,15 @@
 				$result		=	$this->pz_SetCache($before );
 
 				// 実行ログ
-				$message	=	sprintf(__('&ensp;&ensp;&ensp;&ensp;HTTP code=%1$d was returned. The next check date and time=%2$s was set.', 'pz-linkcard' ), intval($result['alive_result'] ), date('Y-m-d H:i', intval($result['alive_nexttime'] ) ) );
+				$message	=	sprintf(__('&ensp;&ensp;&ensp;&ensp;HTTP status code %1$d was returned. The next check is scheduled for %2$s.', 'pz-linkcard' ), intval($result['alive_result'] ), date('Y-m-d H:i', intval($result['alive_nexttime'] ) ) );
 				$log		.=	$message.PHP_EOL;
-				if	($this->options['survey-mode'] ) {
-					$this->pz_OutputLOG(__FUNCTION__, $message );
-				}
 			}
 
 			if	($proc_count >= $max_count ) {
 				break;
 			}
 		}
+	}
+	if ($retry_at !== null && !empty($this->options['alive-period'])) {
+		$this->pz_ScheduleCronRetry('pz_linkcard_alive_retry', $retry_at + 1);
 	}

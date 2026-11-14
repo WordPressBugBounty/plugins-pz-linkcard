@@ -20,6 +20,46 @@
 	if	(is_array($stored_options ) && isset($stored_options['plugin-version'] ) ) {
 		$stored_version	=	$stored_options['plugin-version'];
 	}
+	if (is_array($stored_options) && $stored_version && version_compare($stored_version, '2.6.5', '<')) {
+		foreach (array_keys(self::pz_GetOptionDefinitions()) as $key) {
+			if (strpos($key, 'cat-') === 0) {
+				$this->options[$key] = self::pz_GetDefaultOption($key);
+			}
+		}
+		foreach (array('ex', 'in') as $prefix) {
+			for ($index = 1; $index <= 5; $index++) {
+				$this->options[$prefix.'-content-type-'.$index] = '';
+			}
+		}
+		$info_position = $stored_options['info-position'] ?? null;
+		if ($info_position === 3 || $info_position === '3') {
+			$this->options['ex-content-type-1'] = 'i';
+			$this->options['in-content-type-1'] = 'i';
+		} elseif (in_array($info_position, array('', 0, '0', 1, '1', 2, '2', null), true)) {
+			$this->options['in-content-type-1'] = 'c';
+		}
+		foreach (array('ex', 'in') as $prefix) {
+			$this->options[$prefix.'-content-type-2'] = 't';
+			$display_url = $stored_options['display-url'] ?? '';
+			if ($display_url !== '') {
+				$this->options[$prefix.'-content-type-4'] = 'u';
+				if ($prefix === 'in') {
+					$this->options['in-content-type-4'] = !empty($stored_options['display-date']) ? 'p' : 'u';
+				}
+			} else {
+				$this->options[$prefix.'-content-type-4'] = '';
+			}
+			if (!empty($stored_options['display-excerpt'])) {
+				$this->options[$prefix.'-content-type-5'] = 'e';
+			}
+		}
+		foreach (array('ex-thumbnail-size', 'in-thumbnail-size') as $key) {
+			if (($this->options[$key] ?? '') === 'full') {
+				$this->options[$key] = 'large';
+			}
+		}
+
+	}
 
 	// 項目名称変更
 	$rename_key	=	array(
@@ -361,14 +401,16 @@
 		}
 	}
 
-	foreach	(self::pz_GetOptionDefinitions()	as	$key => $value ) {
+	$definitions	= self::pz_GetOptionDefinitions();
+	foreach	($definitions	as	$key => $value ) {
 		if	(!array_key_exists($key, $this->options ) ) {
 			$this->options[$key]	=	self::pz_GetDefaultOption($key );
 		}
 	}
 
 	// DEFAULTSから削除された旧項目を参照する移行処理
-	if	(version_compare($this->options['plugin-version'], '2.5.6', '<' ) ) {
+	$upgrade_from_256 = version_compare($this->options['plugin-version'], '2.5.6', '<');
+	if	($upgrade_from_256 ) {
 		foreach	(array('title', 'excerpt', 'url', 'date', 'heading', 'more', 'info', 'added', 'cat' ) as $t ) {
 			if	(array_key_exists($t.'-outline', $this->options ) && !$this->options[$t.'-outline'] ) {
 				$this->options[$t.'-outline-color']	=	null;
@@ -383,7 +425,6 @@
 	}
 
 	// DEFAULTSに存在しない項目を削除
-	$definitions	=	self::pz_GetOptionDefinitions();
 	foreach	(array_keys($this->options ) as $key ) {
 		if	(!array_key_exists($key, $definitions ) ) {
 			unset($this->options[$key] );
@@ -391,7 +432,7 @@
 	}
 
 	// 個別に設定しなおす
-	if		(version_compare($this->options['plugin-version'],	'2.5.6', '<' ) ) {
+	if		($upgrade_from_256 ) {
 		if	(intval($this->options['width'] ) == 0 ) {
 			$this->options['width']					=	500;
 			$this->options['width-unit']			=	'px';
@@ -430,8 +471,14 @@
 	}
 
 	// DBテーブル作成・更新＆メンテナンス
-	require_once ('pz-linkcard-activate-db.php');
-	require_once ('pz-linkcard-activate-db-click.php');
+	if ((require 'pz-linkcard-activate-db.php') === false) {
+		$this->activate_now = false;
+		return;
+	}
+	if ((require 'pz-linkcard-activate-db-click.php') === false) {
+		$this->activate_now = false;
+		return;
+	}
 
 	// テンプレート側でMCEプラグイン一覧を上書きする場合があるため、実行優先度を下げる
 	if	(empty($this->options['mce-priority'] ) && (get_template() == 'jin' ) ) {

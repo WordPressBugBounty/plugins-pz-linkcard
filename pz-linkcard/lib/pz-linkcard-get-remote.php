@@ -8,8 +8,37 @@
         return	null;
     }
 
+    // Cookies live only for this retrieval, including its individual redirect requests.
+    $request_cookies = array();
+    $request_remote = static function($request_url, $args, $head = false) use (&$request_cookies) {
+        $origin = new \WpOrg\Requests\Iri($request_url);
+        $cookie_values = array();
+        foreach ($request_cookies as $key => $cookie) {
+            if ($cookie->is_expired()) {
+                unset($request_cookies[$key]);
+            } elseif ($cookie->uri_matches($origin)) {
+                $cookie_values[] = $cookie->format_for_header();
+            }
+        }
+        if ($cookie_values) $args['headers']['Cookie'] = implode('; ', $cookie_values);
+        $response = $head ? wp_safe_remote_head($request_url, $args) : wp_safe_remote_get($request_url, $args);
+        if (!is_wp_error($response)) {
+            $headers = new \WpOrg\Requests\Response\Headers();
+            foreach ((array) wp_remote_retrieve_header($response, 'set-cookie') as $value) {
+                $headers['Set-Cookie'] = $value;
+            }
+            foreach (\WpOrg\Requests\Cookie::parse_from_headers($headers, $origin) as $cookie) {
+                $key = strtolower((string) ($cookie->attributes['domain'] ?? '')).'|'.($cookie->attributes['path'] ?? '/').'|'.$cookie->name;
+                if ($cookie->is_expired()) unset($request_cookies[$key]);
+                else $request_cookies[$key] = $cookie;
+            }
+        }
+        return $response;
+    };
+
     // wp_safe_remote_get/wp_safe_remote_headのオプション
     $rget_args					=	[];
+    $rget_args['timeout'] = $headers_only ? 5 : 20;
     $rget_args['user-agent']	=	$this->pz_GetUserAgent();
     $rget_args['sslverify']		=	$this->options['flg-sslverify']		?	true	:	false ;
 	$rget_args['limit_response_size']	=	defined('MB_IN_BYTES' ) ? MB_IN_BYTES : 1048576;
@@ -50,10 +79,31 @@
         return	$request_args;
     };
 
+    // Keep stored URLs unchanged; HTTP requests need literal query separators.
+    $normalize_request_url = static function($request_url) {
+        if (!is_string($request_url)) return '';
+        for ($i = 0; $i < 5; $i++) {
+            $decoded = html_entity_decode($request_url, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if ($decoded === $request_url) break;
+            $request_url = $decoded;
+        }
+        $request_url = esc_url_raw($request_url, array('http', 'https'));
+        if (!preg_match('~\Ahttps?://~i', $request_url) || !wp_parse_url($request_url, PHP_URL_HOST)) return '';
+        return $request_url;
+    };
+    $invalid_request_url = false;
+
     // URLエンコード
     $url			=	$this->pz_EncodeURL($url ,true );
     $url_redir		=	'';
-    $url_access		=	$url;
+    $url_access		=	$normalize_request_url($url);
+    if ($redirect_limit > 0 && !empty($data['url_redir'])) {
+        $saved_redirect = $this->pz_EncodeURL($data['url_redir'], true);
+        if (is_string($saved_redirect) && preg_match('~\Ahttps?://~i', $saved_redirect)) {
+            $url_redir = $saved_redirect;
+            $url_access = $normalize_request_url($saved_redirect);
+        }
+    }
     $robots_blocked_url	=	'';
     $is_robots_allowed	=	function($check_url ) use ($rget_args, $get_request_args ) {
         if	(empty($this->options['flg-robots'] ) ) {
@@ -76,7 +126,7 @@
             }
             return	null;
         };
-    $get_location_url	=	function($response, $base_url ) {
+    $get_location_url	=	function($response, $base_url ) use ($normalize_request_url, &$invalid_request_url) {
         if	(is_wp_error($response ) ) {
             return	null;
         }
@@ -91,10 +141,72 @@
         if	(!preg_match('/^https?:\/\//i', $location ) ) {
             $location	=	$this->pz_RelToURL($base_url, $location );
         }
-        return	$this->pz_EncodeURL($location, true );
+        $location = $normalize_request_url($location);
+        if (!$location) $invalid_request_url = true;
+        return $location;
     };
-    $trace_redirect_url	=	function($start_url ) use ($rget_args, $get_request_args, $get_response_url, $get_location_url, $redirect_limit, $is_robots_allowed, $headers_only, &$robots_blocked_url ) {
-        $current_url	=	$start_url;
+    // Read declarative redirects without executing JavaScript.
+    $get_refresh_url = function($response, $base_url) use ($normalize_request_url, &$invalid_request_url) {
+        if (is_wp_error($response)) return null;
+        $refresh = wp_remote_retrieve_header($response, 'refresh');
+        if (is_array($refresh)) $refresh = end($refresh);
+        $script_location = null;
+        if (!$refresh && !empty($response['body']) && class_exists('DOMDocument')) {
+            $previous_errors = libxml_use_internal_errors(true);
+            try {
+                $document = new DOMDocument();
+                if ($document->loadHTML($response['body'], LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET)) {
+                    foreach ($document->getElementsByTagName('meta') as $meta) {
+                        if (strcasecmp(trim($meta->getAttribute('http-equiv')), 'refresh') === 0) {
+                            $refresh = $meta->getAttribute('content');
+                            break;
+                        }
+                    }
+                    if (!$refresh) {
+                        // Only accept a script consisting entirely of a literal assignment.
+                        $redirect_pattern = <<<'REGEX'
+~\A\s*(?:(?:window|document)\s*\.\s*)?location\s*\.\s*href\s*=\s*(["'])([^"'\\\r\n]+)\1\s*;?\s*\z~
+REGEX;
+                        foreach ($document->getElementsByTagName('script') as $script) {
+                            $type = strtolower(trim($script->getAttribute('type')));
+                            if ($script->hasAttribute('src') || !in_array($type, array('', 'text/javascript', 'application/javascript', 'text/ecmascript', 'application/ecmascript'), true)) continue;
+                            if (preg_match($redirect_pattern, $script->textContent, $script_match)) {
+                                $script_location = $script_match[2];
+                                break;
+                            }
+                        }
+                    }
+                }
+            } finally {
+                libxml_clear_errors();
+                libxml_use_internal_errors($previous_errors);
+            }
+        }
+        if (is_string($refresh) && preg_match('~^\s*\d+(?:\.\d+)?\s*;\s*url\s*=\s*(.*?)\s*$~is', $refresh, $match)) {
+            $location = trim($match[1]);
+        } elseif ($script_location !== null) {
+            $location = $script_location;
+        } else {
+            return null;
+        }
+        if (strlen($location) >= 2 && (($location[0] === '"' && substr($location, -1) === '"') || ($location[0] === "'" && substr($location, -1) === "'"))) {
+            $location = substr($location, 1, -1);
+        }
+        if ($location === '') return null;
+        $location = html_entity_decode($location, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $location = $this->pz_RelToURL($base_url, $location);
+        $location = $normalize_request_url($location);
+        if (!$location) $invalid_request_url = true;
+        return $location;
+    };
+    $traced_response = null;
+    $traced_response_url = '';
+    $trace_redirect_url	=	function($start_url ) use ($rget_args, $get_request_args, $get_response_url, $get_location_url, $get_refresh_url, $redirect_limit, $is_robots_allowed, $headers_only, &$robots_blocked_url, $normalize_request_url, &$invalid_request_url, $request_remote, &$traced_response, &$traced_response_url ) {
+        $current_url	=	$normalize_request_url($start_url);
+        if (!$current_url) {
+            $invalid_request_url = true;
+            return '';
+        }
         $trace_args		=	$rget_args;
         $trace_args['redirection']	=	0;
 
@@ -109,16 +221,21 @@
 			$probe_args	=	$get_request_args($current_url, $trace_args );
 			if	($headers_only ) {
 				$probe_args['method']	=	'HEAD';
-				$response				=	wp_safe_remote_head($current_url, $probe_args );
+				$response				=	$request_remote($current_url, $probe_args, true);
 			} else {
 				// Some sites redirect GET requests but not HEAD requests.
-				$probe_args['limit_response_size']	=	1;
-				$response							=	wp_safe_remote_get($current_url, $probe_args );
+				$response							=	$request_remote($current_url, $probe_args);
 			}
 
             $http_code		=	intval(wp_remote_retrieve_response_code($response ) );
             $location_url	=	$get_location_url($response, $current_url );
-            if	($http_code >= 300 && $http_code < 400 && $location_url && $location_url !== $current_url ) {
+            $is_refresh = false;
+            if ($http_code >= 200 && $http_code < 300) {
+                $location_url = $get_refresh_url($response, $current_url);
+                $is_refresh = !empty($location_url);
+            }
+            if ($invalid_request_url) return '';
+            if	(($is_refresh || ($http_code >= 300 && $http_code < 400)) && $location_url && $location_url !== $current_url ) {
                 $current_url	=	$location_url;
                 if	($this->pz_ShouldBlockLocalAddress($current_url ) ) {
                     return	$current_url;
@@ -128,47 +245,72 @@
 
 			$response_url	=	$get_response_url($response );
 			if	($response_url && rtrim($response_url, '/' ) !== rtrim($current_url, '/' ) ) {
-				$current_url	=	$this->pz_EncodeURL($response_url, true );
+				$current_url	=	$normalize_request_url($response_url);
+                if (!$current_url) {
+                    $invalid_request_url = true;
+                    return '';
+                }
 				if	($this->pz_ShouldBlockLocalAddress($current_url ) ) {
 					return	$current_url;
 				}
 				continue;
 			}
 
+            $traced_response = $response;
+            $traced_response_url = $current_url;
             break;
         }
 
         return	$current_url;
     };
 
+    $retry_saved_redirect = !empty($this->options['flg-redir-retry']) && $redirect_limit > 0 && $url_redir !== '';
+    for ($attempt = 0; $attempt < 2; $attempt++) {
+    $traced_response = null;
+    $traced_response_url = '';
     // リンク先サイトのアクセス
-    if	($redirect_limit > 0 ) {
-        $last_url	=	$trace_redirect_url($url );
-        if	($last_url && $url !== $last_url ) {
-            $url_redir	=	$this->pz_EncodeURL($last_url, true );
-            $url_access	=	$url_redir;
+    if	($redirect_limit > 0) {
+        $last_url	=	$trace_redirect_url($url_access);
+        if	($last_url) {
+            $url_redir	=	$url !== $last_url ? $this->pz_EncodeURL($last_url, true) : '';
+            $url_access	=	$normalize_request_url($last_url);
         }
     }
-    if	(!$robots_blocked_url && !$is_robots_allowed($url_access ) ) {
+    if	($url_access && !$invalid_request_url && !$robots_blocked_url && !$is_robots_allowed($url_access ) ) {
         $robots_blocked_url	=	$url_access;
     }
     $is_amazon_access	=	$is_amazon_url($url_access );
     $is_twitter_access	=	$is_twitter_url($url_access );
 	$is_jmty_access		=	$is_jmty_url($url_access );
 	$is_yahoo_auction_access	=	$is_yahoo_auction_url($url_access );
-    $blocked_local_url	=	$this->pz_ShouldBlockLocalAddress($url ) || ($url_redir && $this->pz_ShouldBlockLocalAddress($url_redir ) );
-    if	($blocked_local_url ) {
+    $blocked_local_url	=	$this->pz_ShouldBlockLocalAddress($normalize_request_url($url)) || ($url_access && $this->pz_ShouldBlockLocalAddress($url_access));
+    if (!$url_access || $invalid_request_url) {
+        $rget_data = new WP_Error('pz_lkc_invalid_url', 'Invalid HTTP request URL');
+    } elseif ($blocked_local_url) {
         $rget_data	=	new WP_Error('pz_lkc_local_redirect', 'Local address blocked' );
     } elseif ($robots_blocked_url ) {
         $rget_data	=	new WP_Error('pz_lkc_robots_disallowed', 'Blocked by robots.txt' );
+    } elseif ($traced_response !== null && $traced_response_url === $url_access) {
+        $rget_data = $traced_response;
     } else {
 		$rget_args	=	$get_request_args($url_access, $rget_args );
         if	($headers_only ) {
             $rget_args['method']	=	'HEAD';
-            $rget_data	=	wp_safe_remote_head($url_access, $rget_args );
+            $rget_data	=	$request_remote($url_access, $rget_args, true);
         } else {
-            $rget_data	=	wp_safe_remote_get($url_access, $rget_args );	// wp_remote_get実行
+            $rget_data	=	$request_remote($url_access, $rget_args);	// wp_remote_get実行
         }
+    }
+
+    $request_failed = is_wp_error($rget_data) || intval(wp_remote_retrieve_response_code($rget_data)) >= 400;
+    if ($attempt === 0 && $retry_saved_redirect && $request_failed && !$blocked_local_url && !$robots_blocked_url && !$invalid_request_url) {
+        // Retry once, retaining all URL, local-address and robots checks.
+        $request_cookies = array();
+        $url_redir = '';
+        $url_access = $normalize_request_url($url);
+        continue;
+    }
+    break;
     }
 
     // 初期化
@@ -211,6 +353,8 @@
         $data['update_time']		=	$this->now;							// 更新：最終更新日
         $data['update_result']		=	403;								// 更新：HTTPレスポンス
 
+        $data['alive_result'] = $data['update_result'];
+        $data['alive_time'] = $data['update_time'];
         return	$data;
     }
 
@@ -239,11 +383,13 @@
             $http_body	=	mb_convert_encoding($http_body, $this->charset, $charset );
         }
         if	(preg_match('/charset\s*=\s*[\'"]*([A-Za-z0-9\-_]*)/si', $http_body, $m ) ) {
-            $charset	=	strtolower($m[1] );
+            $charset	=	$m[1];
         }
     }
 
     // Charset判定出来ていたら
+    $charset = $this->pz_NormalizeCharsetName($charset );
+
     if	($charset ) {
         // HEADタグ（METAタグ解析）
         $html_head		=	null;
@@ -273,9 +419,23 @@
             }
         }
 
-        // Twitter（X）専用処理：プロフィールアイコン
+        // Twitter（X）専用処理：投稿日・プロフィールアイコン
         if	($this->options['flg-special-twitter'] ) {
             if	($is_twitter_access ) {
+				// Snowflake IDs encode milliseconds since the X epoch (2010-11-04).
+				$twitter_path = (string) wp_parse_url($url_access, PHP_URL_PATH );
+				if (PHP_INT_SIZE >= 8 && preg_match('~^/(?:[^/]+/status|i/(?:web/)?status)/([1-9][0-9]{10,18})(?:/(?:photo|video)/[0-9]+)?/?$~i', $twitter_path, $twitter_match ) ) {
+					$twitter_id_string = $twitter_match[1];
+					if (strlen($twitter_id_string ) < 19 || strcmp($twitter_id_string, (string) PHP_INT_MAX ) <= 0 ) {
+						$twitter_id = intval($twitter_id_string );
+						if ($twitter_id >= 29700859247 ) {
+							$twitter_timestamp = intdiv(($twitter_id >> 22 ) + 1288834974657, 1000 );
+							if ($twitter_timestamp <= $this->now ) {
+								$data['post_date'] = $twitter_timestamp;
+							}
+						}
+					}
+				}
                 $decoded_body = html_entity_decode($http_body, ENT_QUOTES | ENT_HTML5, $this->charset );
                 foreach (array('profile_image_url_https', 'profile_image_url' ) as $image_key ) {
                     if	(!preg_match('/["\']'.preg_quote($image_key, '/' ).'["\']\s*:\s*["\']([^"\']+)["\']/i', $decoded_body, $matches ) ) {
@@ -335,6 +495,75 @@
 			}
 		}
 
+		// note.com: retrieve the article publication date from JSON-LD.
+		if (!empty($this->options['flg-special-note'] ) && $http_code == 200
+			&& strtolower((string) wp_parse_url($url_access, PHP_URL_HOST ) ) === 'note.com'
+			&& preg_match('~^/[^/]+/n/n[0-9a-f]+/?$~i', (string) wp_parse_url($url_access, PHP_URL_PATH ) )
+			&& class_exists('DOMDocument' ) ) {
+			$previous_libxml_errors = libxml_use_internal_errors(true );
+			$document = new DOMDocument();
+			if ($document->loadHTML($http_body, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET ) ) {
+				$find_note_published = function($item ) use (&$find_note_published ) {
+					if (!is_array($item ) ) return 0;
+					if (array_intersect((array) ($item['@type'] ?? array() ), array('BlogPosting', 'Article', 'NewsArticle' ) ) ) {
+						$published = $item['datePublished'] ?? null;
+						if (is_string($published ) && preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/D', $published ) ) {
+							$parsed_date = date_parse($published );
+							if (!$parsed_date['error_count'] && !$parsed_date['warning_count'] ) {
+								return max(0, intval(strtotime($published ) ) );
+							}
+						}
+					}
+					$children = $item['@graph'] ?? (isset($item[0] ) ? $item : array() );
+					foreach (is_array($children ) ? $children : array() as $child ) {
+						$timestamp = $find_note_published($child );
+						if ($timestamp > 0 ) return $timestamp;
+					}
+					return 0;
+				};
+				foreach ($document->getElementsByTagName('script' ) as $script ) {
+					if (strtolower(trim($script->getAttribute('type' ) ) ) !== 'application/ld+json' ) continue;
+					$note_published = $find_note_published(json_decode($script->textContent, true ) );
+					if ($note_published > 0 ) {
+						$data['post_date'] = $note_published;
+						break;
+					}
+				}
+				unset($find_note_published );
+			}
+			libxml_clear_errors();
+			libxml_use_internal_errors($previous_libxml_errors );
+		}
+
+		// Qiita: retrieve dates, likes and stocks from the public item API.
+		$qiita_url = wp_parse_url($url_access );
+		if (!empty($this->options['flg-special-qiita'] ) && $http_code == 200
+			&& strtolower($qiita_url['host'] ?? '') === 'qiita.com'
+			&& preg_match('~^/[^/]+/items/([0-9a-f]{20})/?$~i', $qiita_url['path'] ?? '', $qiita_match ) ) {
+			$qiita_args = $rget_args;
+			$qiita_args['timeout'] = 30;
+			$qiita_response = wp_safe_remote_get('https://qiita.com/api/v2/items/'.strtolower($qiita_match[1] ), $qiita_args );
+			if (!is_wp_error($qiita_response ) && wp_remote_retrieve_response_code($qiita_response ) === 200 ) {
+				$qiita_item = json_decode(wp_remote_retrieve_body($qiita_response ), true );
+				foreach (array('likes_count' => 'sns_qiita_likes', 'stocks_count' => 'sns_qiita_stock' ) as $qiita_key => $count_key ) {
+					$qiita_count = $qiita_item[$qiita_key] ?? null;
+					if (is_int($qiita_count ) && $qiita_count >= 0 ) {
+						$data[$count_key] = $qiita_count;
+					}
+				}
+				foreach (array('created_at' => 'post_date', 'updated_at' => 'post_modified' ) as $qiita_key => $date_key ) {
+					$qiita_date = $qiita_item[$qiita_key] ?? null;
+					if (!is_string($qiita_date ) || !preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/D', $qiita_date ) ) {
+						continue;
+					}
+					$qiita_timestamp = strtotime($qiita_date );
+					if ($qiita_timestamp > 0 ) {
+						$data[$date_key] = $qiita_timestamp;
+					}
+				}
+			}
+		}
+
 		// Yahoo! Auctions: retrieve the auction title and listing start time.
 		if	(!empty($this->options['flg-special-yahoo-auc'] ) && $is_yahoo_auction_access ) {
 			$yahoo_auction_body	=	html_entity_decode($http_body, ENT_QUOTES | ENT_HTML5, $this->charset );
@@ -379,6 +608,25 @@
         $og_image		=	$tags['og:image']				??	'';
         $og_siteicon	=	null;
 
+		// Prefer dates already obtained by site-specific processing.
+		if (!empty($this->options['flg-special-ogp'] ) ) {
+			foreach (array('article:published_time' => 'post_date', 'article:modified_time' => 'post_modified' ) as $og_key => $date_key ) {
+				$current_date = $data[$date_key] ?? 0;
+				$current_timestamp = is_numeric($current_date ) ? intval($current_date ) : strtotime($current_date );
+				$og_time = $tags[$og_key] ?? '';
+				if ($current_timestamp > 0 || !is_string($og_time ) || $og_time === '' ) continue;
+				$og_time = html_entity_decode($og_time, ENT_QUOTES | ENT_HTML5, $this->charset );
+				$og_date = date_parse($og_time );
+				if (!$og_date['error_count'] && !$og_date['warning_count'] && $og_date['year'] !== false
+					&& $og_date['month'] !== false && $og_date['day'] !== false ) {
+					$og_timestamp = strtotime($og_time );
+					if ($og_timestamp > 0 ) {
+						$data[$date_key] = $og_timestamp;
+					}
+				}
+			}
+		}
+
         // Twitter card
         $tw_url			=	null;
         $tw_sitename	=	$tags['twitter:site']			??	'';
@@ -405,6 +653,33 @@
 			$title	=	$yahoo_auction_title;
 		}
         
+        // FANATEC product pages can have English metadata despite localized content.
+        if (!empty($this->options['flg-special-fanatec']) && $http_code == 200
+            && preg_match('/(^|\.)fanatec\.com$/i', (string) wp_parse_url($url_access, PHP_URL_HOST))
+            && class_exists('DOMDocument')) {
+            $previous_libxml_errors = libxml_use_internal_errors(true);
+            try {
+                $document = new DOMDocument();
+                if ($document->loadHTML('<?xml encoding="'.esc_attr($this->charset).'">'.$http_body, LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET)) {
+                    $xpath = new DOMXPath($document);
+                    $sections = $xpath->query('//div[contains(concat(" ", normalize-space(@class), " "), " PDP_product-info__FfuRM ")]');
+                    foreach ($sections as $section) {
+                        foreach ($xpath->query('.//script | .//style | .//noscript', $section) as $unwanted) {
+                            $unwanted->parentNode->removeChild($unwanted);
+                        }
+                        $product_excerpt = trim(preg_replace('/[\s\x{00A0}]+/u', ' ', $section->textContent));
+                        if ($product_excerpt !== '') {
+                            $excerpt = $product_excerpt;
+                            break;
+                        }
+                    }
+                }
+            } finally {
+                libxml_clear_errors();
+                libxml_use_internal_errors($previous_libxml_errors);
+            }
+        }
+
         // サムネイル画像
         if				(!$thumbnail_url ) {
             if			($amazon_image ) {
@@ -420,7 +695,22 @@
         if			($thumbnail_url	&& !preg_match('/^https*:\/\//i', $thumbnail_url, $m ) ) {
             $thumbnail_url	=	$this->pz_RelToURL($url_access, $thumbnail_url );
         }
-        $thumbnail_url		=	$this->pz_EncodeURL($thumbnail_url, true );
+        $thumbnail_url		=	$this->pz_EncodeImageURL($thumbnail_url );
+        if (!empty($this->options['flg-special-fanatec'])
+            && preg_match('/(^|\.)fanatec\.com$/i', (string) wp_parse_url($url_access, PHP_URL_HOST))
+            && (strtolower((string) wp_parse_url((string) $thumbnail_url, PHP_URL_HOST)) === 'assets.fanatec.com'
+                || (strtolower((string) wp_parse_url((string) $thumbnail_url, PHP_URL_HOST)) === 'res.cloudinary.com'
+                    && strpos((string) wp_parse_url((string) $thumbnail_url, PHP_URL_PATH), '/fanatec-pwa/') === 0))) {
+            $thumbnail_sizes = array('thumbnail' => 150, 'medium' => 300, 'large' => 1024);
+            $thumbnail_size = $thumbnail_sizes[$this->options['ex-thumbnail-size'] ?? 'thumbnail'] ?? 150;
+            if ($thumbnail_size > 0) {
+                $thumbnail_url = preg_replace_callback(
+                    '~(/image/upload/c_fill(?:%2c|,)q_auto(?:%2c|,)w_)\d+(?=/)~i',
+                    static function($match) use ($thumbnail_size) { return $match[1].$thumbnail_size; },
+                    $thumbnail_url
+                );
+            }
+        }
 
         // サイト名
         if				(!$sitename ) {
@@ -442,21 +732,13 @@
         if			($siteicon_url && !preg_match('/^https*:\/\//i', $siteicon_url, $m ) ) {
             $siteicon_url	=	$this->pz_RelToURL($url, $siteicon_url );
         }
-        $siteicon_url		=	$this->pz_EncodeURL($siteicon_url, true );
+        $siteicon_url		=	$this->pz_EncodeImageURL($siteicon_url );
 
         // タイトル整形
         $title				=	mb_strimwidth($title, 0, 500, '...' );		// 500文字制限
 
         // 抜粋文整形
         $excerpt			=	mb_strimwidth($excerpt, 0, 1000, '...' );	// 1000文字制限
-    }
-
-    // 呼ばれている記事
-    if	(!isset($data['use_post_id1'] ) ) {
-		$post_id_t	=	intval(get_the_ID() );
-		if	($post_id_t > 0 ) {
-			$data['use_post_id1']	=	$post_id_t;
-		}
     }
 
     // リダイレクト先URL
@@ -477,11 +759,13 @@
     $data['favicon']			=	$siteicon_url;									// リンク先：サイトアイコンURL
     $data['charset']			=	$charset;										// リンク先：文字コード
     $data['alive_time']			=	$this->now;														// 生存確認：確認日時
-    $data['alive_nexttime']		=	$this->now + WEEK_IN_SECONDS * 4 + rand(0, DAY_IN_SECONDS );	// 生存確認：次回確認日時
+    $data['alive_nexttime']		=	$this->pz_GetNextAliveTime($http_code, $this->now, is_wp_error($rget_data) ? '' : (string) wp_remote_retrieve_header($rget_data, 'retry-after'));	// 生存確認：次回確認日時
     $data['alive_result']		=	$http_code;														// 生存確認：HTTPレスポンス
     $data['sns_twitter']		=	$data['sns_twitter']	??	null;				// SNS：Twitter
     $data['sns_facebook']		=	$data['sns_facebook']	??	null;				// SNS：facebook
     $data['sns_hatena']			=	$data['sns_hatena']		??	null;				// SNS：はてなブックマーク
+    $data['sns_qiita_likes']			=	$data['sns_qiita_likes']		??	null;				// SNS: Qiita likes
+    $data['sns_qiita_stock']		=	$data['sns_qiita_stock']	??	null;				// SNS: Qiita stocks
     $data['sns_time']			=	$data['sns_time']		??	0;					// SNS：最終取得日時
     $data['sns_nexttime']		=	$data['sns_nexttime']	??	0;					// SNS：次回取得日時
     $data['use_post_id1']		=	$data['use_post_id1']	??	null;				// 呼ばれている記事
@@ -492,4 +776,6 @@
     $data['use_post_id6']		=	$data['use_post_id6']	??	null;				// 呼ばれている記事
     $data['update_time']		=	$this->now;										// 更新：最終更新日
     $data['update_result']		=	$http_code;										// 更新：HTTPレスポンス
+    $data['alive_result'] = $data['update_result'];
+    $data['alive_time'] = $data['update_time'];
     return	$data;

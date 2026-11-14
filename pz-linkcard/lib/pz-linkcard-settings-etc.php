@@ -39,7 +39,7 @@
 			<th scope="row"><?php esc_html_e('Site Icon API', 'pz-linkcard' ); ?></th>
 			<td>
 				<input name="properties[siteicon-api]" type="url" size="120" class="pz-click-all-select" value="<?php echo	esc_attr($prop['siteicon-api'] ); ?>" />
-				<p><?php echo	__('%DOMAIN% replace to domain name.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_domain.' '.__(')', 'pz-linkcard' ).'<br>'.__('%DOMAIN_URL% replace to domain URL.', 'pz-linkcard').' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_domain_url.' '.__(')', 'pz-linkcard' ).'<br>'.__('%URL% replace to URL.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_url.self::PLUGIN_PATH.' '.__(')', 'pz-linkcard' ); ?>
+				<p><?php echo	__('%DOMAIN% is replaced with the domain name.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_domain.' '.__(')', 'pz-linkcard' ).'<br>'.__('%DOMAIN_URL% is replaced with the domain URL.', 'pz-linkcard').' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_domain_url.' '.__(')', 'pz-linkcard' ).'<br>'.__('%URL% is replaced with the article URL.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_url.self::PLUGIN_PATH.' '.__(')', 'pz-linkcard' ); ?>
 				<p><?php esc_html_e('ex1.', 'pz-linkcard' ); ?><input name="" type="text" size="70" class="pz-click-all-select" value="https://www.google.com/s2/favicons?domain=%DOMAIN%" readonly="readonly" /></p>
 				<p><?php esc_html_e('ex2.', 'pz-linkcard' ); ?><input name="" type="text" size="70" class="pz-click-all-select" value="https://favicon.hatena.ne.jp/?url=%URL%" readonly="readonly" /></p>
 			</td>
@@ -48,7 +48,7 @@
 			<th scope="row" rowspan="3"><?php esc_html_e('Thumbnail API', 'pz-linkcard' ); ?></th>
 			<td>
 				<input name="properties[thumbnail-api]" type="url" size="120" class="pz-click-all-select" value="<?php echo	esc_attr($prop['thumbnail-api'] ); ?>" />
-				<p><?php echo	__('%URL% replace to URL.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_url.self::PLUGIN_PATH.' '.__(')', 'pz-linkcard' ); ?></p>
+				<p><?php echo	__('%URL% is replaced with the article URL.', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('ex.', 'pz-linkcard' ).' '.$pz_url.self::PLUGIN_PATH.' '.__(')', 'pz-linkcard' ); ?></p>
 				<p><?php esc_html_e('ex1.', 'pz-linkcard' ); ?><input name="" type="text" size="70" class="pz-click-all-select" value="https://s.wordpress.com/mshots/v1/%URL%?w=200" readonly="readonly" /></p>
 				<p><?php esc_html_e('ex2.', 'pz-linkcard' ); ?><input name="" type="text" size="70" class="pz-click-all-select" value="https://capture.heartrails.com/200x200?%URL%" readonly="readonly" /></p>
 			</td>
@@ -111,30 +111,12 @@
 				<p><input type="text" class="pz-click-all-select" value="<?php echo esc_attr($this->db_click ); ?>" size="48" readonly="readonly"></p>
 				<p><?php echo esc_html(sprintf(__('Records: %s', 'pz-linkcard' ), number_format_i18n($click_table_size['count'] ) ) ); ?></p>
 				<p><?php echo esc_html(sprintf(__('Total Size: %1$s (%2$s bytes), Index: %3$s (%4$s bytes), Data: %5$s (%6$s bytes)', 'pz-linkcard' ), size_format($click_table_size['total'], 2 ), number_format_i18n($click_table_size['total'] ), size_format($click_table_size['index'], 2 ), number_format_i18n($click_table_size['index'] ), size_format($click_table_size['data'], 2 ), number_format_i18n($click_table_size['data'] ) ) ); ?></p>
-				<p class="pz-destructive-action"><button type="submit" name="action" value="delete-all-click-table-rows" class="pz-button-sure pz-db-clear" disabled="disabled" onclick="return confirm('<?php echo esc_js(__('Delete all click data? This action cannot be undone.', 'pz-linkcard' ) ); ?>');"><?php esc_html_e('Delete All', 'pz-linkcard' ); ?></button><label><input id="pz-confirm-delete-click-table" class="pz-db-clear-enabled" type="checkbox" name="confirm-delete-click-table" value="1"> <?php esc_html_e('I understand that this data cannot be restored and authorize its deletion.', 'pz-linkcard' ); ?></label></p>
+				<div class="pz-click-data-actions">
+					<p class="pz-destructive-action"><button type="submit" name="action" value="delete-all-click-table-rows" class="pz-button-sure pz-db-clear" disabled="disabled" onclick="return confirm('<?php echo esc_js(__('Delete all click data? This action cannot be undone.', 'pz-linkcard' ) ); ?>');"><?php esc_html_e('Delete All', 'pz-linkcard' ); ?></button><label><input id="pz-confirm-delete-click-table" class="pz-db-clear-enabled" type="checkbox" name="confirm-delete-click-table" value="1"> <?php esc_html_e('I understand that this data cannot be restored and authorize its deletion.', 'pz-linkcard' ); ?></label></p>
+					<button type="submit" name="action" value="delete-invalid-click-records" class="button" onclick="return confirm('<?php echo esc_js(__('Delete invalid click records? This action cannot be undone.', 'pz-linkcard' ) ); ?>');"><?php esc_html_e('Delete Invalid Records', 'pz-linkcard' ); ?></button>
+				</div>
 			</td>
 		</tr>
 	</table>
 
-	<div class="pz-debug-only">
-		<h2><?php echo	__('Survey Settings', 'pz-linkcard' ); ?></h2>
-		<table class="form-table">
-			<tr class="pz-debug-only">
-				<th scope="row"><?php esc_html_e('Log URL', 'pz-linkcard' ); ?></th>
-				<td>
-					<p><input name="" type="url" title="<?php echo PZLKC_URL_DEBUG; ?>" class="pz-click-all-select" value="<?php echo PZLKC_URL_DEBUG; ?>" size="120" readonly="readonly" /></p>
-					<p><?php esc_html_e('Schemes (http and https) are omitted.', 'pz-linkcard' ); ?></p>
-					<p><?php echo esc_html__('File Count', 'pz-linkcard' ).esc_html__(': ', 'pz-linkcard' ).'<span class="pz-monospace">'.esc_html(number_format_i18n(pz_GetDirFileCount(PZLKC_DIR_DEBUG ) ) ).'</span>'; ?></p>
-					<p><?php $size = pz_GetDirSize(PZLKC_DIR_DEBUG ); echo __('Used', 'pz-linkcard' ).__(': ', 'pz-linkcard' ).'<span class="pz-monospace">'.pz_GetSizeStringSi($size).' ('.pz_GetStringBytes($size).')'; ?></span></p>
-					<p><button type="submit" name="action" value="clear-log" class="pz-button-sure" onclick="return confirm('<?php echo esc_js(__('Are you sure?', 'pz-linkcard' ) ); ?>');"><?php esc_html_e('Delete All', 'pz-linkcard' ); ?></button></p>
-				</td>
-			</tr>
-			<tr class="pz-debug-only">
-				<th scope="row"><?php esc_html_e('Log Directory', 'pz-linkcard' ); ?></th>
-				<td>
-					<p><input name="" type="text" title="<?php echo	PZLKC_DIR_DEBUG; ?>" class="pz-click-all-select" value="<?php echo PZLKC_DIR_DEBUG; ?>" size="120" readonly="readonly" /></p>
-				</td>
-			</tr>
-		</table>
-	</div>
 </div>

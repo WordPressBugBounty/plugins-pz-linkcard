@@ -9,7 +9,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-nofollow]" value="" />
 					<input type="checkbox" name="properties[flg-nofollow]" value="1" <?php checked($this->options['flg-nofollow'] ); ?> />
-					<?php	echo __('In the case of an external site, it puts the "nofollow".', 'pz-linkcard' ).__('(Deprecation)', 'pz-linkcard' ); ?>
+					<?php	echo __('Add "nofollow" to links to external sites.', 'pz-linkcard' ).__('(Deprecated)', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -19,7 +19,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-noopener]" value="" />
 					<input type="checkbox" name="properties[flg-noopener]" value="1" <?php checked($this->options['flg-noopener'] ); ?> />
-					<?php	echo __('In the case of an external site, it puts the "noopener".', 'pz-linkcard' ).__('(Recommended)', 'pz-linkcard' ); ?>
+					<?php	echo __('Add "noopener" to links to external sites.', 'pz-linkcard' ).__('(Recommended)', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -29,7 +29,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-relative-url]" value="" />
 					<input type="checkbox" name="properties[flg-relative-url]" value="1" <?php checked($this->options['flg-relative-url'] ); ?> />
-					<?php esc_html_e('For relative-specified URLs, complement the site URL.', 'pz-linkcard' ); ?>
+					<?php esc_html_e('Resolve relative URLs against the site URL.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -86,9 +86,17 @@
 				<label>
 					<input type="hidden"   name="properties[flg-redir]" value="" />
 					<input type="checkbox" name="properties[flg-redir]" value="1" <?php checked($this->options['flg-redir'] ); ?> />
-					<?php esc_html_e('Track when the link destination is redirected.', 'pz-linkcard' ); ?>
+					<?php esc_html_e('Follow redirects when retrieving linked pages.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
+		</tr>
+		<tr>
+			<th scope="row" colspan="2"><?php esc_html_e('Retry from Original URL', 'pz-linkcard'); ?></th>
+			<td><label>
+				<input type="hidden" name="properties[flg-redir-retry]" value="" />
+				<input type="checkbox" name="properties[flg-redir-retry]" value="1" <?php checked($this->options['flg-redir-retry']); ?> />
+				<?php esc_html_e('If the saved redirect destination fails with an HTTP error (such as 403) or a connection error, follow redirects again from the original URL.', 'pz-linkcard'); ?>
+			</label></td>
 		</tr>
 		<tr>
 			<th scope="row" colspan="2"><?php esc_html_e('Use User-Agent', 'pz-linkcard' ); ?></th>
@@ -107,7 +115,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-click-count]" value="" />
 					<input type="checkbox" name="properties[flg-click-count]" value="1" class="pz-sync-check" <?php checked($this->options['flg-click-count'] ); ?> />
-					<?php esc_html_e('Record the number of times clicked.', 'pz-linkcard' ); ?>
+					<?php esc_html_e('Record the number of clicks.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>
@@ -123,22 +131,7 @@
 		</tr>
 		<tr id="pz-click-log-retention-settings">
 			<th scope="row"><?php esc_html_e('Retention Period', 'pz-linkcard' ); ?></th>
-			<td>
-				<select name="properties[click-log-retention]">
-					<option value="1w" <?php selected('1w', $this->options['click-log-retention'] ); ?>><?php esc_html_e('1 week', 'pz-linkcard' ); ?></option>
-					<option value="1m" <?php selected('1m', $this->options['click-log-retention'] ); ?>><?php esc_html_e('1 month', 'pz-linkcard' ); ?></option>
-					<option value="2m" <?php selected('2m', $this->options['click-log-retention'] ); ?>><?php esc_html_e('2 months', 'pz-linkcard' ); ?></option>
-					<option value="3m" <?php selected('3m', $this->options['click-log-retention'] ); ?>><?php esc_html_e('3 months', 'pz-linkcard' ); ?></option>
-					<option value="6m" <?php selected('6m', $this->options['click-log-retention'] ); ?>><?php esc_html_e('6 months', 'pz-linkcard' ); ?></option>
-					<option value="1y" <?php selected('1y', $this->options['click-log-retention'] ); ?>><?php esc_html_e('1 year', 'pz-linkcard' ); ?></option>
-					<option value="2y" <?php selected('2y', $this->options['click-log-retention'] ); ?>><?php esc_html_e('2 years (long-term)', 'pz-linkcard' ); ?></option>
-					<option value="3y" <?php selected('3y', $this->options['click-log-retention'] ); ?>><?php esc_html_e('3 years (long-term)', 'pz-linkcard' ); ?></option>
-					<option value="5y" <?php selected('5y', $this->options['click-log-retention'] ); ?>><?php esc_html_e('5 years (long-term)', 'pz-linkcard' ); ?></option>
-					<option value="forever" <?php selected('forever', $this->options['click-log-retention'] ); ?>><?php esc_html_e('Permanent (not recommended)', 'pz-linkcard' ); ?></option>
-				</select>
-				<p class="description"><?php esc_html_e('Detailed click logs older than the retention period are deleted daily after 4:00 AM. The cumulative click count is retained.', 'pz-linkcard' ); ?></p>
-				<p class="description"><?php esc_html_e('Long-term retention increases database usage according to the number of clicks.', 'pz-linkcard' ); ?></p>
-			</td>
+			<td><?php echo sprintf(esc_html__('The %s are on the “Advanced” tab.', 'pz-linkcard'), '<a class="pz-schedule-setting-link" href="#pz-click-cleanup-retention-settings">'.esc_html__('settings', 'pz-linkcard').'</a>'); ?></td>
 		</tr>
 		<tr>
 			<th scope="row" rowspan="2"><?php esc_html_e('Broken Link', 'pz-linkcard' ); ?></th>
@@ -155,7 +148,7 @@
 			<th scope="row"><?php esc_html_e('Recurrence', 'pz-linkcard' ); ?></th>
 			<td>
 				<?php
-					echo esc_html(sprintf(__('The %s are located on the “Advanced” tab.', 'pz-linkcard' ), __('Settings item', 'pz-linkcard' ) ) );
+					echo sprintf(esc_html__('The %s are on the “Advanced” tab.', 'pz-linkcard'), '<a class="pz-schedule-setting-link" href="#pz-alive-recurrence-settings">'.esc_html__('settings', 'pz-linkcard').'</a>');
 				?>
 			</td>
 		</tr>

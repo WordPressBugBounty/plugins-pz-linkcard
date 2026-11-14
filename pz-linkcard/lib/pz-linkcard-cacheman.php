@@ -28,7 +28,9 @@
 	$param_refine	=	isset($_POST['refine'] )		?	esc_attr($_POST['refine'] )					:	null;
 	$keyword		=	isset($_POST['keyword'] ) && is_string($_POST['keyword'] )
 						?	trim(preg_replace('/[\r\n\t ]+/u', ' ', wp_check_invalid_utf8(wp_unslash($_POST['keyword'] ) ) ) )
-						:	null;
+						:	(isset($_GET['keyword']) && is_string($_GET['keyword'])
+							? trim(preg_replace('/[\r\n\t ]+/u', ' ', wp_check_invalid_utf8(wp_unslash($_GET['keyword']))))
+							: null);
 	$filter			=	isset($_POST['filter'] )		?	esc_attr($_POST['filter'] )					:	'all';
 	$header			=	isset($_POST['header'] )		?	esc_attr(strtolower($_POST['header'] ) )	:	null;
 	$orderby		=	isset($_POST['orderby'] )		?	sanitize_key(wp_unslash($_POST['orderby'] ) )	:
@@ -72,7 +74,14 @@
 		$action		=	'click-log';
 	}
 
-	if	(!isset($_POST['filter'] ) && isset($_GET['filter'] ) ) {
+	if (isset($_POST['filter-reset']) && is_string($_POST['filter-reset'])
+		&& in_array($_POST['filter-reset'], array('all', 'external', 'internal', 'modify', 'unlink', 'unregistered'), true)) {
+		$filter = $_POST['filter-reset'];
+		$keyword = '';
+		$param_refine = '';
+		$page_now = 1;
+	}
+	if	(!isset($_POST['filter'] ) && !isset($_POST['filter-reset']) && isset($_GET['filter'] ) ) {
 		$filter	= sanitize_key(wp_unslash($_GET['filter'] ) );
 	}
 
@@ -126,9 +135,7 @@
 
 	// プラグイン名・バージョン・環境表示
 	$debug_mode	= isset($this->options['debug-mode'] ) ? intval($this->options['debug-mode'] ) : 0;
-	$survey_mode	= isset($this->options['survey-mode'] ) ? intval($this->options['survey-mode'] ) : 0;
 	$html_mode		=	($debug_mode			?	'<span class="pz-infobar-env pz-infobar-env-debug">'.__('Debug Mode', 'pz-linkcard' ).'</span>'				:	'' ).
-			($survey_mode	?	'<span class="pz-infobar-env pz-infobar-env-survey">'.__('Survey Mode', 'pz-linkcard' ).'</span>'	:	'' ).
 			($admin_mode	?	'<span class="pz-infobar-env pz-infobar-env-admin">'.__('Admin Mode', 'pz-linkcard' ).'</span>'	:	'' ).
 			($develop_mode	==	1	?	'<span class="pz-infobar-env pz-infobar-env-develop">'.__('Development Environment', 'pz-linkcard' ).'</span>'	:	'' ).
 			($develop_mode	==	2	?	'<span class="pz-infobar-env pz-infobar-env-product">'.__('Production Environment', 'pz-linkcard' ).'</span>'	:	'' );
@@ -177,7 +184,7 @@
 	}
 
 	// モードによって表示させる
-	$html_style		.=	$debug_mode		==	0	?	'.pz-debug-only { display: none; } '	:	'';
+	$html_style		.=	$debug_mode		==	0	?	'.pz-cacheman .pz-debug-only { display: none !important; } '	:	'';
 	$html_style		.=	$admin_mode		==	0	?	'.pz-admin-only { display: none; } '	:	'';
 	$html_style		.=	$develop_mode	==	0	?	'.pz-develop-only { display: none; } '	:	'';
 	if	($html_style ) {
@@ -185,6 +192,10 @@
 	}
 
 	// 画面描画
+	if	($scroll_now > 0 && $action !== 'click-log' ) {
+		echo	'<style>html.pz-cacheman-restoring .pz-cacheman{visibility:hidden}</style>';
+		echo	'<script>document.documentElement.classList.add("pz-cacheman-restoring");</script>';
+	}
 	echo	'<div id="pz-overlay-proc" style="display: none;"><div class="pz-loader"></div></div>';
 	echo	'<div class="pz-dashboard'.$page_class.' wrap">';
 	echo	$html_style;
@@ -265,7 +276,7 @@
 			if	(isset($data ) && is_array($data ) && isset($data['id'] ) ) {
 				$success_count++;
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Update Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Cache Update Result', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			$redirect_url		=	$return_url ?: $this->cacheman_url;
 			echo	'<script>window.location.replace('.wp_json_encode($redirect_url ).');</script>';
 			$show_list			=	false;
@@ -281,11 +292,18 @@
 			foreach	($select_id as $data_id ) {
 				$data		=	$this->pz_GetCache(array('id' => $data_id ) );
 				if	(isset($data ) && is_array($data ) ) {
+					if (isset($_POST['single-renew'])) {
+						if ($this->pz_QueueCardRefresh($data_id)) $success_count++;
+						else $skip_count++;
+						continue;
+					}
 					$url_info	=	$this->Pz_GetURLInfo($data['url'] );
-					$data		=	!empty($url_info['is_internal'] )
-						?	$this->pz_GetPost($data )
-						:	$this->pz_GetRemote($data );
-					$result		=	is_array($data ) ? $this->pz_SetCache($data ) : null;
+					if (!empty($url_info['is_internal'])) {
+						$data = $this->pz_GetPost($data);
+						$result = is_array($data) ? $this->pz_SetCache($data) : null;
+					} else {
+						$result = $this->pz_RefreshExternalCard($data);
+					}
 					if	($result ) {
 						$success_count++;
 					} else {
@@ -295,7 +313,7 @@
 					$skip_count++;
 				}
 			}
-			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.__('Renew Cache', 'pz-linkcard' ).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
+			$html_notice			.=	'<div class="notice '.($success_count ? 'notice-success' : 'notice-error' ).' is-dismissible"><p><strong>'.(isset($_POST['single-renew']) ? __('Content retrieval queued', 'pz-linkcard') : __('Renew Cache', 'pz-linkcard' )).__('...', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Success:', 'pz-linkcard' ).$success_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 			break;
 
 		case	'renew_thumbnail':			// サムネイルの再取得
@@ -350,10 +368,18 @@
 			foreach	($select_id as $data_id ) {
 				$data				=	$this->pz_GetCache(array('id' => $data_id ) );
 				$result				=	null;
-				if	(isset($data ) && is_array($data ) ) {
-					$result			=	$this->pz_SetCache($data );
+				if (is_array($data) && !empty($data['id']) && !empty($data['url'])) {
+					$post_ids = $this->pz_FindUsedPostIDs($data['url']);
+					if ($post_ids !== null) {
+						$fields = array();
+						for ($index = 1; $index <= 6; $index++) {
+							$fields['use_post_id'.$index] = $post_ids[$index - 1] ?? null;
+						}
+						$result = $wpdb->update($this->db_card, $fields, array('id' => intval($data['id'])), array_fill(0, 6, '%d'), array('%d'));
+						if ($result !== false) $this->request_cache = array();
+					}
 				}
-				if	($result ) {
+				if ($result !== null && $result !== false) {
 					$success_count++;
 				} else {
 					$skip_count++;
@@ -373,10 +399,17 @@
 				$data				=	$this->pz_GetCache(array('id' => $data_id ) );
 				if	(isset($data ) && is_array($data ) ) {
 					$data						=	$this->pz_GetCache($data );
-					$after						=	$this->pz_GetRemote($data );
+					$url_info = $this->pz_GetURLInfo($data['url']);
+					$after = !empty($url_info['is_internal'])
+						? $this->pz_GetPost($data)
+						: $this->pz_GetRemote($data);
+					if (!is_array($after) || !isset($after['update_result'])) {
+						$skip_count++;
+						continue;
+					}
 					$data['alive_result']		=	$after['update_result'];
 					$data['alive_time']			=	$this->now;
-					$data['alive_nexttime']		=	$this->now + WEEK_IN_SECONDS * 4;
+					$data['alive_nexttime']		=	(!empty($url_info['is_internal']) ? null : ($after['alive_nexttime'] ?? null)) ?? $this->pz_GetNextAliveTime($data['alive_result'], $this->now);
 					$data						=	$this->pz_SetCache($data );
 					if	($data ) {
 						$success_count++;
@@ -427,7 +460,9 @@
 	}
 
 	// 画面描画
-	echo	$html_notice;
+	if	(!$show_list ) {
+		echo	$html_notice;
+	}
 	echo	$html_input;
 	if	($content_file ) {
 		require ($content_file );

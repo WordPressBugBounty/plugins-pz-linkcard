@@ -43,7 +43,6 @@
 												array(
 													''		=>		__('None',				'pz-linkcard' ),
 													'1'		=>		__('Top Side',			'pz-linkcard' ),
-													'3'		=>		__('Above the Title',	'pz-linkcard' ),
 													'2'		=>		__('Bottom Side',		'pz-linkcard' ),
 											) );
 											echo	'&emsp;';
@@ -192,7 +191,7 @@
 				<label>
 					<input type="hidden"   name="properties[flg-anti-select]" value="" />
 					<input type="checkbox" name="properties[flg-anti-select]" value="1" <?php checked($this->options['flg-anti-select'] ); ?> />
-					<?php esc_html_e('Prohibit the selection of text in the Link-Card.', 'pz-linkcard' ); ?>
+					<?php esc_html_e('Prevent text selection within LinkCards.', 'pz-linkcard' ); ?>
 				</label>
 			</td>
 		</tr>

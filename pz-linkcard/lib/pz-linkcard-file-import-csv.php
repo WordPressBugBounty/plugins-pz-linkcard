@@ -34,6 +34,8 @@
 		'sns_twitter'		=>	array('sns_twitter', 'twitter_count', 'tweet_count' ),
 		'sns_facebook'		=>	array('sns_facebook', 'facebook_count', 'fb_count' ),
 		'sns_hatena'		=>	array('sns_hatena', 'hatena_count', 'hatebu_count' ),
+		'sns_qiita_likes'		=>	array('sns_qiita_likes', 'sns_qiita', 'qiita_count', 'qiita_likes_count' ),
+		'sns_qiita_stock'	=>	array('sns_qiita_stock', 'qiita_stock_count', 'qiita_stocks_count' ),
 		'sns_time'			=>	array('sns_time', 'sns_date' ),
 		'sns_nexttime'		=>	array('sns_nexttime', 'sns_next_time', 'sns_next_at', 'sns_next_date' ),
 		'regist_title'		=>	array('regist_title' ),
@@ -85,6 +87,7 @@
 	$read_count		=	0;
 	$skip_count		=	0;
 	$success_count	=	0;
+	$skipped_records	=	array();
 
 	// アップロードされたファイルの存在チェック
 	if	($upload_error !== UPLOAD_ERR_OK || !$temp_path || !is_uploaded_file($temp_path ) ) {
@@ -163,13 +166,28 @@
 
 		if	(empty($import['url'] ) ) {
 			$skip_count++;
+			if	($record === array(null ) ) {
+				$reason	=	__('The CSV record is empty.', 'pz-linkcard' );
+			} elseif	(!array_key_exists('url', $import ) ) {
+				$reason	=	__('No URL column was found. Accepted column names: url, link_url, link, href.', 'pz-linkcard' );
+			} else {
+				$reason	=	__('The URL is empty.', 'pz-linkcard' );
+			}
+			if	(count($record ) !== count($csv_header ) ) {
+				$reason	.= ' '.sprintf(__('CSV column count differs from the header (expected %1$d, found %2$d).', 'pz-linkcard' ), count($csv_header ), count($record ) );
+			}
+			$skipped_records[]	=	array('row' => $read_count, 'url' => '', 'reason' => $reason );
 			continue;
 		}
 
 		// DB更新
-		$result			=	$this->pz_SetCache($import );
+		$result			=	$this->pz_SetCache($import, $save_error );
 		if	(!isset($result['url'] ) || $result['url'] <> $import['url'] ) {
 			$skip_count++;
+			$reason	=	$save_error ?: (isset($result['url'] )
+				? sprintf(__('The saved URL differs from the imported URL: %s', 'pz-linkcard' ), $result['url'] )
+				: __('The cache record could not be saved.', 'pz-linkcard' ) );
+			$skipped_records[]	=	array('row' => $read_count, 'url' => $import['url'], 'reason' => $reason );
 		} else {
 			$success_count++;
 		}
@@ -182,4 +200,5 @@
 	} else {
 		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import Failure.', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Read:', 'pz-linkcard' ).$read_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 	}
+	require __DIR__.'/pz-linkcard-file-import-result.php';
 	echo	'<p><a href="'.esc_url($this->cacheman_url ).'" class="pz-man-return-button button">'.esc_html__('Return to Cache Manager', 'pz-linkcard' ).'</a></p>';

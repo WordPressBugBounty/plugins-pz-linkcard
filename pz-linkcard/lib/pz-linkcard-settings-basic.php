@@ -29,9 +29,13 @@
 		'floating2'		=>		__('Floating border 2',				'pz-linkcard'),
 		'accent'		=>		__('Accent',						'pz-linkcard'),
 		'JIN'			=>		__('Headline',						'pz-linkcard'),
-		'fancy'			=>		__('Fancy',							'pz-linkcard'),
 		'glass'			=>		__('Glass',							'pz-linkcard'),
 		'metal'			=>		__('Metal',							'pz-linkcard'),
+		'falling-hearts'	=>	__('Rising hearts',				'pz-linkcard' ),
+		'falling-stars' =>		__('Falling stars',					'pz-linkcard' ),
+		'falling-snow'	=>		__('Falling snow',					'pz-linkcard' ),
+		'falling-sakura'	=>	__('Cherry blossom petals',		'pz-linkcard' ),
+		'tracking'		=>		__('3D Tracking',					'pz-linkcard'),
 		'browser'		=>		__('Browser',						'pz-linkcard'),
 		'wxp'			=>		__('Windows XP',					'pz-linkcard'),
 		'w95'			=>		__('Windows 95',					'pz-linkcard'),
@@ -41,8 +45,8 @@
 		'ct2'			=>		__('Cellophane tape "Top corner"',	'pz-linkcard'),
 		'ct3'			=>		__('Cellophane tape "long"',		'pz-linkcard'),
 		'ct4'			=>		__('Cellophane tape "diagonal"',	'pz-linkcard'),
-		'tac'			=>		__('Cellophane tape and curling',	'pz-linkcard'),
-		'ppc'			=>		__('Curling paper',					'pz-linkcard'),
+		'tac'			=>		__('Cellophane Tape and Curled Paper',	'pz-linkcard'),
+		'ppc'			=>		__('Curled Paper',					'pz-linkcard'),
 		'sBR'			=>		__('Stitch blue & red',				'pz-linkcard'),
 		'sGY'			=>		__('Stitch green & yellow',			'pz-linkcard'),
 		'stitch-free'	=>		__('Stitch free',					'pz-linkcard'),
@@ -54,15 +58,15 @@
 		'inE'			=>		__('Enlightened green',				'pz-linkcard'),
 		'inR'			=>		__('Resistance blue',				'pz-linkcard'),
 		'slt'			=>		__('Slanting',						'pz-linkcard'),
-		'3Dr'			=>		__('3D Rotate',						'pz-linkcard'),
+		'3Dr'			=>		__('3D Rotation',						'pz-linkcard'),
 	);
 	$item_descript		=	__('Easy Format',					'pz-linkcard' );
-	$item_notice		=	__('*', 'pz-linkcard' ).' '.__('It applies over other formatting settings.', 'pz-linkcard' );
+	$item_notice		=	__('*', 'pz-linkcard' ).' '.__('These settings take precedence over other formatting settings.', 'pz-linkcard' );
 	$item_value = $prop[$item_name] === 'fbd' ? 'floating' : $prop[$item_name];
 	echo_list($item_name, $item_value, $item_list, $item_descript, $item_notice );
 ?>
 		<tr>
-			<th scope="row"><?php esc_html_e('Saved Datetime', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('Saved Date and Time', 'pz-linkcard' ); ?></th>
 			<td>
 				<span class="pz-admin-only">
 					<input name="properties[saved-date]" type="number" min="0" step="1" value="<?php echo esc_attr($this->options['saved-date'] ); ?>" readonly="readonly" /><br/>
@@ -95,7 +99,7 @@
 	};
 ?>
 		<tr>
-			<th scope="row"><?php echo	__('How to', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('Japanese Only', 'pz-linkcard' ).__(')', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php echo	__('How to Use', 'pz-linkcard' ).' '.__('(', 'pz-linkcard' ).__('Japanese Only', 'pz-linkcard' ).__(')', 'pz-linkcard' ); ?></th>
 			<td>
 				<?php $intro_card($plugin_url, $this->plugin_dir_url.'img/logo_pz-linkcard.png', self::PLUGIN_NAME, 'Version '.PZLKC_PLUGIN_VERSION, 'pz-introduction-pzlkc' ); ?>
 			</td>
@@ -103,7 +107,7 @@
 		<tr>
 			<th scope="row" rowspan="3"><?php esc_html_e('When in Trouble', 'pz-linkcard' ); ?></th>
 			<td>
-				<?php $intro_card($plugin_support_url, '', __('Pz-LinkCard Forum', 'pz-linkcard' ), __('This is a forum for Pz-LinkCard by the official WordPress.org website.', 'pz-linkcard' ), 'pz-introduction-wporg', 'dashicons-wordpress' ); ?>
+				<?php $intro_card($plugin_support_url, '', __('Pz-LinkCard Forum', 'pz-linkcard' ), __('This is the Pz-LinkCard forum on the official WordPress.org website.', 'pz-linkcard' ), 'pz-introduction-wporg', 'dashicons-wordpress' ); ?>
 			</td>
 		</tr>
 		<tr>

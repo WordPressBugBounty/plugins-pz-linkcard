@@ -20,6 +20,7 @@
 	$read_count		=	0;
 	$skip_count		=	0;
 	$success_count	=	0;
+	$skipped_records	=	array();
 
 	// アップロードされたファイルの存在チェック
 	if	(!is_uploaded_file($temp_path ) ) {
@@ -81,14 +82,26 @@
 			}
 
 			// DB更新
-			$result			=	$this->pz_SetCache($import );
+			$result			=	$this->pz_SetCache($import, $save_error );
 			if	(!isset($result['url'] ) || $result['url'] <> $import['url'] ) {
 				$skip_count++;
+				$reason	=	$save_error ?: (isset($result['url'] )
+					? sprintf(__('The saved URL differs from the imported URL: %s', 'pz-linkcard' ), $result['url'] )
+					: __('The cache record could not be saved.', 'pz-linkcard' ) );
+				if	(!array_key_exists('url', $import ) ) {
+					$reason	=	__('No URL column was found.', 'pz-linkcard' );
+				}
+				$skipped_records[]	=	array('row' => $read_count, 'url' => $import['url'] ?? '', 'reason' => $reason );
 			} else {
 				$success_count++;
 			}
 		} else {
 			$skip_count++;
+			$skipped_records[]	=	array(
+				'row' => $read_count,
+				'url' => '',
+				'reason' => sprintf(__('CSV column count differs from the header (expected %1$d, found %2$d).', 'pz-linkcard' ), $item_count, count($record ) ),
+			);
 		}
 	}
 	// ファイルを閉じる
@@ -99,3 +112,4 @@
 	} else {
 		echo	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Import Failure.', 'pz-linkcard' ).__('(', 'pz-linkcard' ).__('Read:', 'pz-linkcard' ).$read_count.' '.__('Skip:', 'pz-linkcard' ).$skip_count.__(')', 'pz-linkcard' ).'</strong></p></div>';
 	}
+	require __DIR__.'/pz-linkcard-file-import-result.php';

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH' ) || wp_die; ?>
+﻿<?php defined('ABSPATH' ) || wp_die; ?>
 <?php
 	define('LIST_ENCLOSE_TAG',	array(
 		'div'			=>		__('DIV Tag',			'pz-linkcard' ),
@@ -13,9 +13,6 @@
 	// 「内部リンクの設定を参照」
 	define('LIST_INTERNAL',	array(''	=>	__('Use the same setting as Internal Link', 'pz-linkcard' ), ) );
 
-	// 「枠線の幅」
-	define('LIST_PX',		array('1px' => __('1px', 'pz-linkcard' ), '2px' => __('2px', 'pz-linkcard' ), '3px' => __('3px', 'pz-linkcard' ), '4px' => __('4px', 'pz-linkcard' ), '5px' => __('5px', 'pz-linkcard' ), '6px' => __('6px', 'pz-linkcard' ), '7px' => __('7px', 'pz-linkcard' ), '8px' => __('8px', 'pz-linkcard' ), '9px' => __('9px', 'pz-linkcard' ), '10px' => __('10px', 'pz-linkcard' ), '11px' => __('11px', 'pz-linkcard' ), '12px' => __('12px', 'pz-linkcard' ), '13px' => __('13px', 'pz-linkcard' ), '14px' => __('14px', 'pz-linkcard' ), '15px' => __('15px', 'pz-linkcard' ), '16px' => __('16px', 'pz-linkcard' ), '17px' => __('17px', 'pz-linkcard' ), '18px' => __('18px', 'pz-linkcard' ), '19px' => __('19px', 'pz-linkcard' ), '20px' => __('20px', 'pz-linkcard' ), '21px' => __('21px', 'pz-linkcard' ), '22px' => __('22px', 'pz-linkcard' ), '23px' => __('23px', 'pz-linkcard' ), '24px' => __('24px', 'pz-linkcard' ), '25px' => __('25px', 'pz-linkcard' ), '26px' => __('26px', 'pz-linkcard' ), '27px' => __('27px', 'pz-linkcard' ), '28px' => __('28px', 'pz-linkcard' ), '29px' => __('29px', 'pz-linkcard' ), '30px' => __('30px', 'pz-linkcard' ), '31px' => __('31px', 'pz-linkcard' ), '32px' => __('32px', 'pz-linkcard' ), '33px' => __('33px', 'pz-linkcard' ), '34px' => __('34px', 'pz-linkcard' ), '35px' => __('35px', 'pz-linkcard' ), '36px' => __('36px', 'pz-linkcard' ), '37px' => __('37px', 'pz-linkcard' ), '38px' => __('38px', 'pz-linkcard' ), '39px' => __('39px', 'pz-linkcard' ), '40px' => __('40px', 'pz-linkcard' ), '41px' => __('41px', 'pz-linkcard' ), '42px' => __('42px', 'pz-linkcard' ), '43px' => __('43px', 'pz-linkcard' ), '44px' => __('44px', 'pz-linkcard' ), '45px' => __('45px', 'pz-linkcard' ), '46px' => __('46px', 'pz-linkcard' ), '47px' => __('47px', 'pz-linkcard' ), '48px' => __('48px', 'pz-linkcard' ), '49px' => __('49px', 'pz-linkcard' ), '50px' => __('50px', 'pz-linkcard' ), '51px' => __('51px', 'pz-linkcard' ), '52px' => __('52px', 'pz-linkcard' ), '53px' => __('53px', 'pz-linkcard' ), '54px' => __('54px', 'pz-linkcard' ), '55px' => __('55px', 'pz-linkcard' ), '56px' => __('56px', 'pz-linkcard' ), '57px' => __('57px', 'pz-linkcard' ), '58px' => __('58px', 'pz-linkcard' ), '59px' => __('59px', 'pz-linkcard' ), '60px' => __('60px', 'pz-linkcard' ), '61px' => __('61px', 'pz-linkcard' ), '62px' => __('62px', 'pz-linkcard' ), '63px' => __('63px', 'pz-linkcard' ), '64px' => __('64px', 'pz-linkcard' ), ) );
-	
 	// 「余白」の書式
 	define('LIST_MARGIN',	array(
 		''				=>		__('Not defined',		'pz-linkcard' ),
@@ -31,22 +28,6 @@
 		'48px'			=>		__('48px',				'pz-linkcard' ),
 		'56px'			=>		__('56px',				'pz-linkcard' ),
 		'64px'			=>		__('64px',				'pz-linkcard' ),
-	) );
-
-	// 「角丸め」の書式
-	define('LIST_RADIUS',	array(
-		''				=>		__('None',				'pz-linkcard' ),
-		'2px'			=>		__('2px',				'pz-linkcard' ),
-		'4px'			=>		__('4px',				'pz-linkcard' ),
-		'6px'			=>		__('6px',				'pz-linkcard' ),
-		'8px'			=>		__('8px',				'pz-linkcard' ),
-		'12px'			=>		__('12px',				'pz-linkcard' ),
-		'16px'			=>		__('16px',				'pz-linkcard' ),
-		'20px'			=>		__('20px',				'pz-linkcard' ),
-		'24px'			=>		__('24px',				'pz-linkcard' ),
-		'32px'			=>		__('32px',				'pz-linkcard' ),
-		'64px'			=>		__('64px',				'pz-linkcard' ),
-		'50%'			=>		__('50%',				'pz-linkcard' ),
 	) );
 
 	// 「枠線」の書式
@@ -116,7 +97,6 @@
 
 	// デバグモード・管理モード
 	$debug_mode			=	isset($this->options['debug-mode'] )		?	intval($this->options['debug-mode'] )		:	0 ;
-	$survey_mode		=	isset($this->options['survey-mode'] )		?	intval($this->options['survey-mode'] )		:	0 ;
 	$admin_mode			=	isset($this->options['admin-mode'] )		?	intval($this->options['admin-mode'] )		:	0 ;
 	$develop_mode		=	isset($this->options['develop-mode'] )		?	intval($this->options['develop-mode'] )		:	0 ;
 	$menu_error			=	isset($this->options['error-mode'] )		?	intval($this->options['error-mode'] )		:	0 ;
@@ -138,7 +118,6 @@
 
 		// 管理者モードの解除
 		if	(!$prop['debug-mode'] ) {
-			$prop['survey-mode']			=	0;
 			$prop['admin-mode']				=	0;
 		}
 		if	(!$prop['admin-mode'] ) {
@@ -148,7 +127,6 @@
 
 	// 画面入力値で修正
 	$debug_mode			=	isset($prop['debug-mode'] )					?	intval($prop['debug-mode'] )				:	$debug_mode ;
-	$survey_mode		=	isset($prop['survey-mode'] )				?	intval($prop['survey-mode'] )				:	$survey_mode ;
 	$admin_mode			=	isset($prop['admin-mode'] )					?	intval($prop['admin-mode'] )				:	$admin_mode ;
 	$develop_mode		=	isset($prop['develop-mode'] )				?	intval($prop['develop-mode'] )				:	$develop_mode ;
 	$menu_error			=	isset($prop['error-mode'] )					?	intval($prop['error-mode'] )				:	$menu_error ;
@@ -156,7 +134,6 @@
 	$menu_initialize	=	isset($prop['flg-initialize'] )				?	intval($prop['flg-initialize'] )			:	$menu_initialize ;
 	$inhibit			=	isset($prop['flg-inhibit'] )				?	intval($prop['flg-inhibit'] )				:	$inhibit ;
 	if	(!$debug_mode ) {
-		$survey_mode	=	0;
 		$admin_mode	=	0;
 	}
 
@@ -238,7 +215,6 @@
 
 	// プラグイン名・バージョン・環境表示
 	$html_mode		=	($debug_mode			?	'<span class="pz-infobar-env pz-infobar-env-debug">'.	__('Debug Mode', 'pz-linkcard' ).'</span>'				:	'' ).
-						($survey_mode			?	'<span class="pz-infobar-env pz-infobar-env-survey">'.	__('Survey Mode', 'pz-linkcard' ).'</span>'				:	'' ).
 						($admin_mode			?	'<span class="pz-infobar-env pz-infobar-env-admin">'.	__('Admin Mode', 'pz-linkcard' ).'</span>'				:	'' ).
 						($develop_mode	==	1	?	'<span class="pz-infobar-env pz-infobar-env-develop">'.	__('Development Environment', 'pz-linkcard' ).'</span>'	:	'' ).
 						($develop_mode	==	2	?	'<span class="pz-infobar-env pz-infobar-env-product">'.	__('Production Environment', 'pz-linkcard' ).'</span>'	:	'' );
@@ -263,7 +239,6 @@
 	$temp_param		=
 		array(
 			'debug-mode'		=>		intval($debug_mode ),
-			'survey-mode'		=>		intval($survey_mode ),
 			'admin-mode'		=>		intval($admin_mode ),
 			'develop-mode'		=>		intval($develop_mode ),
 			'multi-mode'		=>		intval($menu_multi ),
@@ -289,8 +264,6 @@
 	// 定義漏れチェック
 	if	( ($this->options['admin-mode'] ) && ($prop ) && ($action !== 'init-plugin' ) ) {
 		$default_check_exceptions	=	array(
-			'debug-dir',
-			'debug-url',
 			'thumbnail-dir',
 			'thumbnail-url',
 			'blockquote',
@@ -299,7 +272,7 @@
 		$checked_prop		=	self::pz_RemoveThisLinkFallback($prop );
 		foreach	($default_definitions as $key => $value ) {
 			if	(!array_key_exists($key, $checked_prop ) ) {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('Undefined key "%s" in Properties.<br>It may be a glitch. Please inform the developer. (%s)', 'pz-linkcard' ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank" rel="external noopener noreferrer" referrerpolicy="no-referrer">@'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible">'.sprintf(__('The settings data is missing "%s".<br>This may be a plugin issue. Please contact the developer. (%s)', 'pz-linkcard' ), $key, '<a href="https://x.com/'. self::AUTHOR_TWITTER .'" target="_blank" rel="external noopener noreferrer" referrerpolicy="no-referrer">@'.self::AUTHOR_TWITTER.'</a>' ).'</div>';
 			}
 		}
 		// foreach	($checked_prop as $key => $value ) {
@@ -327,9 +300,16 @@
 						}
 					}
 				}
+				if (($prop['user-agent'] ?? 'pzlkc') === '') {
+					$browser_user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
+					if ($browser_user_agent !== ($this->options['user-agent-text'] ?? '')) {
+						$flg_change = true;
+					}
+					$prop['user-agent-text'] = $browser_user_agent;
+				}
 				unset($prop['url-length'], $this->options['url-length'], $prop['blockquote'], $this->options['blockquote'] );
 			} else {
-				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Could not retrieve the content to be changed.', 'pz-linkcard' ).'</strong></p></div>';
+				$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('No settings data was received. Please contact the developer if this problem persists.', 'pz-linkcard' ).'</strong></p></div>';
 			}
 			
 			// パラメーターに変更があった場合
@@ -351,7 +331,10 @@
 						$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
 						$saved_options	=	($saved_value !== null ) ? maybe_unserialize($saved_value ) : array();
 						if	($saved_options != $this->options ) {
-							$html_notice	.=	'<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save the settings.', 'pz-linkcard' ).'</strong></p></div>';
+							$save_debug = $GLOBALS['pz_lkc_option_save_debug'] ?? array();
+							$db_error = trim((string) ($save_debug['direct_write_error'] ?? $wpdb->last_error));
+							$diagnostic = 'WP update='.var_export($save_debug['update_option_result'] ?? null, true).'; direct DB write='.var_export($save_debug['direct_write_result'] ?? null, true).'; option row exists='.(!empty($save_debug['option_exists']) ? 'yes' : 'no').'; submitted/saved keys='.($save_debug['submitted_keys'] ?? '?').'/'.($save_debug['saved_keys'] ?? '?').'; DB error='.($db_error !== '' ? $db_error : __('none', 'pz-linkcard'));
+							$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save the settings.', 'pz-linkcard').'</strong><br><code>'.esc_html($diagnostic).'</code></p></div>';
 						} else {
 							$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
 						}
@@ -384,7 +367,7 @@
 			// 保存済みの値ではなく、実行時に画面で選択されている状態を優先する
 			$this->options['initialize-exception']	=	!empty($prop['initialize-exception'] ) ? 1 : 0;
 			if	($this->options['initialize-exception'] ) {
-				foreach	(array('debug-mode', 'survey-mode', 'admin-mode' ) as $mode_name ) {
+				foreach	(array('debug-mode', 'admin-mode' ) as $mode_name ) {
 					$this->options[$mode_name]	=	!empty($prop[$mode_name] ) ? 1 : 0;
 				}
 			}
@@ -395,7 +378,6 @@
 			if	($result ) {
 				// 表示オプションも初期化後の値で直ちに描画する
 				$debug_mode		=	intval($this->options['debug-mode'] );
-				$survey_mode	=	intval($this->options['survey-mode'] );
 				$admin_mode		=	intval($this->options['admin-mode'] );
 				$develop_mode	=	intval($this->options['develop-mode'] );
 				$menu_error		=	intval($this->options['error-mode'] );
@@ -444,6 +426,17 @@
 			$flg_style	= false;
 			break;
 
+		case	'delete-invalid-click-records':
+			global	$wpdb;
+			$deleted_count = $wpdb->query("DELETE click_log FROM $this->db_click AS click_log WHERE NOT EXISTS (SELECT 1 FROM $this->db_card AS card WHERE card.url_key = click_log.url_key)" );
+			if	(false === $deleted_count ) {
+				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('Failed to delete invalid click records.', 'pz-linkcard' ).'</strong></p></div>';
+			} else {
+				$html_notice .= '<div class="notice notice-success is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %s invalid click records.', 'pz-linkcard' ), esc_html(number_format_i18n($deleted_count ) ) ).'</strong></p></div>';
+			}
+			$flg_style = false;
+			break;
+
 		case	'delete-all-click-table-rows':
 			if	(empty($_POST['confirm-delete-click-table'] ) ) {
 				$html_notice	.= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('Please confirm that deleted click data cannot be restored.', 'pz-linkcard' ).'</strong></p></div>';
@@ -473,17 +466,6 @@
 				$html_notice	.= '<div class="notice notice-success is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %s image cache files.', 'pz-linkcard' ), esc_html(number_format_i18n($delete_result['deleted'] ) ) ).'</strong></p></div>';
 			}
 			$flg_style	= false;
-			break;
-
-		case	'clear-log':
-			$delete_result	= $this->pz_DeleteUploadDirectoryFiles(PZLKC_DIR_DEBUG, 'log' );
-			if	(!$delete_result['valid'] ) {
-				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('The log directory is not configured or does not exist.', 'pz-linkcard' ).'</strong></p></div>';
-			} elseif ($delete_result['failed'] > 0 ) {
-				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %1$s log files. Failed to delete %2$s log files.', 'pz-linkcard' ), esc_html(number_format_i18n($delete_result['deleted'] ) ), esc_html(number_format_i18n($delete_result['failed'] ) ) ).'</strong></p></div>';
-			} else {
-				$html_notice .= '<div class="notice notice-success is-dismissible"><p><strong>'.sprintf(esc_html__('Deleted %s log files.', 'pz-linkcard' ), esc_html(number_format_i18n($delete_result['deleted'] ) ) ).'</strong></p></div>';
-			}
 			break;
 
 		case	'clear-error':
@@ -525,7 +507,7 @@
 		'preview-left', 'preview-top', 'preview-width', 'preview-height',
 		'preview-docked-height', 'preview-right-docked-width', 'preview-two-cards',
 		'window-left', 'window-top', 'window-width', 'window-height',
-		'docked-width', 'docked-height', 'last-bottom-docked-height', 'right-docked-width',
+		'docked-width', 'docked-height', 'last-bottom-docked-height', 'right-docked-width', 'left-docked-width',
 	) as $temp_name ) {
 		$temp_value		=	array_key_exists($temp_name, $this->options ) ? $this->options[$temp_name] : null;
 		$html_input		.=	'<input type="hidden" name="properties['.$temp_name.']" value="'.esc_attr($temp_value ?? '' ).'" data-pz-preview-state="'.esc_attr($temp_name ).'" />';
@@ -601,21 +583,16 @@
 		if	(file_exists($preview_css_file ) ) {
 			$preview_css	=	file_get_contents($preview_css_file );
 		}
-		$preview_image	=	esc_url($this->plugin_dir_url.'img/logo_pz-linkcard.png' );
-		$preview_external_siteicon	=	esc_url($this->plugin_dir_url.'img/icon_popozure.ico' );
-		$preview_internal_siteicon	=	get_site_icon_url(16 );
-		if	(!$preview_internal_siteicon ) {
-			$preview_internal_siteicon	=	$this->plugin_dir_url.'img/siteicon_dummy.png';
-		}
-		$preview_internal_siteicon	=	esc_url($preview_internal_siteicon );
-		$preview_today	=	current_datetime();
-		$preview_yesterday	=	$preview_today->modify('-1 day' );
 		$preview_mode	=	$this->options['preview-mode'] ?? 'icon';
 		$preview_class	=	'';
 		$preview_style	=	'';
-		if	(in_array($preview_mode, array('window', 'right', 'docked' ), true ) ) {
+		if	(in_array($preview_mode, array('window', 'right', 'left', 'docked' ), true ) ) {
 			$preview_class	=	' pz-settings-preview-ready';
-			if	($preview_mode === 'right' ) {
+			if ($preview_mode === 'left') {
+                $preview_class .= ' pz-settings-preview-docked pz-settings-preview-docked-left';
+                $left_width = max(180, absint($this->options['left-docked-width'] ?? 240));
+                $preview_style = 'left:var(--pz-overlay-left,160px);right:auto;top:calc(var(--wp-admin--admin-bar--height, 32px) + 40px);bottom:0;width:'.$left_width.'px;height:auto;max-height:none;';
+            } elseif ($preview_mode === 'right') {
 				$preview_class	.=	' pz-settings-preview-docked pz-settings-preview-docked-right';
 				$right_width	=	max(180, absint($this->options['right-docked-width'] ?? $this->options['preview-right-docked-width'] ?? 180 ) );
 				if	($right_width > 0 ) {
@@ -637,38 +614,16 @@
 				}
 			}
 		}
-		$make_preview_card	=	function($prefix, $url, $site_name, $title, $excerpt) use ($preview_image, $preview_external_siteicon, $preview_internal_siteicon, $preview_today, $preview_yesterday) {
-			return	$this->pz_GetHTML(array(
-				'url'			=>	$url,
-				'title'			=>	$title,
-				'excerpt'		=>	$excerpt,
-				'preview-card'	=>	$prefix,
-				'preview-data'	=>	array(
-					'url'				=>	$url,
-					'site_name'			=>	$site_name,
-					'title'				=>	$title,
-					'excerpt'			=>	$excerpt,
-					'thumbnail'			=>	$preview_image,
-					'favicon'			=>	$prefix === 'ex' ? $preview_external_siteicon : $preview_internal_siteicon,
-					'sns_twitter'		=>	1234,
-					'sns_facebook'		=>	1234,
-					'sns_hatena'		=>	1234,
-					'post_date'			=>	$preview_yesterday->format('Y-m-d H:i:s' ),
-					'post_modified'		=>	$preview_today->format('Y-m-d H:i:s' ),
-					'update_result'		=>	200,
-					'alive_result'		=>	200,
-					'no_failure'		=>	true,
-				),
-			) );
-		};
+
 		$html_preview	=	'<style id="pz-linkcard-preview-css" type="text/css">'.$preview_css.'</style>'.
 							'<section class="pz-settings-preview-window'.$preview_class.'"'.($preview_style ? ' style="'.esc_attr($preview_style ).'"' : '' ).' role="dialog" aria-labelledby="pz-settings-preview-title">'.
 							'<div class="pz-settings-preview-handle" data-pz-preview-handle>'.
 							'<span id="pz-settings-preview-title" class="pz-settings-preview-title">'.esc_html__('Preview', 'pz-linkcard' ).'</span>'.
 							'<span class="pz-settings-preview-controls">'.
-							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode data-no-overlay="1" aria-label="'.esc_attr__('Dock preview bottom', 'pz-linkcard' ).'">_</button>'.
-							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode-secondary data-no-overlay="1" aria-label="'.esc_attr__('Dock preview right', 'pz-linkcard' ).'">∣</button>'.
-							'<button type="button" class="pz-settings-preview-button" data-pz-preview-close data-no-overlay="1" aria-label="'.esc_attr__('Close preview', 'pz-linkcard' ).'">×</button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode data-no-overlay="1" aria-label="'.esc_attr__('Dock preview bottom', 'pz-linkcard' ).'"><img src="'.esc_url($this->plugin_dir_url.'img/preview-dock-bottom.svg' ).'" width="16" height="16" alt="" /></button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode-secondary data-no-overlay="1" aria-label="'.esc_attr__('Dock preview right', 'pz-linkcard' ).'"><img src="'.esc_url($this->plugin_dir_url.'img/preview-dock-right.svg' ).'" width="16" height="16" alt="" /></button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-mode-left data-no-overlay="1" aria-label="'.esc_attr__('Dock preview left', 'pz-linkcard' ).'"><img src="'.esc_url($this->plugin_dir_url.'img/preview-dock-left.svg' ).'" width="16" height="16" alt="" /></button>'.
+							'<button type="button" class="pz-settings-preview-button" data-pz-preview-close data-no-overlay="1" aria-label="'.esc_attr__('Close preview', 'pz-linkcard' ).'"><img src="'.esc_url($this->plugin_dir_url.'img/preview-close.svg' ).'" width="16" height="16" alt="" /></button>'.
 							'</span>'.
 							'</div>'.
 							'<div class="pz-settings-preview-body">'.
@@ -684,10 +639,10 @@
 							'<button type="button" class="pz-settings-preview-background pz-settings-preview-background-crosshatch" data-pz-preview-background="crosshatch" aria-label="'.esc_attr__('Crosshatch pattern background', 'pz-linkcard' ).'" title="'.esc_attr__('Crosshatch pattern background', 'pz-linkcard' ).'"></button>'.
 							'</div>'.
 							'<div class="pz-settings-preview-list">'.
-							'<div class="pz-settings-preview-item">'.$make_preview_card('ex', 'https://popozure.info/pz-linkcard-preview', __('External Link Preview', 'pz-linkcard' ), __('External Link Preview', 'pz-linkcard' ), __('This is a sample of an external link card.', 'pz-linkcard' ) ).'</div>'.
-							'<div class="pz-settings-preview-item pz-settings-preview-extra">'.$make_preview_card('ex', 'https://popozure.info/pz-linkcard-preview-2', __('External Link Preview', 'pz-linkcard' ), __('External Link Preview', 'pz-linkcard' ), __('This is a sample of an external link card.', 'pz-linkcard' ) ).'</div>'.
-							'<div class="pz-settings-preview-item">'.$make_preview_card('in', home_url('/pz-linkcard-preview/' ), get_bloginfo('name' ), __('Internal Link Preview', 'pz-linkcard' ), __('This is a sample of an internal link card.', 'pz-linkcard' ) ).'</div>'.
-							'<div class="pz-settings-preview-item pz-settings-preview-extra">'.$make_preview_card('in', home_url('/pz-linkcard-preview-2/' ), get_bloginfo('name' ), __('Internal Link Preview', 'pz-linkcard' ), __('This is a sample of an internal link card.', 'pz-linkcard' ) ).'</div>'.
+							'<div class="pz-settings-preview-item">'.$this->pz_GetSettingsPreviewCard('ex', 1).'</div>'.
+							'<div class="pz-settings-preview-item pz-settings-preview-extra">'.$this->pz_GetSettingsPreviewCard('ex', 2).'</div>'.
+							'<div class="pz-settings-preview-item">'.$this->pz_GetSettingsPreviewCard('in', 1).'</div>'.
+							'<div class="pz-settings-preview-item pz-settings-preview-extra">'.$this->pz_GetSettingsPreviewCard('in', 2).'</div>'.
 							'</div>'.
 							'<label class="pz-settings-preview-two-cards-control"><input type="checkbox" data-pz-preview-two-cards data-no-overlay="1" /> '.esc_html__('Show two cards for each type', 'pz-linkcard' ).'</label>'.
 							'</div>'.
@@ -696,8 +651,15 @@
 
 	$changelog		=	'';
 	$changelog_limit	=	(function_exists('wp_is_mobile' ) && wp_is_mobile() ) ? 3 : 10;
-	$changelog		=	file_get_contents($this->plugin_dir_path.'/readme.txt' );											// readme.txt を読み込み
-	if	(false !== $changelog ) {
+	$changelog_file = $this->plugin_dir_path.'/readme.txt';
+	if (!is_readable($changelog_file)) {
+		$legacy_changelog_file = $this->plugin_dir_path.'/changelog.old';
+		$changelog_file = is_readable($legacy_changelog_file) ? $legacy_changelog_file : '';
+	}
+	if ($changelog_file !== '') {
+		$changelog = file_get_contents($changelog_file);
+	}
+	if (false !== $changelog && $changelog !== '') {
 		$changelog_pattern	=	'/^== Changelog ==\s*(?<entries>(?:^= [^=\r\n]+ =\s*(?:(?!^= [^=\r\n]+ =|^== ).*\R?)*){1,'.$changelog_limit.'})/m';
 		preg_match($changelog_pattern, $changelog, $m );
 		$changelog	=	$m['entries'] ?? '';
@@ -806,23 +768,17 @@ $settings_allowed_html['a']['referrerpolicy']	=	true;
 			<div id="pz-settings-screen-options-panel" class="pz-man-screen-options-panel pz-settings-screen-options-panel" hidden>
 				<fieldset>
 					<legend><?php esc_html_e('Modes', 'pz-linkcard' ); ?></legend>
-					<label title="<?php echo esc_attr(__('Displays normally hidden items to find and fix defects.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?>">
+					<label title="<?php echo esc_attr(__('Show diagnostic settings and information for troubleshooting.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecated)', 'pz-linkcard' ) ) ); ?>">
 						<input type="hidden" name="properties[debug-mode]" value="" form="pz-settings-form" />
 						<input type="checkbox" name="properties[debug-mode]" value="1" class="pz-tab-show" form="pz-settings-form" <?php checked($this->options['debug-mode'] ); ?> />
 						<span class="pz-screen-option-name"><?php esc_html_e('Debug Mode', 'pz-linkcard' ); ?></span>
-						<span class="pz-screen-option-description"><?php echo esc_html(__('Displays normally hidden items to find and fix defects.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?></span>
+						<span class="pz-screen-option-description"><?php echo esc_html(__('Show diagnostic settings and information for troubleshooting.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecated)', 'pz-linkcard' ) ) ); ?></span>
 					</label>
-					<label class="pz-settings-debug-dependent"<?php echo $debug_mode ? '' : ' style="display: none;"'; ?> title="<?php echo esc_attr(__('Collect logs. May slow down operation.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?>">
-						<input type="hidden" name="properties[survey-mode]" value="" form="pz-settings-form" />
-						<input type="checkbox" name="properties[survey-mode]" value="1" class="pz-tab-show" form="pz-settings-form" <?php checked($survey_mode ); ?> />
-						<span class="pz-screen-option-name"><?php esc_html_e('Survey Mode', 'pz-linkcard' ); ?></span>
-						<span class="pz-screen-option-description"><?php echo esc_html(__('Collect logs. May slow down operation.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?></span>
-					</label>
-					<label class="pz-settings-debug-dependent"<?php echo $debug_mode ? '' : ' style="display: none;"'; ?> title="<?php echo esc_attr(__('Unlock special settings.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?>">
+					<label class="pz-settings-debug-dependent"<?php echo $debug_mode ? '' : ' style="display: none;"'; ?> title="<?php echo esc_attr(__('Unlock special settings.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecated)', 'pz-linkcard' ) ) ); ?>">
 						<input type="hidden" name="properties[admin-mode]" value="" form="pz-settings-form" />
 						<input type="checkbox" name="properties[admin-mode]" value="1" class="pz-tab-show" form="pz-settings-form" <?php checked($admin_mode ); echo (!$admin_mode ? ' readonly="readonly"' : '' ); ?> ondblclick="this.readOnly=false;" />
 						<span class="pz-screen-option-name"><?php esc_html_e('Administrator Mode', 'pz-linkcard' ); ?></span>
-						<span class="pz-screen-option-description"><?php echo esc_html(__('Unlock special settings.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecation)', 'pz-linkcard' ) ) ); ?></span>
+						<span class="pz-screen-option-description"><?php echo esc_html(__('Unlock special settings.', 'pz-linkcard' ).wp_strip_all_tags(__('(Deprecated)', 'pz-linkcard' ) ) ); ?></span>
 					</label>
 					<label title="<?php echo esc_attr__('Display the Multisite tab on the settings screen.', 'pz-linkcard' ); ?>">
 						<input type="hidden" name="properties[multi-mode]" value="" form="pz-settings-form" />
@@ -855,6 +811,7 @@ $settings_allowed_html['a']['referrerpolicy']	=	true;
 					<div><dt><kbd>Ctrl</kbd>+<kbd>S</kbd> / <kbd>Alt</kbd>+<kbd>S</kbd></dt><dd><?php esc_html_e('Save Changes'); ?></dd></div>
 					<div><dt><kbd>Ctrl</kbd>+<kbd>←</kbd> / <kbd>Ctrl</kbd>+<kbd>→</kbd></dt><dd><?php esc_html_e('Switch tabs', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>Shift</kbd>+<kbd><?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd> / <kbd><?php esc_html_e('Right click', 'pz-linkcard' ); ?></kbd>+<kbd><?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd></dt><dd><?php esc_html_e('Increase or decrease values, or select the previous or next option', 'pz-linkcard' ); ?></dd></div>
+					<div><dt><kbd>Alt</kbd>+<kbd>V</kbd></dt><dd><?php esc_html_e('Cycle preview: window, bottom, right, left, hidden', 'pz-linkcard'); ?></dd></div>
 				</dl>
 			</div>
 		</div>
@@ -1083,8 +1040,8 @@ function		echo_list($item_name, $item_value, $item_list, $item_title, $item_noti
 }
 
 // スケジュール用リスト項目
-function pz_echo_schedule_select($item_name, $item_value, $item_list ) {
-	echo '<select name="properties['.esc_attr($item_name ).']">';
+function pz_echo_schedule_select($item_name, $item_value, $item_list, $is_disabled = false ) {
+	echo '<select name="properties['.esc_attr($item_name ).']"'.disabled($is_disabled, true, false).'>';
 	foreach ($item_list as $key => $value ) {
 		echo '<option value="'.esc_attr($key ).'" '.selected((string) $key, (string) $item_value, false ).'>'.esc_html($value ).'</option>';
 	}

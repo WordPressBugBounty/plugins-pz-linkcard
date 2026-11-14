@@ -84,13 +84,33 @@
 	word-break: break-all;
 	white-space: normal;
 	overflow: hidden;
+	box-sizing: content-box;
 
 	/*CONTENT-PADDING*/
 	/*CONTENT-INSET*/
 	/*CONTENT-BG-COLOR*/
 	/*CONTENT-HEIGHT*/
 	/*CONTENT-MARGIN*/
-	/*SEPARATOR*/
+}
+.lkc-separator {
+	display: block;
+	height: 0;
+	margin: 4px 0;
+	padding: 0;
+	border: 0;
+	border-top: 1px solid;
+	clear: both;
+	/*SEPARATOR-COLOR*/
+}
+.lkc-content-item {
+	display: block;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+.lkc-content-item.lkc-content-item-category {
+	display: flex;
+	align-items: flex-start;
 }
 .lkc-title {
 	display: block;
@@ -161,8 +181,13 @@
 .lkc-url:hover {
 	/*URL-HOVER*/
 }
-.lkc-url:link {
-	text-decoration: none;
+.lkc-url > a.lkc-link,
+.lkc-url-info > a.lkc-link {
+	/*URL-UNDERLINE*/
+}
+.lkc-url:hover > a.lkc-link,
+.lkc-url-info:hover > a.lkc-link {
+	/*URL-HOVER*/
 }
 .lkc-date {
 	display: block /*IMPORTANT*/;
@@ -308,6 +333,31 @@
 	white-space: nowrap;
 	overflow: hidden;
 }
+.lkc-info.lkc-info-embedded {
+	display: flex /*IMPORTANT*/;
+	flex-wrap: nowrap;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: clip;
+}
+.lkc-info.lkc-info-embedded > * {
+	flex-shrink: 0;
+}
+.lkc-date.lkc-date-right {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-width: 0;
+	text-align: right;
+}
+.lkc-info > .lkc-date-right {
+	flex: 0 0 auto;
+	margin-right: 0;
+}
+.lkc-info:has(> .lkc-date-right) > :not(.lkc-date-right) {
+	min-width: 0;
+	flex-shrink: 1;
+}
 .lkc-siteicon {
 	display: inline-flex /*IMPORTANT*/;
 	flex: 0 0 auto;
@@ -344,6 +394,61 @@ img.lkc-siteicon {
 	/*INFO-ITALIC*/
 	/*INFO-UNDERLINE*/
 }
+.lkc-cat-list {
+	display: inline-flex /*IMPORTANT*/;
+	min-width: 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+	box-sizing: border-box;
+	scrollbar-width: none;
+	cursor: grab;
+	align-items: center;
+	gap: 4px;
+	max-width: 100%;
+	margin: 0;
+	padding: 1px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+.lkc-cat-list::-webkit-scrollbar {
+	display: none;
+}
+.lkc-cat-list.pz-category-dragging {
+	cursor: grabbing;
+	user-select: none;
+}
+.lkc-cat-list > object {
+	display: inline-flex;
+	flex: 0 0 auto;
+	margin: 0;
+	padding: 0;
+}
+.lkc-cat-list .lkc-cat {
+	display: inline-flex /*IMPORTANT*/;
+	flex: 0 0 auto;
+	align-items: center;
+	box-sizing: border-box;
+	border: 1px solid #000;
+	border-radius: 4px;
+	text-shadow: none;
+	white-space: nowrap;
+	/*CAT-COLOR*/
+	/*CAT-OUTLINE-COLOR*/
+	/*CAT-BG-COLOR*/
+	/*CAT-SIZE*/
+	/*CAT-HEIGHT*/
+	/*CAT-BOLD*/
+	/*CAT-ITALIC*/
+	/*CAT-UNDERLINE*/
+	margin: 0 /*IMPORTANT*/;
+	padding: 2px 6px /*IMPORTANT*/;
+}
+.lkc-cat-list .lkc-cat:hover {
+	/*CAT-HOVER*/
+}
+.lkc-share > object {
+	display: contents;
+}
 .lkc-share {
 	text-shadow: none;
 	white-space: nowrap;
@@ -375,6 +480,10 @@ img.lkc-siteicon {
 .lkc-sns-hb {
 	color: #ff6464 /*IMPORTANT*/;
 	background-color: #ffefef /*IMPORTANT*/;
+}
+.lkc-sns-qiita {
+	color: #ffffff /*IMPORTANT*/;
+	background-color: #55c500 /*IMPORTANT*/;
 }
 .lkc-sns-gp {
 	color: #dd4e42 /*IMPORTANT*/;

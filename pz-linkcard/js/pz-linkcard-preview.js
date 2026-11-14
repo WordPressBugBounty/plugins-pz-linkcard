@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     const dashboard = document.querySelector(".pz-dashboard");
     if (!dashboard) return;
 
@@ -7,6 +7,7 @@
         const handle = win?.querySelector("[data-pz-preview-handle]");
         const modeButton = win?.querySelector("[data-pz-preview-mode]");
         const secondaryModeButton = win?.querySelector("[data-pz-preview-mode-secondary]");
+        const leftModeButton = win?.querySelector("[data-pz-preview-mode-left]");
         const closeButton = win?.querySelector("[data-pz-preview-close]");
         const backgroundButtons = win?.querySelectorAll("[data-pz-preview-background]");
         const twoCardsCheckbox = win?.querySelector("[data-pz-preview-two-cards]");
@@ -15,19 +16,68 @@
         const form = document.querySelector(".pz-settings form");
         const storageKey = "pz-linkcard-preview-state";
         const labels = (typeof pzLinkCardPreview !== "undefined" && pzLinkCardPreview.labels) || {};
+        const iconBase = closeButton?.querySelector("img")?.src;
+        const setButtonIcon = (button, filename) => {
+            if (!iconBase) return;
+            const icon = document.createElement("img");
+            icon.src = new URL(filename, iconBase).href;
+            icon.width = 16;
+            icon.height = 16;
+            icon.alt = "";
+            button.replaceChildren(icon);
+        };
         const restoreButton = document.createElement("button");
         restoreButton.type = "button";
         restoreButton.className = "pz-settings-preview-restore";
         restoreButton.textContent = labels.restorePreview || "□Preview";
         restoreButton.setAttribute("aria-label", labels.restorePreviewAria || "Show preview");
+        const previewTooltip = `${labels.restorePreviewAria || "Preview"} Alt+V`;
+        restoreButton.title = previewTooltip;
+        if (closeButton) closeButton.title = previewTooltip;
         restoreButton.hidden = true;
         document.body.appendChild(restoreButton);
         let previewFadeTimer = null;
         let previewClosed = false;
+        let previewGeometryAnimation = null;
+        let openingIconRect = null;
+        const animateIconTransition = (iconRect, closing, finish = () => {}) => {
+            previewGeometryAnimation?.cancel();
+            previewGeometryAnimation = null;
+            const rect = win.getBoundingClientRect();
+            if (!iconRect || !rect.width || !rect.height || !win.animate
+                || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+                finish();
+                return;
+            }
+            const iconFrame = {
+                transformOrigin: "0 0",
+                transform: `translate(${iconRect.left - rect.left}px, ${iconRect.top - rect.top}px) scale(${iconRect.width / rect.width}, ${iconRect.height / rect.height})`,
+                opacity: 0.15,
+            };
+            const windowFrame = { transformOrigin: "0 0", transform: "none", opacity: 1 };
+            const animation = win.animate(closing ? [windowFrame, iconFrame] : [iconFrame, windowFrame], {
+                duration: 220,
+                easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            });
+            previewGeometryAnimation = animation;
+            animation.onfinish = () => {
+                if (previewGeometryAnimation !== animation) return;
+                previewGeometryAnimation = null;
+                finish();
+                schedulePreviewFit();
+            };
+        };
         const showPreviewWindow = () => {
             previewClosed = false;
+            previewGeometryAnimation?.cancel();
+            previewGeometryAnimation = null;
             window.clearTimeout(previewFadeTimer);
             win.style.display = "";
+            if (openingIconRect) {
+                win.classList.add("pz-settings-preview-ready");
+                animateIconTransition(openingIconRect, false);
+                openingIconRect = null;
+            }
             if (previewDocked) {
                 win.classList.add("pz-settings-preview-ready");
             }
@@ -43,6 +93,9 @@
             });
         };
         const hideRestoreButton = () => {
+            if (!restoreButton.hidden) openingIconRect = restoreButton.getBoundingClientRect();
+            previewGeometryAnimation?.cancel();
+            previewGeometryAnimation = null;
             restoreButton.classList.remove("pz-settings-preview-restore-ready");
             window.setTimeout(() => {
                 if (!restoreButton.classList.contains("pz-settings-preview-restore-ready")) {
@@ -68,15 +121,23 @@
             previewFadeTimer = window.setTimeout(finish, 220);
         };
         const showIconPreview = () => {
+            const wasVisible = !previewClosed && win.style.display !== "none"
+                && win.classList.contains("pz-settings-preview-ready");
             previewClosed = true;
+            window.clearTimeout(previewFadeTimer);
+            showRestoreButton();
+            const finish = () => {
+                if (!previewClosed) return;
+                win.classList.remove("pz-settings-preview-ready", "pz-settings-preview-docked", "pz-settings-preview-docked-right", "pz-settings-preview-docked-left");
+                win.style.display = "none";
+            };
+            if (wasVisible) {
+                animateIconTransition(restoreButton.getBoundingClientRect(), true, finish);
+            } else {
+                finish();
+            }
             setDockedScrollSpace(0);
             setRightDockedScrollSpace(0);
-            win.classList.remove("pz-settings-preview-ready", "pz-settings-preview-docked", "pz-settings-preview-docked-right");
-            window.clearTimeout(previewFadeTimer);
-            previewFadeTimer = window.setTimeout(() => {
-                if (!win.classList.contains("pz-settings-preview-ready")) win.style.display = "none";
-            }, 500);
-            showRestoreButton();
         };
 
         const previewBackgrounds = {
@@ -101,8 +162,10 @@
                 image: "repeating-linear-gradient(45deg, rgba(224, 174, 194, 0.35), rgba(224, 174, 194, 0.35) 20px, transparent 0, transparent 40px), repeating-linear-gradient(315deg, rgba(224, 174, 194, 0.35), rgba(224, 174, 194, 0.35) 20px, transparent 0, transparent 40px)",
             },
         };
+        const backgroundStorageKey = `${storageKey}-background:${window.location.pathname}`;
         const applyPreviewBackground = name => {
-            const background = previewBackgrounds[name] || previewBackgrounds.white;
+            if (!Object.prototype.hasOwnProperty.call(previewBackgrounds, name)) name = "white";
+            const background = previewBackgrounds[name];
             win.style.backgroundColor = background.background;
             win.style.backgroundImage = background.image;
             win.style.backgroundPosition = background.position || "";
@@ -116,10 +179,21 @@
                 e.preventDefault();
                 e.stopPropagation();
                 applyPreviewBackground(button.dataset.pzPreviewBackground);
+                try {
+                    window.localStorage.setItem(backgroundStorageKey, button.dataset.pzPreviewBackground);
+                } catch {
+                    // Keep the palette usable when browser storage is unavailable.
+                }
                 button.blur();
             });
         });
-        applyPreviewBackground("white");
+        let savedBackground = "white";
+        try {
+            savedBackground = window.localStorage.getItem(backgroundStorageKey) || "white";
+        } catch {
+            // Use the default background when browser storage is unavailable.
+        }
+        applyPreviewBackground(savedBackground);
 
         const preventPreviewLink = e => {
             if (!e.target?.closest?.(".pz-settings-preview-window a")) return;
@@ -135,10 +209,10 @@
         const dockedMinHeightFallback = 28;
         let previewDocked = false;
         let previewDockSide = null;
+        const isSideDocked = () => previewDockSide === "right" || previewDockSide === "left";
         let floatingPreviewRect = null;
         let lastBottomDockedHeight = null;
-        let lastRightHandleClick = { time: 0, x: 0, y: 0 };
-        let rightHandleDoubleClickHandled = false;
+        let lastHandleClick = null;
         const stateInput = name => form?.querySelector(`[data-pz-preview-state="${name}"]`) || null;
         const setStateInput = (name, value) => {
             const input = stateInput(name);
@@ -162,6 +236,14 @@
                 : null;
             return readStateNumber(state, "right-docked-width") ?? legacyWidth ?? minPreviewWidth;
         };
+        const readLeftDockedWidth = state => readStateNumber(state, "left-docked-width") ?? minPreviewWidth;
+        const readBottomDockedHeight = state => {
+            return [lastBottomDockedHeight,
+                readStateNumber(state, "docked-height"),
+                readStateNumber(state, "last-bottom-docked-height"),
+                readStateNumber(state, "preview-docked-height"),
+            ].find(value => Number.isFinite(value) && value > 0) ?? minPreviewHeight;
+        };
         const readStoredState = () => {
             const state = {};
             form?.querySelectorAll("[data-pz-preview-state]").forEach(input => {
@@ -175,29 +257,44 @@
         const applyTwoCards = enabled => {
             const active = !!enabled;
             win.classList.toggle("pz-settings-preview-two-cards", active);
+            ["ex", "in"].forEach(prefix => {
+                win.querySelectorAll(`[data-pz-preview-card="${prefix}"]`).forEach((card, index) => {
+                    card.querySelectorAll('.lkc-title').forEach(title => {
+                    if (title.dataset.pzPreviewBaseTitle === undefined) {
+                        title.dataset.pzPreviewBaseTitle = title.textContent;
+                    }
+                    title.textContent = title.dataset.pzPreviewBaseTitle + (active ? ` (${index + 1})` : "");
+                    });
+                });
+            });
             if (twoCardsCheckbox) twoCardsCheckbox.checked = active;
             setStateInput("preview-two-cards", active ? "1" : "0");
         };
         const updateModeButton = () => {
             if (!modeButton || !secondaryModeButton) return;
             if (!previewDocked) {
-                modeButton.textContent = "_";
+                setButtonIcon(modeButton, "preview-dock-bottom.svg");
                 modeButton.setAttribute("aria-label", labels.dockPreviewBottom || "Dock preview bottom");
-                secondaryModeButton.textContent = "∣";
+                setButtonIcon(secondaryModeButton, "preview-dock-right.svg");
                 secondaryModeButton.setAttribute("aria-label", labels.dockPreviewRight || "Dock preview right");
             } else if (previewDockSide === "right") {
-                modeButton.textContent = "_";
+                setButtonIcon(modeButton, "preview-dock-bottom.svg");
                 modeButton.setAttribute("aria-label", labels.dockPreviewBottom || "Dock preview bottom");
-                secondaryModeButton.textContent = "□";
+                setButtonIcon(secondaryModeButton, "preview-window.svg");
                 secondaryModeButton.setAttribute("aria-label", labels.windowPreview || "Window preview");
             } else {
-                modeButton.textContent = "∣";
+                setButtonIcon(modeButton, "preview-dock-right.svg");
                 modeButton.setAttribute("aria-label", labels.dockPreviewRight || "Dock preview right");
-                secondaryModeButton.textContent = "□";
+                setButtonIcon(secondaryModeButton, "preview-window.svg");
                 secondaryModeButton.setAttribute("aria-label", labels.windowPreview || "Window preview");
             }
             modeButton.title = modeButton.getAttribute("aria-label");
             secondaryModeButton.title = secondaryModeButton.getAttribute("aria-label");
+            if (leftModeButton) {
+                setButtonIcon(leftModeButton, previewDockSide === "left" ? "preview-window.svg" : "preview-dock-left.svg");
+                leftModeButton.setAttribute("aria-label", previewDockSide === "left" ? (labels.windowPreview || "Window preview") : (labels.dockPreviewLeft || "Dock preview left"));
+                leftModeButton.title = leftModeButton.getAttribute("aria-label");
+            }
         };
 
         const getAdminBarBottom = () => {
@@ -210,7 +307,7 @@
 
         const clampToViewport = (left, top) => {
             const margin = 8;
-            const rect = win.getBoundingClientRect();
+            const rect = getWindowRect();
             const minLeft = Math.max(margin, getDockLeft() + margin);
             const minTop = Math.max(margin, getAdminBarBottom());
             const maxLeft = Math.max(minLeft, window.innerWidth - rect.width - margin);
@@ -243,11 +340,17 @@
         };
         const getWindowRect = () => {
             const rect = win.getBoundingClientRect();
+            // During a mode transition, save the destination rather than an intermediate frame.
+            const value = name => {
+                const inline = win.style[name];
+                return win.classList.contains("pz-settings-preview-animating") && inline.endsWith("px")
+                    ? parseFloat(inline) : rect[name];
+            };
             return {
-                left: rect.left,
-                top: rect.top,
-                width: rect.width,
-                height: rect.height,
+                left: value("left"),
+                top: value("top"),
+                width: value("width"),
+                height: value("height"),
             };
         };
         const syncPreviewState = () => {
@@ -264,7 +367,7 @@
                     ?? readStateNumber(null, "preview-docked-height");
             const state = {
                 ...storedState,
-                "preview-mode": previewDockSide === "right" ? "right" : (previewDocked ? "docked" : "window"),
+                "preview-mode": isSideDocked() ? previewDockSide : (previewDocked ? "docked" : "window"),
                 "preview-left": Math.round(rect.left),
                 "preview-top": Math.round(rect.top),
                 "preview-width": Math.round(rect.width),
@@ -281,6 +384,8 @@
             };
             if (previewDockSide === "right") {
                 state["right-docked-width"] = Math.round(rect.width);
+            } else if (previewDockSide === "left") {
+                state["left-docked-width"] = Math.round(rect.width);
             } else if (previewDockSide === "bottom") {
                 state["docked-height"] = Math.round(rect.height);
                 state["docked-width"] = Math.round(rect.width);
@@ -311,7 +416,7 @@
             const state = {
                 ...storedState,
                 "preview-mode": "icon",
-                "preview-restore-mode": previewDockSide === "right" ? "right" : (previewDocked ? "docked" : "window"),
+                "preview-restore-mode": isSideDocked() ? previewDockSide : (previewDocked ? "docked" : "window"),
                 "preview-left": Math.round(rect.left),
                 "preview-top": Math.round(rect.top),
                 "preview-width": Math.round(rect.width),
@@ -344,7 +449,7 @@
             if (!twoCardsControl) return;
             twoCardsControl.classList.remove("pz-settings-preview-two-cards-control-hidden");
             const controlRect = twoCardsControl.getBoundingClientRect();
-            const controlFitsWidth = previewDockSide === "right"
+            const controlFitsWidth = isSideDocked()
                 ? rect.width >= rightDockedMinWidth
                 : rect.width >= 32 + Math.ceil(controlRect.width) + 8;
             const controlFitsHeight = rect.height >= handleHeight + Math.ceil(controlRect.height) + 12;
@@ -373,22 +478,22 @@
             }
         };
         const setRightDockedScrollSpace = (width = 0) => {
-            const active = previewDockSide === "right" && width > 0;
-            document.body.classList.toggle("pz-settings-preview-right-docked-active", active);
-            if (active) {
-                document.documentElement.style.setProperty("--pz-settings-preview-right-docked-width", `${Math.round(width)}px`);
-            } else {
-                document.documentElement.style.removeProperty("--pz-settings-preview-right-docked-width");
-            }
+            ["right", "left"].forEach(side => {
+                const active = previewDockSide === side && width > 0;
+                document.body.classList.toggle(`pz-settings-preview-${side}-docked-active`, active);
+                const property = `--pz-settings-preview-${side}-docked-width`;
+                if (active) document.documentElement.style.setProperty(property, `${Math.round(width)}px`);
+                else document.documentElement.style.removeProperty(property);
+            });
         };
         const getResizeEdges = e => {
             const rect = win.getBoundingClientRect();
             const edgeSize = 8;
             const cornerSize = 28;
             if (previewDocked) {
-                if (previewDockSide === "right") {
+                if (isSideDocked()) {
                     return e.target?.closest?.("[data-pz-preview-handle]")
-                        ? { top: false, right: false, bottom: false, left: true }
+                        ? { top: false, right: previewDockSide === "left", bottom: false, left: previewDockSide === "right" }
                         : null;
                 }
                 return e.clientY - rect.top <= edgeSize ? { top: true, right: false, bottom: false, left: false } : null;
@@ -419,7 +524,7 @@
                 handle.style.cursor = "";
                 return;
             }
-            if (e.target?.closest?.("[data-pz-preview-handle]") && previewDockSide !== "right") {
+            if (e.target?.closest?.("[data-pz-preview-handle]") && !isSideDocked()) {
                 win.style.cursor = "";
                 handle.style.cursor = "";
                 return;
@@ -446,10 +551,10 @@
         const keepInViewport = () => {
             if (previewClosed) return;
             if (previewDocked) {
-                if (previewDockSide === "right") {
-                    applyRightDockedRect(getWindowRect().width);
+                if (isSideDocked()) {
+                    applyRightDockedRect(getWindowRect().width, previewDockSide);
                 } else {
-                    applyDockedRect(getWindowRect().height);
+                    applyDockedRect(getWindowRect().height, previewDockSide);
                 }
                 return;
             }
@@ -478,7 +583,7 @@
             const next = rect || floatingPreviewRect;
             previewDocked = false;
             previewDockSide = null;
-            win.classList.remove("pz-settings-preview-docked", "pz-settings-preview-docked-right");
+            win.classList.remove("pz-settings-preview-docked", "pz-settings-preview-docked-right", "pz-settings-preview-docked-left");
             setDockedScrollSpace(0);
             setRightDockedScrollSpace(0);
             updateModeButton();
@@ -498,31 +603,36 @@
             floatingPreviewRect = getWindowRect();
             syncPreviewState();
         };
-        const applyDockedRect = (height, width = null) => {
+        const applyDockedRect = height => {
             const bounds = getViewportBounds();
             const dockLeft = getDockLeft();
-            const dockedMinHeight = getDockedMinHeight();
-            const maxHeight = Math.max(dockedMinHeight, window.innerHeight - bounds.minTop);
-            const nextHeight = Math.min(maxHeight, Math.max(dockedMinHeight, height || getWindowRect().height));
-
+            // The right dock's vertical handle spans the entire viewport height.
+            // Switch its layout before measuring the bottom dock's minimum height.
             previewDocked = true;
             previewDockSide = "bottom";
             win.classList.add("pz-settings-preview-docked");
-            win.classList.remove("pz-settings-preview-docked-right");
+            win.classList.remove("pz-settings-preview-docked-right", "pz-settings-preview-docked-left");
+            const dockedMinHeight = getDockedMinHeight();
+            const maxHeight = Math.max(dockedMinHeight, window.innerHeight - bounds.minTop);
+            // An unset/zero bottom height must never inherit the right dock's
+            // viewport height.
+            const requestedHeight = Number.isFinite(height) && height > 0 ? height : readBottomDockedHeight(readStoredState());
+            const nextHeight = Math.min(maxHeight, Math.max(dockedMinHeight, requestedHeight));
+
             setRightDockedScrollSpace(0);
+            setDockedScrollSpace(nextHeight);
             updateModeButton();
             win.style.left = `${Math.round(dockLeft)}px`;
             win.style.top = `${Math.round(window.innerHeight - nextHeight)}px`;
             win.style.right = "auto";
             win.style.bottom = "auto";
-            const dockedWidth = Math.min(getViewportClientRight() - dockLeft, Math.max(minPreviewWidth, width || getViewportClientRight() - dockLeft));
+            const dockedWidth = Math.max(1, getViewportClientRight() - dockLeft);
             win.style.width = `${Math.round(dockedWidth)}px`;
             win.style.height = `${Math.round(nextHeight)}px`;
             win.style.maxHeight = "none";
-            setDockedScrollSpace(nextHeight);
             syncPreviewState();
         };
-        const applyRightDockedRect = width => {
+        const applyRightDockedRect = (width, side = "right") => {
             const bounds = getViewportBounds();
             const availableWidth = Math.max(1, getViewportClientRight() - bounds.minLeft);
             const minWidth = Math.min(rightDockedMinWidth, availableWidth);
@@ -530,10 +640,12 @@
             const nextWidth = Math.min(maxWidth, Math.max(minWidth, width || getWindowRect().width));
 
             previewDocked = true;
-            previewDockSide = "right";
-            win.classList.add("pz-settings-preview-docked", "pz-settings-preview-docked-right");
+            previewDockSide = side;
+            win.classList.add("pz-settings-preview-docked");
+            win.classList.toggle("pz-settings-preview-docked-right", side === "right");
+            win.classList.toggle("pz-settings-preview-docked-left", side === "left");
             updateModeButton();
-            win.style.left = `${Math.round(getViewportClientRight() - nextWidth)}px`;
+            win.style.left = `${Math.round(side === "left" ? getDockLeft() : getViewportClientRight() - nextWidth)}px`;
             win.style.top = `${Math.round(bounds.minTop)}px`;
             win.style.right = "auto";
             win.style.bottom = "auto";
@@ -558,13 +670,13 @@
             return Math.min(maxHeight, Math.max(minHeight, nextHeight));
         };
         const switchPreviewMode = targetMode => {
-            animatePreviewWindow();
             if (previewDockSide === "bottom") {
                 lastBottomDockedHeight = Math.round(getWindowRect().height);
             }
             if (!previewDocked) floatingPreviewRect = getWindowRect();
             syncPreviewState();
             const stored = readStoredState() || {};
+            animatePreviewWindow();
 
             if (targetMode === "window") {
                 const windowRect = {
@@ -576,15 +688,11 @@
                 const hasWindowRect = !!windowRect && Object.values(windowRect).every(value => value !== null);
                 applyFloatingRect(hasWindowRect ? windowRect : floatingPreviewRect);
             } else if (targetMode === "bottom") {
-                const dockedHeight = readStateNumber(stored, "docked-height")
-                    ?? readStateNumber(stored, "last-bottom-docked-height")
-                    ?? readStateNumber(stored, "preview-docked-height")
-                    ?? minPreviewHeight;
-                const dockedWidth = readStateNumber(stored, "docked-width");
-                applyDockedRect(dockedHeight, dockedWidth);
-            } else if (targetMode === "right") {
-                const dockedWidth = readRightDockedWidth(stored);
-                applyRightDockedRect(dockedWidth);
+                const dockedHeight = readBottomDockedHeight(stored);
+                applyDockedRect(dockedHeight);
+            } else if (targetMode === "right" || targetMode === "left") {
+                const dockedWidth = targetMode === "left" ? readLeftDockedWidth(stored) : readRightDockedWidth(stored);
+                applyRightDockedRect(dockedWidth, targetMode);
             }
             persistPreviewState();
         };
@@ -593,6 +701,8 @@
         };
         const cyclePreviewMode = () => {
             if (!previewDocked) {
+                switchPreviewMode("left");
+            } else if (previewDockSide === "left") {
                 switchPreviewMode("bottom");
             } else if (previewDockSide === "bottom") {
                 switchPreviewMode("right");
@@ -611,7 +721,7 @@
                 return;
             }
 
-            if (previewDockSide === "right") {
+            if (previewDockSide === "left") {
                 syncPreviewState();
                 persistPreviewState();
                 saveIconState();
@@ -621,8 +731,10 @@
 
             if (!previewDocked) {
                 switchPreviewMode("bottom");
-            } else {
+            } else if (previewDockSide === "bottom") {
                 switchPreviewMode("right");
+            } else {
+                switchPreviewMode("left");
             }
         };
         const dockPreviewRight = () => {
@@ -632,37 +744,50 @@
             const stored = readStoredState() || {};
             const storedMode = stored["preview-mode"] || readStateInput("preview-mode");
             const mode = storedMode === "icon" ? (stored["preview-restore-mode"] || "window") : storedMode;
-            const initialFloatingRect = !previewDocked ? getWindowRect() : null;
+            // The server may already have rendered a docked rectangle while the
+            // client mode flags still have their initial floating values.
+            const initiallyDocked = mode === "right" || mode === "left" || mode === "docked";
+            let initialFloatingRect = !previewDocked && !initiallyDocked ? getWindowRect() : null;
             const windowRect = {
                 left: readStateNumber(stored, "window-left"),
                 top: readStateNumber(stored, "window-top"),
                 width: readStateNumber(stored, "window-width"),
                 height: readStateNumber(stored, "window-height"),
             };
-            const dockLeft = getDockLeft();
-            const dockWidth = getViewportClientRight() - dockLeft;
-            const isStoredDockRect = windowRect.left !== null
-                && windowRect.width !== null
-                && Math.abs(windowRect.left - dockLeft) <= 1
-                && windowRect.width >= dockWidth - 1;
-            const hasWindowRect = Object.values(windowRect).every(value => value !== null) && !isStoredDockRect;
+            const hasWindowRect = Object.values(windowRect).every(value => value !== null);
             if (hasWindowRect) {
                 floatingPreviewRect = windowRect;
-            } else if (initialFloatingRect?.width > 0 && initialFloatingRect?.height > 0) {
-                floatingPreviewRect = initialFloatingRect;
+            } else if (!floatingPreviewRect) {
+                if (initiallyDocked) {
+                    // Measure the normal window defaults without painting the
+                    // temporary layout or adopting a dock's full-screen size.
+                    const savedStyle = win.style.cssText;
+                    const savedClass = win.className;
+                    win.classList.remove("pz-settings-preview-docked", "pz-settings-preview-docked-right", "pz-settings-preview-docked-left", "pz-settings-preview-animating");
+                    ["left", "top", "right", "bottom", "width", "height", "max-height"].forEach(name => win.style.removeProperty(name));
+                    initialFloatingRect = getWindowRect();
+                    win.style.cssText = savedStyle;
+                    win.className = savedClass;
+                }
+                if (initialFloatingRect?.width > 0 && initialFloatingRect?.height > 0) {
+                    floatingPreviewRect = initialFloatingRect;
+                    persistStoredState({
+                        "window-left": Math.round(initialFloatingRect.left),
+                        "window-top": Math.round(initialFloatingRect.top),
+                        "window-width": Math.round(initialFloatingRect.width),
+                        "window-height": Math.round(initialFloatingRect.height),
+                    });
+                }
             }
 
             if (mode === "docked") {
-                const dockedHeight = readStateNumber(stored, "docked-height")
-                    ?? readStateNumber(stored, "last-bottom-docked-height")
-                    ?? readStateNumber(stored, "preview-docked-height")
-                    ?? minPreviewHeight;
-                applyDockedRect(dockedHeight, readStateNumber(stored, "docked-width"));
+                const dockedHeight = readBottomDockedHeight(stored);
+                applyDockedRect(dockedHeight);
                 return;
             }
-            if (mode === "right") {
-                const dockedWidth = readRightDockedWidth(stored);
-                applyRightDockedRect(dockedWidth);
+            if (mode === "right" || mode === "left") {
+                const dockedWidth = mode === "left" ? readLeftDockedWidth(stored) : readRightDockedWidth(stored);
+                applyRightDockedRect(dockedWidth, mode);
                 return;
             }
             if (hasWindowRect) {
@@ -687,16 +812,21 @@
             if (upEvent.type !== "pointerup") return false;
             const rect = getWindowRect();
             const dockThreshold = 64;
+            const pushedLeft = getDockLeft() - (upEvent.clientX - offsetX);
             const pushedRight = upEvent.clientX - offsetX + rect.width - window.innerWidth;
             const pushedBottom = upEvent.clientY - offsetY + rect.height - window.innerHeight;
-            const dockRight = pushedRight >= dockThreshold && pushedRight >= pushedBottom;
-            const dockBottom = pushedBottom >= dockThreshold && pushedBottom > pushedRight;
-            if (!dockRight && !dockBottom) return false;
+            const dockLeft = pushedLeft >= dockThreshold && pushedLeft >= pushedRight && pushedLeft >= pushedBottom;
+            const dockRight = pushedRight >= dockThreshold && pushedRight >= pushedBottom && pushedRight >= pushedLeft;
+            const dockBottom = pushedBottom >= dockThreshold && pushedBottom > pushedRight && pushedBottom > pushedLeft;
+            if (!dockLeft && !dockRight && !dockBottom) return false;
 
             const stored = readStoredState() || {};
             floatingPreviewRect = rect;
+            syncPreviewState();
             animatePreviewWindow();
-            if (dockRight) {
+            if (dockLeft) {
+                applyRightDockedRect(readLeftDockedWidth(stored), "left");
+            } else if (dockRight) {
                 const dockedWidth = readStateNumber(stored, "right-docked-width")
                     ?? readStateNumber(stored, "preview-right-docked-width")
                     ?? rect.width;
@@ -705,7 +835,7 @@
                 const dockedHeight = readStateNumber(stored, "docked-height")
                     ?? readStateNumber(stored, "preview-docked-height")
                     ?? rect.height;
-                applyDockedRect(dockedHeight, readStateNumber(stored, "docked-width"));
+                applyDockedRect(dockedHeight);
             }
             persistPreviewState();
             return true;
@@ -716,23 +846,21 @@
         win.addEventListener("pointerdown", e => {
             if (e.button !== undefined && e.button !== 0) return;
             if (e.target?.closest?.(".pz-settings-preview-button, .pz-settings-preview-background, .pz-settings-preview-two-cards-control")) return;
-            if (previewDockSide === "right" && e.target?.closest?.("[data-pz-preview-handle]")) {
+            if (e.target?.closest?.("[data-pz-preview-handle]")) {
                 const now = Date.now();
-                const distance = Math.hypot(e.clientX - lastRightHandleClick.x, e.clientY - lastRightHandleClick.y);
-                const isDoubleClick = now - lastRightHandleClick.time < 400 && distance < 8;
-                lastRightHandleClick = { time: now, x: e.clientX, y: e.clientY };
-                if (e.detail >= 2 || isDoubleClick) {
+                const distance = lastHandleClick
+                    ? Math.hypot(e.clientX - lastHandleClick.x, e.clientY - lastHandleClick.y) : Infinity;
+                const isDoubleClick = lastHandleClick && now - lastHandleClick.time < 400 && distance < 8;
+                lastHandleClick = { time: now, x: e.clientX, y: e.clientY };
+                if (e.detail === 2 || isDoubleClick) {
                     e.preventDefault();
                     e.stopPropagation();
-                    rightHandleDoubleClickHandled = true;
+                    lastHandleClick = null;
                     cyclePreviewMode();
-                    window.setTimeout(() => {
-                        rightHandleDoubleClickHandled = false;
-                    }, 1000);
                     return;
                 }
             }
-            if (e.target?.closest?.("[data-pz-preview-handle]") && previewDockSide !== "right") return;
+            if (e.target?.closest?.("[data-pz-preview-handle]") && !isSideDocked()) return;
             const edges = getResizeEdges(e);
             if (!edges) return;
 
@@ -745,7 +873,7 @@
                 width: startRect.width,
                 height: startRect.height,
             };
-            const startedRightDocked = previewDockSide === "right";
+            const startedRightDocked = isSideDocked();
             let undockedFromRight = false;
             let dragOffsetX = 0;
             let dragOffsetY = 0;
@@ -785,8 +913,8 @@
                     return;
                 }
                 if (previewDocked) {
-                    if (previewDockSide === "right") {
-                        applyRightDockedRect(start.width + e.clientX - moveEvent.clientX);
+                    if (isSideDocked()) {
+                        applyRightDockedRect(start.width + (previewDockSide === "left" ? moveEvent.clientX - e.clientX : e.clientX - moveEvent.clientX), previewDockSide);
                     } else {
                         applyDockedRect(start.height + start.top - moveEvent.clientY);
                     }
@@ -851,7 +979,7 @@
             let offsetX = e.clientX - rect.left;
             let offsetY = e.clientY - rect.top;
             const startedBottomDocked = previewDockSide === "bottom";
-            const startedRightDocked = previewDockSide === "right";
+            const startedRightDocked = isSideDocked();
             let undockedFromBottom = false;
             let undockedFromRight = false;
 
@@ -884,8 +1012,8 @@
                 }
                 if (startedRightDocked && !undockedFromRight) return;
                 if (previewDocked) {
-                    if (previewDockSide === "right") {
-                        applyRightDockedRect(rect.width + e.clientX - moveEvent.clientX);
+                    if (isSideDocked()) {
+                        applyRightDockedRect(rect.width + (previewDockSide === "left" ? moveEvent.clientX - e.clientX : e.clientX - moveEvent.clientX), previewDockSide);
                         return;
                     }
                     applyDockedRect(rect.height + e.clientY - moveEvent.clientY);
@@ -900,29 +1028,7 @@
                 let snappedToEdge = undockedFromDock
                     && dockFloatingDragAtEdge(upEvent, offsetX, offsetY);
                 if (!previewDocked && !undockedFromDock && upEvent.type === "pointerup") {
-                    const dockThreshold = 64;
-                    const pushedRight = upEvent.clientX - offsetX + rect.width - window.innerWidth;
-                    const pushedBottom = upEvent.clientY - offsetY + rect.height - window.innerHeight;
-                    const dockRight = pushedRight >= dockThreshold && pushedRight >= pushedBottom;
-                    const dockBottom = pushedBottom >= dockThreshold && pushedBottom > pushedRight;
-                    if (dockRight || dockBottom) {
-                        const stored = readStoredState() || {};
-                        applyFloatingRect({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
-                        animatePreviewWindow();
-                        if (dockRight) {
-                            const dockedWidth = readStateNumber(stored, "right-docked-width")
-                                ?? readStateNumber(stored, "preview-right-docked-width")
-                                ?? rect.width;
-                            applyRightDockedRect(dockedWidth);
-                        } else {
-                            const dockedHeight = readStateNumber(stored, "docked-height")
-                                ?? readStateNumber(stored, "preview-docked-height")
-                                ?? rect.height;
-                            applyDockedRect(dockedHeight);
-                        }
-                        persistPreviewState();
-                        snappedToEdge = true;
-                    }
+                    snappedToEdge = dockFloatingDragAtEdge(upEvent, offsetX, offsetY);
                 }
                 if (!snappedToEdge) {
                     if (!previewDocked) floatingPreviewRect = getWindowRect();
@@ -941,16 +1047,13 @@
         handle.addEventListener("dblclick", e => {
             if (e.target?.closest?.(".pz-settings-preview-button, .pz-settings-preview-background, .pz-settings-preview-two-cards-control")) return;
             e.preventDefault();
-            if (rightHandleDoubleClickHandled) {
-                rightHandleDoubleClickHandled = false;
-                return;
-            }
-            cyclePreviewMode();
+            // Mode switching is handled on the second pointerdown in every mode.
+            e.stopPropagation();
         });
         modeButton?.addEventListener("click", e => {
             e.preventDefault();
             e.stopPropagation();
-            if (previewDockSide === "bottom") {
+            if (previewDockSide === "bottom" || previewDockSide === "left") {
                 dockPreviewRight();
             } else if (previewDockSide === "right") {
                 switchPreviewMode("bottom");
@@ -968,6 +1071,12 @@
                 dockPreviewRight();
             }
             secondaryModeButton.blur();
+        });
+        leftModeButton?.addEventListener("click", e => {
+            e.preventDefault();
+            e.stopPropagation();
+            switchPreviewMode(previewDockSide === "left" ? "window" : "left");
+            leftModeButton.blur();
         });
         closeButton?.addEventListener("click", e => {
             e.preventDefault();
@@ -995,6 +1104,12 @@
         });
 
         document.addEventListener("keydown", e => {
+            if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.isComposing && !e.repeat && e.key.toLowerCase() === "v") {
+                e.preventDefault();
+                if (previewClosed) restoreButton.click();
+                else closeButton?.click();
+                return;
+            }
             if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing || e.key.toLowerCase() !== "p") return;
 
             e.preventDefault();
@@ -1017,10 +1132,10 @@
             showIconPreview();
         }
         schedulePreviewFit();
-        initSettingsPreviewLiveStyles(win, syncPreviewState);
+        initSettingsPreviewLiveStyles(win, syncPreviewState, () => applyTwoCards(twoCardsCheckbox?.checked));
     }
 
-    function initSettingsPreviewLiveStyles(win, syncPreviewState) {
+    function initSettingsPreviewLiveStyles(win, syncPreviewState, refreshPreviewTitles) {
         const form = document.querySelector(".pz-settings form");
         if (!form) return;
 
@@ -1062,7 +1177,7 @@
             const items = [
                 ["title", ".lkc-title"],
                 ["excerpt", ".lkc-excerpt"],
-                ["url", ".lkc-url, .lkc-url-info"],
+                ["url", ".lkc-url, .lkc-url-info, .lkc-url > a.lkc-link, .lkc-url-info > a.lkc-link"],
                 ["date", ".lkc-date"],
                 ["heading", ".lkc-heading"],
                 ["more", ".lkc-more"],
@@ -1070,8 +1185,9 @@
                 ["added", ".lkc-added"],
             ];
             return ["ex", "in"].flatMap(prefix => items.map(([name, selector]) => {
-                const decoration = value(`${prefix}-${name}-hover`) !== "" ? "underline" : "none";
-                return `.pz-settings-preview-window [data-pz-preview-card="${prefix}"] ${selector}:hover { text-decoration: ${decoration} !important; }`;
+                const decoration = value(`${name}-hover`) !== "" ? "underline" : "none";
+                const selectors = selector.split(",").map(part => `.pz-settings-preview-window [data-pz-preview-card="${prefix}"] ${part.trim()}:hover`);
+                return `${selectors.join(", ")} { text-decoration: ${decoration} !important; }`;
             })).join("\n");
         };
         const collectAllProperties = () => {
@@ -1094,10 +1210,9 @@
             });
             return fd;
         };
-        const kickPreviewCssCallback = async () => {
+        const kickPreviewCssCallback = async seq => {
             if (typeof pzLinkCardPreview === "undefined" || !pzLinkCardPreview.ajaxUrl) return;
 
-            const seq = ++previewCssRequestSeq;
             const fd = collectAllProperties();
             fd.append("action", pzLinkCardPreview.action || "pz_lkc_preview_render");
             fd.append("nonce", pzLinkCardPreview.nonce || "");
@@ -1107,13 +1222,22 @@
                 const json = await response.json();
                 if (seq !== previewCssRequestSeq || !json?.success) return;
                 getPreviewStyleElement().textContent = json.data?.css || "";
+                if (Array.isArray(json.data?.cards)) {
+                    win.querySelectorAll('.pz-settings-preview-item').forEach((item, index) => {
+                        if (typeof json.data.cards[index] === 'string') item.innerHTML = json.data.cards[index];
+                    });
+                    refreshPreviewTitles();
+                }
             } catch (err) {
                 console.warn("Pz-LinkCard preview CSS failed:", err);
             }
         };
         const schedulePreviewCssCallback = (delay = 120) => {
             if (previewCssTimer) clearTimeout(previewCssTimer);
-            previewCssTimer = setTimeout(kickPreviewCssCallback, delay);
+            // Invalidate older responses as soon as settings change, including
+            // while the next request is still waiting for its debounce timer.
+            const seq = ++previewCssRequestSeq;
+            previewCssTimer = setTimeout(() => kickPreviewCssCallback(seq), delay);
         };
 
         const findControl = name => {
@@ -1151,7 +1275,7 @@
         const applyDisplay = (node, show) => {
             if (!node) return;
                 if (show) {
-                const displayValue = node.matches(".lkc-info") ? "flex" : (node.matches(".lkc-sns-tw, .lkc-sns-x, .lkc-sns-fb, .lkc-sns-hb, .lkc-sns-gp") ? "inline" : "block");
+                const displayValue = node.matches(".lkc-info") ? "flex" : (node.matches(".lkc-sns-tw, .lkc-sns-x, .lkc-sns-fb, .lkc-sns-hb, .lkc-sns-qiita, .lkc-sns-gp") ? "inline" : "block");
                 node.style.setProperty("display", displayValue, "important");
             } else {
                 node.style.setProperty("display", "none", "important");
@@ -1184,32 +1308,22 @@
             node.textContent = text;
             return node;
         };
-        const syncShare = (card, content, info, title, infoUrl) => {
-            const position = value("sns-position");
-            const enabled = position !== "" && (checked("sns-tw") || checked("sns-fb") || checked("sns-hb"));
-            let share = card.querySelector(".lkc-share");
-            if (!share && enabled) {
-                share = document.createElement("div");
-                share.className = "lkc-share";
-            }
-            if (!share) return;
-
-            const twText = checked("sns-tw-x") ? "1234 tweets" : "1234 posts";
-            const tw = ensureShareNode(share, ".lkc-sns-tw, .lkc-sns-x", checked("sns-tw-x") ? "lkc-sns-tw no_icon" : "lkc-sns-x no_icon", twText);
-            const fb = ensureShareNode(share, ".lkc-sns-fb", "lkc-sns-fb no_icon", "1234 shares");
-            const hb = ensureShareNode(share, ".lkc-sns-hb", "lkc-sns-hb no_icon", "1234 users");
-            applyDisplay(tw, enabled && checked("sns-tw"));
-            applyDisplay(fb, enabled && checked("sns-fb"));
-            applyDisplay(hb, enabled && checked("sns-hb"));
-            applyDisplay(share, enabled);
-            if (!enabled) return;
-
-            if (position === "1" && content && title) {
-                const titleContainer = title.parentElement && title.parentElement.parentElement === content ? title.parentElement : title;
-                content.insertBefore(share, titleContainer.parentElement === content ? titleContainer.nextSibling : null);
-            } else if (info) {
-                info.insertBefore(share, infoUrl && infoUrl.parentElement === info ? infoUrl : null);
-            }
+        const syncShare = (card) => {
+            const enabled = checked("sns-tw") || checked("sns-fb") || checked("sns-hb") || checked("sns-qiita");
+            card.querySelectorAll(".lkc-share").forEach(share => {
+                const twText = checked("sns-tw-x") ? "1234 tweets" : "1234 posts";
+                const tw = ensureShareNode(share, ".lkc-sns-tw, .lkc-sns-x", checked("sns-tw-x") ? "lkc-sns-tw no_icon" : "lkc-sns-x no_icon", twText);
+                const fb = ensureShareNode(share, ".lkc-sns-fb", "lkc-sns-fb no_icon", "1234 shares");
+                const hb = ensureShareNode(share, ".lkc-sns-hb", "lkc-sns-hb no_icon", "1234 users");
+                const qiitaLikes = ensureShareNode(share, ".lkc-sns-qiita:not(.lkc-sns-qiita-stock)", "lkc-sns-qiita lkc-sns-qiita-likes no_icon", labels.qiitaLikes || "1234 likes");
+                const qiitaStocks = ensureShareNode(share, ".lkc-sns-qiita-stock", "lkc-sns-qiita lkc-sns-qiita-stock no_icon", labels.qiitaStocks || "1234 stocks");
+                applyDisplay(tw, enabled && checked("sns-tw"));
+                applyDisplay(fb, enabled && checked("sns-fb"));
+                applyDisplay(hb, enabled && checked("sns-hb"));
+                applyDisplay(qiitaLikes, enabled && checked("sns-qiita"));
+                applyDisplay(qiitaStocks, enabled && checked("sns-qiita"));
+                applyDisplay(share, enabled);
+            });
         };
         const previewUrlText = (card, fallbackPrefix) => {
             const current = card.querySelector(".lkc-url, .lkc-url-info")?.textContent?.trim();
@@ -1286,7 +1400,7 @@
         const applyConfiguredLinkBoxHover = (node, prefix) => {
             if (!node) return;
 			const specialFormat = value("special-format");
-			const isFloatingLinkBox = ["Floating", "Floating2", "fbd"].includes(specialFormat);
+			const isFloatingLinkBox = ["floating", "floating2", "fbd"].includes(specialFormat);
 			const isAccentLinkBox = specialFormat === "accent";
 
             if (checked(`${prefix}-hover-transform-enabled`)) {
@@ -1294,7 +1408,9 @@
                 const transformY = intValue(`${prefix}-hover-transform-y`, 0);
                 const transformRotate = intValue(`${prefix}-hover-transform-rotate`, 0);
                 const transformScale = intValue(`${prefix}-hover-transform-scale`, 100);
-                node.style.setProperty("transform", `translate(${transformX}px, ${transformY}px) rotate(${transformRotate}deg) scale(${transformScale / 100})`, "important");
+                if (specialFormat !== "tracking") {
+                    node.style.setProperty("transform", `translate(${transformX}px, ${transformY}px) rotate(${transformRotate}deg) scale(${transformScale / 100})`, "important");
+                }
                 node.style.setProperty("opacity", String(Math.max(0, Math.min(100, intValue(`${prefix}-hover-opacity`, 100))) / 100), "important");
             }
             if (checked(`${prefix}-hover-bg-enabled`) && !isAccentLinkBox) {
@@ -1321,7 +1437,7 @@
             applyConfiguredBoxShadow(node, prefix, true);
 
             const transition = parseFloat(value(`${prefix}-hover-transition`));
-            if (Number.isFinite(transition) && transition > 0) {
+            if (specialFormat !== "tracking" && Number.isFinite(transition) && transition > 0) {
                 node.style.setProperty("transition", `all ${transition}s ease`, "important");
             }
         };
@@ -1357,7 +1473,7 @@
                 ex: { background: "#bcddff", outline: "#aabbee" },
                 in: { background: "#f8d0d0", outline: "#e8a8a8" },
             },
-			sFR: {
+			"stitch-free": {
 				ex: {
 					get background() { return value("ex-bg-color") || "transparent"; },
 					get outline() { return value("ex-border-color") || "transparent"; },
@@ -1468,6 +1584,13 @@
                 node.style.boxShadow = `${hoverShadowInset}${intValue(`${prefix}-hover-shadow-x`, 8)}px ${intValue(`${prefix}-hover-shadow-y`, 8)}px ${intValue(`${prefix}-hover-shadow-blur`, 8)}px ${intValue(`${prefix}-hover-shadow-spread`, 0)}px ${hoverShadowColor}`;
             }
         };
+        const applyGlassBackground = (node, prefix) => {
+            const color = value(`${prefix}-bg-color`) || (prefix === "in" ? "#fff4d9" : "#dbeeff");
+            const hex = color.replace("#", "");
+            const rgb = hex.length === 3 ? hex.split("").map(ch => parseInt(ch + ch, 16)) : [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+            node.style.backgroundColor = `rgba(${rgb.join(",")},.5)`;
+            node.style.backgroundImage = "radial-gradient(circle at 18% 12%, rgba(255,255,255,.5), transparent 34%), radial-gradient(circle at 82% 88%, rgba(176,215,255,.22), transparent 42%), linear-gradient(135deg, rgba(255,255,255,.38), rgba(220,235,255,.14))";
+        };
         const applyPartBox = (card, selector, prefix) => {
             const node = card.querySelector(selector);
             if (!node) return;
@@ -1484,7 +1607,7 @@
             const isLinkBox = prefix === "ex" || prefix === "in";
             const specialFormat = value("special-format");
             const isSimpleLinkBox = specialFormat === "smp" && isLinkBox;
-			const isFloatingLinkBox = isLinkBox && ["Floating", "Floating2", "fbd"].includes(specialFormat);
+			const isFloatingLinkBox = isLinkBox && ["floating", "floating2", "fbd"].includes(specialFormat);
 			const isAccentLinkBox = isLinkBox && specialFormat === "accent";
             const stitchPreset = isLinkBox ? stitchPresets[specialFormat]?.[prefix] : null;
             const ingressPreset = isLinkBox ? ingressPresets[specialFormat]?.[prefix] : null;
@@ -1499,6 +1622,7 @@
                     node.style.backgroundImage = bgImage;
                 }
             }
+            if (isLinkBox && specialFormat === "glass") applyGlassBackground(node, prefix);
             if (checked(`${prefix}-border-enabled`)) {
                 const borderColor = value(`${prefix}-border-color`);
                 const borderStyle = value(`${prefix}-border-style`) || "solid";
@@ -1641,7 +1765,7 @@
             if (specialFormat === "JIN") {
                 applyHeadlinePreset();
             }
-            if (["fancy", "glass", "metal", "mac", "browser", "ref", "ct1", "ct2", "ct3", "ct4", "tac", "Floating", "Floating2", "fbd"].includes(specialFormat)) {
+            if (["glass", "metal", "mac", "browser", "ref", "ct1", "ct2", "ct3", "ct4", "tac", "floating", "floating2", "fbd"].includes(specialFormat)) {
                 win.querySelectorAll("[data-pz-preview-heading]").forEach(heading => {
                     heading.style.zIndex = ["glass", "metal"].includes(specialFormat)
                         ? "6"
@@ -1650,14 +1774,19 @@
             }
             if (specialFormat === "browser") {
                 win.querySelectorAll("[data-pz-preview-card]").forEach(card => {
+                    const prefix = card.dataset.pzPreviewCard;
                     const cardBody = card.querySelector(".lkc-card");
-                    const info = card.querySelector("[data-pz-preview-info], .lkc-info");
+                    const info = card.querySelector(".lkc-browser-tab");
                     const content = card.querySelector("[data-pz-preview-content], .lkc-content");
-                    const domain = card.querySelector(".lkc-domain");
+                    const domain = card.querySelector(".lkc-browser-site-name");
                     if (cardBody) {
+                        cardBody.style.margin = "0";
                         cardBody.style.position = "relative";
                         cardBody.style.overflow = "hidden";
-                        cardBody.style.background = "#eef1f5";
+                        cardBody.style.borderRadius = `${Math.max(0, intValue(`${prefix}-border-radius`, 0))}px`;
+                        cardBody.style.background = checked(`${prefix}-bg-enabled`)
+                            ? (value(`${prefix}-bg-color`) || "transparent")
+                            : "transparent";
                     }
                     if (info) {
                         info.style.setProperty("display", "flex", "important");
@@ -1678,7 +1807,7 @@
                         content.style.padding = "42px 8px 8px";
                         content.style.background = "#fff";
                     }
-                    const contentUrl = content?.querySelector(".lkc-url");
+                    const contentUrl = content?.querySelector(".lkc-browser-url");
                     if (contentUrl) {
                         contentUrl.style.position = "absolute";
                         contentUrl.style.zIndex = "1";
@@ -1698,7 +1827,6 @@
                         domain.style.border = "0";
                         domain.style.setProperty("color", "#3c4043", "important");
                     }
-                    card.querySelectorAll(".lkc-share").forEach(node => node.style.setProperty("display", "none", "important"));
                 });
             }
             const ingressPreset = ingressPresets[specialFormat];
@@ -1712,8 +1840,7 @@
             const infoControl = Array.from(form.querySelectorAll('select[name="properties[info-position]"]')).find(el => el.getClientRects?.().length || el.offsetParent !== null);
             const infoPosition = String(infoControl ? infoControl.value : value("info-position") ?? "").trim();
             const showInfo = !["", "0", "none", "なし"].includes(infoPosition.toLowerCase());
-            const displayUrl = value("display-url");
-            const displayDate = value("display-date");
+            const displayDate = value("date-pattern");
             const width = value("width");
             const widthUnit = value("width-unit") || "px";
             const contentHeight = intValue("content-height", 0);
@@ -1742,7 +1869,7 @@
                 resetCardOrder(card);
                 resetStyle(card, ["marginTop", "marginBottom", "paddingLeft", "paddingRight"]);
                 resetStyle(wrap, ["display", "position", "maxWidth", "width", "height", "margin", "padding", "transform", "background", "backgroundColor", "backgroundImage", "backgroundBlendMode", "backdropFilter", "webkitBackdropFilter", "border", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "opacity", "overflow", "transition"]);
-                resetStyle(cardBody, ["position", "overflow", "marginTop", "marginBottom", "marginLeft", "marginRight", "padding", "border", "background", "backgroundColor", "boxShadow", "transform"]);
+                resetStyle(cardBody, ["position", "overflow", "marginTop", "marginBottom", "marginLeft", "marginRight", "padding", "border", "borderRadius", "background", "backgroundColor", "boxShadow", "transform"]);
                 resetStyle(content, ["position", "height", "margin", "padding", "boxShadow", "background", "backgroundColor", "borderTop", "borderBottom", "borderRadius"]);
                 resetStyle(info, ["display", "position", "width", "minHeight", "margin", "padding", "color", "background", "backgroundColor", "alignItems", "gap", "borderRadius", "boxSizing"]);
                 resetStyle(thumbnail, ["display", "float", "width", "margin", "transform", "background", "backgroundColor", "backgroundImage", "border", "borderColor", "borderStyle", "borderWidth", "borderRadius", "boxShadow", "opacity", "transition"]);
@@ -1791,16 +1918,12 @@
                         wrap.style.backgroundBlendMode = "multiply";
                         wrap.style.boxShadow = "0 2px 5px rgba(0,0,0,.25)";
                     } else if (specialFormat === "glass") {
-                        const glassColor = value(`${prefix}-bg-color`) || "#ffffff";
-                        const glassHex = glassColor.replace("#", "");
-                        const glassRgb = glassHex.length === 3 ? glassHex.split("").map(ch => parseInt(ch + ch, 16)) : [parseInt(glassHex.slice(0, 2), 16), parseInt(glassHex.slice(2, 4), 16), parseInt(glassHex.slice(4, 6), 16)];
-                        wrap.style.backgroundColor = `rgba(${glassRgb.join(",")},.5)`;
+                        applyGlassBackground(wrap, prefix);
                         [cardBody, content, info].forEach(node => {
                             if (!node) return;
                             node.style.setProperty("background-color", "transparent", "important");
                             node.style.setProperty("background-image", "none", "important");
                         });
-                        wrap.style.backgroundImage = "radial-gradient(circle at 18% 12%, rgba(255,255,255,.5), transparent 34%), radial-gradient(circle at 82% 88%, rgba(176,215,255,.22), transparent 42%), linear-gradient(135deg, rgba(255,255,255,.38), rgba(220,235,255,.14))";
                         wrap.style.backdropFilter = "blur(2px) saturate(125%)";
                         wrap.style.webkitBackdropFilter = "blur(2px) saturate(125%)";
                         wrap.style.boxShadow = "0 8px 24px rgba(31,56,85,.18)";
@@ -1816,13 +1939,13 @@
                             cardBody.style.setProperty("padding-left", "24px", "important");
                             cardBody.style.setProperty("background-color", "transparent", "important");
                         }
-                    } else if (["Floating", "Floating2", "fbd"].includes(specialFormat)) {
+                    } else if (["floating", "floating2", "fbd"].includes(specialFormat)) {
                         if (wrap) {
                             wrap.style.position = "relative";
                             wrap.style.display = "flow-root";
                             wrap.style.margin = "12px";
                             wrap.style.padding = "12px";
-                            wrap.style.border = "none";
+                            wrap.style.setProperty("border", "none", "important");
                             wrap.style.borderRadius = `${intValue(`${prefix}-border-radius`, 0)}px`;
                             wrap.style.boxShadow = "none";
                             wrap.style.overflow = "visible";
@@ -1834,7 +1957,7 @@
                             cardBody.style.boxShadow = "none";
                             cardBody.style.position = "relative";
                             cardBody.style.zIndex = "1";
-							if (specialFormat === "Floating2") {
+							if (specialFormat === "floating2") {
 								cardBody.style.transform = "translate(-12px, -12px)";
 							}
                         }
@@ -1924,11 +2047,7 @@
                         content.style.boxShadow = "inset 4px 4px 4px rgba(255,255,255,1)";
                         content.style.backgroundColor = "rgba(255,255,255,0.8)";
                     }
-                    content.style.margin = infoPosition === "1" ? "6px 0 0 0" : (infoPosition === "2" ? "0 0 8px 0" : "0");
-                    if (checked("separator")) {
-                        if (infoPosition === "1") content.style.borderTop = `1px solid ${value("info-color") || "#222"}`;
-                        if (infoPosition === "2") content.style.borderBottom = `1px solid ${value("info-color") || "#222"}`;
-                    }
+                    content.style.margin = checked("separator") ? "0" : (infoPosition === "1" ? "6px 0 0 0" : (infoPosition === "2" ? "0 0 8px 0" : "0"));
                 }
 
                 if (specialFormat !== "cmp") applyDisplay(info, showInfo);
@@ -1954,43 +2073,28 @@
                         content.insertBefore(info, title);
                     }
                 }
-                const showDate = prefix !== "ex" && displayDate !== "";
-                const urlText = previewUrlText(card, prefix);
-                const showBrowserUrl = specialFormat === "browser";
-                if ((showBrowserUrl || (!showDate && displayUrl === "1")) && content && !url) {
-                    url = document.createElement("div");
-                    url.className = "lkc-url";
-                    url.title = urlText;
-                    url.textContent = urlText;
-                    content.insertBefore(url, titleInsertReference(content, title));
-                }
-                if (!showDate && displayUrl === "2" && info && !infoUrl) {
-                    infoUrl = document.createElement("div");
-                    infoUrl.className = "lkc-url-info";
-                    infoUrl.textContent = urlText;
-                    info.appendChild(infoUrl);
-                }
-                if (prefix !== "ex" && showDate && content && !date) {
-                    date = document.createElement("div");
-                    date.className = "lkc-date";
-                    content.insertBefore(date, excerpt || titleInsertReference(content, title));
-                }
-                if (date && showDate) {
-                    const postDate = labels.previewPostDate || fallbackPreviewDate(1);
-                    const modifiedDate = labels.previewModifiedDate || fallbackPreviewDate(0);
-                    if (displayDate === "2") {
-                        date.textContent = `\u{1f552}\ufe0f${modifiedDate}`;
-                    } else if (displayDate === "3") {
-                        date.textContent = `\u{1f552}\ufe0f${postDate}\u2002\u{1f501}\ufe0f${modifiedDate}`;
-                    } else {
-                        date.textContent = `\u{1f552}\ufe0f${postDate}`;
+                const showDate = displayDate !== "";
+                card.querySelectorAll(".lkc-date").forEach(dateNode => {
+                    if (showDate) {
+                        const postIconSelect = form.querySelector('[name="properties[date-icon-post]"]');
+                        const modifiedIconSelect = form.querySelector('[name="properties[date-icon-update]"]');
+                        const dateIcon = select => {
+                            if (!select?.value) return document.createTextNode("");
+                            return document.createTextNode(select.selectedOptions[0]?.textContent || "");
+                        };
+                        const postDate = labels.previewPostDate || fallbackPreviewDate(1);
+                        const modifiedDate = labels.previewModifiedDate || fallbackPreviewDate(0);
+                        if (displayDate === "u") {
+                            dateNode.replaceChildren(dateIcon(modifiedIconSelect), document.createTextNode(modifiedDate));
+                        } else if (displayDate === "pu") {
+                            dateNode.replaceChildren(dateIcon(postIconSelect), document.createTextNode(`${postDate}\u2002`), dateIcon(modifiedIconSelect), document.createTextNode(modifiedDate));
+                        } else {
+                            dateNode.replaceChildren(dateIcon(postIconSelect), document.createTextNode(postDate));
+                        }
                     }
-                }
-                applyDisplay(date, showDate);
-                applyDisplay(url, showBrowserUrl || (displayUrl === "1" && !showDate));
-                applyDisplay(infoUrl, !showBrowserUrl && displayUrl === "2" && !showDate);
-                syncShare(card, content, info, title, infoUrl);
-                applyDisplay(excerpt, checked("display-excerpt"));
+                    applyDisplay(dateNode, showDate);
+                });
+                syncShare(card);
 
                 if (heading) {
                     resetStyle(heading, ["alignItems", "position", "top", "left", "height", "padding", "zIndex"]);
@@ -2074,7 +2178,8 @@
         };
 
         const syncPreview = () => {
-            updatePreview();
+            // Keep the current card until the selected layout and CSS are ready.
+            // The legacy DOM updater restores fixed items before the AJAX render.
             getPreviewHoverStyleElement().textContent = getPreviewHoverCss();
             schedulePreviewCssCallback();
         };
@@ -2090,7 +2195,6 @@
             attributes: true,
             attributeFilter: ["class", "disabled", "readonly", "aria-disabled"],
         });
-        updatePreview();
         getPreviewHoverStyleElement().textContent = getPreviewHoverCss();
         schedulePreviewCssCallback(0);
     }
