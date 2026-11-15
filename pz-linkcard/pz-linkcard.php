@@ -4,7 +4,7 @@
 Plugin Name:	Pz-LinkCard
 Plugin URI:		http://popozure.info/pz-linkcard
 Description:	Displays links in card format.
-Version:		2.6.5
+Version:		2.6.5.1
 Author:			Poporon
 Author URI:		http://popozure.info
 Text Domain:	pz-linkcard
@@ -293,7 +293,7 @@ class class_pz_linkcard {
 			'in-siteicon-alt'					=>	['type'	=>	'string',				'null'	=>	true,	'default'	=>	null,					'reset-format'	=>	true,	],
 			'in-content-type-1'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	'c',					'reset-format'	=>	true,	],
 			'in-content-type-2'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	't',					'reset-format'	=>	true,	],
-			'in-content-type-3'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	'u',					'reset-format'	=>	true,	],
+			'in-content-type-3'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	'u',						'reset-format'	=>	true,	],
 			'in-content-type-4'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	'e',					'reset-format'	=>	true,	],
 			'in-content-type-5'					=>	['type'	=>	'card_content_item',	'null'	=>	false,	'default'	=>	'',						'reset-format'	=>	true,	],
 			'in-get-from'						=>	['type'	=>	'string',				'null'	=>	true,	'default'	=>	null,					'reset-format'	=>	true,	],
@@ -442,6 +442,7 @@ class class_pz_linkcard {
 			'multi-count'						=>	['type'	=>	'numeric',				'null'	=>	false,	'default'	=>	0,							],
 
 			'trail-slash'						=>	['type'	=>	'flag',					'null'	=>	true,	'default'	=>	1,							],
+			'title-remove-site-name'		=>	['type'	=>	'flag',					'null'	=>	true,	'default'	=>	null,						],
 			'class-pc'							=>	['type'	=>	'string',				'null'	=>	true,	'default'	=>	null,						],
 			'class-mobile'						=>	['type'	=>	'string',				'null'	=>	true,	'default'	=>	null,						],
 			'mce-priority'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
@@ -457,15 +458,15 @@ class class_pz_linkcard {
 			'preview-height'					=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
 			'preview-docked-height'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
 			'preview-right-docked-width'		=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'window-left'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'window-top'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'window-width'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'window-height'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'docked-width'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'docked-height'						=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'last-bottom-docked-height'			=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'right-docked-width'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
-			'left-docked-width' => ['type' => 'numeric', 'null' => true, 'default' => null],
+			'preview-window-left'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-window-top'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-window-width'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-window-height'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-docked-width'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-docked-height'				=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-last-bottom-docked-height'	=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-right-docked-width'		=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
+			'preview-left-docked-width'		=>	['type'	=>	'numeric',				'null'	=>	true,	'default'	=>	null,						],
 
 
 			'preview-two-cards'					=>	['type'	=>	'flag',					'null'	=>	true,	'default'	=>	null,						],
@@ -651,6 +652,21 @@ class class_pz_linkcard {
 		$this->plugin_dir_path		=	plugin_dir_path(__FILE__ );							// プラグイン ディレクトリのパス
 		$this->plugin_dir_url		=	plugin_dir_url (__FILE__ );							// プラグイン ディレクトリのURL
 		$this->settings_url			=	admin_url(self::SETTINGS_URL );						// Pzカード設定のURL
+		$this->cacheman_url			=	admin_url(self::CACHEMAN_URL );						// Pzカード管理のURL
+
+		// オプション取得
+		$result						=	$this->pz_LoadOptions();
+
+		// ログ出力
+
+		// バージョンが違う場合、初期処理を実行する
+		if	($this->options['plugin-version'] <> PZLKC_PLUGIN_VERSION
+			|| ($this->options['db-version'] ?? '') !== md5($this->pz_GetCardTableSQL())
+			|| !array_key_exists('sns-qiita', (array) get_option(self::OPTION_NAME ) ) ) {
+			$this->hook_activate();															// プラグインの再起動
+		}
+
+		// 環境情報
 		$this->cacheman_url			=	admin_url(self::CACHEMAN_URL );						// Pzカード管理のURL
 
 		// オプション取得
@@ -1026,7 +1042,7 @@ class class_pz_linkcard {
 		if (!$url ) {
 			return null;
 		}
-		$url_info = $this->Pz_GetURLInfo($url );
+$url_info = $this->Pz_GetURLInfo($url );
 		if (isset($atts['preview-data'] ) && is_array($atts['preview-data'] ) ) {
 			return $this->pz_GetHTML($atts, $url_info );
 		}
@@ -1058,7 +1074,8 @@ class class_pz_linkcard {
 			}
 			$data = $this->pz_RecordUsedPost($data);
 			$atts['pz-card-data'] = $data;
-			return $this->pz_GetHTML($atts, $url_info);
+			$html = $this->pz_GetHTML($atts, $url_info);
+			return $html;
 		}
 		$data_id = !empty($data['id'] ) ? intval($data['id'] ) : 0;
 		$force = isset($atts['force'] ) && $atts['force'] == true;
@@ -1109,14 +1126,16 @@ class class_pz_linkcard {
 					wp_schedule_single_event(time() + 3, self::CRON_GET );
 				}
 			}
+		} else {
 		}
 
 		$data = $this->pz_RecordUsedPost($data);
 		$atts['pz-card-data'] = $data;
-		return	$this->pz_GetHTML($atts, $url_info );
+		$html = $this->pz_GetHTML($atts, $url_info );
+		return $html;
 	}
 
-	// URLのエンコード（DB格納用のURL作成）
+// URLのエンコード（DB格納用のURL作成）
 	private	function	pz_GetClickToken($card_id, $post_id ) {
 		$payload	= absint($card_id ).'|'.absint($post_id );
 		return	hash_hmac('sha256', $payload, wp_salt('auth') );
@@ -2038,13 +2057,8 @@ class class_pz_linkcard {
 
 	// サムネイル取得（外部リンクOGP画像取得）
 	private	function	pz_GetImage($thumbnail_url, $force = false, $stamp = false ) {
-
-		return	require('lib/pz-linkcard-get-image.php' );
+		return require('lib/pz-linkcard-get-image.php' );
 	}
-
-
-
-
 	// 書式に関する設定を初期化する
 	private	function	pz_InitializeFormatOptions() {
 
@@ -2118,8 +2132,23 @@ class class_pz_linkcard {
 
 	// プラグインを有効化
 	public	function	hook_activate() {
-
-		require_once('lib/pz-linkcard-activate.php' );
+		try {
+			require_once('lib/pz-linkcard-activate.php' );
+		} catch (\Throwable $error) {
+			$diagnostic = sprintf(
+				'Pz-LinkCard activation error: %s in %s on line %d',
+				$error->getMessage(),
+				$error->getFile(),
+				$error->getLine()
+			);
+			error_log($diagnostic);
+			if (function_exists('set_transient')) {
+				set_transient('pz_lkc_activation_error', $diagnostic, HOUR_IN_SECONDS);
+			}
+			if (function_exists('deactivate_plugins')) {
+				deactivate_plugins($this->plugin_basename, true);
+			}
+		}
 	}
 
 	// プラグインを無効化
@@ -2319,7 +2348,7 @@ class class_pz_linkcard {
 		if	($hook === 'settings_page_'.self::SETTINGS_PAGE
 			&& in_array($preview_mode, array('right', 'left'), true)
 			&& !empty($preview_enabled ) ) {
-			$preview_width	=	$preview_mode === 'left' ? $this->pz_GetRequestOption('left-docked-width', $this->options['left-docked-width'] ?? 240) : $this->pz_GetRequestOption('right-docked-width', $this->pz_GetRequestOption('preview-right-docked-width', $this->options['right-docked-width'] ?? $this->options['preview-right-docked-width'] ?? 240 ) );
+			$preview_width	= $preview_mode === 'left' ? $this->pz_GetRequestOption('preview-left-docked-width', $this->options['preview-left-docked-width'] ?? 240) : $this->pz_GetRequestOption('preview-right-docked-width', $this->options['preview-right-docked-width'] ?? 240 );
 			$preview_width	=	is_numeric($preview_width ) ? absint($preview_width ) : 240;
 			$preview_width	=	max(180, $preview_width );
 			wp_add_inline_style(
@@ -2578,6 +2607,11 @@ class class_pz_linkcard {
 
 	// 管理画面時の注意書き設定
 	public	function	action_admin_notices() {
+		$activation_error = get_transient('pz_lkc_activation_error');
+		if ($activation_error) {
+			delete_transient('pz_lkc_activation_error');
+			echo '<div class="notice notice-error"><p><strong>'.esc_html(self::PLUGIN_NAME).': '.__('Activation error', 'pz-linkcard').'</strong><br><code>'.esc_html($activation_error).'</code></p></div>';
+		}
 
 		$dbdelta_error	=	$GLOBALS['pz_lkc_dbdelta_error'] ?? '';
 		if	(!$dbdelta_error && function_exists('get_transient' ) ) {
