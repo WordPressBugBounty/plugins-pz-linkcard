@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 trait Pz_LinkCard_Cache {
 	private function pz_IsCardRetrievalPending($data) {
@@ -87,9 +87,11 @@ trait Pz_LinkCard_Cache {
 		$post_ids = array();
 		$before_id = PHP_INT_MAX;
 		do {
+			// Conditions contain only repeated LIKE placeholders; patterns are esc_like()d and passed as values.
 			$posts = $wpdb->get_results($wpdb->prepare(
-				"SELECT ID, post_content FROM {$wpdb->posts} WHERE post_type = 'post' AND post_status = 'publish' AND (".implode(' OR ', $conditions).") AND ID < %d ORDER BY ID DESC LIMIT 100",
-				array_merge($search_values, array($before_id))
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+				"SELECT ID, post_content FROM %i WHERE post_type = 'post' AND post_status = 'publish' AND (".implode(' OR ', $conditions).") AND ID < %d ORDER BY ID DESC LIMIT 100",
+				array_merge(array($wpdb->posts), $search_values, array($before_id))
 			));
 			if ($wpdb->last_error) return null;
 			foreach ($posts as $post) {
@@ -147,26 +149,40 @@ trait Pz_LinkCard_Cache {
 		return $data;
 	}
 
-	// Atomically share the last site access between both cron workers.
-	private function pz_ClaimCronSiteAccess($url, $domain = '') {
+	// Share the interval between cron workers without persistent per-site options.
+	private function pz_ClaimCronSiteAccess($url, $domain = '', &$lock = null) {
 		global $wpdb;
+		static $attempts = array();
+		$lock = null;
 		$host = wp_parse_url((string) $url, PHP_URL_HOST);
 		$site = strtolower(rtrim(trim(is_string($host) && $host !== '' ? $host : (string) $domain), '.'));
-		$key = 'pz_lkc_cron_site_'.md5($site !== '' ? $site : (string) $url);
 		$interval = intval($this->options['cron-site-interval'] ?? 30);
 		if (!in_array($interval, array(10, 30, 60, 180, 300, 600, 1800, 3600, 21600), true)) $interval = 30;
-		$now = time();
-		if (add_option($key, $now, '', false)) return 0;
-		$claimed = $wpdb->query($wpdb->prepare(
-			"UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND CAST(option_value AS UNSIGNED) <= %d",
-			(string) $now, $key, $now - $interval
-		));
-		if ($claimed === 1) {
-			wp_cache_delete($key, 'options');
-			return 0;
+		$lock_name = 'pz_lkc_site_'.md5($wpdb->dbname.':'.$this->db_card.':'.($site !== '' ? $site : (string) $url));
+		if ((string) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 0)', $lock_name)) !== '1') return time() + 1;
+		$lock = $lock_name;
+		$now = current_time('timestamp', false);
+		$last = $wpdb->get_var($wpdb->prepare("SELECT update_time FROM %i WHERE domain = %s AND regist_time > 0 ORDER BY update_time DESC LIMIT 1", $this->db_card, $site));
+		if ($wpdb->last_error) {
+			$this->pz_ReleaseCronSiteAccess($lock);
+			return time() + $interval;
 		}
-		$last = intval($wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $key)));
-		return max($now + 1, $last + $interval);
+		$last = max(intval($last), $attempts[$lock_name] ?? 0);
+		if ($last > 0 && $last + $interval > $now) {
+			$this->pz_ReleaseCronSiteAccess($lock);
+			// Card timestamps are local; WP-Cron expects a UTC Unix timestamp.
+			return time() + ($last + $interval - $now);
+		}
+		// Also space failed retrievals within this cron request.
+		$attempts[$lock_name] = $now;
+		return 0;
+	}
+
+	private function pz_ReleaseCronSiteAccess(&$lock) {
+		if ($lock === null) return;
+		global $wpdb;
+		$wpdb->get_var($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
+		$lock = null;
 	}
 
 	private function pz_ScheduleCronRetry($hook, $timestamp) {
@@ -192,14 +208,14 @@ trait Pz_LinkCard_Cache {
 			if	(array_key_exists($cache_key, $this->request_cache ) ) {
 				return	$this->request_cache[$cache_key];
 			}
-			$data		=	$wpdb->get_row($wpdb->prepare("SELECT * FROM $this->db_card WHERE url_key=%s AND url=%s", md5($url ), $url ) );
+			$data		=	$wpdb->get_row($wpdb->prepare("SELECT * FROM %i WHERE url_key=%s AND url=%s", $this->db_card, md5($url ), $url) );
 		} elseif	(isset($data['id'] ) && !is_null($data['id'] ) ) {
 			$data_id	=	intval($data['id'] );
 			$cache_key	=	'id:'.$data_id;
 			if	(array_key_exists($cache_key, $this->request_cache ) ) {
 				return	$this->request_cache[$cache_key];
 			}
-			$data		=	$wpdb->get_row($wpdb->prepare("SELECT * FROM $this->db_card WHERE id=%d", $data_id ) );
+			$data		=	$wpdb->get_row($wpdb->prepare("SELECT * FROM %i WHERE id=%d", $this->db_card, $data_id) );
 		} else {
 			return	null;
 		}
@@ -252,7 +268,7 @@ trait Pz_LinkCard_Cache {
 		}
 
 		// スキームとドメイン
-		$url_m = parse_url($url);
+		$url_m = wp_parse_url($url);
 		$data['scheme']				=	isset($url_m['scheme'])			?	$url_m['scheme']		: null;
 		$data['domain']				=	isset($url_m['host'])			?	$url_m['host']			: null;
 
@@ -284,6 +300,10 @@ trait Pz_LinkCard_Cache {
 
 		// 登録時情報
 		if ((!isset($data['regist_time'] ) || intval($data['regist_time'] ) === 0 ) && $has_charset ) {
+			// Initial imports may supply only the registration result.
+			if ($data['update_result'] === null && $data['regist_result'] !== null) {
+				$data['update_result'] = $data['regist_result'];
+			}
 			$data['regist_title']	=	$data['title'];
 			$data['regist_excerpt']	=	$data['excerpt'];
 			$data['regist_charset']	=	$data['charset'];
@@ -339,7 +359,7 @@ trait Pz_LinkCard_Cache {
 		}
 
 		// 最終更新日時
-		$data['update_time']		=	$this->now;
+		$data['update_time']		=	current_time('timestamp', false );
 
 		// DB更新キー取得
 		if	(!$is_pending && (!isset($data['id'] ) || !$data['id']) ) {
@@ -353,7 +373,7 @@ trait Pz_LinkCard_Cache {
 		global	$wpdb;
 		static	$columns_by_table	=	array();
 		if	(!array_key_exists($this->db_card, $columns_by_table ) ) {
-			$columns_by_table[$this->db_card]	=	$wpdb->get_results("DESCRIBE $this->db_card", ARRAY_A );
+			$columns_by_table[$this->db_card]	=	$wpdb->get_results($wpdb->prepare("DESCRIBE %i", $this->db_card), ARRAY_A );
 		}
 		$columns	=	$columns_by_table[$this->db_card];
 		if	(isset($columns ) && is_array($columns ) ) {
@@ -451,7 +471,7 @@ trait Pz_LinkCard_Cache {
 		}
 		if	(isset($data['url'] ) ) {
 			$url		=	$this->pz_EncodeURL($data['url'], true );
-			$card_id	=	intval($wpdb->get_var($wpdb->prepare("SELECT id FROM $this->db_card WHERE url = %s LIMIT 1", $url ) ) );
+			$card_id	=	intval($wpdb->get_var($wpdb->prepare("SELECT id FROM %i WHERE url = %s LIMIT 1", $this->db_card, $url) ) );
 			$result		=	$wpdb->delete($this->db_card, array('url' => $url ), array('%s' ) );
 			if	($result ) {
 				delete_option('pz_lkc_refresh_'.$card_id);

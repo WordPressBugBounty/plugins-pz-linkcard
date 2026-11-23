@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if (!check_ajax_referer('pz_lkc_ajax_get', 'nonce', false ) ) {
 	wp_send_json_error(array('message' => 'Invalid nonce.' ), 403 );
@@ -12,7 +12,7 @@ if (!$card_id ) {
 
 $source_post_id = isset($_POST['source_post_id']) ? absint(wp_unslash($_POST['source_post_id'])) : 0;
 $expires = isset($_POST['expires']) ? absint(wp_unslash($_POST['expires'])) : 0;
-$card_token = isset($_POST['card_token']) && is_string($_POST['card_token']) ? wp_unslash($_POST['card_token']) : '';
+$card_token = isset($_POST['card_token']) && is_string($_POST['card_token']) ? sanitize_text_field(wp_unslash($_POST['card_token'])) : '';
 if (!$expires || $expires <= time() || $card_token === ''
 	|| !hash_equals($this->pz_GetAjaxCardToken($card_id, $source_post_id, $expires), $card_token)) {
 	wp_send_json_error(array('message' => 'Invalid or expired card token.'), 403);

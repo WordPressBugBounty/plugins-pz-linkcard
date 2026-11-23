@@ -1,31 +1,31 @@
 === Pz-LinkCard ===
 Contributors: Poporon
 Tags: LinkCard, BlogCard, Internal Link, External Link
-Requires at least: 6.0
-Tested up to: 7.1.5
+Requires at least: 6.2
+Tested up to: 7.1
 Requires PHP: 8.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://www.amazon.co.jp/gp/registry/wishlist/2KIBQLC1VLA9X
 
-このプラグインはリンクをカード形式で表示します。テキストだけのリンクにさようなら！
+Display internal and external links as customizable cards with titles, excerpts, and thumbnails.
 
-This plugin is intended to display a link in a blog card format. The goodbye to the text-only link.
+Display links as blog cards. Say goodbye to text-only links.
 
 == Description ==
 
 This plugin is intended to display a link in a blog card format.
 
-Easy to use. Just to write a short code.
+Easy to use. Just add a shortcode.
 
 You can change the appearance in the settings screen.
 
-You can edit or delete the cache on the manage screen.
+You can edit or delete cached data on the Card Manager screen.
 
-The goodbye to the text-only link.
+Say goodbye to text-only links.
 
-* It will access to WebAPI for the thumbnail image acquisition and site icon of acquisition. In addition , it will save the title and excerpt statement to the database. For more information you want to read the item of arbitrary section about this.
+* The plugin retrieves thumbnail images and site icons directly or through external services, depending on your settings. It stores titles and excerpts in the database. See the sections below for details.
 
 
 このプラグインはショートコードでURLを指定する事で、リンクをブログカード形式で表示させるものです。
@@ -121,7 +121,7 @@ WordPressが動作しているサーバー側のSSL証明書が更新されて�
 
 = nofollowの設定は重要ですか？ =
 
-外部リンクにのみnofollowが設定できます。
+設定画面では外部リンクにnofollowを設定できます。ショートコードで指定した場合は、内部リンクにも設定できます。
 Googleではnofollowを指定したリンク先はリンク元のサイトの評価に使用しないとしています。
 通常は使用しない事をお勧めしますが、サイトの運用ポリシーによって使用する事は差し支えありません。
 
@@ -152,13 +152,46 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 
 == Changelog ==
 
-= 2.6.5.1 =
+= 2.6.6 =
 * [Tested] WordPress 7.1.5 での動作確認を行いました。
-* [Fixed] バージョンアップ時、エラーが出る不具合の対策をしました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
-* [Fixed] リンクカードが表示される速度を改善しました。
-* [Fixed] プラグインを有効化する際に表示されるエラーを修正しました。UTF-8 BOM付のファイルがあったため修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
-* [Added] 設定画面の上級者向けタブに「タイトルからサイト名を除去」を追加しました。チェックを入れると取得したタイトルの最後の｜以降を削除します。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
-* [Modified] 管理画面から編集画面に遷移して更新かキャンセルで一覧に戻って来たとき、検索条件と表示していたページ数を復元するように修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Tested] WordPress 7.1.6 での動作確認を行いました。
+* [Fixed] 管理画面の画像を非同期で読み込むようにし、画像取得によって一覧の表示が遅れるのを改善しました。
+* [Fixed] リンクカードの表示時やカード管理画面の読み込み時に行う処理を見直し、表示速度と処理負荷を改善しました。
+* [Fixed] リンクカードの取得中表示と取得完了後の更新処理を見直しました。
+* [Fixed] 画像の展開前にサイズと使用メモリを確認し、大きすぎる画像の処理を抑止するようにしました。
+* [Fixed] WordPressテーマの指定によってタイトルや概要文に下線が付く場合があるのを、文字設定に従うように修正しました。
+* [Fixed] 同じサイトへのバックグラウンド取得処理が重ならないよう、アクセス間隔と排他制御を見直しました。
+* [Fixed] ショートコードのforce属性による強制更新に管理者権限の確認を追加しました。
+* [Fixed] 一部のファイルに含まれていたUTF-8のBOMを除去しました。
+* [Fixed] CSVインポートなどのデータベース処理とメッセージ出力を見直しました。
+* [Fixed] かんたん書式設定の「星が降ってくる」で星が表示されない不具合を修正し、回転する星と後ろに流れて消える星の粒の演出を復元しました。
+* [Fixed] かんたん書式設定の「セロハンテープ」「紙のめくれ」の重なり順が、設定画面のプレビュー以外にも影響するのを修正しました。
+* [Fixed] 設定画面の見出しが上部の情報バーに隠れるのを修正しました。
+* [Fixed] 右・左ドッキングのプレビュー幅を変更したとき、固定表示中のタブの幅とスクロールボタンを再計算するようにしました。
+* [Modified] 管理画面をWordPress標準の一覧表示を使った構成に作り直しました。
+* [Modified] 管理画面の表示オプション、表示件数、一覧の列表示、検索、並べ替え、一括操作、ページ切り替えを整理しました。
+* [Modified] 管理画面の再取得と取得待ち状態の表示を見直しました。
+* [Modified] 管理画面のヘッダー、情報バー、表示オプション、ヘルプの配置と表示方法を調整しました。
+* [Modified] 管理画面の一覧処理と、編集・クリックログ・インポート・エクスポートの処理を整理しました。
+* [Modified] 管理画面のスクロール位置の復元処理を調整しました。
+* [Modified] 設定画面の各タブを、関連する項目ごとにまとめたレイアウトへ変更しました。
+* [Modified] 設定画面の「配置」タブで、余白やサイト情報の位置を図で確認しながら設定できるようにしました。
+* [Modified] 設定画面の「文字」タブを文字の種類ごとにまとめ、背景色の有無によらず文字サイズなどの入力位置を揃えました。
+* [Modified] 設定画面の「外部リンク」「内部リンク」タブの表示項目を、番号部分のドラッグで並べ替えられるようにしました。移動先の項目がスライドして挿入位置を示します。
+* [Modified] 設定画面のタブ列を左右にドラッグして横スクロールできるようにしました。
+* [Modified] 設定画面の管理者タブにあるスケジュールの次回実行日時を、WordPressの一般設定の日付形式・時刻形式で表示するようにしました。
+* [Modified] エラー通知の閉じるボタンと「エラーの解除」で、画面を再読み込みせずにエラー状態を解除し、基本タブを開くようにしました。
+* [Modified] カラーピッカーの「色を選択」をTabキーで選択し、EnterキーやSpaceキーで開けるようにしました。
+* [Modified] カラーピッカーを開くとカラーコード入力欄にフォーカスし、閉じると開く直前の項目へフォーカスを戻すようにしました。
+* [Modified] カラーピッカーの彩度・明度、色相、透明度をTabキーで選択し、矢印キーで調整できるようにしました。Shiftキーの併用で大きく調整できます。
+* [Modified] カラーピッカーの下部パレットをTabキーで選択し、上下左右キーで色を選べるようにしました。パレットからTabキーを押すと彩度・明度エリアへ移動します。
+* [Modified] かんたん書式設定の「ブラウザ風」の×を押すと、ウィンドウを閉じる演出でカードが消え、3秒後に開き直す演出を追加しました。
+* [Modified] ダッシュボードウィジェットの管理・設定リンクのアイコンと配置を調整しました。
+* [Modified] 管理者バーの「Pz」メニューをサイト表示時にも表示するようにしました。
+* [Modified] 管理者バーの「Pz」のアイコンをフォルダーに変更し、マウスを重ねたときの色を文字と揃えました。
+* [Modified] カード管理画面とカード設定画面のブラウザータイトルを、それぞれ「[Pz] カード管理」「[Pz] カード設定」に変更しました。サイト名は引き続き表示します。
+* [Modified] 設定画面での画像キャッシュ容量やカスタムフィールド一覧の取得処理を見直しました。
+* [Modified] 英語表記と日本語翻訳を見直しました。
 
 = 2.6.5 =
 * [Tested] WordPress 7.1.4 での動作確認を行いました。
@@ -166,15 +199,15 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 * [Fixed] 設定画面の基本タブのかんたん書式設定の「ブラウザ風」がテーマによってリンクカードの高さが変わってしまうのを修正しました。
 * [Fixed] 設定画面の基本タブのかんたん書式設定の「浮き出し枠」「浮き出し枠2」がプレビューで枠線が二重に表示されてしまうのを修正しました。
 * [Fixed] 古いバージョンからアップデートした際にDBに書き込みが出来なくなる不具合を修正しました。
-* [Fixed] ブロックエディタで新規のリンクカードを置いたとき、「取得中…」のまま表示が変わらないのを修正しました。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Fixed] ブロックエディタで新規のリンクカードを置いたとき、「取得中…」のまま表示が変わらないのを修正しました。
 * [Removed] 設定画面の基本タブのかんたん書式設定から「ファンシー」を削除しました。
 * [Removed] 設定画面の配置タブのサイト情報から「タイトルの上側」を削除しました。
 * [Removed] 設定画面の上級者向けタブの記録モード機能を削除しました。
 * [Added] 設定画面の基本タブのかんたん書式設定に「ハートが登っていく」「星が降ってくる」「雪が降ってくる」「桜の花びらが舞う」「3D追跡」を追加しました。
 * [Added] 設定画面の表示タブのソーシャルカウントにQiitaのいいね数を追加しました。
 * [Added] 設定画面の外部リンク/内部リンクタブにサイト情報の表示項目と記事内容の表示項目を追加しました。表示する項目を個別で選べるようになりました。
-* [Added] 設定画面の上級者向けタブにAmazon、X.com、ジモティー、note.com、qiita、Yahoo!オークション、Microsoft、OGPの個別処理を追加しました。対応したサイトの投稿日等を取得します。
-* [Added] 設定画面の上級者向けタブにFANATECの個別処理を追加しました。対応したサイトの概要文を本文から取得します。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
+* [Added] 設定画面の上級者向けタブにAmazon、X.com、ジモティー、note.com、qiita、Yahoo!オークション、Microsoft、OGPの専用処理を追加しました。対応したサイトの投稿日等を取得します。
+* [Added] 設定画面の上級者向けタブにFANATECの専用処理を追加しました。対応したサイトの投稿日等を取得します。（Thanks さくら工作室/工作系YouTuber @skrdtrt on x.com）
 * [Modified] 設定画面のプレビューに左ドッキングを追加しました。
 * [Modified] 設定画面の表示タブに投稿日・更新日に関する項目を追加・修正しました。
 * [Modified] 設定画面の外部リンクタブにも投稿日の項目を追加しました。外部リンクでも投稿日と更新日が表示されるようになります。
@@ -261,7 +294,7 @@ Ver.2.1.2から200px四方に変更、Ver.2.4.1から自由に指定出来るよ
 * [Added] 設定画面の「表示」タブにスタイルの重要度を追加しました。リンクカードのCSSを優先させます。
 * [Added] 設定画面の「リンク先の検査」タブに「robots.txtを参照する」を追加。外部リンクを取得するときにrobots.txtに従います。[Pz3]
 * [Added] 設定画面の「リンク先の検査」タブに「ローカルIPアドレスをブロック」を追加。外部リンクを取得するときにローカルIPをブロックします。[Pz3]
-* [Added] 設定画面の「その他」タブをデバグモードで開いたときログファイル全削除ボタンでログを削除出来るようにしました。
+* [Added] 設定画面の「その他」タブをデバッグモードで開いたときログファイル全削除ボタンでログを削除出来るようにしました。
 * [Added] 設定画面の「初期化」タブに「書式の初期化」を追加しました。カードの見た目にかかる設定だけ初期状態に戻せます。
 * [Added] 管理画面の一覧で「記事ID」の数値の右側にリンクボタンを追加しました。投稿を開き、該当のリンクカードを青枠で表示します。
 * [Added] 設定画面、管理画面、編集画面の右上にヘルプを追加しました。使用出来るショートカットキーなどが表示されます。

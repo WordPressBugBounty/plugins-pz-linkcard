@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 trait Pz_LinkCard_Widget {
 
@@ -19,6 +19,8 @@ trait Pz_LinkCard_Widget {
 
 	// カード編集画面などから戻ったときにダッシュボードウィジェットへ移動
 	public	function	action_dashboard_widget_focus() {
+		// This read-only marker only restores the dashboard scroll position.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$focus	= isset($_GET['pz_lkc_focus'] ) ? sanitize_key(wp_unslash($_GET['pz_lkc_focus'] ) ) : '';
 		if	('dashboard_widget' !== $focus ) {
 			return;
@@ -81,9 +83,10 @@ trait Pz_LinkCard_Widget {
 					COUNT(CASE WHEN alive_result <> update_result THEN 1 END) AS count_modify,
 					COUNT(CASE WHEN alive_result IS NOT NULL AND alive_result <> 0 AND (alive_result < 100 OR alive_result >= 400) THEN 1 END) AS count_unlink,
 					COUNT(CASE WHEN regist_time IS NULL OR regist_time = 0 THEN 1 END) AS count_unregistered
-				FROM $this->db_card",
+				FROM %i",
 				$this->domain,
-				$this->domain
+				$this->domain,
+				$this->db_card
 			) );
 			if	($counts ) {
 				$count_list['all']		= intval($counts->count_all );
@@ -93,23 +96,19 @@ trait Pz_LinkCard_Widget {
 				$count_list['unlink']	= intval($counts->count_unlink );
 				$count_list['unregistered']	= intval($counts->count_unregistered );
 			}
-			$recent_registrations	= $wpdb->get_results(
-				"SELECT id AS card_id, regist_time, title, url
-				FROM $this->db_card
+			$recent_registrations	= $wpdb->get_results($wpdb->prepare("SELECT id AS card_id, regist_time, title, url
+				FROM %i
 				WHERE regist_time > 0
 				ORDER BY regist_time DESC, id DESC
-				LIMIT 5"
-			);
+				LIMIT 5", $this->db_card));
 
 			$click_table_exists	= ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $this->db_click ) ) === $this->db_click );
 			if	($click_table_exists ) {
-				$recent_clicks	= $wpdb->get_results(
-					"SELECT click.click_time, card.id AS card_id, card.title, card.url
-					FROM $this->db_click AS click
-					 LEFT JOIN $this->db_card AS card ON BINARY card.url_key = BINARY click.url_key
+				$recent_clicks	= $wpdb->get_results($wpdb->prepare("SELECT click.click_time, card.id AS card_id, card.title, card.url
+					FROM %i AS click
+					 LEFT JOIN %i AS card ON BINARY card.url_key = BINARY click.url_key
 					ORDER BY click.click_time DESC, click.click_id DESC
-					LIMIT 5"
-				);
+					LIMIT 5", $this->db_click, $this->db_card));
 			}
 		}
 
@@ -158,7 +157,7 @@ trait Pz_LinkCard_Widget {
 							'return_url'	=> $dashboard_return_url,
 						), $this->cacheman_url );
 					?>
-						<li><time datetime="<?php echo esc_attr(date('c', intval($registration->regist_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($registration->regist_time ) ) ); ?></time><a href="<?php echo esc_url($edit_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-welcome-write-blog" aria-hidden="true"></span></a></li>
+						<li><time datetime="<?php echo esc_attr(gmdate('c', intval($registration->regist_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($registration->regist_time ) ) ); ?></time><a href="<?php echo esc_url($edit_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-welcome-write-blog" aria-hidden="true"></span></a></li>
 					<?php } ?>
 				</ul>
 			<?php } else { ?>
@@ -175,7 +174,7 @@ trait Pz_LinkCard_Widget {
 			<?php if	(empty($this->options['flg-click-log'] ) ) {
 				$settings_return_url = preg_replace('/#.*$/', '', $dashboard_return_url);
 				$click_settings_url	= add_query_arg(array('tab' => 'pz-check', 'return_url' => $settings_return_url ), $this->settings_url ).'#pz-click-log-settings';
-				$click_settings_link	= '<a href="'.esc_url($click_settings_url ).'">'.esc_html__('Click count recording', 'pz-linkcard' ).'</a>';
+				$click_settings_link	= '<a href="'.esc_url($click_settings_url ).'">'.esc_html__('Click detail recording', 'pz-linkcard' ).'</a>';
 			?>
 				<p class="pz-dashboard-widget-notice"><?php echo wp_kses_post(sprintf(__('Enable %s to display recent clicks.', 'pz-linkcard' ), $click_settings_link ) ); ?></p>
 			<?php } elseif	($recent_clicks ) { ?>
@@ -188,7 +187,7 @@ trait Pz_LinkCard_Widget {
 							'return_url'	=> $dashboard_return_url,
 						), $this->cacheman_url );
 					?>
-						<li><time datetime="<?php echo esc_attr(date('c', intval($click->click_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($click->click_time ) ) ); ?></time><a href="<?php echo esc_url($click_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span></a></li>
+						<li><time datetime="<?php echo esc_attr(gmdate('c', intval($click->click_time ) ) ); ?>"><?php echo esc_html(date_i18n(__('M j, H:i', 'pz-linkcard' ), intval($click->click_time ) ) ); ?></time><a href="<?php echo esc_url($click_url ); ?>" title="<?php echo esc_attr($title ); ?>" class="pz-dashboard-widget-item-link"><span class="pz-dashboard-widget-item-title"><?php echo esc_html($title ); ?></span><span class="dashicons dashicons-chart-bar" aria-hidden="true"></span></a></li>
 					<?php } ?>
 				</ul>
 			<?php } else { ?>
@@ -196,9 +195,9 @@ trait Pz_LinkCard_Widget {
 			<?php } ?>
 		</div>
 		<div class="pz-dashboard-widget-actions">
-			<span class="pz-dashboard-widget-action"><span class="dashicons dashicons-archive" aria-hidden="true"></span><a href="<?php echo esc_url(add_query_arg('return_url', $dashboard_return_url, $this->cacheman_url ) ); ?>"><?php esc_html_e('Manager', 'pz-linkcard' ); ?></a></span>
-			<span class="pz-dashboard-widget-action"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span><a href="<?php echo esc_url(add_query_arg('return_url', $dashboard_return_url, $this->settings_url ) ); ?>"><?php esc_html_e('Settings', 'pz-linkcard' ); ?></a></span>
-			<a class="pz-dashboard-widget-credit" href="https://popozure.info/pz-linkcard" target="_blank" rel="noopener">popozure.info</a>
+			<a class="pz-dashboard-widget-action" href="<?php echo esc_url(add_query_arg('return_url', $dashboard_return_url, $this->cacheman_url ) ); ?>"><span class="dashicons dashicons-archive" aria-hidden="true"></span><?php esc_html_e('Manager', 'pz-linkcard' ); ?></a>
+			<a class="pz-dashboard-widget-action" href="<?php echo esc_url(add_query_arg('return_url', $dashboard_return_url, $this->settings_url ) ); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span><?php esc_html_e('Settings', 'pz-linkcard' ); ?></a>
+			<a class="pz-dashboard-widget-credit" href="https://popozure.info/pz-linkcard" target="_blank" rel="noopener">Pz-LinkCard</a>
 		</div>
 		<?php
 	}

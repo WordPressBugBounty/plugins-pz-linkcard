@@ -1,4 +1,4 @@
-<?php defined('ABSPATH' ) || wp_die; ?>
+<?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php
 	define('LIST_ENCLOSE_TAG',	array(
 		'div'			=>		__('DIV Tag',			'pz-linkcard' ),
@@ -81,21 +81,22 @@
 	if	(isset($_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 		check_admin_referer('pz-settings' );
 	}
-	$action				=	isset($_POST['action'] )					?	esc_attr($_POST['action'] )					:	null ;
-	$submit				=	isset($_POST['submit'] )					?	esc_attr($_POST['submit'] )					:	null ;
+	$action				=	isset($_POST['action'] )					?	sanitize_key(wp_unslash($_POST['action'] ) )					:	null ;
+	$submit				=	isset($_POST['submit'] )					?	sanitize_text_field(wp_unslash($_POST['submit'] ) )					:	null ;
 	$tab_now			=	isset($_POST['tab-now'] )					?	sanitize_key(wp_unslash($_POST['tab-now'] ) )	:
 						(isset($_GET['tab'] )						?	sanitize_key(wp_unslash($_GET['tab'] ) )		:	'pz-error' );
-	$scroll_now			=	isset($_POST['scroll-now'] )				?	esc_attr($_POST['scroll-now'] )				:	null ;
+	$scroll_now			=	isset($_POST['scroll-now'] )				?	absint(wp_unslash($_POST['scroll-now'] ) )				:	null ;
 	$return_url			=	isset($_POST['return_url'] )				?	esc_url_raw(wp_unslash($_POST['return_url'] ) )	:
 						(isset($_GET['return_url'] )				?	esc_url_raw(wp_unslash($_GET['return_url'] ) )	:	'' );
 	$return_url			=	$return_url ? wp_validate_redirect($return_url, '' ) : '';
+	$submitted_properties = $this->pz_GetSubmittedProperties();
 
 	// 変更の保存ボタンを押したとき
 	if	(!$action	&&	$submit ) {
 		$action			=	'save-changed';
 	}
 
-	// デバグモード・管理モード
+	// デバッグモード・管理モード
 	$debug_mode			=	isset($this->options['debug-mode'] )		?	intval($this->options['debug-mode'] )		:	0 ;
 	$admin_mode			=	isset($this->options['admin-mode'] )		?	intval($this->options['admin-mode'] )		:	0 ;
 	$develop_mode		=	isset($this->options['develop-mode'] )		?	intval($this->options['develop-mode'] )		:	0 ;
@@ -106,12 +107,12 @@
 
 	// 入力値
 	$prop		=	null;
-	if	(isset($_POST['properties'] ) ) {
+	if	(is_array($submitted_properties ) ) {
 		$prop		=	array_merge(self::pz_GetDefaultOptions(), is_array($this->options ) ? $this->options : array() );
-		foreach	($_POST['properties']	as	$key => $value ) {
-			$prop[$key]	=	stripslashes($value );
+		foreach	($submitted_properties as $key => $value ) {
+			$prop[$key]	=	$value;
 		}
-		if	(!array_key_exists('enclose-tag', $_POST['properties'] ) ) {
+		if	(!array_key_exists('enclose-tag', $submitted_properties ) ) {
 			$prop['enclose-tag']	=	!empty($this->options['blockquote'] ) ? 'blockquote' : 'div';
 		}
 		ksort($prop );
@@ -290,10 +291,10 @@
 		switch	($action ) {
 		case	'save-changed':								// 変更を保存ボタン
 			$flg_change			=	false;
-			if	(isset($_POST['properties'] ) ) {
+			if	(is_array($submitted_properties ) ) {
 				$prop	=	array_merge(self::pz_GetDefaultOptions(), is_array($this->options ) ? $this->options : array() );
-				foreach	($_POST['properties']	as	$key => $value ) {
-					$prop[$key]	=	stripslashes($value );
+				foreach	($submitted_properties as $key => $value ) {
+					$prop[$key]	=	$value;
 					if	(array_key_exists($key, $this->options ) ) {
 						if	($value		!==	$this->options[$key] ) {
 							$flg_change	=	true;			// 変更あり
@@ -320,7 +321,7 @@
 				if	(!$flg_error ) {
 					$result	=	$this->pz_SaveOptions();				// オプションの更新
 					if	($result ) {
-						$settings_saved_date	=	!empty($this->options['saved-date'] ) ? '（'.esc_html(date('Y/m/d H:i:s', $this->options['saved-date'] ) ).'）' : '';
+						$settings_saved_date	=	!empty($this->options['saved-date'] ) ? '（'.esc_html(gmdate('Y/m/d H:i:s', $this->options['saved-date'] ) ).'）' : '';
 						$html_notice	.=	'<div class="notice notice-success is-dismissible"><p><strong>'.__('Successfully saved the settings.', 'pz-linkcard' ).$settings_saved_date.'</strong></p></div>';
 					} else {
 						if	(function_exists('wp_cache_delete' ) ) {
@@ -328,19 +329,19 @@
 							wp_cache_delete('alloptions', 'options' );
 						}
 						global	$wpdb;
-						$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+						$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM %i WHERE option_name = %s LIMIT 1", $wpdb->options, self::OPTION_NAME) );
 						$saved_options	=	($saved_value !== null ) ? maybe_unserialize($saved_value ) : array();
 						if	($saved_options != $this->options ) {
 							$save_debug = $GLOBALS['pz_lkc_option_save_debug'] ?? array();
 							$db_error = trim((string) ($save_debug['direct_write_error'] ?? $wpdb->last_error));
-							$diagnostic = 'WP update='.var_export($save_debug['update_option_result'] ?? null, true).'; direct DB write='.var_export($save_debug['direct_write_result'] ?? null, true).'; option row exists='.(!empty($save_debug['option_exists']) ? 'yes' : 'no').'; submitted/saved keys='.($save_debug['submitted_keys'] ?? '?').'/'.($save_debug['saved_keys'] ?? '?').'; DB error='.($db_error !== '' ? $db_error : __('none', 'pz-linkcard'));
+							$diagnostic = 'WP update='.wp_json_encode($save_debug['update_option_result'] ?? null).'; direct DB write='.wp_json_encode($save_debug['direct_write_result'] ?? null).'; option row exists='.(!empty($save_debug['option_exists']) ? 'yes' : 'no').'; submitted/saved keys='.($save_debug['submitted_keys'] ?? '?').'/'.($save_debug['saved_keys'] ?? '?').'; DB error='.($db_error !== '' ? $db_error : __('none', 'pz-linkcard'));
 							$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.__('Failed to save the settings.', 'pz-linkcard').'</strong><br><code>'.esc_html($diagnostic).'</code></p></div>';
 						} else {
 							$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
 						}
 					}
 				}
-			} elseif (isset($_POST['properties'] ) ) {
+			} elseif (null !== $submitted_properties ) {
 				$html_notice	.=	'<div class="notice notice-info is-dismissible"><p><strong>'.__('The settings have not changed.', 'pz-linkcard' ).'</strong></p></div>';
 			}
 			$flg_style			=	true;				// スタイルシートの再生成
@@ -417,7 +418,7 @@
 				break;
 			}
 			global	$wpdb;
-			$deleted_count	= $wpdb->query("DELETE FROM $this->db_card" );
+			$deleted_count	= $wpdb->query($wpdb->prepare("DELETE FROM %i", $this->db_card));
 			if	(false === $deleted_count ) {
 				$html_notice	.= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('Failed to delete all LinkCard data.', 'pz-linkcard' ).'</strong></p></div>';
 			} else {
@@ -428,7 +429,7 @@
 
 		case	'delete-invalid-click-records':
 			global	$wpdb;
-			$deleted_count = $wpdb->query("DELETE click_log FROM $this->db_click AS click_log WHERE NOT EXISTS (SELECT 1 FROM $this->db_card AS card WHERE card.url_key = click_log.url_key)" );
+			$deleted_count = $wpdb->query($wpdb->prepare("DELETE click_log FROM %i AS click_log WHERE NOT EXISTS (SELECT 1 FROM %i AS card WHERE card.url_key = click_log.url_key)", $this->db_click, $this->db_card));
 			if	(false === $deleted_count ) {
 				$html_notice .= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('Failed to delete invalid click records.', 'pz-linkcard' ).'</strong></p></div>';
 			} else {
@@ -443,7 +444,7 @@
 				break;
 			}
 			global	$wpdb;
-			$deleted_count	= $wpdb->query("DELETE FROM $this->db_click" );
+			$deleted_count	= $wpdb->query($wpdb->prepare("DELETE FROM %i", $this->db_click));
 			if	(false === $deleted_count ) {
 				$html_notice	.= '<div class="notice notice-error is-dismissible"><p><strong>'.esc_html__('Failed to delete all click data.', 'pz-linkcard' ).'</strong></p></div>';
 			} else {
@@ -507,7 +508,8 @@
 		'preview-left', 'preview-top', 'preview-width', 'preview-height',
 		'preview-two-cards',
 		'preview-window-left', 'preview-window-top', 'preview-window-width', 'preview-window-height',
-		'preview-docked-width', 'preview-last-bottom-docked-height', 'preview-left-docked-width',
+		'preview-docked-width', 'preview-docked-height', 'preview-last-bottom-docked-height',
+		'preview-right-docked-width', 'preview-left-docked-width',
 	) as $temp_name ) {
 		$temp_value		=	array_key_exists($temp_name, $this->options ) ? $this->options[$temp_name] : null;
 		$html_input		.=	'<input type="hidden" name="properties['.$temp_name.']" value="'.esc_attr($temp_value ?? '' ).'" data-pz-preview-state="'.esc_attr($temp_name ).'" />';
@@ -544,7 +546,7 @@
 	}
 
 	global	$wpdb;
-	$option_id	=	$wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+	$option_id	=	$wpdb->get_var($wpdb->prepare("SELECT option_id FROM %i WHERE option_name = %s LIMIT 1", $wpdb->options, self::OPTION_NAME) );
 	if	(!$option_id ) {
 		$html_notice	.=	'<div class="notice notice-warning is-dismissible"><p><strong>'.esc_html(self::PLUGIN_NAME).': '.esc_html__('Settings option was not found in the database.', 'pz-linkcard' ).'</strong><br>'.
 			esc_html__('Option name', 'pz-linkcard' ).': <code>'.esc_html(self::OPTION_NAME).'</code><br>'.
@@ -695,12 +697,10 @@
 
 	// カスタムフィールドの一覧
 	global	$wpdb;
-	$query			=	"SELECT meta_key FROM $wpdb->postmeta WHERE SUBSTRING(meta_key, 1, 1 ) <> '_'  GROUP BY meta_key ORDER BY meta_key ASC";
-	$result			=	$wpdb->get_results($query, ARRAY_N );
-	$meta_list		=	null;
-	$meta_list['']	=	'';
-	foreach	($result as $item ) {
-		$meta_list[$item[0]]	=	$item[0];
+	$meta_keys = $wpdb->get_col("SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE SUBSTRING(meta_key, 1, 1 ) <> '_'");
+	$meta_list = array('' => '' );
+	foreach ($meta_keys as $meta_key ) {
+		$meta_list[$meta_key] = $meta_key;
 	}
 	ksort($meta_list );
 
@@ -762,7 +762,7 @@
 		<div class="pz-man-screen-tabs pz-settings-screen-tabs">
 		<div class="pz-man-screen-options pz-settings-screen-options">
 			<button type="button" id="pz-settings-screen-options-toggle" class="pz-man-screen-options-toggle" title="<?php echo esc_attr(__('Screen Options', 'pz-linkcard' ).' F2'); ?>" aria-expanded="false" aria-controls="pz-settings-screen-options-panel" data-no-overlay="1">
-				<span class="pz-screen-toggle-label-wide"><?php esc_html_e('Screen Options', 'pz-linkcard' ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-forms" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down-alt2"></span>
+				<span class="pz-screen-toggle-label-wide"><?php esc_html_e('Screen Options', 'pz-linkcard' ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-forms" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span>
 			</button>
 			<div id="pz-settings-screen-options-panel" class="pz-man-screen-options-panel pz-settings-screen-options-panel" hidden>
 				<fieldset>
@@ -796,10 +796,10 @@
 		</div>
 		<div class="pz-page-help">
 			<button type="button" class="pz-page-help-toggle" title="<?php echo esc_attr(__('Help', 'pz-linkcard' ).' F1'); ?>" aria-expanded="false" aria-controls="pz-settings-help-panel" data-no-overlay="1">
-				<span class="pz-screen-toggle-label-wide"><?php esc_html_e('Help', 'pz-linkcard' ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-editor-help" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down-alt2"></span>
+				<span class="pz-screen-toggle-label-wide"><?php esc_html_e('Help', 'pz-linkcard' ); ?></span><span class="pz-screen-toggle-label-compact dashicons dashicons-editor-help" aria-hidden="true"></span><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span>
 			</button>
 			<div id="pz-settings-help-panel" class="pz-page-help-panel" hidden>
-				<h3><?php esc_html_e('Keyboard Shortcuts'); ?></h3>
+				<h3><?php esc_html_e('Keyboard Shortcuts', 'default'); ?></h3>
 				<dl class="pz-man-shortcut-list">
 					<div><dt><kbd>F1</kbd></dt><dd><?php esc_html_e('Show Help', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>F2</kbd></dt><dd><?php esc_html_e('Show Screen Options', 'pz-linkcard' ); ?></dd></div>
@@ -807,7 +807,7 @@
 					<div><dt><kbd>F4</kbd></dt><dd><?php esc_html_e('Switch between Card Manager and Settings', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>F6</kbd></dt><dd><?php esc_html_e('Focus current tab', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Alt</kbd>+<kbd>Q</kbd></dt><dd><?php esc_html_e('Search settings', 'pz-linkcard' ); ?></dd></div>
-					<div><dt><kbd>Ctrl</kbd>+<kbd>S</kbd> / <kbd>Alt</kbd>+<kbd>S</kbd></dt><dd><?php esc_html_e('Save Changes'); ?></dd></div>
+					<div><dt><kbd>Ctrl</kbd>+<kbd>S</kbd> / <kbd>Alt</kbd>+<kbd>S</kbd></dt><dd><?php esc_html_e('Save Changes', 'default'); ?></dd></div>
 					<div><dt><kbd>Ctrl</kbd>+<kbd>←</kbd> / <kbd>Ctrl</kbd>+<kbd>→</kbd></dt><dd><?php esc_html_e('Switch tabs', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>Shift</kbd>+<kbd><?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd> / <kbd><?php esc_html_e('Right click', 'pz-linkcard' ); ?></kbd>+<kbd><?php esc_html_e('Wheel', 'pz-linkcard' ); ?></kbd></dt><dd><?php esc_html_e('Increase or decrease values, or select the previous or next option', 'pz-linkcard' ); ?></dd></div>
 					<div><dt><kbd>Alt</kbd>+<kbd>V</kbd></dt><dd><?php esc_html_e('Cycle preview: window, bottom, right, left, hidden', 'pz-linkcard'); ?></dd></div>
@@ -818,20 +818,20 @@
 		<div id="pz-tabbar-wrapper" class="pz-tabbar-wrapper">
 			<button type="button" class="pz-tab-scroll pz-tab-left" aria-label="<?php esc_attr_e('Scroll tabs left', 'pz-linkcard' ); ?>"><span class="dashicons dashicons-arrow-left-alt2"></span></button>
 			<div id="pz-tabbar" class="pz-tabs">
-			<a class="pz-tab pz-red<?php echo $pz_tab_active('pz-error' ); ?>"			name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php esc_html_e('Error', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-hide<?php echo $pz_tab_active('pz-basic' ); ?>"			name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php esc_html_e('Basic', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-position' ); ?>"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php esc_html_e('Position', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-display' ); ?>"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php esc_html_e('Display', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-letter' ); ?>"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php esc_html_e('Letter', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-external' ); ?>"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php esc_html_e('External Link', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-internal' ); ?>"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php esc_html_e('Internal Link', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-check' ); ?>"					name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php esc_html_e('Link Check', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-editor' ); ?>"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php esc_html_e('Editor', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-orange<?php echo $pz_tab_active('pz-multisite' ); ?>"	name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php esc_html_e('Multisite', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-advanced' ); ?>"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php esc_html_e('Advanced', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-etc' ); ?>"					name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php esc_html_e('etc.', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab<?php echo $pz_tab_active('pz-initialize' ); ?>"			name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php esc_html_e('Initialize', 'pz-linkcard' ); ?></a>
-			<a class="pz-tab pz-purple<?php echo $pz_tab_active('pz-admin' ); ?>"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php esc_html_e('Admin', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-red<?php echo esc_attr($pz_tab_active('pz-error' )); ?>"			name="pz-error"			href="#pz-error"		<?php echo $show_error;			?>><?php esc_html_e('Error', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-hide<?php echo esc_attr($pz_tab_active('pz-basic' )); ?>"			name="pz-basic"			href="#pz-basic"		<?php echo $show_basic;			?>><?php esc_html_e('Basic', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-position' )); ?>"				name="pz-position"		href="#pz-position"		<?php echo $show_position;		?>><?php esc_html_e('Position', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-display' )); ?>"				name="pz-display"		href="#pz-display"		<?php echo $show_display;		?>><?php esc_html_e('Display', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-letter' )); ?>"				name="pz-letter"		href="#pz-letter"		<?php echo $show_letter;		?>><?php esc_html_e('Letter', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-external' )); ?>"				name="pz-external"		href="#pz-external"		<?php echo $show_external;		?>><?php esc_html_e('External Link', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-internal' )); ?>"				name="pz-internal"		href="#pz-internal"		<?php echo $show_internal;		?>><?php esc_html_e('Internal Link', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-check' )); ?>"					name="pz-check"			href="#pz-check"		<?php echo $show_check;			?>><?php esc_html_e('Link Check', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-editor' )); ?>"				name="pz-editor"		href="#pz-editor"		<?php echo $show_editor;		?>><?php esc_html_e('Editor', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-orange<?php echo esc_attr($pz_tab_active('pz-multisite' )); ?>"	name="pz-multisite"		href="#pz-multisite"	<?php echo $show_multisite;		?>><?php esc_html_e('Multisite', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-advanced' )); ?>"				name="pz-advanced"		href="#pz-advanced"		<?php echo $show_advanced;		?>><?php esc_html_e('Advanced', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-etc' )); ?>"					name="pz-etc"			href="#pz-etc"			<?php echo $show_etc;			?>><?php esc_html_e('etc.', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab<?php echo esc_attr($pz_tab_active('pz-initialize' )); ?>"			name="pz-initialize"	href="#pz-initialize"	<?php echo $show_initialize;	?>><?php esc_html_e('Initialize', 'pz-linkcard' ); ?></a>
+			<a class="pz-tab pz-purple<?php echo esc_attr($pz_tab_active('pz-admin' )); ?>"		name="pz-admin"			href="#pz-admin"		<?php echo $show_admin;			?>><?php esc_html_e('Admin', 'pz-linkcard' ); ?></a>
 			</div>
 			<button type="button" class="pz-tab-scroll pz-tab-right" aria-label="<?php esc_attr_e('Scroll tabs right', 'pz-linkcard' ); ?>"><span class="dashicons dashicons-arrow-right-alt2"></span></button>
 		</div>
@@ -907,46 +907,44 @@ function	pz_TrimNumPx($val, $unit_percent = false ) {
 	return		$val.$unit;
 }
 
-// ディレクトリ配下の使用サイズ
-function	pz_GetDirSize($dir ) {
-	$size		=	0;
-	$handle		=	opendir($dir );
-	if	(!$handle ) {
-		return	null;
+// ディレクトリ配下のファイル数と使用サイズを一度の走査で取得
+function pz_GetDirStats($dir ) {
+	$stats = array('count' => 0, 'size' => null );
+	$handle = is_dir($dir ) ? opendir($dir ) : false;
+	if (!$handle ) {
+		return $stats;
 	}
-	while ($file = readdir($handle ) ) {
-		$fullpath = $dir.'/'.$file;
-		if	(is_dir($fullpath ) ) {
-			if	($file	!==	'..' && $file !== '.' ) {
-				$size	+=	pz_GetDirSize($fullpath );
-			}
-		} else {
-			$size		+=	filesize($fullpath );
-		}
-	}
-	return	$size;
-}
-
-// ディレクトリ配下のファイル数
-function pz_GetDirFileCount($dir ) {
-	$count		= 0;
-	$handle		= is_dir($dir ) ? opendir($dir ) : false;
-	if	(!$handle ) {
-		return	0;
-	}
+	$stats['size'] = 0;
 	while (($file = readdir($handle ) ) !== false ) {
-		if	($file === '.' || $file === '..' ) {
+		if ($file === '.' || $file === '..' ) {
 			continue;
 		}
 		$fullpath = $dir.'/'.$file;
-		if	(is_dir($fullpath ) && !is_link($fullpath ) ) {
-			$count	+= pz_GetDirFileCount($fullpath );
+		if (is_dir($fullpath ) && !is_link($fullpath ) ) {
+			$child = pz_GetDirStats($fullpath );
+			$stats['count'] += $child['count'];
+			$stats['size'] += $child['size'] ?? 0;
 		} elseif (is_file($fullpath ) ) {
-			$count++;
+			$stats['count']++;
+			$size = filesize($fullpath );
+			if ($size !== false ) {
+				$stats['size'] += $size;
+			}
 		}
 	}
 	closedir($handle );
-	return	$count;
+	return $stats;
+}
+
+// 既存の呼び出し元との互換性を維持
+function pz_GetDirSize($dir ) {
+	$stats = pz_GetDirStats($dir );
+	return $stats['size'];
+}
+
+function pz_GetDirFileCount($dir ) {
+	$stats = pz_GetDirStats($dir );
+	return $stats['count'];
 }
 
 // 数値をKB、MB、TBの単位に変換
@@ -969,7 +967,7 @@ function	pz_GetStringBytes($val ) {
 function		pz_Select($prop, $name, $items ) {
 	echo		'<select name="properties['.$name.']">';
 	foreach		($items				as	$key => $value ) {
-		echo	'<option value="'.$key.'" '.($prop[$name] == $key ? 'selected=selected' : '' ).'>'.$value.'</option>';
+		echo	'<option value="'.esc_attr($key).'" '.selected($prop[$name], $key, false).'>'.esc_html($value).'</option>';
 	}
 	echo		'</select>';
 }
@@ -977,17 +975,17 @@ function		pz_Select($prop, $name, $items ) {
 //
 function		pz_Checkbox($prop, $name, $explanatory_text ) {
 	echo		'<label>';
-	echo		'<input type="hidden"   name="properties['.$name.']" value="" />';
-	echo		'<input type="checkbox" name="properties['.$name.']" value="1" '.($prop[$name] == '1' ? 'checked="checked" ' : '' ).'/>';
-	echo		$explanatory_text;
+	echo		'<input type="hidden"   name="properties['.esc_attr($name).']" value="" />';
+	echo		'<input type="checkbox" name="properties['.esc_attr($name).']" value="1" '.checked($prop[$name], '1', false).'/>';
+	echo		wp_kses_post($explanatory_text);
 	echo		'</label>';
 }
 
 //
 function		pz_Option($prop, $name, $explanatory_text, $item_list ) {
-	echo		'<label>'.$explanatory_text.'<select name="properties['.$name.']">';
+	echo		'<label>'.wp_kses_post($explanatory_text).'<select name="properties['.esc_attr($name).']">';
 	foreach		($item_list		as $item_value => $item_desc ) {
-		echo	'<option value="'.$item_value.'"'.($prop[$name] == $item_value ? ' selected="selected"' : '' ).'">'.$item_desc.'</option>';
+		echo	'<option value="'.esc_attr($item_value).'"'.selected($prop[$name], $item_value, false).'>'.esc_html($item_desc).'</option>';
 	}
 	echo		'</select></label>';
 }
@@ -998,7 +996,7 @@ function		echo_text($item_name, $item_value, $item_title, $item_notice, $item_cl
 		$item_maxlength		=	'';
 	}
 	$html_result	=	'<input type="text" name="properties['.esc_attr($item_name ).']" value="'.esc_attr($item_value ).'" maxlength="'.esc_attr($item_maxlength ).'" class="'.esc_attr($item_class ).'" '.esc_attr($item_disabled ).' /><br><span class="pz-note">'.esc_attr($item_notice ).'</span></td>';
-	$html_result	=	'<tr><th scope="row">'.$item_title.'</th><td>'.$html_result.'</tr>';
+	$html_result	=	'<tr><th scope="row">'.wp_kses_post($item_title).'</th><td>'.$html_result.'</tr>';
 	echo			$html_result;
 }
 
@@ -1007,13 +1005,13 @@ function		echo_checkbox($item_name, $item_value, $item_list, $item_title, $item_
 	if			($item_enabled		==	false ) {
 		echo		'<label>';
 		echo		'<input type="checkbox" disabled="disabled" />';
-		echo		$item_notice;
+		echo wp_kses_post($item_notice);
 		echo		'</label>';
 	} else {
 		echo		'<label>';
-		echo		'<input type="hidden"   name="properties['.$item_name.']" value="" />';
-		echo		'<input type="checkbox" name="properties['.$item_name.']" value="1" '.($item_value == '1' ? 'checked="checked" ' : '' ).'/>';
-		echo		$item_notice;
+		echo		'<input type="hidden"   name="properties['.esc_attr($item_name).']" value="" />';
+		echo		'<input type="checkbox" name="properties['.esc_attr($item_name).']" value="1" '.($item_value == '1' ? 'checked="checked" ' : '' ).'/>';
+		echo wp_kses_post($item_notice);
 		echo		'</label>';
 	}
 }
@@ -1050,11 +1048,11 @@ function pz_echo_schedule_select($item_name, $item_value, $item_list, $is_disabl
 function	echo_combo($item_name, $item_value, $item_list, $item_title, $item_notice, $item_class, $item_maxlength, $item_disabled ) {
 	$html_result		=	'<tr><th scope="row">'.esc_attr($item_title ).'</th><td>';
 	if	($item_disabled ) {
-		$html_result	.=	'<input type="text" name="" value="'.$item_value.'" disabled="disabled" class="pz-combo" />';
+		$html_result	.=	'<input type="text" name="" value="'.esc_attr($item_value).'" disabled="disabled" class="pz-combo" />';
 	} else {
 		$html_result	.=	'<input type="text" name="properties['.esc_attr($item_name ).']" value="'.esc_attr($item_value ).'" maxlength="'.esc_attr($item_maxlength ).'" list="datalist-'.esc_attr($item_name ).'" class="pz-combo" />';
 	}
-	$html_result		.=	'<datalist id="datalist-'.$item_name.'">';
+	$html_result		.=	'<datalist id="datalist-'.esc_attr($item_name).'">';
 	foreach		($item_list	as	$key => $value ) {
 		$html_result	.=	'<option value="'.esc_attr($key ).'" '.(esc_attr($key ) == esc_attr($item_value ) ? 'selected="selected"' : '' ).'>'.esc_attr($value ).'</option>';
 	}

@@ -1,4 +1,4 @@
-<?php defined('ABSPATH' ) || wp_die; ?>
+<?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php
 	global	$wpdb;
 
@@ -8,14 +8,19 @@
 	$multi_subsite_attr		=	$is_multisite ? ' aria-readonly="true" data-pz-locked-checkbox="1"' : $multi_disabled_attr;
 	$multi_site_list_attr	=	$is_multisite ? ' aria-readonly="true" data-pz-locked-checkbox="1"' : ' disabled="disabled"';
 	$db_table_exists	=	false;
+	$db_click_table_exists	=	false;
 	if	(isset($wpdb ) && $this->db_card ) {
 		$db_table_exists	=	($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $this->db_card ) ) === $this->db_card );
 	}
+	if	(isset($wpdb ) && $this->db_click ) {
+		$db_click_table_exists	=	($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $this->db_click ) ) === $this->db_click );
+	}
 ?>
-<div class="pz-page<?php echo $pz_page_active('pz-multisite' ); ?>" id="pz-multisite">
+<div class="pz-page<?php echo esc_attr($pz_page_active('pz-multisite' )); ?>" id="pz-multisite">
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
-	<h2><?php echo	__('Multisite Information', 'pz-linkcard' ).$help_open.'multisite'.$help_close; ?></h2>
-	<div class="pz-multi-notice"><?php echo __('*** Cannot be changed ***', 'pz-linkcard' ); ?></div>
+	<section class="pz-settings-detail-section">
+	<h2><?php echo wp_kses_post(__('Multisite Information', 'pz-linkcard' ).$help_open.'multisite'.$help_close); ?></h2>
+	<div class="pz-multi-notice"><?php echo wp_kses_post(__('*** Cannot be changed ***', 'pz-linkcard' )); ?></div>
 	<table class="form-table">
 		<tr>
 			<th scope="row"><?php esc_html_e('Multisite', 'pz-linkcard' ); ?></th>
@@ -58,11 +63,20 @@
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e('Table Name', 'pz-linkcard' ); ?></th>
+			<th scope="row"><?php esc_html_e('Link Card Table', 'pz-linkcard' ); ?></th>
 			<td>
 				<input type="text" size="40" value="<?php echo esc_attr($this->db_card ); ?>" class="pz-multi-normal-control" readonly="readonly" />
 				<span class="pz-table-exists-badge <?php echo $db_table_exists ? 'pz-table-exists' : 'pz-table-missing'; ?>">
 					<?php echo $db_table_exists ? wp_kses_post(__('&#x2705;&#xFE0F;', 'pz-linkcard' ) ).esc_html__('Exists', 'pz-linkcard' ) : wp_kses_post(__('&#x1F6AB;&#xFE0F;', 'pz-linkcard' ) ).esc_html__('Not Found.', 'pz-linkcard' ); ?>
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e('Click Information Table', 'pz-linkcard' ); ?></th>
+			<td>
+				<input type="text" size="40" value="<?php echo esc_attr($this->db_click ); ?>" class="pz-multi-normal-control" readonly="readonly" />
+				<span class="pz-table-exists-badge <?php echo $db_click_table_exists ? 'pz-table-exists' : 'pz-table-missing'; ?>">
+					<?php echo $db_click_table_exists ? wp_kses_post(__('&#x2705;&#xFE0F;', 'pz-linkcard' ) ).esc_html__('Exists', 'pz-linkcard' ) : wp_kses_post(__('&#x1F6AB;&#xFE0F;', 'pz-linkcard' ) ).esc_html__('Not Found.', 'pz-linkcard' ); ?>
 				</span>
 			</td>
 		</tr>
@@ -76,11 +90,13 @@
 			</td>
 		</tr>
 	</table>
+	</section>
 
 	<div class="pz-submit-float"><?php submit_button(); ?></div>
-	<h2><?php echo	__('Site List', 'pz-linkcard' ).$help_open.'multisite'.$help_close; ?></h2>
-	<div class="pz-multi-notice"><?php echo __('*** Cannot be changed ***', 'pz-linkcard' ); ?></div>
-	<table class="form-table pz-multi-list widefat striped">
+	<section class="pz-settings-detail-section">
+	<h2><?php echo wp_kses_post(__('Site List', 'pz-linkcard' ).$help_open.'multisite'.$help_close); ?></h2>
+	<div class="pz-multi-notice"><?php echo wp_kses_post(__('*** Cannot be changed ***', 'pz-linkcard' )); ?></div>
+	<div class="pz-multisite-table-scroll"><table class="form-table pz-multi-list widefat striped">
 		<thead>
 			<tr>
 				<th scope="col" class="pz-multi-head-current"><?php esc_html_e('Current', 'pz-linkcard' ); ?></th>
@@ -104,5 +120,6 @@
 			</tr>
 			<?php } ?>
 		</tbody>
-	</table>
+	</table></div>
+	</section>
 </div>

@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 	if	(!current_user_can('edit_posts' ) ) {
 		wp_send_json_error(__('You do not have permission to update LinkCard data.', 'pz-linkcard' ), 403 );
@@ -7,7 +7,9 @@ defined('ABSPATH' ) || wp_die;
 	if	(!check_ajax_referer('pz_lkc_mce_render_card', 'nonce', false ) ) {
 		wp_send_json_error(__('Invalid request.', 'pz-linkcard' ), 403 );
 	}
-	$shortcode	= isset($_POST['shortcode'] ) ? trim(wp_unslash($_POST['shortcode'] ) ) : '';
+	// Preserve shortcode punctuation; the configured shortcode allowlist and anchored pattern validate it below.
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	$shortcode	= isset($_POST['shortcode'] ) && is_string($_POST['shortcode'] ) ? trim(wp_unslash($_POST['shortcode'] ) ) : '';
 	$codes		= array_values(array_filter(array_unique(array_map('strval', array(
 		$this->options['code1'] ?? '', $this->options['code2'] ?? '', $this->options['code3'] ?? '',
 	) ) ) ) );

@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 trait Pz_LinkCard_Options {
 
@@ -46,7 +46,7 @@ trait Pz_LinkCard_Options {
 			}
 
 			global	$wpdb;
-			$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+			$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM %i WHERE option_name = %s LIMIT 1", $wpdb->options, self::OPTION_NAME) );
 			if	($saved_value === null ) {
 				$result		=	$wpdb->insert($wpdb->options, array(
 					'option_name'	=>	self::OPTION_NAME,
@@ -73,6 +73,7 @@ trait Pz_LinkCard_Options {
 
 	// 設定を更新する
 	private	function	pz_SaveOptions($increment_css_count = true ) {
+		$return_status	=	false;
 		$this->options	=	self::pz_RemoveThisLinkFallback($this->options );
 
 		// 変更前
@@ -103,7 +104,7 @@ trait Pz_LinkCard_Options {
 			wp_cache_delete('alloptions', 'options' );
 		}
 		global	$wpdb;
-		$saved_value		=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+		$saved_value		=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM %i WHERE option_name = %s LIMIT 1", $wpdb->options, self::OPTION_NAME) );
 		$saved_options		=	($saved_value !== null ) ? maybe_unserialize($saved_value ) : array();
 		$direct_write_result = null;
 		$direct_write_error = '';
@@ -130,7 +131,7 @@ trait Pz_LinkCard_Options {
 				wp_cache_delete(self::OPTION_NAME, 'options' );
 				wp_cache_delete('alloptions', 'options' );
 			}
-			$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", self::OPTION_NAME ) );
+			$saved_value	=	$wpdb->get_var($wpdb->prepare("SELECT option_value FROM %i WHERE option_name = %s LIMIT 1", $wpdb->options, self::OPTION_NAME) );
 			$saved_options	=	($saved_value !== null ) ? maybe_unserialize($saved_value ) : array();
 		}
 		if	($saved_options		!=	$this->options ) {

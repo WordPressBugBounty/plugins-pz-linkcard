@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH' ) || wp_die;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 	if	(!current_user_can('manage_options' ) ) {
 		wp_send_json_error('forbidden', 403 );
@@ -9,7 +9,7 @@ defined('ABSPATH' ) || wp_die;
 	}
 
 	$original_options	=	$this->options;
-	$properties			=	isset($_POST['properties'] ) && is_array($_POST['properties'] ) ? wp_unslash($_POST['properties'] ) : array();
+	$properties			=	$this->pz_GetSubmittedProperties() ?? array();
 	$definitions		=	self::pz_GetOptionDefinitions();
 	$preview_options	=	array_merge(self::pz_GetDefaultOptions(), is_array($this->options ) ? $this->options : array() );
 
